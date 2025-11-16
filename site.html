@@ -1,4 +1,4 @@
--<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
@@ -44,6 +44,8 @@ body {
 header img {
     width: 95%;
     max-width: 550px;
+    margin: 0 auto;
+    display: block;
     border-radius: 20px;
     box-shadow: 0 0 25px rgba(0,255,120,0.4);
     animation: fadeIn 1.5s ease;
@@ -83,20 +85,24 @@ header img {
 /* Menu estilo cards */
 .menu-cards {
     margin-top: 30px;
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
     gap: 18px;
 }
 
+@media (max-width: 768px) {
+    .menu-cards {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
 .menu-item {
-    width: 250px;
     background: rgba(0,0,0,0.35);
     border-radius: 18px;
     padding: 20px;
     text-align: center;
     color: #00ff9d;
-    font-size: 1.2rem;
+    font-size: 1.1rem;
     font-weight: bold;
     text-decoration: none;
     border: 2px solid rgba(0,255,90,0.4);
@@ -108,15 +114,15 @@ header img {
 
 /* Imagem destacada */
 .menu-item img {
-    width: 120px;
+    width: 110px;
     margin-bottom: 10px;
-    filter: drop-shadow(0 0 14px #00ffbb);
+    filter: drop-shadow(0 0 18px #00ffbb);
     transition: .3s ease;
 }
 
 .menu-item:hover img {
-    filter: drop-shadow(0 0 22px #00ffe1);
-    transform: scale(1.12);
+    filter: drop-shadow(0 0 25px #00ffe1);
+    transform: scale(1.15);
 }
 
 @keyframes flutuar {
@@ -145,6 +151,15 @@ header img {
 .odu-card h2 {
     color: #00ffcc;
     text-shadow: 0 0 10px #000;
+}
+
+/* Texto explicação ODU */
+.odu-explica {
+    color: #eafff5;
+    font-size: 1rem;
+    margin-top: -10px;
+    margin-bottom: 15px;
+    text-shadow: 0 0 5px #000;
 }
 
 .odu-card input {
@@ -247,32 +262,32 @@ footer {
         <!-- MENUS -->
         <div class="menu-cards">
 
-            <a class="menu-item" href="https://sites.google.com/view/ceusaosebastiao/nossas-origens" target="_blank" rel="noopener noreferrer">
+            <a class="menu-item" href="https://sites.google.com/view/ceusaosebastiao/nossas-origens" target="_blank">
                 <img src="https://i.ibb.co/Mk1fHrjf/2fb20f7ef8fd966737d3454c13941203-removebg-preview.png">
                 <div>Nossas Origens</div>
             </a>
 
-            <a class="menu-item" href="https://sites.google.com/view/ceusaosebastiao/alb%C3%BAm-de-fotos" target="_blank" rel="noopener noreferrer">
+            <a class="menu-item" href="https://sites.google.com/view/ceusaosebastiao/alb%C3%BAm-de-fotos" target="_blank">
                 <img src="https://i.ibb.co/Mk1fHrjf/2fb20f7ef8fd966737d3454c13941203-removebg-preview.png">
                 <div>Álbum de Fotos</div>
             </a>
 
-            <a class="menu-item" href="https://sites.google.com/view/ceusaosebastiao/estudos-de-umbanda" target="_blank" rel="noopener noreferrer">
+            <a class="menu-item" href="https://sites.google.com/view/ceusaosebastiao/estudos-de-umbanda" target="_blank">
                 <img src="https://i.ibb.co/Mk1fHrjf/2fb20f7ef8fd966737d3454c13941203-removebg-preview.png">
                 <div>Estudo da Umbanda</div>
             </a>
 
-            <a class="menu-item" href="https://www.youtube.com/@paimarciodeoxossi" target="_blank" rel="noopener noreferrer">
+            <a class="menu-item" href="https://www.youtube.com/@paimarciodeoxossi" target="_blank">
                 <img src="https://i.ibb.co/Mk1fHrjf/2fb20f7ef8fd966737d3454c13941203-removebg-preview.png">
                 <div>Nossos Vídeos</div>
             </a>
 
-            <a class="menu-item" href="https://sites.google.com/view/ceusaosebastiao/hor%C3%B3scopo" target="_blank" rel="noopener noreferrer">
+            <a class="menu-item" href="https://sites.google.com/view/ceusaosebastiao/hor%C3%B3scopo" target="_blank">
                 <img src="https://i.ibb.co/Mk1fHrjf/2fb20f7ef8fd966737d3454c13941203-removebg-preview.png">
                 <div>Horóscopo</div>
             </a>
 
-            <a class="menu-item" href="https://sites.google.com/view/ceusaosebastiao/in%C3%ADcio/filmes" target="_blank" rel="noopener noreferrer">
+            <a class="menu-item" href="https://sites.google.com/view/ceusaosebastiao/in%C3%ADcio/filmes" target="_blank">
                 <img src="https://i.ibb.co/Mk1fHrjf/2fb20f7ef8fd966737d3454c13941203-removebg-preview.png">
                 <div>Filmes</div>
             </a>
@@ -284,6 +299,12 @@ footer {
     <div class="card odu-card">
 
         <h2>Descubra Seu Odu</h2>
+
+        <p class="odu-explica">
+            <strong>O que é Odu?</strong><br>
+            O Odu representa o caminho espiritual de cada pessoa, revelando segredos,
+            forças, desafios e a energia dos Orixás que acompanham seu destino.
+        </p>
 
         <p>Digite sua data de nascimento:</p>
 
