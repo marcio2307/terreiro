@@ -40,7 +40,7 @@ body {
     text-align: center;
 }
 
-/* >>> CAPA CORRIGIDA E CENTRALIZADA <<< */
+/* CAPA 100% CENTRALIZADA E AJUSTADA */
 header {
     width: 100%;
     display: flex;
@@ -54,13 +54,15 @@ header img {
     border-radius: 20px;
     box-shadow: 0 0 25px rgba(0,255,120,0.4);
     animation: fadeIn 1.5s ease;
+    margin-left: auto;
+    margin-right: auto;
 }
 
 /* CORREÇÃO EXTRA para celular */
 @media (max-width: 600px) {
     header img {
-        width: 92%;
-        max-width: 380px;
+        width: 90%;
+        max-width: 360px;
     }
 }
 
@@ -70,54 +72,61 @@ header img {
     to { opacity: 1; transform: translateY(0); }
 }
 
-/* PLAYER ESTILIZADO */
+/* PLAYER NOVO, COMPACTO E ELEGANTE */
 .radio-player {
     margin: 25px auto 35px auto;
-    padding: 25px;
-    width: 90%;
-    max-width: 500px;
-    background: rgba(0, 0, 0, 0.45);
+    padding: 20px;
+    width: 92%;
+    max-width: 420px;
+    background: rgba(0, 0, 0, 0.55);
     border-radius: 20px;
     backdrop-filter: blur(10px);
     text-align: center;
-    border: 2px solid rgba(0,255,150,0.4);
+    border: 2px solid rgba(0,255,150,0.35);
     box-shadow: 0 0 25px rgba(0,255,120,0.25);
-    animation: fadeIn 1.5s ease;
 }
 
 .radio-player h3 {
     color: #aaffcc;
-    font-size: 1.4rem;
+    font-size: 1.3rem;
     margin-top: 0;
     text-shadow: 0 0 10px #000;
 }
 
-/* Botão bonito */
+/* BOTÃO DE PLAY MODERNO */
 .play-btn {
-    margin-top: 10px;
-    width: 90px;
-    height: 90px;
+    margin-top: 5px;
+    width: 70px;
+    height: 70px;
     border-radius: 50%;
-    font-size: 32px;
+    font-size: 28px;
     border: none;
     cursor: pointer;
-    background: linear-gradient(145deg, #00ff99, #009966);
+    background: linear-gradient(145deg, #00ffaa, #00bb66);
     color: #003d1f;
-    box-shadow: 0 0 25px #00ff99, inset 0 0 12px rgba(0,0,0,0.6);
-    transition: 0.2s;
+    box-shadow: 0 0 18px #00ff99, inset 0 0 10px rgba(0,0,0,0.6);
+    transition: 0.25s;
 }
 
 .play-btn:hover {
     transform: scale(1.12);
-    box-shadow: 0 0 35px #00ffcc;
+    box-shadow: 0 0 25px #00ffcc;
 }
 
-/* Status */
 .radio-status {
-    margin-top: 12px;
+    margin-top: 10px;
     color: #ddffe8;
-    font-size: 1.1rem;
+    font-size: 1.05rem;
     text-shadow: 0 0 5px #000;
+}
+
+/* Player menor no celular */
+@media (max-width: 600px) {
+    .play-btn {
+        width: 60px;
+        height: 60px;
+        font-size: 24px;
+    }
 }
 
 /* Card principal */
@@ -215,7 +224,6 @@ header img {
     text-shadow: 0 0 10px #000;
 }
 
-/* Texto explicação ODU */
 .odu-explica {
     color: #eafff5;
     font-size: 1rem;
@@ -224,6 +232,7 @@ header img {
     text-shadow: 0 0 5px #000;
 }
 
+/* ODU INPUT */
 .odu-card input {
     padding: 10px;
     border-radius: 10px;
@@ -253,7 +262,6 @@ header img {
     background: #00ffaa;
 }
 
-/* Odu */
 .animation {
     position: relative;
     margin: 25px auto;
@@ -323,6 +331,8 @@ footer {
         <p class="radio-status" id="radioStatus">Toque para ouvir</p>
         <audio id="radioAudio" src="https://stream.zeno.fm/l8ocj9i6ka2uv"></audio>
     </div>
+
+
 
     <!-- CARD PRINCIPAL -->
     <div class="card">
