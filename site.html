@@ -70,6 +70,56 @@ header img {
     to { opacity: 1; transform: translateY(0); }
 }
 
+/* PLAYER ESTILIZADO */
+.radio-player {
+    margin: 25px auto 35px auto;
+    padding: 25px;
+    width: 90%;
+    max-width: 500px;
+    background: rgba(0, 0, 0, 0.45);
+    border-radius: 20px;
+    backdrop-filter: blur(10px);
+    text-align: center;
+    border: 2px solid rgba(0,255,150,0.4);
+    box-shadow: 0 0 25px rgba(0,255,120,0.25);
+    animation: fadeIn 1.5s ease;
+}
+
+.radio-player h3 {
+    color: #aaffcc;
+    font-size: 1.4rem;
+    margin-top: 0;
+    text-shadow: 0 0 10px #000;
+}
+
+/* Botão bonito */
+.play-btn {
+    margin-top: 10px;
+    width: 90px;
+    height: 90px;
+    border-radius: 50%;
+    font-size: 32px;
+    border: none;
+    cursor: pointer;
+    background: linear-gradient(145deg, #00ff99, #009966);
+    color: #003d1f;
+    box-shadow: 0 0 25px #00ff99, inset 0 0 12px rgba(0,0,0,0.6);
+    transition: 0.2s;
+}
+
+.play-btn:hover {
+    transform: scale(1.12);
+    box-shadow: 0 0 35px #00ffcc;
+}
+
+/* Status */
+.radio-status {
+    margin-top: 12px;
+    color: #ddffe8;
+    font-size: 1.1rem;
+    text-shadow: 0 0 5px #000;
+}
+
 /* Card principal */
 .card {
     background: rgba(255,255,255,0.07);
@@ -125,7 +175,6 @@ header img {
     animation: flutuar 4s ease-in-out infinite alternate;
 }
 
-/* Imagem destacada */
 .menu-item img {
     width: 110px;
     margin-bottom: 10px;
@@ -204,7 +253,7 @@ header img {
     background: #00ffaa;
 }
 
-/* Animação dos búzios */
+/* Odu */
 .animation {
     position: relative;
     margin: 25px auto;
@@ -266,6 +315,14 @@ footer {
     <header>
         <img src="https://i.ibb.co/GQhzMnkn/Design-sem-nome.png" alt="Capa Umbanda">
     </header>
+
+    <!-- PLAYER DA RÁDIO -->
+    <div class="radio-player">
+        <h3>📻 Rádio Ao Vivo</h3>
+        <button class="play-btn" onclick="tocarRadio()">▶️</button>
+        <p class="radio-status" id="radioStatus">Toque para ouvir</p>
+        <audio id="radioAudio" src="https://stream.zeno.fm/l8ocj9i6ka2uv"></audio>
+    </div>
 
     <!-- CARD PRINCIPAL -->
     <div class="card">
@@ -334,6 +391,21 @@ footer {
     <footer>Pai Márcio de Oxóssi © 2025</footer>
 
 </div>
+
+<script>
+function tocarRadio() {
+    const radio = document.getElementById("radioAudio");
+    const status = document.getElementById("radioStatus");
+
+    if (radio.paused) {
+        radio.play();
+        status.innerHTML = "🔊 Rádio tocando...";
+    } else {
+        radio.pause();
+        status.innerHTML = "▶️ Toque para ouvir";
+    }
+}
+</script>
 
 <script>
 /* LÓGICA ORIGINAL DO ODU — 100% MANTIDA */
