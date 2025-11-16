@@ -41,12 +41,16 @@ body {
 }
 
 /* >>> CAPA CORRIGIDA E CENTRALIZADA <<< */
+header {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
 header img {
     width: 95%;
     max-width: 550px;
-    display: block;
-    margin: 0 auto;
-    margin-top: 10px;
     border-radius: 20px;
     box-shadow: 0 0 25px rgba(0,255,120,0.4);
     animation: fadeIn 1.5s ease;
@@ -57,9 +61,6 @@ header img {
     header img {
         width: 92%;
         max-width: 380px;
-        margin-left: auto !important;
-        margin-right: auto !important;
-        transform: translateX(0) !important;
     }
 }
 
