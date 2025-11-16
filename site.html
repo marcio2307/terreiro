@@ -1,0 +1,384 @@
+-<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Umbanda – Nossas Origens</title>
+
+<style>
+/* Fundo */
+body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Segoe UI', sans-serif;
+    overflow-x: hidden;
+    color: #b9ffce;
+}
+
+.bg {
+    position: fixed;
+    top: 0; 
+    left: 0;
+    width: 100%; 
+    height: 100%;
+    background: url("https://rizomagaleria.com/wp-content/uploads/2024/05/Banner-Logo-baixa.png");
+    background-size: 300px;
+    background-repeat: repeat;
+    filter: blur(10px) brightness(40%);
+    z-index: -2;
+    animation: movimento 40s infinite linear alternate;
+}
+
+@keyframes movimento {
+    0% { background-position: 0 0; }
+    100% { background-position: 200px 200px; }
+}
+
+/* Container principal */
+.main {
+    padding: 20px;
+    text-align: center;
+}
+
+/* Capa */
+header img {
+    width: 95%;
+    max-width: 550px;
+    border-radius: 20px;
+    box-shadow: 0 0 25px rgba(0,255,120,0.4);
+    animation: fadeIn 1.5s ease;
+}
+
+/* Fade suave */
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Card principal */
+.card {
+    background: rgba(255,255,255,0.07);
+    padding: 25px;
+    margin: auto;
+    width: 90%;
+    max-width: 850px;
+    border-radius: 20px;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(0,255,100,0.2);
+    box-shadow: 0 0 25px rgba(0,255,120,0.2);
+    animation: fadeIn 1.3s ease;
+}
+
+.card h2 {
+    margin-top: 0;
+    color: #afffcb;
+    text-shadow: 0 0 10px black;
+}
+
+.card p {
+    font-size: 1.2rem;
+    color: #dbffe8;
+}
+
+/* Menu estilo cards */
+.menu-cards {
+    margin-top: 30px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 18px;
+}
+
+.menu-item {
+    width: 250px;
+    background: rgba(0,0,0,0.35);
+    border-radius: 18px;
+    padding: 20px;
+    text-align: center;
+    color: #00ff9d;
+    font-size: 1.2rem;
+    font-weight: bold;
+    text-decoration: none;
+    border: 2px solid rgba(0,255,90,0.4);
+    box-shadow: 0 0 18px rgba(0,255,120,0.3);
+    backdrop-filter: blur(6px);
+    transition: .4s ease;
+    animation: flutuar 4s ease-in-out infinite alternate;
+}
+
+/* Imagem destacada */
+.menu-item img {
+    width: 120px;
+    margin-bottom: 10px;
+    filter: drop-shadow(0 0 14px #00ffbb);
+    transition: .3s ease;
+}
+
+.menu-item:hover img {
+    filter: drop-shadow(0 0 22px #00ffe1);
+    transform: scale(1.12);
+}
+
+@keyframes flutuar {
+    from { transform: translateY(0px); }
+    to { transform: translateY(-8px); }
+}
+
+.menu-item:hover {
+    background: rgba(0,255,100,0.22);
+    box-shadow: 0 0 30px #00ffcc;
+    border-color: #00ffdd;
+    color: #003d1f;
+    transform: scale(1.06);
+}
+
+/* CARD DO ODU */
+.odu-card {
+    margin-top: 40px;
+    padding: 25px;
+    background: rgba(0,0,0,0.55);
+    border-radius: 20px;
+    border: 2px solid rgba(0,255,160,0.4);
+    box-shadow: 0 0 25px rgba(0,255,140,0.3);
+}
+
+.odu-card h2 {
+    color: #00ffcc;
+    text-shadow: 0 0 10px #000;
+}
+
+.odu-card input {
+    padding: 10px;
+    border-radius: 10px;
+    border: none;
+    width: 80%;
+    max-width: 300px;
+    margin-top: 10px;
+    text-align: center;
+    font-size: 16px;
+}
+
+.odu-card button {
+    margin-top: 15px;
+    padding: 12px 25px;
+    font-size: 18px;
+    background: #00ffcc;
+    color: #003d28;
+    border: none;
+    border-radius: 15px;
+    cursor: pointer;
+    transition: 0.3s;
+    width: 80%;
+    max-width: 250px;
+}
+
+.odu-card button:hover {
+    background: #00ffaa;
+}
+
+/* Animação dos búzios */
+.animation {
+    position: relative;
+    margin: 25px auto;
+    width: clamp(240px, 70vw, 330px);
+    height: clamp(240px, 70vw, 330px);
+    background: url('https://i.ibb.co/ycK55TH5/D-879072-MLB94468249023-102025-O-removebg-preview.png') center/contain no-repeat;
+    border-radius: 50%;
+    overflow: hidden;
+    border: 3px solid #00ffcc;
+    box-shadow: 0 0 25px #000;
+}
+
+.buzio {
+    position: absolute;
+    width: 20%;
+    aspect-ratio: 1.6/1;
+    background-size: cover;
+    animation: cair 1.5s ease forwards;
+    opacity: 0;
+    filter: drop-shadow(2px 4px 3px rgba(0,0,0,0.7));
+}
+
+@keyframes cair {
+    0% { transform: translateY(-200px) rotate(0deg); opacity: 0; }
+    100% { transform: translateY(0) rotate(360deg); opacity: 1; }
+}
+
+.odu-nome {
+    font-size: clamp(20px, 5vw, 26px);
+    color: #00ffdd;
+    font-weight: bold;
+    margin-top: 15px;
+    text-shadow: 0 0 10px #000;
+}
+
+.odu-info {
+    color: #eafff5;
+    text-shadow: 0 0 5px #000;
+    margin-top: 15px;
+    padding: 10px;
+    text-align: left;
+    line-height: 1.6;
+}
+
+footer {
+    margin-top: 40px;
+    color: #ccc;
+    padding-bottom: 15px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="bg"></div>
+
+<div class="main">
+
+    <header>
+        <img src="https://i.ibb.co/GQhzMnkn/Design-sem-nome.png" alt="Capa Umbanda">
+    </header>
+
+    <!-- CARD PRINCIPAL -->
+    <div class="card">
+        <h2>Seja Bem-Vindo</h2>
+        <p>Este espaço foi criado com carinho para apresentar nossa fé, nossas raízes e o amor pela Umbanda.</p>
+
+        <!-- MENUS -->
+        <div class="menu-cards">
+
+            <a class="menu-item" href="https://sites.google.com/view/ceusaosebastiao/nossas-origens" target="_blank" rel="noopener noreferrer">
+                <img src="https://i.ibb.co/Mk1fHrjf/2fb20f7ef8fd966737d3454c13941203-removebg-preview.png">
+                <div>Nossas Origens</div>
+            </a>
+
+            <a class="menu-item" href="https://sites.google.com/view/ceusaosebastiao/alb%C3%BAm-de-fotos" target="_blank" rel="noopener noreferrer">
+                <img src="https://i.ibb.co/Mk1fHrjf/2fb20f7ef8fd966737d3454c13941203-removebg-preview.png">
+                <div>Álbum de Fotos</div>
+            </a>
+
+            <a class="menu-item" href="https://sites.google.com/view/ceusaosebastiao/estudos-de-umbanda" target="_blank" rel="noopener noreferrer">
+                <img src="https://i.ibb.co/Mk1fHrjf/2fb20f7ef8fd966737d3454c13941203-removebg-preview.png">
+                <div>Estudo da Umbanda</div>
+            </a>
+
+            <a class="menu-item" href="https://www.youtube.com/@paimarciodeoxossi" target="_blank" rel="noopener noreferrer">
+                <img src="https://i.ibb.co/Mk1fHrjf/2fb20f7ef8fd966737d3454c13941203-removebg-preview.png">
+                <div>Nossos Vídeos</div>
+            </a>
+
+            <a class="menu-item" href="https://sites.google.com/view/ceusaosebastiao/hor%C3%B3scopo" target="_blank" rel="noopener noreferrer">
+                <img src="https://i.ibb.co/Mk1fHrjf/2fb20f7ef8fd966737d3454c13941203-removebg-preview.png">
+                <div>Horóscopo</div>
+            </a>
+
+            <a class="menu-item" href="https://sites.google.com/view/ceusaosebastiao/in%C3%ADcio/filmes" target="_blank" rel="noopener noreferrer">
+                <img src="https://i.ibb.co/Mk1fHrjf/2fb20f7ef8fd966737d3454c13941203-removebg-preview.png">
+                <div>Filmes</div>
+            </a>
+
+        </div>
+    </div>
+
+    <!-- CARD DO ODU -->
+    <div class="card odu-card">
+
+        <h2>Descubra Seu Odu</h2>
+
+        <p>Digite sua data de nascimento:</p>
+
+        <input type="text" id="dataNascimento" placeholder="DD/MM/AAAA" maxlength="10">
+        <br>
+        <button onclick="calcularOdu()">Revelar Odu</button>
+
+        <div class="animation" id="animacao"></div>
+        <div class="odu-nome" id="oduNome"></div>
+        <div class="odu-info" id="oduInfo"></div>
+
+    </div>
+
+    <footer>Pai Márcio de Oxóssi © 2025</footer>
+
+</div>
+
+<script>
+/* LÓGICA ORIGINAL DO ODU — 100% MANTIDA */
+const odus = [
+  { num: 1, nome: "Okànràn Méjì", regentes: "Exu, Ogum, Obatalá", descricao: "Líder nato, ousado e corajoso. Representa o início e o impulso vital. Ensina que o poder só é verdadeiro quando guiado pela sabedoria." },
+  { num: 2, nome: "Ejìokò Méjì", regentes: "Oxóssi, Oxalá, Nanã", descricao: "Paciência, sabedoria e equilíbrio. Representa estabilidade e harmonia. Ensina que o tempo certo é mais poderoso do que a força bruta." },
+  { num: 3, nome: "Ètá Ògúndá Méjì", regentes: "Ogum, Iansã", descricao: "Odu da luta e da conquista. Representa o trabalho, a disciplina e a vitória merecida. Ensina que a vitória pertence a quem persiste com fé." },
+  { num: 4, nome: "Ìròsùn Méjì", regentes: "Iansã, Obá, Egungun, Oxóssi", descricao: "Odu dos mistérios, da intuição e dos ancestrais. Representa sabedoria espiritual, conexão com a natureza e dons mediúnicos." },
+  { num: 5, nome: "Òsé Méjì", regentes: "Oxum, Logunedé, Obatalá", descricao: "Odu do amor, da beleza e da prosperidade. Ensina que a doçura e a bondade abrem portas e curam feridas." },
+  { num: 6, nome: "Òbàrà Méjì", regentes: "Oxóssi, Xangô, Logunedé, Iansã e Oxum", descricao: "Odu da comunicação, da justiça e do poder da palavra. Representa criatividade, expressão e liderança." },
+  { num: 7, nome: "Òdí Méjì", regentes: "Iemanjá, Nanã, Obaluaiê", descricao: "Proteção, recolhimento e introspecção. Representa o útero e o poder de gerar novos começos." },
+  { num: 8, nome: "Èjìonílé Méjì", regentes: "Obaluaiê, Oxóssi, Oxalá", descricao: "Odu da estrutura e da prosperidade. Ensina a força das raízes e da fé." },
+  { num: 9, nome: "Òsá Méjì", regentes: "Iemanjá, Obá, Nanã", descricao: "Transformação, espiritualidade e renascimento. Ensina a força de recomeçar." },
+  { num: 10, nome: "Òfún Méjì", regentes: "Oxalá, Orunmilá, Oxum", descricao: "Odu da pureza e sabedoria. Representa iluminação e verdade espiritual." },
+  { num: 11, nome: "Òwónrín Méjì", regentes: "Iansã, Exu", descricao: "Movimento, liberdade e mudança. Representa renovação constante e transformação." },
+  { num: 12, nome: "Èjìlaxeborá Méjì", regentes: "Xangô, Oxalá, Obaluaiê", descricao: "Justiça, ética e aprendizado. Ensina o equilíbrio entre ação e reflexão." },
+  { num: 13, nome: "Èjìlògbón Méjì", regentes: "Nanã, Obaluaiê", descricao: "Sabedoria, prudência e maturidade espiritual. Representa o respeito ao tempo." },
+  { num: 14, nome: "Ìká Méjì", regentes: "Obaluaiê, Iansã, Oxumarê", descricao: "Cura, transformação e superação da dor. Ensina que toda ferida é uma iniciação." },
+  { num: 15, nome: "Òbè Ògúndá Méjì", regentes: "Ogum, Xangô, Oxóssi", descricao: "Luta justa, ética e persistência. Ensina que o triunfo é fruto da verdade." },
+  { num: 16, nome: "Aláfíà Méjì", regentes: "Oxalá, Ifá, Oxum", descricao: "Odu da paz e plenitude. Representa harmonia, equilíbrio e iluminação." },
+];
+
+function reduzirNumero(num) {
+  while (num > 16) {
+    num = num.toString().split('').reduce((a, b) => a + parseInt(b), 0);
+  }
+  return num;
+}
+
+function calcularOdu() {
+  const data = document.getElementById("dataNascimento").value.trim();
+  
+  if (!data.match(/^\d{2}\/\d{2}\/\d{4}$/)) {
+    alert("Por favor, insira a data no formato DD/MM/AAAA.");
+    return;
+  }
+
+  const numeros = data.replace(/\D/g, '').split('');
+  const soma = numeros.reduce((a, b) => a + parseInt(b), 0);
+  const oduNum = reduzirNumero(soma);
+  const odu = odus.find(o => o.num === oduNum);
+
+  document.getElementById("oduNome").innerHTML = `Seu Odu é: ${odu.num} – ${odu.nome}`;
+  document.getElementById("oduInfo").innerHTML = `
+    <strong>Orixás Regentes:</strong> ${odu.regentes}<br><br>
+    <strong>Descrição:</strong> ${odu.descricao}
+  `;
+
+  const animacao = document.getElementById("animacao");
+  animacao.innerHTML = "";
+
+  const totalBuzios = 16;
+  const abertos = oduNum;
+
+  for (let i = 0; i < totalBuzios; i++) {
+    const buzio = document.createElement("div");
+    buzio.classList.add("buzio");
+
+    const centerX = 125;
+    const centerY = 125;
+    const raio = 20 + Math.random() * 40;
+    const angulo = Math.random() * 2 * Math.PI;
+
+    const left = centerX + Math.cos(angulo) * raio;
+    const top = centerY + Math.sin(angulo) * raio;
+
+    buzio.style.left = `${left}px`;
+    buzio.style.top = `${top}px`;
+    buzio.style.transform = `rotate(${Math.random() * 360}deg)`;
+    buzio.style.animationDelay = `${Math.random()}s`;
+    buzio.style.backgroundImage =
+      i < abertos
+        ? "url('https://i.ibb.co/G4n1TnTc/images-1-removebg-preview.png')" 
+        : "url('https://i.ibb.co/2Y1Rs6XB/images-removebg-preview.png')";
+    
+    animacao.appendChild(buzio);
+  }
+}
+</script>
+
+</body>
+</html>
