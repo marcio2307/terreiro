@@ -6,33 +6,31 @@
 <title>Umbanda – Nossas Origens</title>
 
 <style>
-/* ------------------------------- */
-/* CORREÇÃO GERAL DE CENTRALIZAÇÃO */
-/* ------------------------------- */
-
-html, body {
+/* Fundo geral */
+body {
     margin: 0;
     padding: 0;
-    width: 100%;
-    overflow-x: hidden !important;
     font-family: 'Segoe UI', sans-serif;
+    overflow-x: hidden !important;
     color: #b9ffce;
+    display: flex;
+    justify-content: center;
+    width: 100%;
 }
 
-/* Container principal centralizado */
+/* Container principal */
 .main {
+    padding: 20px;
+    text-align: center;
     width: 100%;
     max-width: 900px;
-    margin: 0 auto !important;
-    padding: 0 12px;
-    box-sizing: border-box;
-    text-align: center;
+    margin: auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
-/* Impede qualquer elemento de expandir pra fora */
-* { box-sizing: border-box; }
-
-/* Fundo do site */
+/* NOVO FUNDO — PAPAGAIO NA SELVA */
 .bg {
     position: fixed;
     top: 0; 
@@ -47,7 +45,7 @@ html, body {
     z-index: -2;
 }
 
-/* CAPA CENTRALIZADA */
+/* CAPA */
 header {
     width: 100%;
     display: flex;
@@ -61,7 +59,7 @@ header img {
     border-radius: 20px;
     box-shadow: 0 0 25px rgba(0,255,120,0.35);
     animation: fadeIn 1.5s ease;
-    margin: 0 auto;
+    margin: auto;
     background: transparent !important;
 }
 
@@ -69,6 +67,7 @@ header img {
     header img {
         width: 85%;
         max-width: 320px;
+        margin: auto;
     }
 }
 
@@ -78,9 +77,9 @@ header img {
     to { opacity: 1; transform: translateY(0); }
 }
 
-/* PLAYER CENTRALIZADO */
+/* PLAYER DA RÁDIO */
 .radio-player {
-    margin: 25px auto 35px auto !important;
+    margin: 25px auto 35px auto;
     padding: 20px;
     width: 92%;
     max-width: 420px;
@@ -90,6 +89,13 @@ header img {
     text-align: center;
     border: 2px solid rgba(0,255,150,0.25);
     box-shadow: 0 0 25px rgba(0,255,120,0.2);
+}
+
+.radio-player h3 {
+    color: #aaffcc;
+    font-size: 1.3rem;
+    margin-top: 0;
+    text-shadow: 0 0 10px #000;
 }
 
 .play-btn {
@@ -111,42 +117,64 @@ header img {
     box-shadow: 0 0 25px #00ffcc;
 }
 
-.radio-status { margin-top: 10px; }
+.radio-status {
+    margin-top: 10px;
+    color: #ddffe8;
+    font-size: 1.05rem;
+    text-shadow: 0 0 5px #000;
+}
 
-/* CARD PRINCIPAL */
+/* Card principal */
 .card {
     background: rgba(0,0,0,0.30);
     padding: 25px;
     margin: 20px auto;
-    width: 100%;
+    width: 90%;
     max-width: 850px;
     border-radius: 20px;
     backdrop-filter: blur(10px);
     border: 1px solid rgba(0,255,100,0.15);
     box-shadow: 0 0 25px rgba(0,255,120,0.15);
     animation: fadeIn 1.3s ease;
-    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
-/* MENU — 100% CENTRALIZADO NO CELULAR */
+.card h2 {
+    margin-top: 0;
+    color: #afffcb;
+    text-shadow: 0 0 10px black;
+}
+
+.card p {
+    font-size: 1.2rem;
+    color: #dbffe8;
+}
+
+/* Menu estilo cards */
 .menu-cards {
     margin-top: 30px;
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: 18px;
     width: 100%;
+    justify-content: center;
 }
 
 @media (max-width: 768px) {
     .menu-cards {
         grid-template-columns: repeat(2, 1fr);
-        gap: 16px;
+        margin: auto;
+        width: 100%;
     }
 }
 
 @media (max-width: 480px) {
     .menu-cards {
         grid-template-columns: 1fr 1fr;
+        gap: 15px;
+        width: 100%;
         justify-items: center;
     }
 }
@@ -164,21 +192,53 @@ header img {
     box-shadow: 0 0 18px rgba(0,255,120,0.2);
     backdrop-filter: blur(6px);
     transition: .4s ease;
+    width: 100%;
+    max-width: 180px;
+    margin: auto;
 }
 
 .menu-item img {
     width: 110px;
-    margin: 0 auto 10px auto;
+    margin-bottom: 10px;
     filter: drop-shadow(0 0 18px #00ffbb);
+    transition: .3s ease;
+    background: transparent !important;
 }
 
-/* CARD ODU */
-.odu-card { margin-top: 40px; }
+.menu-item:hover {
+    background: rgba(0,255,100,0.15);
+    box-shadow: 0 0 30px #00ffcc;
+    border-color: #00ffdd;
+    color: #003d1f;
+    transform: scale(1.06);
+}
 
-/* ANIMAÇÃO CENTRALIZADA */
+/* CARD DO ODU */
+.odu-card {
+    margin-top: 40px;
+    padding: 25px;
+    background: rgba(0,0,0,0.35);
+    border-radius: 20px;
+    border: 2px solid rgba(0,255,160,0.25);
+    box-shadow: 0 0 25px rgba(0,255,140,0.25);
+    width: 95%;
+    max-width: 850px;
+    margin-left: auto;
+    margin-right: auto;
+    text-align: center;
+}
+
+.odu-explica {
+    color: #eafff5;
+    font-size: 1rem;
+    margin-top: -10px;
+    margin-bottom: 15px;
+    text-shadow: 0 0 5px #000;
+}
+
 .animation {
     position: relative;
-    margin: 25px auto !important;
+    margin: 25px auto;
     width: clamp(240px, 70vw, 330px);
     height: clamp(240px, 70vw, 330px);
     background: url('https://i.ibb.co/ycK55TH5/D-879072-MLB94468249023-102025-O-removebg-preview.png') center/contain no-repeat;
@@ -188,10 +248,29 @@ header img {
     box-shadow: 0 0 25px #000;
 }
 
+.odu-nome {
+    font-size: clamp(20px, 5vw, 26px);
+    color: #00ffdd;
+    font-weight: bold;
+    margin-top: 15px;
+    text-shadow: 0 0 10px #000;
+}
+
+.odu-info {
+    color: #eafff5;
+    text-shadow: 0 0 5px #000;
+    margin-top: 15px;
+    padding: 10px;
+    text-align: left;
+    line-height: 1.6;
+}
+
 footer {
     margin-top: 40px;
     color: #ccc;
     padding-bottom: 15px;
+    text-align: center;
+    width: 100%;
 }
 </style>
 </head>
@@ -219,6 +298,7 @@ footer {
         <p>Este espaço foi criado com carinho para apresentar nossa fé, nossas raízes e o amor pela Umbanda.</p>
 
         <div class="menu-cards">
+
             <a class="menu-item" href="https://sites.google.com/view/ceusaosebastiao/nossas-origens" target="_blank">
                 <img src="https://i.ibb.co/Mk1fHrjf/2fb20f7ef8fd966737d3454c13941203-removebg-preview.png">
                 <div>Nossas Origens</div>
@@ -246,8 +326,9 @@ footer {
 
             <a class="menu-item" href="https://marcio2307.github.io/terreiro/aniversario.html" target="_blank">
                 <img src="https://i.ibb.co/Mk1fHrjf/2fb20f7ef8fd966737d3454c13941203-removebg-preview.png">
-                <div>Aniversariantes</div>
+                <div>Filmes</div>
             </a>
+
         </div>
     </div>
 
@@ -292,24 +373,24 @@ function tocarRadio() {
 </script>
 
 <script>
-/* LÓGICA ORIGINAL DO ODU — MANTIDA */
+/* LÓGICA ORIGINAL DO ODU — 100% MANTIDA */
 const odus = [
-  { num: 1, nome: "Okànràn Méjì", regentes: "Exu, Ogum, Obatalá", descricao: "Líder nato, ousado e corajoso. Representa o início e o impulso vital." },
-  { num: 2, nome: "Ejìokò Méjì", regentes: "Oxóssi, Oxalá, Nanã", descricao: "Paciência, sabedoria e equilíbrio." },
-  { num: 3, nome: "Ètá Ògúndá Méjì", regentes: "Ogum, Iansã", descricao: "Odu da luta e da conquista." },
-  { num: 4, nome: "Ìròsùn Méjì", regentes: "Iansã, Obá, Egungun, Oxóssi", descricao: "Intuição, mistérios e ancestrais." },
-  { num: 5, nome: "Òsé Méjì", regentes: "Oxum, Logunedé, Obatalá", descricao: "Odu do amor, da beleza e prosperidade." },
-  { num: 6, nome: "Òbàrà Méjì", regentes: "Oxóssi, Xangô, Logunedé, Iansã e Oxum", descricao: "Comunicação e justiça." },
-  { num: 7, nome: "Òdí Méjì", regentes: "Iemanjá, Nanã, Obaluaiê", descricao: "Proteção e introspecção." },
-  { num: 8, nome: "Èjìonílé Méjì", regentes: "Obaluaiê, Oxóssi, Oxalá", descricao: "Estrutura e prosperidade." },
-  { num: 9, nome: "Òsá Méjì", regentes: "Iemanjá, Obá, Nanã", descricao: "Transformação e renascimento." },
-  { num: 10, nome: "Òfún Méjì", regentes: "Oxalá, Orunmilá, Oxum", descricao: "Pureza e sabedoria." },
-  { num: 11, nome: "Òwónrín Méjì", regentes: "Iansã, Exu", descricao: "Mudança e movimento." },
-  { num: 12, nome: "Èjìlaxeborá Méjì", regentes: "Xangô, Oxalá, Obaluaiê", descricao: "Justiça e aprendizado." },
-  { num: 13, nome: "Èjìlògbón Méjì", regentes: "Nanã, Obaluaiê", descricao: "Sabedoria e prudência." },
-  { num: 14, nome: "Ìká Méjì", regentes: "Obaluaiê, Iansã, Oxumarê", descricao: "Cura e superação." },
-  { num: 15, nome: "Òbè Ògúndá Méjì", regentes: "Ogum, Xangô, Oxóssi", descricao: "Luta justa e ética." },
-  { num: 16, nome: "Aláfíà Méjì", regentes: "Oxalá, Ifá, Oxum", descricao: "Paz e iluminação." },
+  { num: 1, nome: "Okànràn Méjì", regentes: "Exu, Ogum, Obatalá", descricao: "Líder nato, ousado e corajoso. Representa o início e o impulso vital. Ensina que o poder só é verdadeiro quando guiado pela sabedoria." },
+  { num: 2, nome: "Ejìokò Méjì", regentes: "Oxóssi, Oxalá, Nanã", descricao: "Paciência, sabedoria e equilíbrio. Representa estabilidade e harmonia. Ensina que o tempo certo é mais poderoso do que a força bruta." },
+  { num: 3, nome: "Ètá Ògúndá Méjì", regentes: "Ogum, Iansã", descricao: "Odu da luta e da conquista. Representa o trabalho, a disciplina e a vitória merecida. Ensina que a vitória pertence a quem persiste com fé." },
+  { num: 4, nome: "Ìròsùn Méjì", regentes: "Iansã, Obá, Egungun, Oxóssi", descricao: "Odu dos mistérios, da intuição e dos ancestrais. Representa sabedoria espiritual, conexão com a natureza e dons mediúnicos." },
+  { num: 5, nome: "Òsé Méjì", regentes: "Oxum, Logunedé, Obatalá", descricao: "Odu do amor, da beleza e da prosperidade. Ensina que a doçura e a bondade abrem portas e curam feridas." },
+  { num: 6, nome: "Òbàrà Méjì", regentes: "Oxóssi, Xangô, Logunedé, Iansã e Oxum", descricao: "Odu da comunicação, da justiça e do poder da palavra. Representa criatividade, expressão e liderança." },
+  { num: 7, nome: "Òdí Méjì", regentes: "Iemanjá, Nanã, Obaluaiê", descricao: "Proteção, recolhimento e introspecção. Representa o útero e o poder de gerar novos começos." },
+  { num: 8, nome: "Èjìonílé Méjì", regentes: "Obaluaiê, Oxóssi, Oxalá", descricao: "Odu da estrutura e da prosperidade. Ensina a força das raízes e da fé." },
+  { num: 9, nome: "Òsá Méjì", regentes: "Iemanjá, Obá, Nanã", descricao: "Transformação, espiritualidade e renascimento. Ensina a força de recomeçar." },
+  { num: 10, nome: "Òfún Méjì", regentes: "Oxalá, Orunmilá, Oxum", descricao: "Odu da pureza e sabedoria. Representa iluminação e verdade espiritual." },
+  { num: 11, nome: "Òwónrín Méjì", regentes: "Iansã, Exu", descricao: "Movimento, liberdade e mudança. Representa renovação constante e transformação." },
+  { num: 12, nome: "Èjìlaxeborá Méjì", regentes: "Xangô, Oxalá, Obaluaiê", descricao: "Justiça, ética e aprendizado. Ensina o equilíbrio entre ação e reflexão." },
+  { num: 13, nome: "Èjìlògbón Méjì", regentes: "Nanã, Obaluaiê", descricao: "Sabedoria, prudência e maturidade espiritual. Representa o respeito ao tempo." },
+  { num: 14, nome: "Ìká Méjì", regentes: "Obaluaiê, Iansã, Oxumarê", descricao: "Cura, transformação e superação da dor. Ensina que toda ferida é uma iniciação." },
+  { num: 15, nome: "Òbè Ògúndá Méjì", regentes: "Ogum, Xangô, Oxóssi", descricao: "Luta justa, ética e persistência. Ensina que o triunfo é fruto da verdade." },
+  { num: 16, nome: "Aláfíà Méjì", regentes: "Oxalá, Ifá, Oxum", descricao: "Odu da paz e plenitude. Representa harmonia, equilíbrio e iluminação." },
 ];
 
 function reduzirNumero(num) {
