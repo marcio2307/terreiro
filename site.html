@@ -465,7 +465,7 @@ document.getElementById("imgUpload").addEventListener("change", function () {
 
         if (tipoMidia === "video") {
             document.getElementById("preview").innerHTML = `
-                <video controls>
+                <video controls autoplay muted playsinline>
                     <source src="${imagemTemp}">
                 </video>
                 <div class="remove-preview" onclick="removerPreview()">Excluir vídeo</div>
@@ -527,7 +527,9 @@ onValue(postsRef, snap => {
             midiaHTML = `<img src="${p.imagem}" onclick="abreModal('${p.imagem}')">`;
         }
         if (p.video) {
-            midiaHTML = `<video controls><source src="${p.video}"></video>`;
+            midiaHTML = `<video controls autoplay muted playsinline>
+                            <source src="${p.video}">
+                         </video>`;
         }
 
         div.innerHTML = `
