@@ -16,6 +16,7 @@ body {
     background-attachment: fixed;
     color: #b9ffce;
     text-align: center;
+    overflow-x: hidden; /* 🔥 Remove movimento lateral */
 }
 
 /* ---- LOGIN ---- */
@@ -95,7 +96,7 @@ body {
     color: #00ffcc;
     cursor: pointer;
     font-weight: bold;
-    margin-right: 15px;
+    margin-right: 5px; /* 🔥 Mais à esquerda */
 }
 
 /* ===== MENU LATERAL – ABRE PELA DIREITA ===== */
@@ -298,8 +299,8 @@ button {
     border-radius: 15px;
     margin-top: 12px;
     border: 1px solid rgba(0,255,150,0.25);
-    overflow: hidden;          /* ← Impede que o conteúdo saia da caixa */
-    box-sizing: border-box;    /* ← Ajuste correto */
+    overflow: hidden;
+    box-sizing: border-box;
 }
 
 .comment-box textarea {
@@ -312,7 +313,7 @@ button {
     background: rgba(0,0,0,0.45);
     color: #fff;
     height: 60px;
-    box-sizing: border-box;    /* ← Evita vazamento */
+    box-sizing: border-box;
 }
 
 #imgModal {
