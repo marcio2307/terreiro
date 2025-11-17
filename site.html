@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!DOCTYPE html> 
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
@@ -25,9 +25,7 @@ body {
     margin: 0;
     padding: 0;
     font-family: 'Segoe UI', sans-serif;
-    background: url("https://www.pontoxtecidos.com.br/static/567/sku/155904889647122.jpg");
-    background-size: cover;
-    background-attachment: fixed;
+    background: #095c32 !important;
     color: #b9ffce;
     text-align: center;
 }
@@ -339,7 +337,7 @@ button {
 
 <!-- LOGIN -->
 <div id="loginBox">
-    <img src="https://i.ibb.co/JRvgqKGM/5c081edd-21e9-48fb-9a91-834cfdd112fc-removebg-preview.png">
+    <img src="https://i.ibb.co/60KYtQzh/Chat-GPT-Image-17-11-2025-20-41-21.png">
     <input type="text" id="nomeLogin" placeholder="Digite seu nome">
     <button onclick="entrar()">Entrar</button>
 </div>
@@ -362,7 +360,7 @@ button {
 
 <!-- LOGO CENTRAL -->
 <div class="main-logo">
-    <img src="https://i.ibb.co/JRvgqKGM/5c081edd-21e9-48fb-9a91-834cfdd112fc-removebg-preview.png">
+    <img src="https://i.ibb.co/60KYtQzh/Chat-GPT-Image-17-11-2025-20-41-21.png">
 </div>
 
 <!-- FEED -->
@@ -375,7 +373,6 @@ button {
             <img src="https://i.pinimg.com/736x/f9/c5/fa/f9c5fa9710cdf2b510d32915cd882330.jpg">
         </label>
 
-        <!-- ACEITA QUALQUER FORMATO DE VÍDEO -->
         <input type="file" id="imgUpload" accept="image/*,video/*">
     </div>
 
@@ -541,7 +538,7 @@ onValue(postsRef, snap => {
             midiaHTML = `<img src="${p.imagem}" onclick="abreModal('${p.imagem}')">`;
         }
         if (p.video) {
-            midiaHTML = `<video controls>
+            midiaHTML = `<video controls autoplay muted playsinline>
                             <source src="${p.video}">
                          </video>`;
         }
