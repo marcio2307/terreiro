@@ -34,6 +34,9 @@ body {
 .main {
     padding: 20px;
     text-align: center;
+    max-width: 1000px;
+    margin-left: auto;
+    margin-right: auto;
 }
 
 /* CAPA */
@@ -50,9 +53,9 @@ header img {
     border-radius: 20px;
     box-shadow: 0 0 25px rgba(0,255,120,0.35);
     animation: fadeIn 1.5s ease;
-    margin-left: auto;
-    margin-right: auto;
+    margin: 0 auto !important;
     background: transparent !important;
+    display: block;
 }
 
 /* Ajuste no celular */
@@ -75,7 +78,7 @@ header img {
     padding: 20px;
     width: 92%;
     max-width: 420px;
-    background: rgba(0, 0, 0, 0.35); /* MAIS TRANSPARENTE */
+    background: rgba(0, 0, 0, 0.35);
     border-radius: 20px;
     backdrop-filter: blur(10px);
     text-align: center;
@@ -118,7 +121,7 @@ header img {
 
 /* Card principal — MAIS TRANSPARENTE */
 .card {
-    background: rgba(0,0,0,0.30); /* MAIS TRANSPARENTE */
+    background: rgba(0,0,0,0.30);
     padding: 25px;
     margin: auto;
     width: 90%;
@@ -147,6 +150,9 @@ header img {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: 18px;
+    margin-left: auto !important;
+    margin-right: auto !important;
+    justify-content: center;
 }
 
 @media (max-width: 768px) {
@@ -156,7 +162,7 @@ header img {
 }
 
 .menu-item {
-    background: rgba(0,0,0,0.25); /* TRANSPARÊNCIA REFORÇADA */
+    background: rgba(0,0,0,0.25);
     border-radius: 18px;
     padding: 20px;
     text-align: center;
@@ -168,6 +174,8 @@ header img {
     box-shadow: 0 0 18px rgba(0,255,120,0.2);
     backdrop-filter: blur(6px);
     transition: .4s ease;
+    margin-left: auto;
+    margin-right: auto;
 }
 
 .menu-item img {
@@ -190,10 +198,12 @@ header img {
 .odu-card {
     margin-top: 40px;
     padding: 25px;
-    background: rgba(0,0,0,0.35); /* MAIS TRANSPARENTE */
+    background: rgba(0,0,0,0.35);
     border-radius: 20px;
     border: 2px solid rgba(0,255,160,0.25);
     box-shadow: 0 0 25px rgba(0,255,140,0.25);
+    margin-left: auto !important;
+    margin-right: auto !important;
 }
 
 .odu-card h2 {
@@ -257,6 +267,7 @@ footer {
     margin-top: 40px;
     color: #ccc;
     padding-bottom: 15px;
+    text-align: center;
 }
 </style>
 </head>
@@ -439,5 +450,3 @@ function calcularOdu() {
 
 </body>
 </html>
-
-
