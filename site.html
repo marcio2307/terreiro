@@ -95,6 +95,7 @@ body {
     color: #00ffcc;
     cursor: pointer;
     font-weight: bold;
+    margin-right: 15px; /* ⬅️ AJUSTE PEDIDO */
 }
 
 /* ===== MENU LATERAL – ABRE PELA DIREITA ===== */
@@ -112,9 +113,7 @@ body {
     gap: 25px;
     transition: 0.4s;
 
-    /* CORREÇÃO DO PROBLEMA DO MENU FICAR ATRÁS DA TOPBAR */
     z-index: 10000;
-
     box-shadow: -3px 0 18px #00ffcc;
 }
 
@@ -156,7 +155,6 @@ body {
     margin-bottom: 25px;
 }
 
-/* TEXTAREA MENOR – NÃO CRESCE ALEATORIAMENTE */
 .post-box textarea {
     width: 100%;
     resize: none;
@@ -286,7 +284,6 @@ button {
     cursor: pointer;
 }
 
-/* RESPONSIVO */
 @media (max-width: 600px) {
     .post-box textarea {
         height: 50px;
@@ -366,11 +363,19 @@ function toggleMenu() {
     const menu = document.getElementById("sideMenu");
     menu.style.right = (menu.style.right === "0px") ? "-260px" : "0px";
 }
+
+/* FECHAR MENU AO CLICAR FORA */
+document.addEventListener("click", function(e) {
+    const menu = document.getElementById("sideMenu");
+    const icon = document.getElementById("menuIcon");
+
+    if (icon.contains(e.target)) return; // deixa o toggle funcionar
+    if (!menu.contains(e.target)) menu.style.right = "-260px";
+});
 </script>
 
-<!-- FIREBASE ORIGINAL (SEM ALTERAÇÕES) -->
+<!-- FIREBASE ORIGINAL -->
 <script type="module">
-/* FIREBASE CONFIG */
 import { initializeApp } 
     from "https://www.gstatic.com/firebasejs/10.14.0/firebase-app.js";
 import { getDatabase, ref, push, onValue, remove, update }
@@ -391,8 +396,6 @@ const db = getDatabase(app);
 const postsRef = ref(db, "coletivo_mural/posts");
 
 let usuario = null;
-
-/* LOGIN */
 window.entrar = function () {
     const nome = document.getElementById("nomeLogin").value.trim();
     if (nome.length < 2) return alert("Digite um nome válido.");
@@ -400,7 +403,6 @@ window.entrar = function () {
     document.getElementById("loginBox").style.display = "none";
 };
 
-/* PREVIEW */
 let imagemTemp = null;
 
 document.getElementById("imgUpload").addEventListener("change", function () {
@@ -423,7 +425,6 @@ window.removerPreview = function () {
     document.getElementById("imgUpload").value = "";
 };
 
-/* POSTAR */
 window.postar = function () {
     if (!usuario) return alert("Você precisa fazer login.");
     const texto = document.getElementById("texto").value.trim();
@@ -440,7 +441,6 @@ window.postar = function () {
     removerPreview();
 };
 
-/* FEED */
 onValue(postsRef, snap => {
     const feed = document.getElementById("feed");
     feed.innerHTML = "";
@@ -495,26 +495,22 @@ onValue(postsRef, snap => {
     });
 });
 
-/* CURTIR */
 window.toggleCurtida = function (postId, curtidasAtual) {
     update(ref(db, "coletivo_mural/posts/" + postId), {
         curtidas: (curtidasAtual || 0) + 1
     });
 };
 
-/* MOSTRAR COMENTÁRIOS */
 window.toggleComentarios = function (id) {
     const lista = document.getElementById("cl_" + id);
     lista.style.display = lista.style.display === "block" ? "none" : "block";
 };
 
-/* ABRIR BOX DE COMENTAR */
 window.toggleComentarioBox = function (id) {
     const box = document.getElementById("cb_" + id);
     box.style.display = box.style.display === "block" ? "none" : "block";
 };
 
-/* ENVIAR COMENTÁRIO */
 window.comentar = function (postId) {
     if (!usuario) return;
     const campo = document.getElementById("ct_" + postId);
@@ -528,21 +524,18 @@ window.comentar = function (postId) {
     campo.value = "";
 };
 
-/* EXCLUIR COMENTÁRIO */
 window.excluirComentario = function (postId, cid) {
     if (confirm("Apagar este comentário?")) {
         remove(ref(db, `coletivo_mural/posts/${postId}/comentarios/${cid}`));
     }
 };
 
-/* EXCLUIR POST */
 window.apagarPost = function (id) {
     if (confirm("Apagar este post completo?")) {
         remove(ref(db, "coletivo_mural/posts/" + id));
     }
 };
 
-/* MODAL */
 window.abreModal = function (src) {
     document.getElementById("modalImg").src = src;
     document.getElementById("imgModal").style.display = "flex";
