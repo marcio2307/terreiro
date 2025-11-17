@@ -6,7 +6,21 @@
 <title>Mural Público</title>
 
 <style>
-/* FUNDO DO SITE */
+
+/* 🔥🔥 CORREÇÃO ANTI-DESLIZAMENTO 🔥🔥 */
+html, body {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: hidden !important;
+}
+
+/* 🔥🔥 CORREÇÃO GLOBAL ANTI-VAZAMENTO 🔥🔥 */
+* {
+    box-sizing: border-box;
+    overflow-x: hidden;
+}
+/* ------------------------------------ */
+
 body {
     margin: 0;
     padding: 0;
@@ -16,10 +30,8 @@ body {
     background-attachment: fixed;
     color: #b9ffce;
     text-align: center;
-    overflow-x: hidden; /* 🔥 Remove movimento lateral */
 }
 
-/* ---- LOGIN ---- */
 #loginBox {
     position: fixed;
     top: 0;
@@ -62,7 +74,6 @@ body {
     font-weight: bold;
 }
 
-/* ===== MENU SUPERIOR ===== */
 .topbar {
     width: 100%;
     background: rgba(0,0,0,0.90);
@@ -76,7 +87,6 @@ body {
     box-shadow: 0 0 15px #00ffcc;
 }
 
-/* BOTÃO REDONDO DO PLAYER */
 .radio-btn {
     background: #000;
     color: #fff;
@@ -96,10 +106,11 @@ body {
     color: #00ffcc;
     cursor: pointer;
     font-weight: bold;
-    margin-right: 5px; /* 🔥 Mais à esquerda */
+
+    /* 🔥🔥 AJUSTE PEDIDO — menu um pouco mais à esquerda 🔥🔥 */
+    margin-right: 5px;
 }
 
-/* ===== MENU LATERAL – ABRE PELA DIREITA ===== */
 #sideMenu {
     position: fixed;
     top: 0;
@@ -129,7 +140,6 @@ body {
     text-shadow: 0 0 10px #00ffcc;
 }
 
-/* LOGO */
 .main-logo {
     margin-top: 20px;
 }
@@ -138,17 +148,12 @@ body {
     height: 110px;
 }
 
-/* FEED */
 .feed {
     width: 95%;
     max-width: 650px;
     margin: 15px auto;
     padding: 5px;
 }
-
-/* ================================ */
-/* ★ NOVA CAIXA DE POSTAGEM—WHATSAPP */
-/* ================================ */
 
 .post-box {
     background: rgba(0,0,0,0.65);
@@ -161,7 +166,6 @@ body {
     position: relative;
 }
 
-/* textarea estilo WhatsApp */
 .post-box textarea {
     width: 100%;
     padding: 12px 15px;
@@ -175,7 +179,6 @@ body {
     height: 40px;
 }
 
-/* Ícone de imagem */
 .img-icon {
     font-size: 1.6rem;
     color: #00FF6A;
@@ -183,12 +186,10 @@ body {
     padding: 8px;
 }
 
-/* Esconde input file */
 #imgUpload {
     display: none;
 }
 
-/* Preview */
 .preview img {
     width: 100%;
     max-height: 150px;
@@ -206,7 +207,6 @@ body {
     display: inline-block;
 }
 
-/* Botão postar */
 button {
     width: 100%;
     padding: 12px;
@@ -218,10 +218,6 @@ button {
     cursor: pointer;
     font-weight: bold;
 }
-
-/* ========================================= */
-/* POSTS, COMENTÁRIOS, AÇÕES, MODAL — IGUAL AO SEU */
-/* ========================================= */
 
 .post {
     background: rgba(0,0,0,0.65);
@@ -287,10 +283,6 @@ button {
     justify-content: space-between;
     color: #ddffe8;
 }
-
-/* ====================================== */
-/* ★ CORREÇÃO DO PROBLEMA DA ÁREA SAINDO */
-/* ====================================== */
 
 .comment-box {
     background: rgba(255,255,255,0.15);
@@ -377,14 +369,10 @@ button {
 <!-- FEED -->
 <div class="feed">
 
-    <!-- ★ NOVA CAIXA DE POSTAGEM -->
     <div class="post-box">
-
         <textarea id="texto" placeholder="No que você está pensando?"></textarea>
-
         <label for="imgUpload" class="img-icon">🖼️</label>
         <input type="file" id="imgUpload" accept="image/*">
-
     </div>
 
     <div id="preview" class="preview"></div>
@@ -401,12 +389,10 @@ button {
 </div>
 
 <script>
-/* PLAYER */
 let tocando = false;
 function toggleRadio() {
     const player = document.getElementById("radioPlayer");
     const btn = document.getElementById("playBtn");
-
     if (!tocando) {
         player.play();
         btn.innerHTML = "⏸";
@@ -418,13 +404,11 @@ function toggleRadio() {
     }
 }
 
-/* MENU LATERAL DIREITO */
 function toggleMenu() {
     const menu = document.getElementById("sideMenu");
     menu.style.right = (menu.style.right === "0px") ? "-260px" : "0px";
 }
 
-/* FECHAR MENU AO CLICAR FORA */
 document.addEventListener("click", function(e) {
     const menu = document.getElementById("sideMenu");
     const icon = document.getElementById("menuIcon");
@@ -433,7 +417,6 @@ document.addEventListener("click", function(e) {
 });
 </script>
 
-<!-- FIREBASE + SISTEMA -->
 <script type="module">
 import { initializeApp } 
     from "https://www.gstatic.com/firebasejs/10.14.0/firebase-app.js";
@@ -456,7 +439,6 @@ const postsRef = ref(db, "coletivo_mural/posts");
 
 let usuario = null;
 
-/* LOGIN */
 window.entrar = function () {
     const nome = document.getElementById("nomeLogin").value.trim();
     if (nome.length < 2) return alert("Digite um nome válido.");
@@ -464,7 +446,6 @@ window.entrar = function () {
     document.getElementById("loginBox").style.display = "none";
 };
 
-/* PREVIEW */
 let imagemTemp = null;
 
 document.getElementById("imgUpload").addEventListener("change", function () {
@@ -487,7 +468,6 @@ window.removerPreview = function () {
     document.getElementById("imgUpload").value = "";
 };
 
-/* POSTAR */
 window.postar = function () {
     if (!usuario) return alert("Você precisa fazer login.");
     const texto = document.getElementById("texto").value.trim();
@@ -507,7 +487,6 @@ window.postar = function () {
     removerPreview();
 };
 
-/* LISTAR POSTS */
 onValue(postsRef, snap => {
     const feed = document.getElementById("feed");
     feed.innerHTML = "";
@@ -525,18 +504,12 @@ onValue(postsRef, snap => {
 
         div.innerHTML = `
             <strong style="color:#00ffcc;">${p.usuario}</strong><br><br>
-
             ${p.imagem ? `<img src="${p.imagem}" onclick="abreModal('${p.imagem}')">` : ""}
-
             <p>${p.texto}</p>
 
-            <div class="reaction-count" onclick="mostrarCurtidas('${id}')">
-                👍 ${totalCurtidas} curtidas
-            </div>
+            <div class="reaction-count" onclick="mostrarCurtidas('${id}')">👍 ${totalCurtidas} curtidas</div>
 
-            <div class="comment-count" onclick="toggleComentarios('${id}')">
-                💬 ${numComentarios} comentários
-            </div>
+            <div class="comment-count" onclick="toggleComentarios('${id}')">💬 ${numComentarios} comentários</div>
 
             <div class="actions">
                 <div onclick="toggleCurtir('${id}')">
@@ -558,7 +531,6 @@ onValue(postsRef, snap => {
 
         feed.prepend(div);
 
-        /* LISTA DE COMENTÁRIOS */
         const lista = document.getElementById("cl_" + id);
         lista.innerHTML = "";
 
@@ -573,11 +545,9 @@ onValue(postsRef, snap => {
                 lista.appendChild(cdiv);
             });
         }
-
     });
 });
 
-/* CURTIR / DESCURTIR */
 window.toggleCurtir = function (postId) {
     if (!usuario) return;
 
@@ -592,7 +562,6 @@ window.toggleCurtir = function (postId) {
     }, { onlyOnce: true });
 };
 
-/* MOSTRAR LISTA DE CURTIDAS */
 window.mostrarCurtidas = function (postId) {
     const caixa = document.getElementById("likes_" + postId);
     caixa.style.display = caixa.style.display === "block" ? "none" : "block";
@@ -615,7 +584,6 @@ window.mostrarCurtidas = function (postId) {
     });
 };
 
-/* EXIBIR / OCULTAR COMENTÁRIOS */
 window.toggleComentarios = function (id) {
     const lista = document.getElementById("cl_" + id);
     lista.style.display = lista.style.display === "block" ? "none" : "block";
@@ -626,7 +594,6 @@ window.toggleComentarioBox = function (id) {
     box.style.display = box.style.display === "block" ? "none" : "block";
 };
 
-/* COMENTAR */
 window.comentar = function (postId) {
     if (!usuario) return;
     const campo = document.getElementById("ct_" + postId);
@@ -642,21 +609,18 @@ window.comentar = function (postId) {
     campo.value = "";
 };
 
-/* EXCLUIR COMENTÁRIO */
 window.excluirComentario = function (postId, cid) {
     if (confirm("Apagar este comentário?")) {
         remove(ref(db, `coletivo_mural/posts/${postId}/comentarios/${cid}`));
     }
 };
 
-/* EXCLUIR POST */
 window.apagarPost = function (id) {
     if (confirm("Apagar este post completo?")) {
         remove(ref(db, "coletivo_mural/posts/" + id));
     }
 };
 
-/* MODAL DA IMAGEM */
 window.abreModal = function (src) {
     document.getElementById("modalImg").src = src;
     document.getElementById("imgModal").style.display = "flex";
