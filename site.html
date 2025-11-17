@@ -375,7 +375,7 @@ button {
             <img src="https://i.pinimg.com/736x/f9/c5/fa/f9c5fa9710cdf2b510d32915cd882330.jpg">
         </label>
 
-        <!-- AGORA ACEITA IMAGEM + VÍDEO -->
+        <!-- ACEITA QUALQUER FORMATO DE VÍDEO -->
         <input type="file" id="imgUpload" accept="image/*,video/*">
     </div>
 
@@ -453,6 +453,7 @@ window.entrar = function () {
 let imagemTemp = null;
 let tipoMidia = null;
 
+/* 🔥 SUPORTE TOTAL A VÍDEO + LIMITE DE 5 MINUTOS 🔥 */
 document.getElementById("imgUpload").addEventListener("change", function () {
     const file = this.files[0];
     if (!file) return;
@@ -464,12 +465,25 @@ document.getElementById("imgUpload").addEventListener("change", function () {
         imagemTemp = e.target.result;
 
         if (tipoMidia === "video") {
-            document.getElementById("preview").innerHTML = `
-                <video controls autoplay muted playsinline>
-                    <source src="${imagemTemp}">
-                </video>
-                <div class="remove-preview" onclick="removerPreview()">Excluir vídeo</div>
-            `;
+            const videoCheck = document.createElement("video");
+            videoCheck.src = imagemTemp;
+
+            videoCheck.onloadedmetadata = () => {
+                const dur = videoCheck.duration;
+
+                if (dur > 300) { // 5 minutos = 300s
+                    alert("❌ O vídeo pode ter no máximo 5 minutos.");
+                    removerPreview();
+                    return;
+                }
+
+                document.getElementById("preview").innerHTML = `
+                    <video controls autoplay muted playsinline>
+                        <source src="${imagemTemp}">
+                    </video>
+                    <div class="remove-preview" onclick="removerPreview()">Excluir vídeo</div>
+                `;
+            };
         } else {
             document.getElementById("preview").innerHTML = `
                 <img src="${imagemTemp}">
@@ -527,7 +541,7 @@ onValue(postsRef, snap => {
             midiaHTML = `<img src="${p.imagem}" onclick="abreModal('${p.imagem}')">`;
         }
         if (p.video) {
-            midiaHTML = `<video controls autoplay muted playsinline>
+            midiaHTML = `<video controls>
                             <source src="${p.video}">
                          </video>`;
         }
