@@ -145,34 +145,54 @@ body {
     padding: 5px;
 }
 
-/* ===== CAIXA DE POSTAGEM ===== */
+/* ================================ */
+/* ★ NOVA CAIXA DE POSTAGEM—WHATSAPP */
+/* ================================ */
+
 .post-box {
-    background: rgba(0,0,0,0.70);
-    padding: 14px;
-    border-radius: 16px;
-    border: 1px solid rgba(0,255,150,0.30);
-    margin-bottom: 25px;
+    background: rgba(0,0,0,0.65);
+    border-radius: 30px;
+    padding: 16px;
+    border: 1px solid rgba(0,255,150,0.25);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    position: relative;
 }
 
+/* textarea estilo WhatsApp */
 .post-box textarea {
     width: 100%;
-    resize: none;
-    border-radius: 10px;
-    padding: 8px;
+    padding: 12px 15px;
+    border-radius: 25px;
     border: none;
     outline: none;
-    font-size: 0.85rem;
-    background: rgba(255,255,255,0.18);
+    background: rgba(255,255,255,0.10);
     color: #fff;
-    height: 55px;
+    font-size: 1rem;
+    resize: none;
+    height: 40px;
 }
 
-/* PREVIEW */
+/* Ícone de imagem */
+.img-icon {
+    font-size: 1.6rem;
+    color: #00FF6A;
+    cursor: pointer;
+    padding: 8px;
+}
+
+/* Esconde input file */
+#imgUpload {
+    display: none;
+}
+
+/* Preview */
 .preview img {
     width: 100%;
     max-height: 150px;
     border-radius: 12px;
-    margin-top: 10px;
+    margin-top: 12px;
     object-fit: cover;
 }
 
@@ -185,7 +205,7 @@ body {
     display: inline-block;
 }
 
-/* BOTÃO */
+/* Botão postar */
 button {
     width: 100%;
     padding: 12px;
@@ -198,7 +218,10 @@ button {
     font-weight: bold;
 }
 
-/* POST */
+/* ========================================= */
+/* POSTS, COMENTÁRIOS, AÇÕES, MODAL — IGUAL AO SEU */
+/* ========================================= */
+
 .post {
     background: rgba(0,0,0,0.65);
     padding: 16px;
@@ -215,7 +238,6 @@ button {
     cursor: pointer;
 }
 
-/* CURTIDAS E COMENTÁRIOS */
 .reaction-count {
     text-align: left;
     margin-top: 8px;
@@ -233,7 +255,6 @@ button {
     color: #aaffcc;
 }
 
-/* BOTÕES COMO FACEBOOK */
 .actions {
     display: flex;
     justify-content: space-around;
@@ -248,7 +269,6 @@ button {
     color: #00ffaa;
 }
 
-/* LISTA DE COMENTÁRIOS */
 .comment-list {
     background: rgba(255,255,255,0.10);
     border-radius: 10px;
@@ -267,63 +287,28 @@ button {
     color: #ddffe8;
 }
 
-/* =========================== */
-/* === CAIXA DE COMENTAR NOVA === */
-/* =========================== */
-
+/* NOVA COMMENT-BOX */
 .comment-box {
-    background: rgba(255, 255, 255, 0.15) !important;
+    background: rgba(255,255,255,0.15);
     backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
     padding: 12px;
     border-radius: 15px;
     margin-top: 12px;
     border: 1px solid rgba(0,255,150,0.25);
-    animation: fadeInBox 0.3s ease;
 }
 
 .comment-box textarea {
     width: 100%;
     resize: none;
-    border-radius: 12px !important;
+    border-radius: 12px;
     padding: 10px;
     border: none;
     outline: none;
-    font-size: 0.9rem;
-    background: rgba(0,0,0,0.45) !important;
-    color: #ffffff !important;
+    background: rgba(0,0,0,0.45);
+    color: #fff;
     height: 60px;
-    box-shadow: 0 0 12px rgba(0,255,150,0.25);
 }
 
-.comment-box button {
-    margin-top: 10px !important;
-    padding: 10px !important;
-    border-radius: 12px !important;
-    background: linear-gradient(135deg, #00ffaa, #00dd99) !important;
-    color: #000 !important;
-    font-weight: bold !important;
-    box-shadow: 0 0 10px #00ffaa88;
-    transition: 0.2s;
-}
-
-.comment-box button:hover {
-    transform: scale(1.05);
-    box-shadow: 0 0 15px #00ffaa;
-}
-
-@keyframes fadeInBox {
-    from {
-        opacity: 0;
-        transform: translateY(8px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}
-
-/* MODAL */
 #imgModal {
     position: fixed;
     top: 0;
@@ -384,12 +369,20 @@ button {
 
 <!-- FEED -->
 <div class="feed">
+
+    <!-- ★ NOVA CAIXA DE POSTAGEM -->
     <div class="post-box">
-        <textarea id="texto" rows="3" placeholder="No que está pensando?"></textarea>
+
+        <textarea id="texto" placeholder="No que você está pensando?"></textarea>
+
+        <label for="imgUpload" class="img-icon">🖼️</label>
         <input type="file" id="imgUpload" accept="image/*">
-        <div id="preview" class="preview"></div>
-        <button onclick="postar()">Postar</button>
+
     </div>
+
+    <div id="preview" class="preview"></div>
+
+    <button onclick="postar()">Postar</button>
 
     <div id="feed"></div>
 </div>
@@ -433,7 +426,7 @@ document.addEventListener("click", function(e) {
 });
 </script>
 
-<!-- FIREBASE + SISTEMA DE CURTIR FACEBOOK -->
+<!-- FIREBASE + SISTEMA -->
 <script type="module">
 import { initializeApp } 
     from "https://www.gstatic.com/firebasejs/10.14.0/firebase-app.js";
