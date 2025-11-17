@@ -48,9 +48,9 @@
     ========================== */
     .container {
         width: 100%;
-        max-width: 440px;     /* 🔥 impede de ficar largo demais */
-        margin: 0 auto;       /* 🔥 centraliza perfeitamente */
-        padding: 0 16px;      /* 🔥 bordas suaves no celular */
+        max-width: 440px;
+        margin: 0 auto;
+        padding: 0 16px;
     }
 
     .mural {
@@ -140,13 +140,24 @@
         margin-top: 20px;
     }
 
+    /* ==========================
+       CORREÇÃO AQUI ✔
+    ========================== */
     input, textarea {
-        width: 100%;
+        width: 100% !important;
+        max-width: 100% !important;
+        box-sizing: border-box !important;
         padding: 14px;
         border-radius: 10px;
         border: 2px solid #0a7c44;
-        margin-bottom: 10px;
+        margin-bottom: 12px;
         background: #ffffff;
+        display: block;
+    }
+
+    textarea {
+        min-height: 100px;
+        resize: none;
     }
 
     .btn-enviar {
@@ -158,6 +169,7 @@
         border-radius: 12px;
         border: none;
         cursor: pointer;
+        margin-top: 5px;
     }
 
     .upload-box {
@@ -196,6 +208,7 @@
             <p><strong>Envie suas fotos</strong></p>
             <input type="file" id="upload" accept="image/*">
         </div>
+
     </div>
 </div>
 
