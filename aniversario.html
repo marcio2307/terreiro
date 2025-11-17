@@ -18,6 +18,17 @@
         color: #0a7c44;
     }
 
+    * {
+        box-sizing: border-box;
+    }
+
+    .container {
+        max-width: 600px;
+        margin: auto;
+        width: 100%;
+        padding: 0 12px;
+    }
+
     header {
         background: rgba(10,124,68,0.9);
         color: white;
@@ -41,6 +52,7 @@
         font-weight: bold;
         color: #0a7c44;
         background: rgba(255,255,255,0.85);
+        margin-bottom: 10px;
     }
 
     .mural {
@@ -48,7 +60,9 @@
         flex-wrap: wrap;
         gap: 10px;
         justify-content: center;
-        padding: 10px;
+        padding: 10px 0;
+        width: 100%;
+        margin: auto;
     }
 
     .foto {
@@ -91,7 +105,9 @@
     }
 
     .lista-comentarios {
-        padding: 15px;
+        padding: 10px 0;
+        max-width: 600px;
+        margin: auto;
     }
 
     .comentario {
@@ -101,6 +117,7 @@
         border-radius: 14px;
         margin-bottom: 10px;
         box-shadow: 0px 2px 10px rgba(0,0,0,0.2);
+        width: 100%;
     }
 
     .comentario img {
@@ -128,19 +145,25 @@
         background: rgba(255,255,255,0.92);
         padding: 20px;
         border-top: 3px solid #0a7c44;
+        margin-top: 10px;
+        max-width: 600px;
+        margin: auto;
     }
 
     input, textarea {
         width: 100%;
+        max-width: 100%;
         padding: 14px;
         border-radius: 10px;
         border: 2px solid #0a7c44;
         margin-bottom: 10px;
         background: #ffffff;
+        font-size: 16px;
     }
 
     .btn-enviar {
         width: 100%;
+        max-width: 100%;
         background: #0a7c44;
         color: white;
         padding: 14px;
@@ -148,6 +171,7 @@
         border-radius: 12px;
         border: none;
         cursor: pointer;
+        font-weight: bold;
     }
 
     .upload-box {
@@ -156,12 +180,16 @@
         border-top: 3px solid #0a7c44;
         text-align: center;
         margin-top: 10px;
+        width: 100%;
+        max-width: 100%;
     }
 </style>
 </head>
 <body>
 
 <header>ANIVERSARIANTES DO MÊS</header>
+
+<div class="container">
 
 <div class="frase-topo">
     Parabéns hoje e felicidades sempre.
@@ -185,10 +213,9 @@
     </div>
 </div>
 
+</div>
+
 <script type="module">
-/* =========================
-   Firebase v10 - MESMO DA RÁDIO
-========================= */
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.0/firebase-app.js";
 import { getDatabase, ref, push, onValue, remove } from "https://www.gstatic.com/firebasejs/10.14.0/firebase-database.js";
 
@@ -208,9 +235,6 @@ const db = getDatabase(app);
 const fotosRef = ref(db, "coletivo_mural/fotos");
 const comentariosRef = ref(db, "coletivo_mural/comentarios");
 
-/* =========================
-   LISTAR FOTOS
-========================= */
 const mural = document.getElementById("muralFotos");
 
 onValue(fotosRef, snap => {
@@ -243,9 +267,6 @@ onValue(fotosRef, snap => {
     });
 });
 
-/* =========================
-   UPLOAD DE FOTOS
-========================= */
 document.getElementById("upload").addEventListener("change", e => {
     const file = e.target.files[0];
     if (!file) return;
@@ -257,9 +278,6 @@ document.getElementById("upload").addEventListener("change", e => {
     reader.readAsDataURL(file);
 });
 
-/* =========================
-   LISTAR COMENTÁRIOS
-========================= */
 const lista = document.getElementById("listaComentarios");
 
 onValue(comentariosRef, snap => {
@@ -297,9 +315,6 @@ onValue(comentariosRef, snap => {
     });
 });
 
-/* =========================
-   ENVIAR COMENTÁRIO
-========================= */
 document.getElementById("btnEnviar").onclick = () => {
     const nome = document.getElementById("nomeComentario").value.trim();
     const texto = document.getElementById("textoComentario").value.trim();
