@@ -177,20 +177,19 @@ body {
     height: 40px;
 }
 
-/* 🔥 ÍCONE AQUI - MOSTRA A IMAGEM TODA 🔥 */
+/* ÍCONE DA IMAGEM */
 .img-icon img {
-    height: 26px;         /* controla a altura */
-    width: auto;          /* largura proporcional */
+    height: 26px;
+    width: auto;
     cursor: pointer;
-    object-fit: contain;  /* garante que não corta */
-    border-radius: 0;     /* sem arredondar pra não comer borda */
+    object-fit: contain;
 }
 
 #imgUpload {
     display: none;
 }
 
-.preview img {
+.preview img, .preview video {
     width: 100%;
     max-height: 150px;
     border-radius: 12px;
@@ -228,7 +227,7 @@ button {
     text-align: left;
 }
 
-.post img {
+.post img, .post video {
     width: 100%;
     max-height: 400px;
     border-radius: 12px;
@@ -372,12 +371,12 @@ button {
     <div class="post-box">
         <textarea id="texto" placeholder="No que você está pensando?"></textarea>
 
-        <!-- ÍCONE NOVO AQUI, SEM CORTAR -->
         <label for="imgUpload" class="img-icon">
             <img src="https://i.pinimg.com/736x/f9/c5/fa/f9c5fa9710cdf2b510d32915cd882330.jpg">
         </label>
 
-        <input type="file" id="imgUpload" accept="image/*">
+        <!-- AGORA ACEITA IMAGEM + VÍDEO -->
+        <input type="file" id="imgUpload" accept="image/*,video/*">
     </div>
 
     <div id="preview" class="preview"></div>
@@ -452,23 +451,38 @@ window.entrar = function () {
 };
 
 let imagemTemp = null;
+let tipoMidia = null;
 
 document.getElementById("imgUpload").addEventListener("change", function () {
     const file = this.files[0];
     if (!file) return;
+
+    tipoMidia = file.type.startsWith("video/") ? "video" : "imagem";
+
     const reader = new FileReader();
     reader.onload = e => {
         imagemTemp = e.target.result;
-        document.getElementById("preview").innerHTML = `
-            <img src="${imagemTemp}">
-            <div class="remove-preview" onclick="removerPreview()">Excluir imagem</div>
-        `;
+
+        if (tipoMidia === "video") {
+            document.getElementById("preview").innerHTML = `
+                <video controls>
+                    <source src="${imagemTemp}">
+                </video>
+                <div class="remove-preview" onclick="removerPreview()">Excluir vídeo</div>
+            `;
+        } else {
+            document.getElementById("preview").innerHTML = `
+                <img src="${imagemTemp}">
+                <div class="remove-preview" onclick="removerPreview()">Excluir imagem</div>
+            `;
+        }
     };
     reader.readAsDataURL(file);
 });
 
 window.removerPreview = function () {
     imagemTemp = null;
+    tipoMidia = null;
     document.getElementById("preview").innerHTML = "";
     document.getElementById("imgUpload").value = "";
 };
@@ -481,7 +495,8 @@ window.postar = function () {
     const postData = {
         usuario,
         texto,
-        imagem: imagemTemp || null,
+        imagem: tipoMidia === "imagem" ? imagemTemp : null,
+        video: tipoMidia === "video" ? imagemTemp : null,
         reacoes: {},  
         comentarios: {}
     };
@@ -507,9 +522,17 @@ onValue(postsRef, snap => {
         const div = document.createElement("div");
         div.className = "post";
 
+        let midiaHTML = "";
+        if (p.imagem) {
+            midiaHTML = `<img src="${p.imagem}" onclick="abreModal('${p.imagem}')">`;
+        }
+        if (p.video) {
+            midiaHTML = `<video controls><source src="${p.video}"></video>`;
+        }
+
         div.innerHTML = `
             <strong style="color:#00ffcc;">${p.usuario}</strong><br><br>
-            ${p.imagem ? `<img src="${p.imagem}" onclick="abreModal('${p.imagem}')">` : ""}
+            ${midiaHTML}
             <p>${p.texto}</p>
 
             <div class="reaction-count" onclick="mostrarCurtidas('${id}')">👍 ${totalCurtidas} curtidas</div>
