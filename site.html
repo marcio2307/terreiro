@@ -11,26 +11,20 @@ body {
     margin: 0;
     padding: 0;
     font-family: 'Segoe UI', sans-serif;
-    overflow-x: hidden !important;
+    overflow-x: hidden;
     color: #b9ffce;
-    display: flex;
-    justify-content: center;
-    width: 100%;
+    text-align: center; /* CENTRALIZA TUDO */
 }
 
-/* Container principal */
+/* Remove qualquer deslocamento lateral */
 .main {
-    padding: 20px;
-    text-align: center;
     width: 100%;
-    max-width: 900px;
-    margin: auto;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+    margin: 0 auto;
+    padding: 20px;
+    box-sizing: border-box;
 }
 
-/* NOVO FUNDO — PAPAGAIO NA SELVA */
+/* BG */
 .bg {
     position: fixed;
     top: 0; 
@@ -49,7 +43,7 @@ body {
 header {
     width: 100%;
     display: flex;
-    justify-content: center;
+    justify-content: center; /* CENTRALIZA */
     align-items: center;
 }
 
@@ -57,17 +51,17 @@ header img {
     width: 95%;
     max-width: 450px;
     border-radius: 20px;
-    box-shadow: 0 0 25px rgba(0,255,120,0.35);
+    box-shadow: none !important; /* REMOVE A SOMBRA DO CARD */
     animation: fadeIn 1.5s ease;
-    margin: auto;
-    background: transparent !important;
+    margin-left: auto;
+    margin-right: auto;
 }
 
+/* Ajuste no celular */
 @media (max-width: 600px) {
     header img {
         width: 85%;
         max-width: 320px;
-        margin: auto;
     }
 }
 
@@ -77,7 +71,7 @@ header img {
     to { opacity: 1; transform: translateY(0); }
 }
 
-/* PLAYER DA RÁDIO */
+/* PLAYER — sem sombra de card */
 .radio-player {
     margin: 25px auto 35px auto;
     padding: 20px;
@@ -88,14 +82,14 @@ header img {
     backdrop-filter: blur(10px);
     text-align: center;
     border: 2px solid rgba(0,255,150,0.25);
-    box-shadow: 0 0 25px rgba(0,255,120,0.2);
+    box-shadow: none !important;
 }
 
 .radio-player h3 {
     color: #aaffcc;
     font-size: 1.3rem;
     margin-top: 0;
-    text-shadow: 0 0 10px #000;
+    text-shadow: 0 0 10px #000; /* SOMBRA SOMENTE NOS TEXTOS */
 }
 
 .play-btn {
@@ -121,66 +115,46 @@ header img {
     margin-top: 10px;
     color: #ddffe8;
     font-size: 1.05rem;
-    text-shadow: 0 0 5px #000;
+    text-shadow: 0 0 5px #000; /* SOMBRA TEXTO */
 }
 
-/* Card principal */
+/* Card principal — SEM SOMBRA */
 .card {
     background: rgba(0,0,0,0.30);
     padding: 25px;
-    margin: 20px auto;
+    margin: auto;
     width: 90%;
     max-width: 850px;
     border-radius: 20px;
     backdrop-filter: blur(10px);
     border: 1px solid rgba(0,255,100,0.15);
-    box-shadow: 0 0 25px rgba(0,255,120,0.15);
-    animation: fadeIn 1.3s ease;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+    box-shadow: none !important; /* REMOVE A SOMBRA DO CARD */
 }
 
-.card h2 {
-    margin-top: 0;
-    color: #afffcb;
-    text-shadow: 0 0 10px black;
+/* Sombras apenas nos textos */
+.card h2,
+.card p,
+.menu-item div {
+    text-shadow: 0 0 10px rgba(0,0,0,0.9);
 }
 
-.card p {
-    font-size: 1.2rem;
-    color: #dbffe8;
-}
-
-/* Menu estilo cards */
+/* MENU DE CARDS */
 .menu-cards {
     margin-top: 30px;
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: 18px;
-    width: 100%;
-    justify-content: center;
 }
 
 @media (max-width: 768px) {
     .menu-cards {
         grid-template-columns: repeat(2, 1fr);
-        margin: auto;
-        width: 100%;
     }
 }
 
-@media (max-width: 480px) {
-    .menu-cards {
-        grid-template-columns: 1fr 1fr;
-        gap: 15px;
-        width: 100%;
-        justify-items: center;
-    }
-}
-
+/* menu-item — sombra atrás REMOVIDA */
 .menu-item {
-    background: rgba(0,0,0,0.25);
+    background: rgba(0,0,0,0.15);
     border-radius: 18px;
     padding: 20px;
     text-align: center;
@@ -189,12 +163,9 @@ header img {
     font-weight: bold;
     text-decoration: none;
     border: 2px solid rgba(0,255,90,0.3);
-    box-shadow: 0 0 18px rgba(0,255,120,0.2);
     backdrop-filter: blur(6px);
     transition: .4s ease;
-    width: 100%;
-    max-width: 180px;
-    margin: auto;
+    box-shadow: none !important;
 }
 
 .menu-item img {
@@ -202,42 +173,31 @@ header img {
     margin-bottom: 10px;
     filter: drop-shadow(0 0 18px #00ffbb);
     transition: .3s ease;
-    background: transparent !important;
 }
 
-.menu-item:hover {
-    background: rgba(0,255,100,0.15);
-    box-shadow: 0 0 30px #00ffcc;
-    border-color: #00ffdd;
-    color: #003d1f;
-    transform: scale(1.06);
-}
-
-/* CARD DO ODU */
+/* CARD DO ODU — sombra REMOVIDA */
 .odu-card {
     margin-top: 40px;
     padding: 25px;
     background: rgba(0,0,0,0.35);
     border-radius: 20px;
     border: 2px solid rgba(0,255,160,0.25);
-    box-shadow: 0 0 25px rgba(0,255,140,0.25);
-    width: 95%;
-    max-width: 850px;
+    box-shadow: none !important;
+    width: 90%;
     margin-left: auto;
     margin-right: auto;
+}
+
+/* Centralização total do texto */
+.odu-card h2,
+.odu-explica,
+#oduNome,
+#oduInfo {
     text-align: center;
+    text-shadow: 0 0 10px #000; /* SOMENTE NOS TEXTOS */
 }
 
-/* Texto ODU */
-.odu-explica {
-    color: #eafff5;
-    font-size: 1rem;
-    margin-top: -10px;
-    margin-bottom: 15px;
-    text-shadow: 0 0 5px #000;
-}
-
-/* ANIMAÇÃO DO ODU */
+/* Animação */
 .animation {
     position: relative;
     margin: 25px auto;
@@ -247,51 +207,14 @@ header img {
     border-radius: 50%;
     overflow: hidden;
     border: 3px solid #00ffcc;
-    box-shadow: 0 0 25px #000;
 }
 
-/* BÚZIOS — RESTAURADO EXATAMENTE COMO O ORIGINAL */
-.buzio {
-    position: absolute;
-    width: 20%;
-    aspect-ratio: 1.6/1;
-    background-size: cover;
-    opacity: 0;
-    animation: cair 1.5s ease forwards;
-    filter: drop-shadow(2px 4px 3px rgba(0,0,0,0.7));
-    transform: translateY(-200px) rotate(0deg);
-}
-
-/* ANIMAÇÃO ORIGINAL */
-@keyframes cair {
-    0% { transform: translateY(-200px) rotate(0deg); opacity: 0; }
-    100% { transform: translateY(0) rotate(360deg); opacity: 1; }
-}
-
-/* Resultado ODU */
-.odu-nome {
-    font-size: clamp(20px, 5vw, 26px);
-    color: #00ffdd;
-    font-weight: bold;
-    margin-top: 15px;
-    text-shadow: 0 0 10px #000;
-}
-
-.odu-info {
-    color: #eafff5;
-    text-shadow: 0 0 5px #000;
-    margin-top: 15px;
-    padding: 10px;
-    text-align: left;
-    line-height: 1.6;
-}
-
-footer {
-    margin-top: 40px;
-    color: #ccc;
-    padding-bottom: 15px;
-    text-align: center;
-    width: 100%;
+/* Ajustes extras para centralização no celular */
+@media (max-width: 600px) {
+    .main {
+        padding-left: 10px;
+        padding-right: 10px;
+    }
 }
 </style>
 </head>
@@ -460,17 +383,43 @@ function calcularOdu() {
 
     buzio.style.left = `${left}px`;
     buzio.style.top = `${top}px`;
+    buzio.style.transform = `rotate(${Math.random() * 360}deg)`;
     buzio.style.animationDelay = `${Math.random()}s`;
-
     buzio.style.backgroundImage =
       i < abertos
         ? "url('https://i.ibb.co/G4n1TnTc/images-1-removebg-preview.png')" 
         : "url('https://i.ibb.co/2Y1Rs6XB/images-removebg-preview.png')";
     
+    buzio.style.position = "absolute";
+    buzio.style.width = "20%";
+    buzio.style.aspectRatio = "1.6 / 1";
+    buzio.style.backgroundSize = "cover";
+    buzio.style.animation = "cair 1.5s ease forwards";
+    buzio.style.opacity = "0";
+    buzio.style.filter = "drop-shadow(2px 4px 3px rgba(0,0,0,0.7))";
+
     animacao.appendChild(buzio);
   }
 }
+
 </script>
+
+<style>
+.buzio {
+    position: absolute;
+    width: 20%;
+    aspect-ratio: 1.6/1;
+    background-size: cover;
+    animation: cair 1.5s ease forwards;
+    opacity: 0;
+    filter: drop-shadow(2px 4px 3px rgba(0,0,0,0.7));
+}
+
+@keyframes cair {
+    0% { transform: translateY(-200px) rotate(0deg); opacity: 0; }
+    100% { transform: translateY(0) rotate(360deg); opacity: 1; }
+}
+</style>
 
 </body>
 </html>
