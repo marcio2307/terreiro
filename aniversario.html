@@ -18,17 +18,6 @@
         color: #0a7c44;
     }
 
-    * {
-        box-sizing: border-box;
-    }
-
-    .container {
-        max-width: 600px;
-        margin: auto;
-        width: 100%;
-        padding: 0 12px;
-    }
-
     header {
         background: rgba(10,124,68,0.9);
         color: white;
@@ -52,7 +41,16 @@
         font-weight: bold;
         color: #0a7c44;
         background: rgba(255,255,255,0.85);
-        margin-bottom: 10px;
+    }
+
+    /* ==========================
+       CORREÇÃO DO DESLOCAMENTO
+    ========================== */
+    .container {
+        width: 100%;
+        max-width: 440px;     /* 🔥 impede de ficar largo demais */
+        margin: 0 auto;       /* 🔥 centraliza perfeitamente */
+        padding: 0 16px;      /* 🔥 bordas suaves no celular */
     }
 
     .mural {
@@ -60,9 +58,7 @@
         flex-wrap: wrap;
         gap: 10px;
         justify-content: center;
-        padding: 10px 0;
-        width: 100%;
-        margin: auto;
+        padding: 10px;
     }
 
     .foto {
@@ -77,9 +73,7 @@
         transition: .25s;
     }
 
-    .foto:hover {
-        transform: scale(1.05);
-    }
+    .foto:hover { transform: scale(1.05); }
 
     .foto img {
         width: 100%;
@@ -105,9 +99,7 @@
     }
 
     .lista-comentarios {
-        padding: 10px 0;
-        max-width: 600px;
-        margin: auto;
+        padding: 15px;
     }
 
     .comentario {
@@ -117,7 +109,6 @@
         border-radius: 14px;
         margin-bottom: 10px;
         box-shadow: 0px 2px 10px rgba(0,0,0,0.2);
-        width: 100%;
     }
 
     .comentario img {
@@ -145,25 +136,21 @@
         background: rgba(255,255,255,0.92);
         padding: 20px;
         border-top: 3px solid #0a7c44;
-        margin-top: 10px;
-        max-width: 600px;
-        margin: auto;
+        border-radius: 14px;
+        margin-top: 20px;
     }
 
     input, textarea {
         width: 100%;
-        max-width: 100%;
         padding: 14px;
         border-radius: 10px;
         border: 2px solid #0a7c44;
         margin-bottom: 10px;
         background: #ffffff;
-        font-size: 16px;
     }
 
     .btn-enviar {
         width: 100%;
-        max-width: 100%;
         background: #0a7c44;
         color: white;
         padding: 14px;
@@ -171,7 +158,6 @@
         border-radius: 12px;
         border: none;
         cursor: pointer;
-        font-weight: bold;
     }
 
     .upload-box {
@@ -180,8 +166,7 @@
         border-top: 3px solid #0a7c44;
         text-align: center;
         margin-top: 10px;
-        width: 100%;
-        max-width: 100%;
+        border-radius: 14px;
     }
 </style>
 </head>
@@ -189,33 +174,35 @@
 
 <header>ANIVERSARIANTES DO MÊS</header>
 
-<div class="container">
-
 <div class="frase-topo">
     Parabéns hoje e felicidades sempre.
 </div>
 
 <div class="mural" id="muralFotos"></div>
 
-<div class="lista-comentarios" id="listaComentarios"></div>
+<div class="container">
 
-<div class="comentarios">
-    <h2 style="margin-top:0; color:#0a7c44;">Deixe seu comentário</h2>
+    <div class="lista-comentarios" id="listaComentarios"></div>
 
-    <input type="text" id="nomeComentario" placeholder="Seu nome">
-    <textarea id="textoComentario" placeholder="Seu comentário"></textarea>
+    <div class="comentarios">
+        <h2 style="margin-top:0; color:#0a7c44;">Deixe seu comentário</h2>
 
-    <button class="btn-enviar" id="btnEnviar">Enviar</button>
+        <input type="text" id="nomeComentario" placeholder="Seu nome">
+        <textarea id="textoComentario" placeholder="Seu comentário"></textarea>
 
-    <div class="upload-box">
-        <p><strong>Envie suas fotos</strong></p>
-        <input type="file" id="upload" accept="image/*">
+        <button class="btn-enviar" id="btnEnviar">Enviar</button>
+
+        <div class="upload-box">
+            <p><strong>Envie suas fotos</strong></p>
+            <input type="file" id="upload" accept="image/*">
+        </div>
     </div>
 </div>
 
-</div>
-
 <script type="module">
+/* =========================
+   Firebase v10
+========================= */
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.0/firebase-app.js";
 import { getDatabase, ref, push, onValue, remove } from "https://www.gstatic.com/firebasejs/10.14.0/firebase-database.js";
 
@@ -235,6 +222,9 @@ const db = getDatabase(app);
 const fotosRef = ref(db, "coletivo_mural/fotos");
 const comentariosRef = ref(db, "coletivo_mural/comentarios");
 
+/* =========================
+   LISTAR FOTOS
+========================= */
 const mural = document.getElementById("muralFotos");
 
 onValue(fotosRef, snap => {
@@ -267,6 +257,9 @@ onValue(fotosRef, snap => {
     });
 });
 
+/* =========================
+   UPLOAD DE FOTOS
+========================= */
 document.getElementById("upload").addEventListener("change", e => {
     const file = e.target.files[0];
     if (!file) return;
@@ -278,6 +271,9 @@ document.getElementById("upload").addEventListener("change", e => {
     reader.readAsDataURL(file);
 });
 
+/* =========================
+   LISTAR COMENTÁRIOS
+========================= */
 const lista = document.getElementById("listaComentarios");
 
 onValue(comentariosRef, snap => {
@@ -315,6 +311,9 @@ onValue(comentariosRef, snap => {
     });
 });
 
+/* =========================
+   ENVIAR COMENTÁRIO
+========================= */
 document.getElementById("btnEnviar").onclick = () => {
     const nome = document.getElementById("nomeComentario").value.trim();
     const texto = document.getElementById("textoComentario").value.trim();
