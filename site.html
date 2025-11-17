@@ -267,6 +267,62 @@ button {
     color: #ddffe8;
 }
 
+/* =========================== */
+/* === CAIXA DE COMENTAR NOVA === */
+/* =========================== */
+
+.comment-box {
+    background: rgba(255, 255, 255, 0.15) !important;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    padding: 12px;
+    border-radius: 15px;
+    margin-top: 12px;
+    border: 1px solid rgba(0,255,150,0.25);
+    animation: fadeInBox 0.3s ease;
+}
+
+.comment-box textarea {
+    width: 100%;
+    resize: none;
+    border-radius: 12px !important;
+    padding: 10px;
+    border: none;
+    outline: none;
+    font-size: 0.9rem;
+    background: rgba(0,0,0,0.45) !important;
+    color: #ffffff !important;
+    height: 60px;
+    box-shadow: 0 0 12px rgba(0,255,150,0.25);
+}
+
+.comment-box button {
+    margin-top: 10px !important;
+    padding: 10px !important;
+    border-radius: 12px !important;
+    background: linear-gradient(135deg, #00ffaa, #00dd99) !important;
+    color: #000 !important;
+    font-weight: bold !important;
+    box-shadow: 0 0 10px #00ffaa88;
+    transition: 0.2s;
+}
+
+.comment-box button:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 15px #00ffaa;
+}
+
+@keyframes fadeInBox {
+    from {
+        opacity: 0;
+        transform: translateY(8px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
 /* MODAL */
 #imgModal {
     position: fixed;
@@ -441,7 +497,7 @@ window.postar = function () {
         usuario,
         texto,
         imagem: imagemTemp || null,
-        reacoes: {},  // <-- curtidas zeradas
+        reacoes: {},  
         comentarios: {}
     };
 
