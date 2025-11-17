@@ -3,423 +3,593 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Umbanda – Nossas Origens</title>
+<title>Mural Público</title>
 
 <style>
-/* Fundo geral */
+/* FUNDO IGUAL AO SITE */
 body {
     margin: 0;
     padding: 0;
     font-family: 'Segoe UI', sans-serif;
-    overflow-x: hidden;
-    color: #b9ffce;
-    text-align: center; /* CENTRALIZA TUDO */
-}
-
-/* Remove qualquer deslocamento lateral */
-.main {
-    width: 100%;
-    margin: 0 auto;
-    padding: 20px;
-    box-sizing: border-box;
-}
-
-/* BG */
-.bg {
-    position: fixed;
-    top: 0; 
-    left: 0;
-    width: 100%; 
-    height: 100%;
-    background: url("https://img.freepik.com/fotos-premium/papagaio-na-selva-generative-ai_74760-4800.jpg");
+    background: url("https://www.pontoxtecidos.com.br/static/567/sku/155904889647122.jpg");
     background-size: cover;
-    background-position: center;
     background-attachment: fixed;
-    filter: brightness(48%);
-    z-index: -2;
+    color: #b9ffce;
+    text-align: center;
 }
 
-/* CAPA */
-header {
+/* ---- LOGIN ---- */
+#loginBox {
+    position: fixed;
+    top: 0;
+    left: 0;
     width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.90);
     display: flex;
-    justify-content: center; /* CENTRALIZA */
+    flex-direction: column;
+    justify-content: center;
     align-items: center;
+    z-index: 999999;
 }
 
-header img {
-    width: 95%;
-    max-width: 450px;
-    border-radius: 20px;
-    box-shadow: none !important; /* REMOVE A SOMBRA DO CARD */
-    animation: fadeIn 1.5s ease;
-    margin-left: auto;
-    margin-right: auto;
+#loginBox img {
+    height: 120px;
+    margin-bottom: 20px;
 }
 
-/* Ajuste no celular */
-@media (max-width: 600px) {
-    header img {
-        width: 85%;
-        max-width: 320px;
-    }
-}
-
-/* Fade suave */
-@keyframes fadeIn {
-    from { opacity: 0; transform: translateY(20px); }
-    to { opacity: 1; transform: translateY(0); }
-}
-
-/* PLAYER — sem sombra de card */
-.radio-player {
-    margin: 25px auto 35px auto;
-    padding: 20px;
-    width: 92%;
-    max-width: 420px;
-    background: rgba(0, 0, 0, 0.35);
-    border-radius: 20px;
-    backdrop-filter: blur(10px);
-    text-align: center;
-    border: 2px solid rgba(0,255,150,0.25);
-    box-shadow: none !important;
-}
-
-.radio-player h3 {
-    color: #aaffcc;
-    font-size: 1.3rem;
-    margin-top: 0;
-    text-shadow: 0 0 10px #000; /* SOMBRA SOMENTE NOS TEXTOS */
-}
-
-.play-btn {
-    margin-top: 5px;
-    width: 70px;
-    height: 70px;
-    border-radius: 50%;
-    font-size: 28px;
+#loginBox input {
+    width: 80%;
+    max-width: 260px;
+    padding: 12px;
+    border-radius: 10px;
     border: none;
-    cursor: pointer;
-    background: linear-gradient(145deg, #00ffaa, #00bb66);
-    color: #003d1f;
-    box-shadow: 0 0 18px #00ff99, inset 0 0 10px rgba(0,0,0,0.6);
-    transition: 0.25s;
-}
-
-.play-btn:hover {
-    transform: scale(1.12);
-    box-shadow: 0 0 25px #00ffcc;
-}
-
-.radio-status {
-    margin-top: 10px;
-    color: #ddffe8;
-    font-size: 1.05rem;
-    text-shadow: 0 0 5px #000; /* SOMBRA TEXTO */
-}
-
-/* Card principal — SEM SOMBRA */
-.card {
-    background: rgba(0,0,0,0.30);
-    padding: 25px;
-    margin: auto;
-    width: 90%;
-    max-width: 850px;
-    border-radius: 20px;
-    backdrop-filter: blur(10px);
-    border: 1px solid rgba(0,255,100,0.15);
-    box-shadow: none !important; /* REMOVE A SOMBRA DO CARD */
-}
-
-/* Sombras apenas nos textos */
-.card h2,
-.card p,
-.menu-item div {
-    text-shadow: 0 0 10px rgba(0,0,0,0.9);
-}
-
-/* MENU DE CARDS */
-.menu-cards {
-    margin-top: 30px;
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 18px;
-}
-
-@media (max-width: 768px) {
-    .menu-cards {
-        grid-template-columns: repeat(2, 1fr);
-    }
-}
-
-/* menu-item — sombra atrás REMOVIDA */
-.menu-item {
-    background: rgba(0,0,0,0.15);
-    border-radius: 18px;
-    padding: 20px;
-    text-align: center;
-    color: #00ff9d;
-    font-size: 1.1rem;
-    font-weight: bold;
-    text-decoration: none;
-    border: 2px solid rgba(0,255,90,0.3);
-    backdrop-filter: blur(6px);
-    transition: .4s ease;
-    box-shadow: none !important;
-}
-
-.menu-item img {
-    width: 110px;
+    outline: none;
+    font-size: 1rem;
     margin-bottom: 10px;
-    filter: drop-shadow(0 0 18px #00ffbb);
-    transition: .3s ease;
 }
 
-/* CARD DO ODU — sombra REMOVIDA */
-.odu-card {
-    margin-top: 40px;
-    padding: 25px;
-    background: rgba(0,0,0,0.35);
-    border-radius: 20px;
-    border: 2px solid rgba(0,255,160,0.25);
-    box-shadow: none !important;
-    width: 90%;
-    margin-left: auto;
-    margin-right: auto;
+#loginBox button {
+    width: 80%;
+    max-width: 260px;
+    padding: 13px;
+    background: #00ffaa;
+    border: none;
+    border-radius: 12px;
+    font-size: 1.1rem;
+    cursor: pointer;
+    font-weight: bold;
 }
 
-/* Centralização total do texto */
-.odu-card h2,
-.odu-explica,
-#oduNome,
-#oduInfo {
-    text-align: center;
-    text-shadow: 0 0 10px #000; /* SOMENTE NOS TEXTOS */
+/* MENU */
+.topbar {
+    width: 100%;
+    background: rgba(0,0,0,0.85);
+    padding: 18px 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 28px;
+    position: sticky;
+    top: 0;
+    z-index: 999;
+    flex-wrap: wrap;
 }
 
-/* Animação */
-.animation {
-    position: relative;
-    margin: 25px auto;
-    width: clamp(240px, 70vw, 330px);
-    height: clamp(240px, 70vw, 330px);
-    background: url('https://i.ibb.co/ycK55TH5/D-879072-MLB94468249023-102025-O-removebg-preview.png') center/contain no-repeat;
+/* BOTÃO DO PLAYER REDONDO COM PLAY/PAUSE */
+.radio-btn {
+    background: #000 !important;
+    color: #fff !important;
+    width: 55px;
+    height: 55px;
     border-radius: 50%;
-    overflow: hidden;
-    border: 3px solid #00ffcc;
+    font-size: 1.7rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    box-shadow: 0 0 12px #00ffcc;
+    transition: 0.3s;
+    cursor: pointer;
+    user-select: none;
 }
 
-/* Ajustes extras para centralização no celular */
+.radio-btn:hover {
+    background: #111 !important;
+    box-shadow: 0 0 18px #00ffee;
+}
+
+/* LINKS DO MENU */
+.topbar a {
+    color: #00ffcc;
+    text-decoration: none;
+    font-weight: bold;
+    font-size: 1.1rem;
+    transition: 0.3s;
+}
+
+.topbar a:hover {
+    color: #ffffff;
+    text-shadow: 0px 0px 6px #00ffcc;
+}
+
+/* LOGO CENTRAL */
+.main-logo {
+    margin-top: 20px;
+}
+
+.main-logo img {
+    height: 110px;
+}
+
+/* AREA DO FEED */
+.feed {
+    width: 95%;
+    max-width: 650px;
+    margin: 15px auto;
+    padding: 5px;
+}
+
+/* CAIXA DE POSTAGEM */
+.post-box {
+    background: rgba(0,0,0,0.70);
+    padding: 16px;
+    border-radius: 16px;
+    border: 1px solid rgba(0,255,150,0.30);
+    margin-bottom: 25px;
+}
+
+/* TEXTAREA */
+.post-box textarea {
+    width: 100%;
+    resize: none;
+    border-radius: 10px;
+    padding: 10px;
+    border: none;
+    outline: none;
+    font-size: 0.90rem;
+    background: rgba(255,255,255,0.18);
+    color: #fff;
+    max-height: 80px;
+    overflow-y: auto;
+}
+
+/* PREVIEW */
+.preview img {
+    width: 100%;
+    max-height: 150px;
+    border-radius: 12px;
+    margin-top: 10px;
+    object-fit: cover;
+}
+
+.remove-preview {
+    background: #ff5555;
+    padding: 6px 10px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    display: inline-block;
+    margin-top: 5px;
+}
+
+/* BOTÃO */
+button {
+    width: 100%;
+    padding: 12px;
+    background: #00ffaa;
+    border: none;
+    border-radius: 10px;
+    margin-top: 10px;
+    font-size: 1.05rem;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+/* POST */
+.post {
+    background: rgba(0,0,0,0.65);
+    padding: 16px;
+    border-radius: 15px;
+    border: 1px solid rgba(0,255,150,0.30);
+    margin-bottom: 25px;
+    text-align: left;
+}
+
+.post p {
+    color: #e0ffe8;
+}
+
+/* IMAGEM */
+.post img {
+    width: 100%;
+    max-height: 400px;
+    object-fit: cover;
+    border-radius: 12px;
+    cursor: pointer;
+}
+
+/* AÇÕES */
+.actions {
+    display: flex;
+    justify-content: space-around;
+    margin-top: 10px;
+}
+
+.actions div {
+    cursor: pointer;
+    font-weight: bold;
+    color: #00ffaa;
+}
+
+/* CONTADORES */
+.reaction-count,
+.comment-count {
+    text-align: center;
+    margin-top: 10px;
+    font-weight: bold;
+    cursor: pointer;
+    color: #aaffcc;
+}
+
+/* LISTA */
+.comment-list {
+    background: rgba(255,255,255,0.10);
+    border-radius: 10px;
+    margin-top: 10px;
+    padding: 10px;
+    display: none;
+}
+
+/* ITEM */
+.comment-entry {
+    padding: 10px;
+    background: rgba(0,0,0,0.35);
+    border-radius: 10px;
+    margin-bottom: 8px;
+    font-size: 0.95rem;
+    color: #ddffe8;
+    display: flex;
+    justify-content: space-between;
+}
+
+.comment-entry .delete-btn {
+    color: #ff7777;
+    cursor: pointer;
+}
+
+/* CAIXA COMENTAR */
+.comment-box {
+    margin-top: 10px;
+    background: rgba(255,255,255,0.10);
+    padding: 10px;
+    border-radius: 10px;
+    display: none;
+}
+
+.comment-box textarea {
+    width: 100%;
+    resize: none;
+    border-radius: 8px;
+    padding: 8px;
+    border: none;
+    outline: none;
+    background: rgba(255,255,255,0.18);
+    color: #fff;
+    font-size: 0.9rem;
+}
+
+/* MODAL IMAGEM */
+#imgModal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.90);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 99999;
+}
+
+#imgModal img {
+    max-width: 95%;
+    max-height: 90%;
+    border-radius: 12px;
+}
+
+#closeModal {
+    position: absolute;
+    top: 20px;
+    right: 25px;
+    font-size: 2.5rem;
+    cursor: pointer;
+}
+
+/* MOBILE */
 @media (max-width: 600px) {
-    .main {
-        padding-left: 10px;
-        padding-right: 10px;
+    .topbar {
+        padding: 16px 8px;
+        gap: 12px;
+        flex-direction: column;
+    }
+    .topbar a {
+        font-size: 1rem;
+    }
+    .feed {
+        margin-top: 15px;
+    }
+    .post-box textarea {
+        font-size: 0.85rem;
+        max-height: 70px;
+    }
+    .post {
+        padding: 14px;
     }
 }
 </style>
 </head>
-
 <body>
 
-<div class="bg"></div>
+<!-- LOGIN -->
+<div id="loginBox">
+    <img src="https://i.ibb.co/JRvgqKGM/5c081edd-21e9-48fb-9a91-834cfdd112fc-removebg-preview.png">
+    <input type="text" id="nomeLogin" placeholder="Digite seu nome">
+    <button onclick="entrar()">Entrar</button>
+</div>
 
-<div class="main">
+<!-- MENU -->
+<div class="topbar">
 
-    <header>
-        <img src="https://i.ibb.co/JRvgqKGM/5c081edd-21e9-48fb-9a91-834cfdd112fc-removebg-preview.png" alt="Capa Umbanda">
-    </header>
+    <!-- BOTÃO PLAY / PAUSE -->
+    <div class="radio-btn" id="playBtn" onclick="toggleRadio()">▶</div>
 
-    <!-- PLAYER -->
-    <div class="radio-player">
-        <h3>📻 Rádio Ao Vivo</h3>
-        <button class="play-btn" onclick="tocarRadio()">▶️</button>
-        <p class="radio-status" id="radioStatus">Toque para ouvir</p>
-        <audio id="radioAudio" src="https://stream.zeno.fm/l8ocj9i6ka2uv"></audio>
-    </div>
+    <!-- PLAYER OCULTO -->
+    <audio id="radioPlayer" src="https://stream.zeno.fm/l8ocj9i6ka2uv"></audio>
 
-    <div class="card">
-        <h2>Seja Bem-Vindo</h2>
-        <p>Este espaço foi criado com carinho para apresentar nossa fé, nossas raízes e o amor pela Umbanda.</p>
-
-        <div class="menu-cards">
-
-            <a class="menu-item" href="https://sites.google.com/view/ceusaosebastiao/nossas-origens" target="_blank">
-                <img src="https://i.ibb.co/Mk1fHrjf/2fb20f7ef8fd966737d3454c13941203-removebg-preview.png">
-                <div>Nossas Origens</div>
-            </a>
-
-            <a class="menu-item" href="https://marcio2307.github.io/mural/mural.html" target="_blank">
-                <img src="https://i.ibb.co/Mk1fHrjf/2fb20f7ef8fd966737d3454c13941203-removebg-preview.png">
-                <div>Mural de Fotos</div>
-            </a>
-
-            <a class="menu-item" href="https://sites.google.com/view/ceusaosebastiao/estudos-de-umbanda" target="_blank">
-                <img src="https://i.ibb.co/Mk1fHrjf/2fb20f7ef8fd966737d3454c13941203-removebg-preview.png">
-                <div>Estudo da Umbanda</div>
-            </a>
-
-            <a class="menu-item" href="https://www.youtube.com/@paimarciodeoxossi" target="_blank">
-                <img src="https://i.ibb.co/Mk1fHrjf/2fb20f7ef8fd966737d3454c13941203-removebg-preview.png">
-                <div>Nossos Vídeos</div>
-            </a>
-
-            <a class="menu-item" href="https://sites.google.com/view/ceusaosebastiao/hor%C3%B3scopo" target="_blank">
-                <img src="https://i.ibb.co/Mk1fHrjf/2fb20f7ef8fd966737d3454c13941203-removebg-preview.png">
-                <div>Horóscopo</div>
-            </a>
-
-            <a class="menu-item" href="https://marcio2307.github.io/terreiro/aniversario.html" target="_blank">
-                <img src="https://i.ibb.co/Mk1fHrjf/2fb20f7ef8fd966737d3454c13941203-removebg-preview.png">
-                <div>Aniversariantes</div>
-            </a>
-
-        </div>
-    </div>
-
-    <!-- CARD ODU -->
-    <div class="card odu-card">
-        <h2>Descubra Seu Odu</h2>
-
-        <p class="odu-explica"><strong>O que é Odu?</strong><br>
-            O Odu representa o caminho espiritual de cada pessoa, revelando segredos,
-            forças, desafios e a energia dos Orixás que acompanham seu destino.
-        </p>
-
-        <p>Digite sua data de nascimento:</p>
-
-        <input type="text" id="dataNascimento" placeholder="DD/MM/AAAA" maxlength="10">
-        <br>
-        <button onclick="calcularOdu()">Revelar Odu</button>
-
-        <div class="animation" id="animacao"></div>
-        <div class="odu-nome" id="oduNome"></div>
-        <div class="odu-info" id="oduInfo"></div>
-
-    </div>
-
-    <footer>Pai Márcio de Oxóssi © 2025</footer>
+    <a href="https://sites.google.com/view/ceusaosebastiao/nossas-origens" target="_blank">Nossas Origens</a>
+    <a href="https://marcio2307.github.io/mural/mural.html" target="_blank">Mural de Fotos</a>
+    <a href="https://sites.google.com/view/ceusaosebastiao/estudos-de-umbanda" target="_blank">Estudo da Umbanda</a>
+    <a href="https://marcio2307.github.io/terreiro/aniversario.html" target="_blank">Aniversariantes</a>
+    <a href="https://sites.google.com/view/ceusaosebastiao/horóscopo" target="_blank">Horóscopo</a>
 
 </div>
 
-<script>
-function tocarRadio() {
-    const radio = document.getElementById("radioAudio");
-    const status = document.getElementById("radioStatus");
+<!-- LOGO -->
+<div class="main-logo">
+    <img src="https://i.ibb.co/JRvgqKGM/5c081edd-21e9-48fb-9a91-834cfdd112fc-removebg-preview.png">
+</div>
 
-    if (radio.paused) {
-        radio.play();
-        status.innerHTML = "🔊 Rádio tocando...";
+<!-- FEED -->
+<div class="feed">
+    <div class="post-box">
+        <textarea id="texto" rows="3" placeholder="No que está pensando?"></textarea>
+        <input type="file" id="imgUpload" accept="image/*">
+        <div id="preview" class="preview"></div>
+        <button onclick="postar()">Postar</button>
+    </div>
+
+    <div id="feed"></div>
+</div>
+
+<!-- MODAL -->
+<div id="imgModal">
+    <span id="closeModal" onclick="fechaModal()">✖</span>
+    <img id="modalImg">
+</div>
+
+<script>
+/* PLAY / PAUSE */
+let tocando = false;
+
+function toggleRadio() {
+    const player = document.getElementById("radioPlayer");
+    const btn = document.getElementById("playBtn");
+
+    if (!tocando) {
+        player.play();
+        btn.innerHTML = "⏸"; // PAUSE
+        tocando = true;
     } else {
-        radio.pause();
-        status.innerHTML = "▶️ Toque para ouvir";
+        player.pause();
+        btn.innerHTML = "▶"; // PLAY
+        tocando = false;
     }
 }
 </script>
 
-<script>
-/* LÓGICA ORIGINAL DO ODU — 100% MANTIDA */
-const odus = [
-  { num: 1, nome: "Okànràn Méjì", regentes: "Exu, Ogum, Obatalá", descricao: "Líder nato, ousado e corajoso. Representa o início e o impulso vital. Ensina que o poder só é verdadeiro quando guiado pela sabedoria." },
-  { num: 2, nome: "Ejìokò Méjì", regentes: "Oxóssi, Oxalá, Nanã", descricao: "Paciência, sabedoria e equilíbrio. Representa estabilidade e harmonia. Ensina que o tempo certo é mais poderoso do que a força bruta." },
-  { num: 3, nome: "Ètá Ògúndá Méjì", regentes: "Ogum, Iansã", descricao: "Odu da luta e da conquista. Representa o trabalho, a disciplina e a vitória merecida. Ensina que a vitória pertence a quem persiste com fé." },
-  { num: 4, nome: "Ìròsùn Méjì", regentes: "Iansã, Obá, Egungun, Oxóssi", descricao: "Odu dos mistérios, da intuição e dos ancestrais. Representa sabedoria espiritual, conexão com a natureza e dons mediúnicos." },
-  { num: 5, nome: "Òsé Méjì", regentes: "Oxum, Logunedé, Obatalá", descricao: "Odu do amor, da beleza e da prosperidade. Ensina que a doçura e a bondade abrem portas e curam feridas." },
-  { num: 6, nome: "Òbàrà Méjì", regentes: "Oxóssi, Xangô, Logunedé, Iansã e Oxum", descricao: "Odu da comunicação, da justiça e do poder da palavra. Representa criatividade, expressão e liderança." },
-  { num: 7, nome: "Òdí Méjì", regentes: "Iemanjá, Nanã, Obaluaiê", descricao: "Proteção, recolhimento e introspecção. Representa o útero e o poder de gerar novos começos." },
-  { num: 8, nome: "Èjìonílé Méjì", regentes: "Obaluaiê, Oxóssi, Oxalá", descricao: "Odu da estrutura e da prosperidade. Ensina a força das raízes e da fé." },
-  { num: 9, nome: "Òsá Méjì", regentes: "Iemanjá, Obá, Nanã", descricao: "Transformação, espiritualidade e renascimento. Ensina a força de recomeçar." },
-  { num: 10, nome: "Òfún Méjì", regentes: "Oxalá, Orunmilá, Oxum", descricao: "Odu da pureza e sabedoria. Representa iluminação e verdade espiritual." },
-  { num: 11, nome: "Òwónrín Méjì", regentes: "Iansã, Exu", descricao: "Movimento, liberdade e mudança. Representa renovação constante e transformação." },
-  { num: 12, nome: "Èjìlaxeborá Méjì", regentes: "Xangô, Oxalá, Obaluaiê", descricao: "Justiça, ética e aprendizado. Ensina o equilíbrio entre ação e reflexão." },
-  { num: 13, nome: "Èjìlògbón Méjì", regentes: "Nanã, Obaluaiê", descricao: "Sabedoria, prudência e maturidade espiritual. Representa o respeito ao tempo." },
-  { num: 14, nome: "Ìká Méjì", regentes: "Obaluaiê, Iansã, Oxumarê", descricao: "Cura, transformação e superação da dor. Ensina que toda ferida é uma iniciação." },
-  { num: 15, nome: "Òbè Ògúndá Méjì", regentes: "Ogum, Xangô, Oxóssi", descricao: "Luta justa, ética e persistência. Ensina que o triunfo é fruto da verdade." },
-  { num: 16, nome: "Aláfíà Méjì", regentes: "Oxalá, Ifá, Oxum", descricao: "Odu da paz e plenitude. Representa harmonia, equilíbrio e iluminação." },
-];
+<script type="module">
+/* ==========================
+       FIREBASE CONFIG
+========================== */
+import { initializeApp } 
+    from "https://www.gstatic.com/firebasejs/10.14.0/firebase-app.js";
+import { getDatabase, ref, push, onValue, remove, update }
+    from "https://www.gstatic.com/firebasejs/10.14.0/firebase-database.js";
 
-function reduzirNumero(num) {
-  while (num > 16) {
-    num = num.toString().split('').reduce((a, b) => a + parseInt(b), 0);
-  }
-  return num;
-}
+const firebaseConfig = {
+    apiKey: "AIzaSyAt4CeGjdbjzdtMH1qZHw6RuBFJ6SeTDKk",
+    authDomain: "coletivo-f34d4.firebaseapp.com",
+    databaseURL: "https://coletivo-f34d4-default-rtdb.firebaseio.com",
+    projectId: "coletivo-f34d4",
+    storageBucket: "coletivo-f34d4.firebasestorage.app",
+    messagingSenderId: "296376447787",
+    appId: "1:296376447787:web:1341c59c8087d6ac1e4b6e"
+};
 
-function calcularOdu() {
-  const data = document.getElementById("dataNascimento").value.trim();
-  
-  if (!data.match(/^\d{2}\/\d{2}\/\d{4}$/)) {
-    alert("Por favor, insira a data no formato DD/MM/AAAA.");
-    return;
-  }
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
 
-  const numeros = data.replace(/\D/g, '').split('');
-  const soma = numeros.reduce((a, b) => a + parseInt(b), 0);
-  const oduNum = reduzirNumero(soma);
-  const odu = odus.find(o => o.num === oduNum);
+const postsRef = ref(db, "coletivo_mural/posts");
 
-  document.getElementById("oduNome").innerHTML = `Seu Odu é: ${odu.num} – ${odu.nome}`;
-  document.getElementById("oduInfo").innerHTML = `
-    <strong>Orixás Regentes:</strong> ${odu.regentes}<br><br>
-    <strong>Descrição:</strong> ${odu.descricao}
-  `;
+let usuario = null;
 
-  const animacao = document.getElementById("animacao");
-  animacao.innerHTML = "";
+window.entrar = function () {
+    const nome = document.getElementById("nomeLogin").value.trim();
+    if (nome.length < 2) return alert("Digite um nome válido.");
+    usuario = nome;
+    document.getElementById("loginBox").style.display = "none";
+};
 
-  const totalBuzios = 16;
-  const abertos = oduNum;
+let imagemTemp = null;
 
-  for (let i = 0; i < totalBuzios; i++) {
-    const buzio = document.createElement("div");
-    buzio.classList.add("buzio");
+/* Preview da imagem */
+document.getElementById("imgUpload").addEventListener("change", function () {
+    const file = this.files[0];
+    if (!file) return;
 
-    const centerX = 125;
-    const centerY = 125;
-    const raio = 20 + Math.random() * 40;
-    const angulo = Math.random() * 2 * Math.PI;
+    const reader = new FileReader();
+    reader.onload = e => {
+        imagemTemp = e.target.result;
+        document.getElementById("preview").innerHTML = `
+            <img src="${imagemTemp}">
+            <div class="remove-preview" onclick="removerPreview()">Excluir imagem</div>
+        `;
+    };
+    reader.readAsDataURL(file);
+});
 
-    const left = centerX + Math.cos(angulo) * raio;
-    const top = centerY + Math.sin(angulo) * raio;
+window.removerPreview = function () {
+    imagemTemp = null;
+    document.getElementById("preview").innerHTML = "";
+    document.getElementById("imgUpload").value = "";
+};
 
-    buzio.style.left = `${left}px`;
-    buzio.style.top = `${top}px`;
-    buzio.style.transform = `rotate(${Math.random() * 360}deg)`;
-    buzio.style.animationDelay = `${Math.random()}s`;
-    buzio.style.backgroundImage =
-      i < abertos
-        ? "url('https://i.ibb.co/G4n1TnTc/images-1-removebg-preview.png')" 
-        : "url('https://i.ibb.co/2Y1Rs6XB/images-removebg-preview.png')";
-    
-    buzio.style.position = "absolute";
-    buzio.style.width = "20%";
-    buzio.style.aspectRatio = "1.6 / 1";
-    buzio.style.backgroundSize = "cover";
-    buzio.style.animation = "cair 1.5s ease forwards";
-    buzio.style.opacity = "0";
-    buzio.style.filter = "drop-shadow(2px 4px 3px rgba(0,0,0,0.7))";
+window.postar = function () {
+    if (!usuario) return alert("Você precisa fazer login.");
 
-    animacao.appendChild(buzio);
-  }
-}
+    const texto = document.getElementById("texto").value.trim();
+    if (texto === "" && !imagemTemp) return;
 
+    const postData = {
+        usuario,
+        texto,
+        imagem: imagemTemp || null,
+        curtidas: 0,
+        comentarios: {}
+    };
+
+    push(postsRef, postData);
+
+    document.getElementById("texto").value = "";
+    removerPreview();
+};
+
+/* Renderização dos posts */
+onValue(postsRef, snap => {
+    const feed = document.getElementById("feed");
+    feed.innerHTML = "";
+
+    snap.forEach(postSnap => {
+        const id = postSnap.key;
+        const p = postSnap.val();
+
+        const div = document.createElement("div");
+        div.className = "post";
+
+        const numComentarios = p.comentarios ? Object.keys(p.comentarios).length : 0;
+
+        div.innerHTML = `
+            <strong style="color:#00ffcc;">${p.usuario}</strong><br><br>
+            ${p.imagem ? `<img src="${p.imagem}" onclick="abreModal('${p.imagem}')">` : ""}
+            <p>${p.texto}</p>
+
+            <div class="reaction-count" onclick="toggleCurtida('${id}', ${p.curtidas || 0})">
+                👍 ${p.curtidas || 0} curtidas
+            </div>
+
+            <div class="comment-count" onclick="toggleComentarios('${id}')">
+                💬 ${numComentarios} comentários
+            </div>
+
+            <div class="actions">
+                <div onclick="toggleComentarioBox('${id}')">💬 Comentar</div>
+                <div onclick="apagarPost('${id}')">🗑 Excluir</div>
+            </div>
+
+            <div class="comment-box" id="cb_${id}">
+                <textarea id="ct_${id}" rows="2" placeholder="Escreva um comentário..."></textarea>
+                <button onclick="comentar('${id}')">Enviar</button>
+            </div>
+
+            <div class="comment-list" id="cl_${id}"></div>
+        `;
+
+        feed.prepend(div);
+
+        const lista = document.getElementById("cl_" + id);
+        lista.innerHTML = "";
+
+        if (p.comentarios) {
+            Object.entries(p.comentarios).forEach(([cid, c]) => {
+                const cdiv = document.createElement("div");
+                cdiv.className = "comment-entry";
+                cdiv.innerHTML = `
+                    <div><strong style="color:#00ffaa;">${c.usuario}:</strong> ${c.texto}</div>
+                    <span class="delete-btn" onclick="excluirComentario('${id}','${cid}')">❌</span>
+                `;
+                lista.appendChild(cdiv);
+            });
+        }
+    });
+});
+
+/* LÓGICA DE CURTIR, COMENTAR E DELETAR */
+window.toggleCurtida = function (postId, curtidasAtual) {
+    update(ref(db, "coletivo_mural/posts/" + postId), {
+        curtidas: (curtidasAtual || 0) + 1
+    });
+};
+
+window.toggleComentarios = function (id) {
+    const lista = document.getElementById("cl_" + id);
+    lista.style.display = lista.style.display === "block" ? "none" : "block";
+};
+
+window.toggleComentarioBox = function (id) {
+    const box = document.getElementById("cb_" + id);
+    box.style.display = box.style.display === "block" ? "none" : "block";
+};
+
+window.comentar = function (postId) {
+    if (!usuario) return;
+    const campo = document.getElementById("ct_" + postId);
+    const texto = campo.value.trim();
+    if (!texto) return;
+
+    const comentario = {
+        usuario,
+        texto,
+        hora: new Date().toLocaleString("pt-BR")
+    };
+
+    push(ref(db, `coletivo_mural/posts/${postId}/comentarios`), comentario);
+    campo.value = "";
+};
+
+window.excluirComentario = function (postId, cid) {
+    if (confirm("Apagar este comentário?")) {
+        remove(ref(db, `coletivo_mural/posts/${postId}/comentarios/${cid}`));
+    }
+};
+
+window.apagarPost = function (id) {
+    if (confirm("Apagar este post completo?")) {
+        remove(ref(db, "coletivo_mural/posts/" + id));
+    }
+};
+
+/* MODAL */
+window.abreModal = function (src) {
+    document.getElementById("modalImg").src = src;
+    document.getElementById("imgModal").style.display = "flex";
+};
+
+window.fechaModal = function () {
+    document.getElementById("imgModal").style.display = "none";
+};
 </script>
-
-<style>
-.buzio {
-    position: absolute;
-    width: 20%;
-    aspect-ratio: 1.6/1;
-    background-size: cover;
-    animation: cair 1.5s ease forwards;
-    opacity: 0;
-    filter: drop-shadow(2px 4px 3px rgba(0,0,0,0.7));
-}
-
-@keyframes cair {
-    0% { transform: translateY(-200px) rotate(0deg); opacity: 0; }
-    100% { transform: translateY(0) rotate(360deg); opacity: 1; }
-}
-</style>
 
 </body>
 </html>
