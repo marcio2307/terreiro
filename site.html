@@ -15,18 +15,18 @@ body {
     color: #b9ffce;
 }
 
-/* NOVO FUNDO F1 */
+/* NOVO FUNDO — PAPAGAIO NA SELVA */
 .bg {
     position: fixed;
     top: 0; 
     left: 0;
     width: 100%; 
     height: 100%;
-    background: url("https://s2-g1.glbimg.com/c4cIy6uiqHKoHT580oea1lNuMf0=/0x0:4608x3072/1008x0/smart/filters:strip_icc()/i.s3.glbimg.com/v1/AUTH_59edd422c0c84a879bd37670ae4f538a/internal_photos/bs/2018/I/j/BitFoaS9eTy4xqUhA5UA/img-2417.jpg");
+    background: url("https://img.freepik.com/fotos-premium/papagaio-na-selva-generative-ai_74760-4800.jpg");
     background-size: cover;
     background-position: center;
     background-attachment: fixed;
-    filter: brightness(55%);
+    filter: brightness(48%);
     z-index: -2;
 }
 
@@ -36,7 +36,7 @@ body {
     text-align: center;
 }
 
-/* CAPA SUBSTITUÍDA */
+/* CAPA */
 header {
     width: 100%;
     display: flex;
@@ -48,10 +48,11 @@ header img {
     width: 95%;
     max-width: 450px;
     border-radius: 20px;
-    box-shadow: 0 0 25px rgba(0,255,120,0.4);
+    box-shadow: 0 0 25px rgba(0,255,120,0.35);
     animation: fadeIn 1.5s ease;
     margin-left: auto;
     margin-right: auto;
+    background: transparent !important;
 }
 
 /* Ajuste no celular */
@@ -68,18 +69,18 @@ header img {
     to { opacity: 1; transform: translateY(0); }
 }
 
-/* PLAYER DA RÁDIO */
+/* PLAYER DA RÁDIO — fundo ainda mais transparente */
 .radio-player {
     margin: 25px auto 35px auto;
     padding: 20px;
     width: 92%;
     max-width: 420px;
-    background: rgba(0, 0, 0, 0.55);
+    background: rgba(0, 0, 0, 0.35); /* MAIS TRANSPARENTE */
     border-radius: 20px;
     backdrop-filter: blur(10px);
     text-align: center;
-    border: 2px solid rgba(0,255,150,0.35);
-    box-shadow: 0 0 25px rgba(0,255,120,0.25);
+    border: 2px solid rgba(0,255,150,0.25);
+    box-shadow: 0 0 25px rgba(0,255,120,0.2);
 }
 
 .radio-player h3 {
@@ -115,25 +116,17 @@ header img {
     text-shadow: 0 0 5px #000;
 }
 
-@media (max-width: 600px) {
-    .play-btn {
-        width: 60px;
-        height: 60px;
-        font-size: 24px;
-    }
-}
-
-/* Card principal */
+/* Card principal — MAIS TRANSPARENTE */
 .card {
-    background: rgba(0,0,0,0.45); /* TIRA O FUNDO BRANCO */
+    background: rgba(0,0,0,0.30); /* MAIS TRANSPARENTE */
     padding: 25px;
     margin: auto;
     width: 90%;
     max-width: 850px;
     border-radius: 20px;
     backdrop-filter: blur(10px);
-    border: 1px solid rgba(0,255,100,0.2);
-    box-shadow: 0 0 25px rgba(0,255,120,0.2);
+    border: 1px solid rgba(0,255,100,0.15);
+    box-shadow: 0 0 25px rgba(0,255,120,0.15);
     animation: fadeIn 1.3s ease;
 }
 
@@ -163,7 +156,7 @@ header img {
 }
 
 .menu-item {
-    background: rgba(0,0,0,0.35);
+    background: rgba(0,0,0,0.25); /* TRANSPARÊNCIA REFORÇADA */
     border-radius: 18px;
     padding: 20px;
     text-align: center;
@@ -171,8 +164,8 @@ header img {
     font-size: 1.1rem;
     font-weight: bold;
     text-decoration: none;
-    border: 2px solid rgba(0,255,90,0.4);
-    box-shadow: 0 0 18px rgba(0,255,120,0.3);
+    border: 2px solid rgba(0,255,90,0.3);
+    box-shadow: 0 0 18px rgba(0,255,120,0.2);
     backdrop-filter: blur(6px);
     transition: .4s ease;
 }
@@ -182,10 +175,11 @@ header img {
     margin-bottom: 10px;
     filter: drop-shadow(0 0 18px #00ffbb);
     transition: .3s ease;
+    background: transparent !important;
 }
 
 .menu-item:hover {
-    background: rgba(0,255,100,0.22);
+    background: rgba(0,255,100,0.15);
     box-shadow: 0 0 30px #00ffcc;
     border-color: #00ffdd;
     color: #003d1f;
@@ -196,10 +190,10 @@ header img {
 .odu-card {
     margin-top: 40px;
     padding: 25px;
-    background: rgba(0,0,0,0.55);
+    background: rgba(0,0,0,0.35); /* MAIS TRANSPARENTE */
     border-radius: 20px;
-    border: 2px solid rgba(0,255,160,0.4);
-    box-shadow: 0 0 25px rgba(0,255,140,0.3);
+    border: 2px solid rgba(0,255,160,0.25);
+    box-shadow: 0 0 25px rgba(0,255,140,0.25);
 }
 
 .odu-card h2 {
@@ -213,35 +207,6 @@ header img {
     margin-top: -10px;
     margin-bottom: 15px;
     text-shadow: 0 0 5px #000;
-}
-
-.odu-card input {
-    padding: 10px;
-    border-radius: 10px;
-    border: none;
-    width: 80%;
-    max-width: 300px;
-    margin-top: 10px;
-    text-align: center;
-    font-size: 16px;
-}
-
-.odu-card button {
-    margin-top: 15px;
-    padding: 12px 25px;
-    font-size: 18px;
-    background: #00ffcc;
-    color: #003d28;
-    border: none;
-    border-radius: 15px;
-    cursor: pointer;
-    transition: 0.3s;
-    width: 80%;
-    max-width: 250px;
-}
-
-.odu-card button:hover {
-    background: #00ffaa;
 }
 
 .animation {
