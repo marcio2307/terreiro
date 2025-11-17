@@ -71,9 +71,7 @@
         box-sizing: border-box;
     }
 
-    .foto:hover {
-        transform: scale(1.05);
-    }
+    .foto:hover { transform: scale(1.05); }
 
     .foto img {
         width: 100%;
@@ -126,9 +124,7 @@
         border-radius: 10px;
     }
 
-    .comentario-conteudo {
-        flex: 1;
-    }
+    .comentario-conteudo { flex: 1; }
 
     .btn-del-coment {
         background: #ff3b3b;
@@ -142,57 +138,77 @@
     }
 
     /* =========================
-       FORMULÁRIO DE COMENTÁRIOS
+       FORMULÁRIO MODERNO
     ========================== */
     .comentarios {
         width: 100%;
         max-width: 420px;
         margin: 0 auto;
-        background: rgba(255,255,255,0.92);
+        background: rgba(255,255,255,0.96);
         padding: 20px;
+        border-radius: 18px;
+        box-shadow: 0 3px 10px rgba(0,0,0,0.18);
         border-top: 3px solid #0a7c44;
-        border-radius: 14px;
-        box-sizing: border-box;
     }
 
     input, textarea {
         width: 100%;
-        padding: 14px;
-        border-radius: 10px;
+        padding: 11px;
+        border-radius: 12px;
         border: 2px solid #0a7c44;
-        margin-bottom: 12px;
-        background: #ffffff;
-        font-size: 16px;
+        background: #fff;
+        font-size: 15px;
+        margin-bottom: 10px;
         box-sizing: border-box;
     }
 
     textarea {
-        height: 95px;
+        min-height: 80px;
         resize: none;
     }
 
     .btn-enviar {
         width: 100%;
+        padding: 11px;
+        background: #0a7c44;
+        color: #fff;
+        border: none;
+        font-size: 17px;
+        border-radius: 20px;
+        cursor: pointer;
+        font-weight: bold;
+    }
+
+    /* =========================
+       UPLOAD MODERNO
+    ========================== */
+    .upload-box {
+        margin-top: 18px;
+        background: rgba(255,255,255,0.96);
+        padding: 18px;
+        border-radius: 18px;
+        border-top: 3px solid #0a7c44;
+        box-shadow: 0 3px 10px rgba(0,0,0,0.18);
+        text-align: center;
+    }
+
+    .custom-file-upload {
+        display: block;
+        width: 100%;
+        padding: 11px;
         background: #0a7c44;
         color: white;
-        padding: 14px;
-        font-size: 18px;
-        border-radius: 12px;
-        border: none;
+        border-radius: 20px;
         cursor: pointer;
-        margin-top: 6px;
+        font-size: 15px;
+        font-weight: bold;
     }
 
-    .upload-box {
-        background: rgba(255,255,255,0.9);
-        padding: 20px;
-        border-top: 3px solid #0a7c44;
-        text-align: center;
-        margin-top: 16px;
-        border-radius: 14px;
+    .custom-file-upload input[type="file"] {
+        display: none;
     }
 
-    /* MOBILE FIX EXCLUSIVO */
+    /* MOBILE */
     @media (max-width: 480px) {
         .foto { width: 30%; }
         .comentario { flex-direction: column; text-align: center; }
@@ -204,16 +220,17 @@
 
 <header>ANIVERSARIANTES DO MÊS</header>
 
-<div class="frase-topo">
-    Parabéns hoje e felicidades sempre.
-</div>
+<div class="frase-topo">Parabéns hoje e felicidades sempre.</div>
 
 <div class="mural" id="muralFotos"></div>
 
 <div class="lista-comentarios" id="listaComentarios"></div>
 
+<!-- ================================================
+     FORMULÁRIO ATUALIZADO (ESTILO NOVO)
+================================================ -->
 <div class="comentarios">
-    <h2 style="margin-top:0; color:#0a7c44;">Deixe seu comentário</h2>
+    <h2 style="margin-top:0; color:#0a7c44; text-align:center;">Deixe seu comentário</h2>
 
     <input type="text" id="nomeComentario" placeholder="Seu nome">
     <textarea id="textoComentario" placeholder="Seu comentário"></textarea>
@@ -222,7 +239,11 @@
 
     <div class="upload-box">
         <p><strong>Envie suas fotos</strong></p>
-        <input type="file" id="upload" accept="image/*">
+
+        <label class="custom-file-upload">
+            Selecionar arquivo
+            <input type="file" id="upload" accept="image/*">
+        </label>
     </div>
 </div>
 
@@ -249,9 +270,7 @@ const db = getDatabase(app);
 const fotosRef = ref(db, "coletivo_mural/fotos");
 const comentariosRef = ref(db, "coletivo_mural/comentarios");
 
-/* ===========================================
-   LISTAR FOTOS
-=============================================== */
+/* LISTAR FOTOS */
 const mural = document.getElementById("muralFotos");
 
 onValue(fotosRef, snap => {
@@ -270,7 +289,7 @@ onValue(fotosRef, snap => {
         del.className = "btn-apagar";
         del.innerHTML = "×";
         del.onclick = () => {
-            const senha = prompt("Digite a senha admin para excluir:");
+            const senha = prompt("Digite a senha admin:");
             if (senha === "1234") remove(ref(db, "coletivo_mural/fotos/" + id));
         };
 
@@ -280,23 +299,17 @@ onValue(fotosRef, snap => {
     });
 });
 
-/* ===========================================
-   UPLOAD DE FOTOS
-=============================================== */
+/* UPLOAD */
 document.getElementById("upload").addEventListener("change", e => {
     const file = e.target.files[0];
     if (!file) return;
 
     const reader = new FileReader();
-    reader.onload = ev => {
-        push(fotosRef, { url: ev.target.result });
-    };
+    reader.onload = ev => push(fotosRef, { url: ev.target.result });
     reader.readAsDataURL(file);
 });
 
-/* ===========================================
-   LISTAR COMENTÁRIOS
-=============================================== */
+/* LISTAR COMENTÁRIOS */
 const lista = document.getElementById("listaComentarios");
 
 onValue(comentariosRef, snap => {
@@ -330,9 +343,7 @@ onValue(comentariosRef, snap => {
     });
 });
 
-/* ===========================================
-   ENVIAR COMENTÁRIO
-=============================================== */
+/* ENVIAR COMENTÁRIO */
 document.getElementById("btnEnviar").onclick = () => {
     const nome = document.getElementById("nomeComentario").value.trim();
     const texto = document.getElementById("textoComentario").value.trim();
