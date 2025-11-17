@@ -6,7 +6,7 @@
 <title>Mural Público</title>
 
 <style>
-/* FUNDO IGUAL AO SITE */
+/* FUNDO DO SITE */
 body {
     margin: 0;
     padding: 0;
@@ -61,25 +61,24 @@ body {
     font-weight: bold;
 }
 
-/* MENU */
+/* ===== MENU SUPERIOR ===== */
 .topbar {
     width: 100%;
-    background: rgba(0,0,0,0.85);
-    padding: 18px 12px;
+    background: rgba(0,0,0,0.90);
+    padding: 12px 15px;
     display: flex;
     align-items: center;
-    justify-content: center;
-    gap: 28px;
+    justify-content: space-between;
     position: sticky;
     top: 0;
-    z-index: 999;
-    flex-wrap: wrap;
+    z-index: 9999;
+    box-shadow: 0 0 15px #00ffcc;
 }
 
-/* BOTÃO DO PLAYER REDONDO COM PLAY/PAUSE */
+/* BOTÃO REDONDO DO PLAYER */
 .radio-btn {
-    background: #000 !important;
-    color: #fff !important;
+    background: #000;
+    color: #fff;
     width: 55px;
     height: 55px;
     border-radius: 50%;
@@ -87,33 +86,51 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-    text-decoration: none;
     box-shadow: 0 0 12px #00ffcc;
-    transition: 0.3s;
     cursor: pointer;
-    user-select: none;
 }
 
-.radio-btn:hover {
-    background: #111 !important;
-    box-shadow: 0 0 18px #00ffee;
+#menuIcon {
+    font-size: 2.3rem;
+    color: #00ffcc;
+    cursor: pointer;
+    font-weight: bold;
 }
 
-/* LINKS DO MENU */
-.topbar a {
+/* ===== MENU LATERAL – ABRE PELA DIREITA ===== */
+#sideMenu {
+    position: fixed;
+    top: 0;
+    right: -260px; /* abre pela direita */
+    width: 240px;
+    height: 100%;
+    background: rgba(0,0,0,0.95);
+    padding-top: 80px;
+    padding-left: 25px;
+    display: flex;
+    flex-direction: column;
+    gap: 25px;
+    transition: 0.4s;
+
+    /* CORREÇÃO DO PROBLEMA DO MENU FICAR ATRÁS DA TOPBAR */
+    z-index: 10000;
+
+    box-shadow: -3px 0 18px #00ffcc;
+}
+
+#sideMenu a {
     color: #00ffcc;
     text-decoration: none;
+    font-size: 1.3rem;
     font-weight: bold;
-    font-size: 1.1rem;
-    transition: 0.3s;
 }
 
-.topbar a:hover {
+#sideMenu a:hover {
     color: #ffffff;
-    text-shadow: 0px 0px 6px #00ffcc;
+    text-shadow: 0 0 10px #00ffcc;
 }
 
-/* LOGO CENTRAL */
+/* LOGO */
 .main-logo {
     margin-top: 20px;
 }
@@ -122,7 +139,7 @@ body {
     height: 110px;
 }
 
-/* AREA DO FEED */
+/* FEED */
 .feed {
     width: 95%;
     max-width: 650px;
@@ -130,28 +147,27 @@ body {
     padding: 5px;
 }
 
-/* CAIXA DE POSTAGEM */
+/* ===== CAIXA DE POSTAGEM ===== */
 .post-box {
     background: rgba(0,0,0,0.70);
-    padding: 16px;
+    padding: 14px;
     border-radius: 16px;
     border: 1px solid rgba(0,255,150,0.30);
     margin-bottom: 25px;
 }
 
-/* TEXTAREA */
+/* TEXTAREA MENOR – NÃO CRESCE ALEATORIAMENTE */
 .post-box textarea {
     width: 100%;
     resize: none;
     border-radius: 10px;
-    padding: 10px;
+    padding: 8px;
     border: none;
     outline: none;
-    font-size: 0.90rem;
+    font-size: 0.85rem;
     background: rgba(255,255,255,0.18);
     color: #fff;
-    max-height: 80px;
-    overflow-y: auto;
+    height: 55px;
 }
 
 /* PREVIEW */
@@ -168,9 +184,8 @@ body {
     padding: 6px 10px;
     border-radius: 8px;
     cursor: pointer;
-    font-size: 0.9rem;
-    display: inline-block;
     margin-top: 5px;
+    display: inline-block;
 }
 
 /* BOTÃO */
@@ -196,20 +211,14 @@ button {
     text-align: left;
 }
 
-.post p {
-    color: #e0ffe8;
-}
-
-/* IMAGEM */
 .post img {
     width: 100%;
     max-height: 400px;
-    object-fit: cover;
     border-radius: 12px;
     cursor: pointer;
 }
 
-/* AÇÕES */
+/* COMENTÁRIOS */
 .actions {
     display: flex;
     justify-content: space-around;
@@ -222,7 +231,6 @@ button {
     color: #00ffaa;
 }
 
-/* CONTADORES */
 .reaction-count,
 .comment-count {
     text-align: center;
@@ -232,7 +240,6 @@ button {
     color: #aaffcc;
 }
 
-/* LISTA */
 .comment-list {
     background: rgba(255,255,255,0.10);
     border-radius: 10px;
@@ -241,45 +248,17 @@ button {
     display: none;
 }
 
-/* ITEM */
 .comment-entry {
     padding: 10px;
     background: rgba(0,0,0,0.35);
     border-radius: 10px;
     margin-bottom: 8px;
-    font-size: 0.95rem;
-    color: #ddffe8;
     display: flex;
     justify-content: space-between;
+    color: #ddffe8;
 }
 
-.comment-entry .delete-btn {
-    color: #ff7777;
-    cursor: pointer;
-}
-
-/* CAIXA COMENTAR */
-.comment-box {
-    margin-top: 10px;
-    background: rgba(255,255,255,0.10);
-    padding: 10px;
-    border-radius: 10px;
-    display: none;
-}
-
-.comment-box textarea {
-    width: 100%;
-    resize: none;
-    border-radius: 8px;
-    padding: 8px;
-    border: none;
-    outline: none;
-    background: rgba(255,255,255,0.18);
-    color: #fff;
-    font-size: 0.9rem;
-}
-
-/* MODAL IMAGEM */
+/* MODAL */
 #imgModal {
     position: fixed;
     top: 0;
@@ -307,25 +286,11 @@ button {
     cursor: pointer;
 }
 
-/* MOBILE */
+/* RESPONSIVO */
 @media (max-width: 600px) {
-    .topbar {
-        padding: 16px 8px;
-        gap: 12px;
-        flex-direction: column;
-    }
-    .topbar a {
-        font-size: 1rem;
-    }
-    .feed {
-        margin-top: 15px;
-    }
     .post-box textarea {
-        font-size: 0.85rem;
-        max-height: 70px;
-    }
-    .post {
-        padding: 14px;
+        height: 50px;
+        font-size: 0.8rem;
     }
 }
 </style>
@@ -339,24 +304,23 @@ button {
     <button onclick="entrar()">Entrar</button>
 </div>
 
-<!-- MENU -->
+<!-- TOPO -->
 <div class="topbar">
-
-    <!-- BOTÃO PLAY / PAUSE -->
     <div class="radio-btn" id="playBtn" onclick="toggleRadio()">▶</div>
-
-    <!-- PLAYER OCULTO -->
+    <div id="menuIcon" onclick="toggleMenu()">☰</div>
     <audio id="radioPlayer" src="https://stream.zeno.fm/l8ocj9i6ka2uv"></audio>
+</div>
 
+<!-- MENU LATERAL -->
+<div id="sideMenu">
     <a href="https://sites.google.com/view/ceusaosebastiao/nossas-origens" target="_blank">Nossas Origens</a>
     <a href="https://marcio2307.github.io/mural/mural.html" target="_blank">Mural de Fotos</a>
     <a href="https://sites.google.com/view/ceusaosebastiao/estudos-de-umbanda" target="_blank">Estudo da Umbanda</a>
     <a href="https://marcio2307.github.io/terreiro/aniversario.html" target="_blank">Aniversariantes</a>
     <a href="https://sites.google.com/view/ceusaosebastiao/horóscopo" target="_blank">Horóscopo</a>
-
 </div>
 
-<!-- LOGO -->
+<!-- LOGO CENTRAL -->
 <div class="main-logo">
     <img src="https://i.ibb.co/JRvgqKGM/5c081edd-21e9-48fb-9a91-834cfdd112fc-removebg-preview.png">
 </div>
@@ -380,29 +344,33 @@ button {
 </div>
 
 <script>
-/* PLAY / PAUSE */
+/* PLAYER */
 let tocando = false;
-
 function toggleRadio() {
     const player = document.getElementById("radioPlayer");
     const btn = document.getElementById("playBtn");
 
     if (!tocando) {
         player.play();
-        btn.innerHTML = "⏸"; // PAUSE
+        btn.innerHTML = "⏸";
         tocando = true;
     } else {
         player.pause();
-        btn.innerHTML = "▶"; // PLAY
+        btn.innerHTML = "▶";
         tocando = false;
     }
 }
+
+/* MENU LATERAL DIREITO */
+function toggleMenu() {
+    const menu = document.getElementById("sideMenu");
+    menu.style.right = (menu.style.right === "0px") ? "-260px" : "0px";
+}
 </script>
 
+<!-- FIREBASE ORIGINAL (SEM ALTERAÇÕES) -->
 <script type="module">
-/* ==========================
-       FIREBASE CONFIG
-========================== */
+/* FIREBASE CONFIG */
 import { initializeApp } 
     from "https://www.gstatic.com/firebasejs/10.14.0/firebase-app.js";
 import { getDatabase, ref, push, onValue, remove, update }
@@ -420,11 +388,11 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
-
 const postsRef = ref(db, "coletivo_mural/posts");
 
 let usuario = null;
 
+/* LOGIN */
 window.entrar = function () {
     const nome = document.getElementById("nomeLogin").value.trim();
     if (nome.length < 2) return alert("Digite um nome válido.");
@@ -432,13 +400,12 @@ window.entrar = function () {
     document.getElementById("loginBox").style.display = "none";
 };
 
+/* PREVIEW */
 let imagemTemp = null;
 
-/* Preview da imagem */
 document.getElementById("imgUpload").addEventListener("change", function () {
     const file = this.files[0];
     if (!file) return;
-
     const reader = new FileReader();
     reader.onload = e => {
         imagemTemp = e.target.result;
@@ -456,12 +423,11 @@ window.removerPreview = function () {
     document.getElementById("imgUpload").value = "";
 };
 
+/* POSTAR */
 window.postar = function () {
     if (!usuario) return alert("Você precisa fazer login.");
-
     const texto = document.getElementById("texto").value.trim();
     if (texto === "" && !imagemTemp) return;
-
     const postData = {
         usuario,
         texto,
@@ -469,25 +435,20 @@ window.postar = function () {
         curtidas: 0,
         comentarios: {}
     };
-
     push(postsRef, postData);
-
     document.getElementById("texto").value = "";
     removerPreview();
 };
 
-/* Renderização dos posts */
+/* FEED */
 onValue(postsRef, snap => {
     const feed = document.getElementById("feed");
     feed.innerHTML = "";
-
     snap.forEach(postSnap => {
         const id = postSnap.key;
         const p = postSnap.val();
-
         const div = document.createElement("div");
         div.className = "post";
-
         const numComentarios = p.comentarios ? Object.keys(p.comentarios).length : 0;
 
         div.innerHTML = `
@@ -515,7 +476,6 @@ onValue(postsRef, snap => {
 
             <div class="comment-list" id="cl_${id}"></div>
         `;
-
         feed.prepend(div);
 
         const lista = document.getElementById("cl_" + id);
@@ -535,45 +495,47 @@ onValue(postsRef, snap => {
     });
 });
 
-/* LÓGICA DE CURTIR, COMENTAR E DELETAR */
+/* CURTIR */
 window.toggleCurtida = function (postId, curtidasAtual) {
     update(ref(db, "coletivo_mural/posts/" + postId), {
         curtidas: (curtidasAtual || 0) + 1
     });
 };
 
+/* MOSTRAR COMENTÁRIOS */
 window.toggleComentarios = function (id) {
     const lista = document.getElementById("cl_" + id);
     lista.style.display = lista.style.display === "block" ? "none" : "block";
 };
 
+/* ABRIR BOX DE COMENTAR */
 window.toggleComentarioBox = function (id) {
     const box = document.getElementById("cb_" + id);
     box.style.display = box.style.display === "block" ? "none" : "block";
 };
 
+/* ENVIAR COMENTÁRIO */
 window.comentar = function (postId) {
     if (!usuario) return;
     const campo = document.getElementById("ct_" + postId);
     const texto = campo.value.trim();
     if (!texto) return;
-
-    const comentario = {
+    push(ref(db, `coletivo_mural/posts/${postId}/comentarios`), {
         usuario,
         texto,
         hora: new Date().toLocaleString("pt-BR")
-    };
-
-    push(ref(db, `coletivo_mural/posts/${postId}/comentarios`), comentario);
+    });
     campo.value = "";
 };
 
+/* EXCLUIR COMENTÁRIO */
 window.excluirComentario = function (postId, cid) {
     if (confirm("Apagar este comentário?")) {
         remove(ref(db, `coletivo_mural/posts/${postId}/comentarios/${cid}`));
     }
 };
 
+/* EXCLUIR POST */
 window.apagarPost = function (id) {
     if (confirm("Apagar este post completo?")) {
         remove(ref(db, "coletivo_mural/posts/" + id));
