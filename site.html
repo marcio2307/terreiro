@@ -6,7 +6,7 @@
 <title>Umbanda – Nossas Origens</title>
 
 <style>
-/* Fundo */
+/* Fundo geral */
 body {
     margin: 0;
     padding: 0;
@@ -15,23 +15,19 @@ body {
     color: #b9ffce;
 }
 
+/* NOVO FUNDO F1 */
 .bg {
     position: fixed;
     top: 0; 
     left: 0;
     width: 100%; 
     height: 100%;
-    background: url("https://rizomagaleria.com/wp-content/uploads/2024/05/Banner-Logo-baixa.png");
-    background-size: 300px;
-    background-repeat: repeat;
-    filter: blur(10px) brightness(40%);
+    background: url("https://s2-g1.glbimg.com/c4cIy6uiqHKoHT580oea1lNuMf0=/0x0:4608x3072/1008x0/smart/filters:strip_icc()/i.s3.glbimg.com/v1/AUTH_59edd422c0c84a879bd37670ae4f538a/internal_photos/bs/2018/I/j/BitFoaS9eTy4xqUhA5UA/img-2417.jpg");
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    filter: brightness(55%);
     z-index: -2;
-    animation: movimento 40s infinite linear alternate;
-}
-
-@keyframes movimento {
-    0% { background-position: 0 0; }
-    100% { background-position: 200px 200px; }
 }
 
 /* Container principal */
@@ -40,7 +36,7 @@ body {
     text-align: center;
 }
 
-/* CAPA 100% CENTRALIZADA E AJUSTADA */
+/* CAPA SUBSTITUÍDA */
 header {
     width: 100%;
     display: flex;
@@ -50,7 +46,7 @@ header {
 
 header img {
     width: 95%;
-    max-width: 550px;
+    max-width: 450px;
     border-radius: 20px;
     box-shadow: 0 0 25px rgba(0,255,120,0.4);
     animation: fadeIn 1.5s ease;
@@ -58,11 +54,11 @@ header img {
     margin-right: auto;
 }
 
-/* CORREÇÃO EXTRA para celular */
+/* Ajuste no celular */
 @media (max-width: 600px) {
     header img {
-        width: 90%;
-        max-width: 360px;
+        width: 85%;
+        max-width: 320px;
     }
 }
 
@@ -72,7 +68,7 @@ header img {
     to { opacity: 1; transform: translateY(0); }
 }
 
-/* PLAYER NOVO, COMPACTO E ELEGANTE */
+/* PLAYER DA RÁDIO */
 .radio-player {
     margin: 25px auto 35px auto;
     padding: 20px;
@@ -93,7 +89,6 @@ header img {
     text-shadow: 0 0 10px #000;
 }
 
-/* BOTÃO DE PLAY MODERNO */
 .play-btn {
     margin-top: 5px;
     width: 70px;
@@ -120,7 +115,6 @@ header img {
     text-shadow: 0 0 5px #000;
 }
 
-/* Player menor no celular */
 @media (max-width: 600px) {
     .play-btn {
         width: 60px;
@@ -131,7 +125,7 @@ header img {
 
 /* Card principal */
 .card {
-    background: rgba(255,255,255,0.07);
+    background: rgba(0,0,0,0.45); /* TIRA O FUNDO BRANCO */
     padding: 25px;
     margin: auto;
     width: 90%;
@@ -181,7 +175,6 @@ header img {
     box-shadow: 0 0 18px rgba(0,255,120,0.3);
     backdrop-filter: blur(6px);
     transition: .4s ease;
-    animation: flutuar 4s ease-in-out infinite alternate;
 }
 
 .menu-item img {
@@ -189,16 +182,6 @@ header img {
     margin-bottom: 10px;
     filter: drop-shadow(0 0 18px #00ffbb);
     transition: .3s ease;
-}
-
-.menu-item:hover img {
-    filter: drop-shadow(0 0 25px #00ffe1);
-    transform: scale(1.15);
-}
-
-@keyframes flutuar {
-    from { transform: translateY(0px); }
-    to { transform: translateY(-8px); }
 }
 
 .menu-item:hover {
@@ -232,7 +215,6 @@ header img {
     text-shadow: 0 0 5px #000;
 }
 
-/* ODU INPUT */
 .odu-card input {
     padding: 10px;
     border-radius: 10px;
@@ -321,10 +303,10 @@ footer {
 <div class="main">
 
     <header>
-        <img src="https://i.ibb.co/GQhzMnkn/Design-sem-nome.png" alt="Capa Umbanda">
+        <img src="https://i.ibb.co/JRvgqKGM/5c081edd-21e9-48fb-9a91-834cfdd112fc-removebg-preview.png" alt="Capa Umbanda">
     </header>
 
-    <!-- PLAYER DA RÁDIO -->
+    <!-- PLAYER -->
     <div class="radio-player">
         <h3>📻 Rádio Ao Vivo</h3>
         <button class="play-btn" onclick="tocarRadio()">▶️</button>
@@ -332,14 +314,10 @@ footer {
         <audio id="radioAudio" src="https://stream.zeno.fm/l8ocj9i6ka2uv"></audio>
     </div>
 
-
-
-    <!-- CARD PRINCIPAL -->
     <div class="card">
         <h2>Seja Bem-Vindo</h2>
         <p>Este espaço foi criado com carinho para apresentar nossa fé, nossas raízes e o amor pela Umbanda.</p>
 
-        <!-- MENUS -->
         <div class="menu-cards">
 
             <a class="menu-item" href="https://sites.google.com/view/ceusaosebastiao/nossas-origens" target="_blank">
@@ -375,13 +353,11 @@ footer {
         </div>
     </div>
 
-    <!-- CARD DO ODU -->
+    <!-- CARD ODU -->
     <div class="card odu-card">
-
         <h2>Descubra Seu Odu</h2>
 
-        <p class="odu-explica">
-            <strong>O que é Odu?</strong><br>
+        <p class="odu-explica"><strong>O que é Odu?</strong><br>
             O Odu representa o caminho espiritual de cada pessoa, revelando segredos,
             forças, desafios e a energia dos Orixás que acompanham seu destino.
         </p>
