@@ -95,14 +95,14 @@ body {
     color: #00ffcc;
     cursor: pointer;
     font-weight: bold;
-    margin-right: 15px; /* ⬅️ AJUSTE PEDIDO */
+    margin-right: 15px;
 }
 
 /* ===== MENU LATERAL – ABRE PELA DIREITA ===== */
 #sideMenu {
     position: fixed;
     top: 0;
-    right: -260px; /* abre pela direita */
+    right: -260px;
     width: 240px;
     height: 100%;
     background: rgba(0,0,0,0.95);
@@ -112,7 +112,6 @@ body {
     flex-direction: column;
     gap: 25px;
     transition: 0.4s;
-
     z-index: 10000;
     box-shadow: -3px 0 18px #00ffcc;
 }
@@ -216,11 +215,31 @@ button {
     cursor: pointer;
 }
 
-/* COMENTÁRIOS */
+/* CURTIDAS E COMENTÁRIOS */
+.reaction-count {
+    text-align: left;
+    margin-top: 8px;
+    margin-bottom: 10px;
+    cursor: pointer;
+    color: #9cffb5;
+    font-weight: bold;
+}
+
+.comment-count {
+    text-align: left;
+    font-weight: bold;
+    margin-bottom: 10px;
+    cursor: pointer;
+    color: #aaffcc;
+}
+
+/* BOTÕES COMO FACEBOOK */
 .actions {
     display: flex;
     justify-content: space-around;
-    margin-top: 10px;
+    margin-top: 5px;
+    border-top: 1px solid #004422;
+    padding-top: 10px;
 }
 
 .actions div {
@@ -229,15 +248,7 @@ button {
     color: #00ffaa;
 }
 
-.reaction-count,
-.comment-count {
-    text-align: center;
-    margin-top: 10px;
-    font-weight: bold;
-    cursor: pointer;
-    color: #aaffcc;
-}
-
+/* LISTA DE COMENTÁRIOS */
 .comment-list {
     background: rgba(255,255,255,0.10);
     border-radius: 10px;
@@ -282,13 +293,6 @@ button {
     right: 25px;
     font-size: 2.5rem;
     cursor: pointer;
-}
-
-@media (max-width: 600px) {
-    .post-box textarea {
-        height: 50px;
-        font-size: 0.8rem;
-    }
 }
 </style>
 </head>
@@ -368,17 +372,16 @@ function toggleMenu() {
 document.addEventListener("click", function(e) {
     const menu = document.getElementById("sideMenu");
     const icon = document.getElementById("menuIcon");
-
-    if (icon.contains(e.target)) return; // deixa o toggle funcionar
+    if (icon.contains(e.target)) return;
     if (!menu.contains(e.target)) menu.style.right = "-260px";
 });
 </script>
 
-<!-- FIREBASE ORIGINAL -->
+<!-- FIREBASE + SISTEMA DE CURTIR FACEBOOK -->
 <script type="module">
 import { initializeApp } 
     from "https://www.gstatic.com/firebasejs/10.14.0/firebase-app.js";
-import { getDatabase, ref, push, onValue, remove, update }
+import { getDatabase, ref, push, onValue, remove, update, set }
     from "https://www.gstatic.com/firebasejs/10.14.0/firebase-database.js";
 
 const firebaseConfig = {
@@ -396,6 +399,8 @@ const db = getDatabase(app);
 const postsRef = ref(db, "coletivo_mural/posts");
 
 let usuario = null;
+
+/* LOGIN */
 window.entrar = function () {
     const nome = document.getElementById("nomeLogin").value.trim();
     if (nome.length < 2) return alert("Digite um nome válido.");
@@ -403,6 +408,7 @@ window.entrar = function () {
     document.getElementById("loginBox").style.display = "none";
 };
 
+/* PREVIEW */
 let imagemTemp = null;
 
 document.getElementById("imgUpload").addEventListener("change", function () {
@@ -425,39 +431,51 @@ window.removerPreview = function () {
     document.getElementById("imgUpload").value = "";
 };
 
+/* POSTAR */
 window.postar = function () {
     if (!usuario) return alert("Você precisa fazer login.");
     const texto = document.getElementById("texto").value.trim();
     if (texto === "" && !imagemTemp) return;
+
     const postData = {
         usuario,
         texto,
         imagem: imagemTemp || null,
-        curtidas: 0,
+        reacoes: {},  // <-- curtidas zeradas
         comentarios: {}
     };
+
     push(postsRef, postData);
+
     document.getElementById("texto").value = "";
     removerPreview();
 };
 
+/* LISTAR POSTS */
 onValue(postsRef, snap => {
     const feed = document.getElementById("feed");
     feed.innerHTML = "";
+
     snap.forEach(postSnap => {
         const id = postSnap.key;
         const p = postSnap.val();
+
+        const totalCurtidas = p.reacoes ? Object.keys(p.reacoes).length : 0;
+        const numComentarios = p.comentarios ? Object.keys(p.comentarios).length : 0;
+        const jaCurtiu = p.reacoes && p.reacoes[usuario];
+
         const div = document.createElement("div");
         div.className = "post";
-        const numComentarios = p.comentarios ? Object.keys(p.comentarios).length : 0;
 
         div.innerHTML = `
             <strong style="color:#00ffcc;">${p.usuario}</strong><br><br>
+
             ${p.imagem ? `<img src="${p.imagem}" onclick="abreModal('${p.imagem}')">` : ""}
+
             <p>${p.texto}</p>
 
-            <div class="reaction-count" onclick="toggleCurtida('${id}', ${p.curtidas || 0})">
-                👍 ${p.curtidas || 0} curtidas
+            <div class="reaction-count" onclick="mostrarCurtidas('${id}')">
+                👍 ${totalCurtidas} curtidas
             </div>
 
             <div class="comment-count" onclick="toggleComentarios('${id}')">
@@ -465,19 +483,26 @@ onValue(postsRef, snap => {
             </div>
 
             <div class="actions">
+                <div onclick="toggleCurtir('${id}')">
+                    👍 ${jaCurtiu ? "Você curtiu" : "Curtir"}
+                </div>
                 <div onclick="toggleComentarioBox('${id}')">💬 Comentar</div>
                 <div onclick="apagarPost('${id}')">🗑 Excluir</div>
             </div>
 
-            <div class="comment-box" id="cb_${id}">
+            <div class="comment-box" id="cb_${id}" style="display:none;">
                 <textarea id="ct_${id}" rows="2" placeholder="Escreva um comentário..."></textarea>
                 <button onclick="comentar('${id}')">Enviar</button>
             </div>
 
             <div class="comment-list" id="cl_${id}"></div>
+
+            <div class="comment-list" id="likes_${id}" style="display:none;"></div>
         `;
+
         feed.prepend(div);
 
+        /* LISTA DE COMENTÁRIOS */
         const lista = document.getElementById("cl_" + id);
         lista.innerHTML = "";
 
@@ -487,20 +512,54 @@ onValue(postsRef, snap => {
                 cdiv.className = "comment-entry";
                 cdiv.innerHTML = `
                     <div><strong style="color:#00ffaa;">${c.usuario}:</strong> ${c.texto}</div>
-                    <span class="delete-btn" onclick="excluirComentario('${id}','${cid}')">❌</span>
+                    <span onclick="excluirComentario('${id}','${cid}')">❌</span>
                 `;
                 lista.appendChild(cdiv);
             });
         }
+
     });
 });
 
-window.toggleCurtida = function (postId, curtidasAtual) {
-    update(ref(db, "coletivo_mural/posts/" + postId), {
-        curtidas: (curtidasAtual || 0) + 1
+/* CURTIR / DESCURTIR */
+window.toggleCurtir = function (postId) {
+    if (!usuario) return;
+
+    const likeRef = ref(db, `coletivo_mural/posts/${postId}/reacoes/${usuario}`);
+
+    onValue(likeRef, snap => {
+        if (snap.exists()) {
+            remove(likeRef);
+        } else {
+            set(likeRef, true);
+        }
+    }, { onlyOnce: true });
+};
+
+/* MOSTRAR LISTA DE CURTIDAS */
+window.mostrarCurtidas = function (postId) {
+    const caixa = document.getElementById("likes_" + postId);
+    caixa.style.display = caixa.style.display === "block" ? "none" : "block";
+
+    onValue(ref(db, `coletivo_mural/posts/${postId}/reacoes`), snap => {
+        caixa.innerHTML = "";
+
+        if (!snap.exists()) {
+            caixa.innerHTML = "<p>Ninguém curtiu ainda</p>";
+            return;
+        }
+
+        snap.forEach(s => {
+            const pessoa = s.key;
+            const item = document.createElement("div");
+            item.className = "comment-entry";
+            item.innerHTML = `<strong>${pessoa}</strong> curtiu 👍`;
+            caixa.appendChild(item);
+        });
     });
 };
 
+/* EXIBIR / OCULTAR COMENTÁRIOS */
 window.toggleComentarios = function (id) {
     const lista = document.getElementById("cl_" + id);
     lista.style.display = lista.style.display === "block" ? "none" : "block";
@@ -511,31 +570,37 @@ window.toggleComentarioBox = function (id) {
     box.style.display = box.style.display === "block" ? "none" : "block";
 };
 
+/* COMENTAR */
 window.comentar = function (postId) {
     if (!usuario) return;
     const campo = document.getElementById("ct_" + postId);
     const texto = campo.value.trim();
     if (!texto) return;
+
     push(ref(db, `coletivo_mural/posts/${postId}/comentarios`), {
         usuario,
         texto,
         hora: new Date().toLocaleString("pt-BR")
     });
+
     campo.value = "";
 };
 
+/* EXCLUIR COMENTÁRIO */
 window.excluirComentario = function (postId, cid) {
     if (confirm("Apagar este comentário?")) {
         remove(ref(db, `coletivo_mural/posts/${postId}/comentarios/${cid}`));
     }
 };
 
+/* EXCLUIR POST */
 window.apagarPost = function (id) {
     if (confirm("Apagar este post completo?")) {
         remove(ref(db, "coletivo_mural/posts/" + id));
     }
 };
 
+/* MODAL DA IMAGEM */
 window.abreModal = function (src) {
     document.getElementById("modalImg").src = src;
     document.getElementById("imgModal").style.display = "flex";
@@ -544,6 +609,7 @@ window.abreModal = function (src) {
 window.fechaModal = function () {
     document.getElementById("imgModal").style.display = "none";
 };
+
 </script>
 
 </body>
