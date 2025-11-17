@@ -106,8 +106,6 @@ body {
     color: #00ffcc;
     cursor: pointer;
     font-weight: bold;
-
-    /* 🔥🔥 AJUSTE PEDIDO — menu um pouco mais à esquerda 🔥🔥 */
     margin-right: 5px;
 }
 
@@ -179,11 +177,12 @@ body {
     height: 40px;
 }
 
-.img-icon {
-    font-size: 1.6rem;
-    color: #00FF6A;
+/* 🔥 TROCA DO ÍCONE AQUI 🔥 */
+.img-icon img {
+    height: 26px;
+    width: 26px;
+    border-radius: 5px;
     cursor: pointer;
-    padding: 8px;
 }
 
 #imgUpload {
@@ -371,7 +370,12 @@ button {
 
     <div class="post-box">
         <textarea id="texto" placeholder="No que você está pensando?"></textarea>
-        <label for="imgUpload" class="img-icon">🖼️</label>
+
+        <!-- ÍCONE SUBSTITUÍDO -->
+        <label for="imgUpload" class="img-icon">
+            <img src="https://i.pinimg.com/236x/fe/d5/bc/fed5bc7482605699eceaa523f1d3e711.jpg" style="height:26px;width:26px;border-radius:5px;">
+        </label>
+
         <input type="file" id="imgUpload" accept="image/*">
     </div>
 
