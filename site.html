@@ -177,12 +177,13 @@ body {
     height: 40px;
 }
 
-/* 🔥 TROCA DO ÍCONE AQUI 🔥 */
+/* 🔥 ÍCONE AQUI 🔥 */
 .img-icon img {
     height: 26px;
     width: 26px;
     border-radius: 5px;
     cursor: pointer;
+    object-fit: contain;
 }
 
 #imgUpload {
@@ -371,9 +372,10 @@ button {
     <div class="post-box">
         <textarea id="texto" placeholder="No que você está pensando?"></textarea>
 
-        <!-- ÍCONE SUBSTITUÍDO -->
+        <!-- ÍCONE NOVO AQUI -->
         <label for="imgUpload" class="img-icon">
-            <img src="https://i.pinimg.com/236x/fe/d5/bc/fed5bc7482605699eceaa523f1d3e711.jpg" style="height:26px;width:26px;border-radius:5px;">
+            <img src="https://i.pinimg.com/736x/f9/c5/fa/f9c5fa9710cdf2b510d32915cd882330.jpg" 
+                 style="height:26px;width:26px;object-fit:contain;border-radius:5px;">
         </label>
 
         <input type="file" id="imgUpload" accept="image/*">
