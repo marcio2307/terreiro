@@ -44,9 +44,48 @@
         background: rgba(255,255,255,0.85);
     }
 
-    /* =========================
-       MURAL DE FOTOS
-    ========================== */
+    /* NOVO BLOCO – ANIVERSARIANTES */
+    .aniversariantes {
+        background: rgba(255,255,255,0.9);
+        padding: 15px;
+        margin: 10px auto;
+        max-width: 700px;
+        border-radius: 12px;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+        text-align: center;
+    }
+
+    .aniversariantes h3 {
+        margin-top: 0;
+        color: #0a7c44;
+        font-size: 20px;
+        font-weight: bold;
+    }
+
+    .aniversariantes textarea {
+        width: 95%;
+        height: 80px;
+        padding: 10px;
+        border-radius: 10px;
+        border: 2px solid #0a7c44;
+        resize: none;
+        font-size: 15px;
+    }
+
+    .btn-publicar {
+        width: 95%;
+        padding: 10px;
+        background: #0a7c44;
+        color: #fff;
+        border: none;
+        font-size: 15px;
+        border-radius: 18px;
+        cursor: pointer;
+        font-weight: 600;
+        margin-top: 8px;
+    }
+
+    /* MURAL */
     .mural {
         display: flex;
         flex-wrap: wrap;
@@ -96,9 +135,7 @@
         box-shadow: 0px 2px 8px rgba(0,0,0,0.4);
     }
 
-    /* =========================
-       LISTA DE COMENTÁRIOS
-    ========================== */
+    /* COMENTÁRIOS */
     .lista-comentarios {
         padding: 10px;
         width: 100%;
@@ -137,12 +174,9 @@
         min-width: 78px;
     }
 
-    /* =========================
-       FORMULÁRIO E UPLOAD – CARD ÚNICO
-    ========================== */
     .comentarios {
         width: 92%;
-        max-width: 340px;              /* FORMULÁRIO MENOR */
+        max-width: 340px;
         margin: 20px auto 25px auto;
         background: rgba(255,255,255,0.97);
         padding: 16px 14px 18px;
@@ -170,25 +204,6 @@
         box-sizing: border-box;
     }
 
-    textarea {
-        min-height: 70px;
-        resize: none;
-    }
-
-    .btn-enviar {
-        width: 100%;
-        padding: 10px;
-        background: #0a7c44;
-        color: #fff;
-        border: none;
-        font-size: 15px;
-        border-radius: 18px;
-        cursor: pointer;
-        font-weight: 600;
-        margin-top: 4px;
-    }
-
-    /* BLOCO DE UPLOAD DENTRO DO CARD */
     .upload-area {
         margin-top: 12px;
         padding-top: 10px;
@@ -214,18 +229,6 @@
         font-weight: 600;
         box-sizing: border-box;
     }
-
-    .custom-file-upload input[type="file"] {
-        display: none;
-    }
-
-    /* MOBILE */
-    @media (max-width: 480px) {
-        .foto { width: 30%; }
-        .comentario { flex-direction: column; text-align: center; }
-        .btn-del-coment { width: 100%; margin-top: 10px; }
-        .comentarios { width: 94%; max-width: 330px; }
-    }
 </style>
 </head>
 <body>
@@ -234,11 +237,22 @@
 
 <div class="frase-topo">Parabéns hoje e felicidades sempre.</div>
 
+<!-- NOVO BLOCO COMPLETO – ANIVERSARIANTES -->
+<div class="aniversariantes">
+    <h3>🎉 Nomes dos Aniversariantes 🎉</h3>
+
+    <textarea id="nomeAniversariante" placeholder="Digite o nome do aniversariante..."></textarea>
+
+    <button class="btn-publicar" id="btnPublicarNome">Publicar</button>
+
+    <div id="listaNomesPublicados" style="margin-top:15px; text-align:left;"></div>
+</div>
+
 <div class="mural" id="muralFotos"></div>
 
 <div class="lista-comentarios" id="listaComentarios"></div>
 
-<!-- CARD ÚNICO: COMENTÁRIO + ENVIO DE FOTO -->
+<!-- CARD: COMENTÁRIO -->
 <div class="comentarios">
     <h2>Deixe seu comentário</h2>
 
@@ -276,10 +290,70 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 
-const fotosRef = ref(db, "coletivo_mural/fotos");
-const comentariosRef = ref(db, "coletivo_mural/comentarios");
+/* =========================
+   ANIVERSARIANTES – CRUD
+========================= */
 
-/* LISTAR FOTOS */
+const aniversariantesRef = ref(db, "coletivo_mural/aniversariantes");
+const listaNomes = document.getElementById("listaNomesPublicados");
+
+/* LISTAR NOMES */
+onValue(aniversariantesRef, snap => {
+    listaNomes.innerHTML = ""; 
+
+    snap.forEach(item => {
+        const id = item.key;
+        const nome = item.val().nome;
+
+        const linha = document.createElement("div");
+        linha.style.background = "rgba(255,255,255,0.9)";
+        linha.style.padding = "10px";
+        linha.style.marginBottom = "8px";
+        linha.style.borderRadius = "10px";
+        linha.style.display = "flex";
+        linha.style.justifyContent = "space-between";
+        linha.style.alignItems = "center";
+        linha.style.boxShadow = "0px 2px 8px rgba(0,0,0,0.2)";
+
+        linha.innerHTML = `<strong>${nome}</strong>`;
+
+        const del = document.createElement("button");
+        del.innerText = "Excluir";
+        del.style.background = "#ff3b3b";
+        del.style.color = "white";
+        del.style.border = "none";
+        del.style.padding = "8px 10px";
+        del.style.borderRadius = "10px";
+        del.style.cursor = "pointer";
+
+        del.onclick = () => {
+            const senha = prompt("Digite a senha admin:");
+            if (senha === "1234") remove(ref(db, "coletivo_mural/aniversariantes/" + id));
+        };
+
+        linha.appendChild(del);
+        listaNomes.appendChild(linha);
+    });
+});
+
+/* PUBLICAR NOME */
+document.getElementById("btnPublicarNome").onclick = () => {
+    const nome = document.getElementById("nomeAniversariante").value.trim();
+
+    if (!nome) return alert("Digite um nome!");
+
+    push(aniversariantesRef, { nome });
+
+    document.getElementById("nomeAniversariante").value = "";
+};
+
+
+/* =========================
+   RESTANTE DO SEU CÓDIGO
+========================= */
+
+/* FOTOS */
+const fotosRef = ref(db, "coletivo_mural/fotos");
 const mural = document.getElementById("muralFotos");
 
 onValue(fotosRef, snap => {
@@ -318,7 +392,8 @@ document.getElementById("upload").addEventListener("change", e => {
     reader.readAsDataURL(file);
 });
 
-/* LISTAR COMENTÁRIOS */
+/* COMENTÁRIOS */
+const comentariosRef = ref(db, "coletivo_mural/comentarios");
 const lista = document.getElementById("listaComentarios");
 
 onValue(comentariosRef, snap => {
