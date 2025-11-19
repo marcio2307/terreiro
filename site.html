@@ -697,9 +697,11 @@ window.postar = function () {
 
     push(postsRef, postData);
 
-    texto.value = "";
-    removerPreview();
+    // APÓS POSTAR, LIMPA TUDO:
+    document.getElementById("texto").value = "";  // <<< CORRIGIDO
+    removerPreview();                             // <<< LIMPA A PRÉVIA
 };
+
 
 onValue(postsRef, snap => {
     const feed = document.getElementById("feed");
@@ -849,3 +851,4 @@ window.fechaModal = function () {
 
 </body>
 </html>
+
