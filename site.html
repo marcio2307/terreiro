@@ -751,17 +751,32 @@ onValue(postsRef, snap => {
         const lista = document.getElementById("cl_" + id);
         lista.innerHTML = "";
 
-        if (p.comentarios) {
-            Object.entries(p.comentarios).forEach(([cid, c]) => {
-                const cdiv = document.createElement("div");
-                cdiv.className = "comment-entry";
-                cdiv.innerHTML = `
-                    <div><strong style="color:#00ffaa;">${c.usuario}:</strong> ${c.texto}</div>
-                    <span onclick="excluirComentario('${id}','${cid}')">❌</span>
-                `;
-                lista.appendChild(cdiv);
-            });
-        }
+       if (p.comentarios) {
+    Object.entries(p.comentarios).forEach(([cid, c]) => {
+
+        // BUSCA A FOTO DO USUÁRIO OU USA UM PADRÃO
+        const foto = localStorage.getItem("fotoPerfil_" + c.usuario) 
+                     || "https://cdn-icons-png.flaticon.com/512/149/149071.png";
+
+        const cdiv = document.createElement("div");
+        cdiv.className = "comment-entry";
+
+        cdiv.innerHTML = `
+            <img src="${foto}" 
+                 style="width:40px; height:40px; border-radius:50%; margin-right:10px; object-fit:cover; border:2px solid #00ffaa;">
+            
+            <div style="flex:1;">
+                <strong style="color:#00ffaa;">${c.usuario}:</strong> 
+                ${c.texto}
+            </div>
+
+            <span onclick="excluirComentario('${id}','${cid}')"
+                  style="cursor:pointer;">❌</span>
+        `;
+
+        lista.appendChild(cdiv);
+    });
+}
     });
 });
 
