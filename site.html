@@ -1,8 +1,8 @@
-<!DOCTYPE html> 
+<!DOCTYPE html>  
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial=1.0">
+<meta name="viewport" content="width=device=1.0">
 <title>Mural Público</title>
 
 <style>
@@ -19,14 +19,12 @@ html, body {
     box-sizing: border-box;
     overflow-x: hidden;
 }
-/* ------------------------------------ */
 
 body {
     margin: 0;
     padding: 0;
     font-family: 'Segoe UI', sans-serif;
 
-    /* 🎨 NOVO FUNDO APLICADO AQUI */
     background: url("https://i.pinimg.com/736x/5e/ee/c6/5eeec65cf9fa536914d3d3590967c4b8.jpg") no-repeat center center fixed !important;
     background-size: cover !important;
 
@@ -34,7 +32,7 @@ body {
     text-align: center;
 }
 
-#loginBox {
+#loginBox, #cadastroBox {
     position: fixed;
     top: 0;
     left: 0;
@@ -48,12 +46,14 @@ body {
     z-index: 999999;
 }
 
-#loginBox img {
+#cadastroBox { display: none; }
+
+#loginBox img, #cadastroBox img {
     height: 120px;
     margin-bottom: 20px;
 }
 
-#loginBox input {
+#loginBox input, #cadastroBox input {
     width: 80%;
     max-width: 260px;
     padding: 12px;
@@ -64,7 +64,7 @@ body {
     margin-bottom: 10px;
 }
 
-#loginBox button {
+#loginBox button, #cadastroBox button {
     width: 80%;
     max-width: 260px;
     padding: 13px;
@@ -72,6 +72,13 @@ body {
     border: none;
     border-radius: 12px;
     font-size: 1.1rem;
+    cursor: pointer;
+    font-weight: bold;
+}
+
+#cadastroLink, #voltarLogin {
+    color: #00ffaa;
+    margin-top: 15px;
     cursor: pointer;
     font-weight: bold;
 }
@@ -128,20 +135,16 @@ body {
     box-shadow: -3px 0 18px #00ffcc;
 }
 
-#sideMenu a {
+#sideMenu a, #sideMenu div {
     color: #00ffcc;
     text-decoration: none;
     font-size: 1.3rem;
     font-weight: bold;
+    cursor: pointer;
 }
 
-#sideMenu a:hover {
+#sideMenu a:hover, #sideMenu div:hover {
     color: #ffffff;
-    text-shadow: 0 0 10px #00ffcc;
-}
-
-.main-logo {
-    margin-top: 20px;
 }
 
 .main-logo img {
@@ -171,25 +174,19 @@ body {
     padding: 12px 15px;
     border-radius: 25px;
     border: none;
-    outline: none;
     background: rgba(255,255,255,0.10);
     color: #fff;
-    font-size: 1rem;
     resize: none;
     height: 40px;
 }
 
-/* ÍCONE DA IMAGEM */
 .img-icon img {
     height: 26px;
-    width: auto;
     cursor: pointer;
     object-fit: contain;
 }
 
-#imgUpload {
-    display: none;
-}
+#imgUpload { display:none; }
 
 .preview img, .preview video {
     width: 100%;
@@ -205,7 +202,6 @@ body {
     border-radius: 8px;
     cursor: pointer;
     margin-top: 5px;
-    display: inline-block;
 }
 
 button {
@@ -216,8 +212,8 @@ button {
     border-radius: 10px;
     margin-top: 10px;
     font-size: 1.05rem;
-    cursor: pointer;
     font-weight: bold;
+    cursor: pointer;
 }
 
 .post {
@@ -236,16 +232,7 @@ button {
     cursor: pointer;
 }
 
-.reaction-count {
-    text-align: left;
-    margin-top: 8px;
-    margin-bottom: 10px;
-    cursor: pointer;
-    color: #9cffb5;
-    font-weight: bold;
-}
-
-.comment-count {
+.reaction-count, .comment-count {
     text-align: left;
     font-weight: bold;
     margin-bottom: 10px;
@@ -263,8 +250,8 @@ button {
 
 .actions div {
     cursor: pointer;
-    font-weight: bold;
     color: #00ffaa;
+    font-weight: bold;
 }
 
 .comment-list {
@@ -285,28 +272,14 @@ button {
     color: #ddffe8;
 }
 
-.comment-box {
-    background: rgba(255,255,255,0.15);
-    backdrop-filter: blur(12px);
-    padding: 12px;
-    border-radius: 15px;
-    margin-top: 12px;
-    border: 1px solid rgba(0,255,150,0.25);
-    overflow: hidden;
-    box-sizing: border-box;
-}
-
 .comment-box textarea {
     width: 100%;
     resize: none;
     border-radius: 12px;
     padding: 10px;
     border: none;
-    outline: none;
     background: rgba(0,0,0,0.45);
-    color: #fff;
-    height: 60px;
-    box-sizing: border-box;
+    color: white;
 }
 
 #imgModal {
@@ -321,13 +294,11 @@ button {
     align-items: center;
     z-index: 99999;
 }
-
 #imgModal img {
     max-width: 95%;
     max-height: 90%;
     border-radius: 12px;
 }
-
 #closeModal {
     position: absolute;
     top: 20px;
@@ -339,11 +310,25 @@ button {
 </head>
 <body>
 
-<!-- LOGIN -->
+<!-- 🔥 LOGIN GLOBAL FIXO (CORRIGIDO) -->
 <div id="loginBox">
     <img src="https://i.ibb.co/JRvgqKGM/5c081edd-21e9-48fb-9a91-834cfdd112fc-removebg-preview.png">
-    <input type="text" id="nomeLogin" placeholder="Digite seu nome">
-    <button onclick="entrar()">Entrar</button>
+
+    <input type="text" id="loginUser" placeholder="Usuário">
+    <input type="password" id="loginPass" placeholder="Senha">
+
+    <button onclick="login()">Entrar</button>
+    <div id="cadastroLink" onclick="abrirCadastro()">Criar conta</div>
+</div>
+
+<div id="cadastroBox">
+    <img src="https://i.ibb.co/JRvgqKGM/5c081edd-21e9-48fb-9a91-834cfdd112fc-removebg-preview.png">
+
+    <input type="text" id="cadUser" placeholder="Novo usuário">
+    <input type="password" id="cadPass" placeholder="Nova senha">
+
+    <button onclick="cadastrar()">Cadastrar</button>
+    <div id="voltarLogin" onclick="fecharCadastro()">Voltar</div>
 </div>
 
 <!-- TOPO -->
@@ -353,23 +338,24 @@ button {
     <audio id="radioPlayer" src="https://stream.zeno.fm/l8ocj9i6ka2uv"></audio>
 </div>
 
-<!-- MENU LATERAL -->
+<!-- MENU -->
 <div id="sideMenu">
-    <a href="https://sites.google.com/view/ceusaosebastiao/nossas-origens" target="_blank">Nossas Origens</a>
-    <a href="https://marcio2307.github.io/mural/mural.html" target="_blank">Mural de Fotos</a>
-    <a href="https://sites.google.com/view/ceusaosebastiao/estudos-de-umbanda" target="_blank">Estudo da Umbanda</a>
-    <a href="https://marcio2307.github.io/terreiro/aniversario.html" target="_blank">Aniversariantes</a>
-    <a href="https://sites.google.com/view/ceusaosebastiao/horóscopo" target="_blank">Horóscopo</a>
+    <a href="#">Nossas Origens</a>
+    <a href="#">Mural de Fotos</a>
+    <a href="#">Estudo da Umbanda</a>
+    <a href="#">Aniversariantes</a>
+    <a href="#">Horóscopo</a>
+
+    <div onclick="logout()">Sair da Conta</div>
 </div>
 
-<!-- LOGO CENTRAL -->
+<!-- LOGO -->
 <div class="main-logo">
     <img src="https://i.ibb.co/JRvgqKGM/5c081edd-21e9-48fb-9a91-834cfdd112fc-removebg-preview.png">
 </div>
 
 <!-- FEED -->
 <div class="feed">
-
     <div class="post-box">
         <textarea id="texto" placeholder="No que você está pensando?"></textarea>
 
@@ -384,47 +370,130 @@ button {
 
     <button onclick="postar()">Postar</button>
 
-    <!-- ⭐ NOVO TÍTULO SOLICITADO ⭐ -->
     <h2 style="color:#00ffcc; margin-top:25px;">Publicações</h2>
 
     <div id="feed"></div>
 </div>
 
-<!-- MODAL -->
+<!-- MODAL DE IMAGEM -->
 <div id="imgModal">
     <span id="closeModal" onclick="fechaModal()">✖</span>
     <img id="modalImg">
 </div>
 
 <script>
+/* ----------------------------------------------------------
+   🔥 LOGIN DEFINITIVO — FUNCIONA EM QUALQUER PÁGINA 🔥
+------------------------------------------------------------*/
+
+let usuario = null;
+
+/* ------------------------------------------------------------------
+   🔥 BLOQUEIO TOTAL: SÓ MOSTRA A PÁGINA SE ESTIVER LOGADO
+-------------------------------------------------------------------*/
+window.addEventListener("DOMContentLoaded", () => {
+    const logado = localStorage.getItem("usuarioLogado");
+
+    if (!logado || logado === "") {
+        document.getElementById("loginBox").style.display = "flex";
+        document.body.style.overflow = "hidden";
+    } else {
+        usuario = logado;
+        document.getElementById("loginBox").style.display = "none";
+        document.body.style.overflow = "auto";
+    }
+});
+
+/* ABRIR CADASTRO */
+function abrirCadastro() {
+    loginBox.style.display = "none";
+    cadastroBox.style.display = "flex";
+}
+
+/* FECHAR CADASTRO */
+function fecharCadastro() {
+    cadastroBox.style.display = "none";
+    loginBox.style.display = "flex";
+}
+
+/* CADASTRAR */
+function cadastrar() {
+    const user = cadUser.value.trim();
+    const pass = cadPass.value.trim();
+
+    if (user.length < 2 || pass.length < 2) {
+        alert("Preencha usuário e senha.");
+        return;
+    }
+
+    if (localStorage.getItem("user_" + user)) {
+        alert("Usuário já existe.");
+        return;
+    }
+
+    localStorage.setItem("user_" + user, pass);
+    alert("Cadastro realizado!");
+    fecharCadastro();
+}
+
+/* LOGIN */
+function login() {
+    const user = loginUser.value.trim();
+    const pass = loginPass.value.trim();
+
+    const savedPass = localStorage.getItem("user_" + user);
+
+    if (!savedPass) return alert("Usuário não encontrado.");
+    if (savedPass !== pass) return alert("Senha incorreta.");
+
+    usuario = user;
+    localStorage.setItem("usuarioLogado", user);
+
+    loginBox.style.display = "none";
+    document.body.style.overflow = "auto";
+}
+
+/* SAIR */
+function logout() {
+    localStorage.removeItem("usuarioLogado");
+    location.reload();
+}
+</script>
+
+<script>
+/* RADIO */
 let tocando = false;
 function toggleRadio() {
     const player = document.getElementById("radioPlayer");
     const btn = document.getElementById("playBtn");
+
     if (!tocando) {
         player.play();
-        btn.innerHTML = "⏸";
+        btn.textContent = "⏸";
         tocando = true;
     } else {
         player.pause();
-        btn.innerHTML = "▶";
+        btn.textContent = "▶";
         tocando = false;
     }
 }
 
+/* MENU */
 function toggleMenu() {
     const menu = document.getElementById("sideMenu");
     menu.style.right = (menu.style.right === "0px") ? "-260px" : "0px";
 }
 
 document.addEventListener("click", function(e) {
-    const menu = document.getElementById("sideMenu");
-    const icon = document.getElementById("menuIcon");
-    if (icon.contains(e.target)) return;
-    if (!menu.contains(e.target)) menu.style.right = "-260px";
+    const menu = sideMenu;
+    const icon = menuIcon;
+    if (!menu.contains(e.target) && !icon.contains(e.target)) {
+        menu.style.right = "-260px";
+    }
 });
 </script>
 
+<!-- FIREBASE -->
 <script type="module">
 import { initializeApp } 
     from "https://www.gstatic.com/firebasejs/10.14.0/firebase-app.js";
@@ -445,19 +514,9 @@ const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 const postsRef = ref(db, "coletivo_mural/posts");
 
-let usuario = null;
-
-window.entrar = function () {
-    const nome = document.getElementById("nomeLogin").value.trim();
-    if (nome.length < 2) return alert("Digite um nome válido.");
-    usuario = nome;
-    document.getElementById("loginBox").style.display = "none";
-};
-
 let imagemTemp = null;
 let tipoMidia = null;
 
-/* 🔥 SUPORTE TOTAL A VÍDEO + LIMITE DE 5 MINUTOS 🔥 */
 document.getElementById("imgUpload").addEventListener("change", function () {
     const file = this.files[0];
     if (!file) return;
@@ -469,25 +528,12 @@ document.getElementById("imgUpload").addEventListener("change", function () {
         imagemTemp = e.target.result;
 
         if (tipoMidia === "video") {
-            const videoCheck = document.createElement("video");
-            videoCheck.src = imagemTemp;
-
-            videoCheck.onloadedmetadata = () => {
-                const dur = videoCheck.duration;
-
-                if (dur > 300) { // 5 minutos = 300s
-                    alert("❌ O vídeo pode ter no máximo 5 minutos.");
-                    removerPreview();
-                    return;
-                }
-
-                document.getElementById("preview").innerHTML = `
-                    <video controls autoplay muted playsinline>
-                        <source src="${imagemTemp}">
-                    </video>
-                    <div class="remove-preview" onclick="removerPreview()">Excluir vídeo</div>
-                `;
-            };
+            document.getElementById("preview").innerHTML = `
+                <video controls autoplay muted playsinline>
+                    <source src="${imagemTemp}">
+                </video>
+                <div class="remove-preview" onclick="removerPreview()">Excluir vídeo</div>
+            `;
         } else {
             document.getElementById("preview").innerHTML = `
                 <img src="${imagemTemp}">
@@ -501,12 +547,13 @@ document.getElementById("imgUpload").addEventListener("change", function () {
 window.removerPreview = function () {
     imagemTemp = null;
     tipoMidia = null;
-    document.getElementById("preview").innerHTML = "";
-    document.getElementById("imgUpload").value = "";
+    preview.innerHTML = "";
+    imgUpload.value = "";
 };
 
 window.postar = function () {
-    if (!usuario) return alert("Você precisa fazer login.");
+    if (!usuario) return alert("Faça login!");
+
     const texto = document.getElementById("texto").value.trim();
     if (texto === "" && !imagemTemp) return;
 
@@ -521,7 +568,7 @@ window.postar = function () {
 
     push(postsRef, postData);
 
-    document.getElementById("texto").value = "";
+    texto.value = "";
     removerPreview();
 };
 
@@ -541,14 +588,8 @@ onValue(postsRef, snap => {
         div.className = "post";
 
         let midiaHTML = "";
-        if (p.imagem) {
-            midiaHTML = `<img src="${p.imagem}" onclick="abreModal('${p.imagem}')">`;
-        }
-        if (p.video) {
-            midiaHTML = `<video controls autoplay muted playsinline>
-                            <source src="${p.video}">
-                         </video>`;
-        }
+        if (p.imagem) midiaHTML = `<img src="${p.imagem}" onclick="abreModal('${p.imagem}')">`;
+        if (p.video) midiaHTML = `<video controls autoplay muted playsinline><source src="${p.video}"></video>`;
 
         div.innerHTML = `
             <strong style="color:#00ffcc;">${p.usuario}</strong><br><br>
@@ -556,13 +597,10 @@ onValue(postsRef, snap => {
             <p>${p.texto}</p>
 
             <div class="reaction-count" onclick="mostrarCurtidas('${id}')">👍 ${totalCurtidas} curtidas</div>
-
             <div class="comment-count" onclick="toggleComentarios('${id}')">💬 ${numComentarios} comentários</div>
 
             <div class="actions">
-                <div onclick="toggleCurtir('${id}')">
-                    👍 ${jaCurtiu ? "Você curtiu" : "Curtir"}
-                </div>
+                <div onclick="toggleCurtir('${id}')">👍 ${jaCurtiu ? "Você curtiu" : "Curtir"}</div>
                 <div onclick="toggleComentarioBox('${id}')">💬 Comentar</div>
                 <div onclick="apagarPost('${id}')">🗑 Excluir</div>
             </div>
@@ -644,6 +682,7 @@ window.toggleComentarioBox = function (id) {
 
 window.comentar = function (postId) {
     if (!usuario) return;
+
     const campo = document.getElementById("ct_" + postId);
     const texto = campo.value.trim();
     if (!texto) return;
@@ -670,16 +709,14 @@ window.apagarPost = function (id) {
 };
 
 window.abreModal = function (src) {
-    document.getElementById("modalImg").src = src;
-    document.getElementById("imgModal").style.display = "flex";
+    modalImg.src = src;
+    imgModal.style.display = "flex";
 };
 
 window.fechaModal = function () {
-    document.getElementById("imgModal").style.display = "none";
+    imgModal.style.display = "none";
 };
-
 </script>
 
 </body>
 </html>
-
