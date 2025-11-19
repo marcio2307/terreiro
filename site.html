@@ -754,9 +754,8 @@ onValue(postsRef, snap => {
        if (p.comentarios) {
     Object.entries(p.comentarios).forEach(([cid, c]) => {
 
-        // BUSCA A FOTO DO USUÁRIO OU USA UM PADRÃO
-        const foto = localStorage.getItem("fotoPerfil_" + c.usuario) 
-                     || "https://cdn-icons-png.flaticon.com/512/149/149071.png";
+        // FOTO DO PERFIL SALVA NO FIREBASE (NÃO MAIS NO LOCALSTORAGE)
+        const foto = c.fotoPerfil || "https://cdn-icons-png.flaticon.com/512/149/149071.png";
 
         const cdiv = document.createElement("div");
         cdiv.className = "comment-entry";
@@ -777,6 +776,7 @@ onValue(postsRef, snap => {
         lista.appendChild(cdiv);
     });
 }
+
     });
 });
 
@@ -833,14 +833,20 @@ window.comentar = function (postId) {
     const texto = campo.value.trim();
     if (!texto) return;
 
+    // PEGA A FOTO DO PERFIL DO USUÁRIO LOGADO
+    const foto = localStorage.getItem("fotoPerfil_" + usuario) 
+                 || "https://cdn-icons-png.flaticon.com/512/149/149071.png";
+
     push(ref(db, `coletivo_mural/posts/${postId}/comentarios`), {
         usuario,
         texto,
+        fotoPerfil: foto,
         hora: new Date().toLocaleString("pt-BR")
     });
 
     campo.value = "";
 };
+
 
 window.excluirComentario = function (postId, cid) {
     if (confirm("Apagar este comentário?")) {
@@ -866,4 +872,5 @@ window.fechaModal = function () {
 
 </body>
 </html>
+
 
