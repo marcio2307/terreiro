@@ -31,20 +31,18 @@ body {
 }
 
 @media (max-width: 600px) {
-    #loginBox img,
-    #cadastroBox img {
+
+    #loginBox img, #cadastroBox img {
         height: 95px;
     }
 
-    #loginBox input,
-    #cadastroBox input {
+    #loginBox input, #cadastroBox input {
         max-width: 92%;
         padding: 11px;
         font-size: 0.95rem;
     }
 
-    #loginBox button,
-    #cadastroBox button {
+    #loginBox button, #cadastroBox button {
         max-width: 92%;
         padding: 12px;
         font-size: 1rem;
@@ -97,8 +95,7 @@ body {
         margin-top: 10px;
     }
 
-    .preview img,
-    .preview video {
+    .preview img, .preview video {
         max-height: 130px;
     }
 
@@ -106,8 +103,7 @@ body {
         padding: 14px;
     }
 
-    .post img,
-    .post video {
+    .post img, .post video {
         max-height: 280px;
     }
 
@@ -129,14 +125,13 @@ body {
     }
 }
 
-#loginBox,
-#cadastroBox {
+#loginBox, #cadastroBox {
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(0, 0, 0, 0.90);
+    background: rgba(0,0,0,0.90);
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -144,18 +139,14 @@ body {
     z-index: 999999;
 }
 
-#cadastroBox {
-    display: none;
-}
+#cadastroBox { display: none; }
 
-#loginBox img,
-#cadastroBox img {
+#loginBox img, #cadastroBox img {
     height: 120px;
     margin-bottom: 20px;
 }
 
-#loginBox input,
-#cadastroBox input {
+#loginBox input, #cadastroBox input {
     width: 80%;
     max-width: 260px;
     padding: 12px;
@@ -166,8 +157,7 @@ body {
     margin-bottom: 10px;
 }
 
-#loginBox button,
-#cadastroBox button {
+#loginBox button, #cadastroBox button {
     width: 80%;
     max-width: 260px;
     padding: 13px;
@@ -179,8 +169,7 @@ body {
     font-weight: bold;
 }
 
-#cadastroLink,
-#voltarLogin {
+#cadastroLink, #voltarLogin {
     color: #00ffaa;
     margin-top: 15px;
     cursor: pointer;
@@ -189,7 +178,7 @@ body {
 
 .topbar {
     width: 100%;
-    background: rgba(0, 0, 0, 0.90);
+    background: rgba(0,0,0,0.90);
     padding: 12px 15px;
     display: flex;
     align-items: center;
@@ -222,13 +211,14 @@ body {
     margin-right: 5px;
 }
 
+/* MENU */
 #sideMenu {
     position: fixed;
     top: 0;
     right: -260px;
     width: 240px;
     height: 100%;
-    background: rgba(0, 0, 0, 0.95);
+    background: rgba(0,0,0,0.95);
     padding-top: 80px;
     padding-left: 25px;
     display: flex;
@@ -239,8 +229,7 @@ body {
     box-shadow: -3px 0 18px #00ffcc;
 }
 
-#sideMenu a,
-#sideMenu div {
+#sideMenu a, #sideMenu div {
     color: #00ffcc;
     text-decoration: none;
     font-size: 1.3rem;
@@ -248,15 +237,13 @@ body {
     cursor: pointer;
 }
 
-#sideMenu a:hover,
-#sideMenu div:hover {
+#sideMenu a:hover, #sideMenu div:hover {
     color: #ffffff;
 }
 
 .main-logo img {
     height: 110px;
 }
-
 .feed {
     width: 95%;
     max-width: 650px;
@@ -265,10 +252,10 @@ body {
 }
 
 .post-box {
-    background: rgba(0, 0, 0, 0.65);
+    background: rgba(0,0,0,0.65);
     border-radius: 30px;
     padding: 16px;
-    border: 1px solid rgba(0, 255, 150, 0.25);
+    border: 1px solid rgba(0,255,150,0.25);
     display: flex;
     align-items: center;
     gap: 12px;
@@ -279,7 +266,7 @@ body {
     padding: 12px 15px;
     border-radius: 25px;
     border: none;
-    background: rgba(255, 255, 255, 0.10);
+    background: rgba(255,255,255,0.10);
     color: #fff;
     resize: none;
     height: 40px;
@@ -290,12 +277,9 @@ body {
     cursor: pointer;
 }
 
-#imgUpload {
-    display: none;
-}
+#imgUpload { display:none; }
 
-.preview img,
-.preview video {
+.preview img, .preview video {
     width: 100%;
     max-height: 150px;
     border-radius: 12px;
@@ -324,24 +308,22 @@ button {
 }
 
 .post {
-    background: rgba(0, 0, 0, 0.65);
+    background: rgba(0,0,0,0.65);
     padding: 16px;
     border-radius: 15px;
-    border: 1px solid rgba(0, 255, 150, 0.30);
+    border: 1px solid rgba(0,255,150,0.30);
     margin-bottom: 25px;
     text-align: left;
 }
 
-.post img,
-.post video {
+.post img, .post video {
     width: 100%;
     max-height: 400px;
     border-radius: 12px;
     cursor: pointer;
 }
 
-.reaction-count,
-.comment-count {
+.reaction-count, .comment-count {
     text-align: left;
     font-weight: bold;
     margin-bottom: 10px;
@@ -364,7 +346,7 @@ button {
 }
 
 .comment-list {
-    background: rgba(255, 255, 255, 0.10);
+    background: rgba(255,255,255,0.10);
     border-radius: 10px;
     margin-top: 10px;
     padding: 10px;
@@ -373,7 +355,7 @@ button {
 
 .comment-entry {
     padding: 10px;
-    background: rgba(0, 0, 0, 0.35);
+    background: rgba(0,0,0,0.35);
     border-radius: 10px;
     margin-bottom: 8px;
     display: flex;
@@ -387,7 +369,7 @@ button {
     border-radius: 12px;
     padding: 10px;
     border: none;
-    background: rgba(0, 0, 0, 0.45);
+    background: rgba(0,0,0,0.45);
     color: white;
 }
 
@@ -397,7 +379,7 @@ button {
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(0, 0, 0, 0.90);
+    background: rgba(0,0,0,0.90);
     display: none;
     justify-content: center;
     align-items: center;
@@ -421,96 +403,127 @@ button {
 </style>
 </head>
 <body>
-<script type="module">
 
-/* --------------------------
-       IMPORTS FIREBASE
---------------------------- */
-import { initializeApp }
-    from "https://www.gstatic.com/firebasejs/10.14.0/firebase-app.js";
+<!-- LOGIN -->
+<div id="loginBox">
+    <img src="https://i.ibb.co/JRvgqKGM/5c081edd-21e9-48fb-9a91-834cfdd112fc-removebg-preview.png">
 
-import { getDatabase, ref, get, set }
-    from "https://www.gstatic.com/firebasejs/10.14.0/firebase-database.js";
+    <input type="text" id="loginUser" placeholder="Usuário">
+    <input type="password" id="loginPass" placeholder="Senha">
+    <button onclick="login()">Entrar</button>
 
-import { getStorage, ref as sRef, uploadBytes, getDownloadURL }
-    from "https://www.gstatic.com/firebasejs/10.14.0/firebase-storage.js";
+    <div id="cadastroLink" onclick="abrirCadastro()">Criar conta</div>
+</div>
 
-/* --------------------------
-      CONFIGURAÇÃO FIREBASE
---------------------------- */
-const firebaseConfig = {
-    apiKey: "AIzaSyAt4CeGjdbjzdtMH1qZHw6RuBFJ6SeTDKk",
-    authDomain: "coletivo-f34d4.firebaseapp.com",
-    databaseURL: "https://coletivo-f34d4-default-rtdb.firebaseio.com",
-    projectId: "coletivo-f34d4",
-    storageBucket: "coletivo-f34d4.appspot.com",
-    messagingSenderId: "296376447787",
-    appId: "1:296376447787:web:1341c59c8087d6ac1e4b6e"
-};
+<div id="cadastroBox">
+    <img src="https://i.ibb.co/JRvgqKGM/5c081edd-21e9-48fb-9a91-834cfdd112fc-removebg-preview.png">
 
-const app = initializeApp(firebaseConfig);
-const db = getDatabase(app);
-const storage = getStorage(app);
+    <input type="text" id="cadUser" placeholder="Novo usuário">
+    <input type="password" id="cadPass" placeholder="Nova senha">
+    <button onclick="cadastrar()">Cadastrar</button>
 
-/* --------------------------
-      VARIÁVEL GLOBAL
---------------------------- */
+    <div id="voltarLogin" onclick="fecharCadastro()">Voltar</div>
+</div>
+
+<!-- TOPO -->
+<div class="topbar">
+    <div class="radio-btn" id="playBtn" onclick="toggleRadio()">▶</div>
+    <div id="menuIcon" onclick="toggleMenu()">☰</div>
+    <audio id="radioPlayer" src="https://stream.zeno.fm/l8ocj9i6ka2uv"></audio>
+</div>
+
+<!-- MENU LATERAL -->
+<div id="sideMenu">
+
+    <!-- FOTO + NOME DO USUÁRIO -->
+    <div style="text-align:center; margin-bottom:10px;">
+        <label for="fotoPerfilUpload">
+
+            <img id="perfilFoto" src="https://cdn-icons-png.flaticon.com/512/149/149071.png"
+                 style="width:95px; height:95px; border-radius:50%; border:3px solid #00ffcc; cursor:pointer; object-fit:cover;">
+        </label>
+        <input type="file" id="fotoPerfilUpload" accept="image/*" style="display:none;">
+
+        <!-- *** NOME DO USUÁRIO AQUI *** -->
+        <div id="nomeUsuarioMenu" style="color:#00ffcc; font-weight:bold; margin-top:8px; font-size:1.1rem;"></div>
+
+    </div>
+
+    <a href="https://sites.google.com/view/ceusaosebastiao/nossas-origens" target="_blank">Nossas Origens</a>
+    <a href="https://marcio2307.github.io/mural/mural.html" target="_blank">Mural de Fotos</a>
+    <a href="https://sites.google.com/view/ceusaosebastiao/estudos-de-umbanda" target="_blank">Estudo da Umbanda</a>
+    <a href="https://marcio2307.github.io/terreiro/aniversario.html" target="_blank">Aniversariantes</a>
+    <a href="https://sites.google.com/view/ceusaosebastiao/horóscopo" target="_blank">Horóscopo</a>
+
+    <div onclick="logout()">Sair da Conta</div>
+</div>
+
+<!-- LOGO -->
+<div class="main-logo">
+    <img src="https://i.ibb.co/JRvgqKGM/5c081edd-21e9-48fb-9a91-834cfdd112fc-removebg-preview.png">
+</div>
+
+<!-- FEED -->
+<div class="feed">
+
+    <div class="post-box">
+        <textarea id="texto" placeholder="No que você está pensando?"></textarea>
+
+        <label for="imgUpload" class="img-icon">
+            <img src="https://i.pinimg.com/736x/f9/c5/fa/f9c5fa9710cdf2b510d32915cd882330.jpg">
+        </label>
+
+        <input type="file" id="imgUpload" accept="image/*,video/*">
+    </div>
+
+    <div id="preview" class="preview"></div>
+
+    <button onclick="postar()">Postar</button>
+
+    <h2 style="color:#00ffcc; margin-top:25px;">Publicações</h2>
+    <div id="feed"></div>
+</div>
+
+<!-- MODAL -->
+<div id="imgModal">
+    <span id="closeModal" onclick="fechaModal()">✖</span>
+    <img id="modalImg">
+</div>
+
+<script>
+/* LOGIN */
 let usuario = null;
 
-/* --------------------------
-      VERIFICAR LOGIN
---------------------------- */
-window.addEventListener("DOMContentLoaded", async () => {
-
+window.addEventListener("DOMContentLoaded", () => {
     const logado = localStorage.getItem("usuarioLogado");
 
     if (!logado) {
         loginBox.style.display = "flex";
         document.body.style.overflow = "hidden";
-        return;
+    } else {
+        usuario = logado;
+        loginBox.style.display = "none";
+        document.body.style.overflow = "auto";
+
+        const fotoSalva = localStorage.getItem("fotoPerfil_" + usuario);
+        if (fotoSalva) perfilFoto.src = fotoSalva;
+
+        // MOSTRAR NOME NO MENU
+        nomeUsuarioMenu.textContent = usuario;
     }
-
-    usuario = logado;
-
-    // CARREGAR DADOS DO USUÁRIO NO FIREBASE
-    const userRef = ref(db, "usuarios/" + usuario);
-    const snap = await get(userRef);
-
-    if (!snap.exists()) {
-        localStorage.removeItem("usuarioLogado");
-        loginBox.style.display = "flex";
-        return;
-    }
-
-    const dados = snap.val();
-
-    // FOTO DO STORAGE
-    perfilFoto.src = dados.foto || "https://cdn-icons-png.flaticon.com/512/149/149071.png";
-
-    nomeUsuarioMenu.textContent = usuario;
-
-    loginBox.style.display = "none";
-    document.body.style.overflow = "auto";
 });
 
-/* --------------------------
-      ABRIR E FECHAR CADASTRO
---------------------------- */
-window.abrirCadastro = function () {
+function abrirCadastro() {
     loginBox.style.display = "none";
     cadastroBox.style.display = "flex";
-};
+}
 
-window.fecharCadastro = function () {
+function fecharCadastro() {
     cadastroBox.style.display = "none";
     loginBox.style.display = "flex";
-};
+}
 
-/* --------------------------
-         CADASTRAR
---------------------------- */
-window.cadastrar = async function () {
-
+function cadastrar() {
     const user = cadUser.value.trim();
     const pass = cadPass.value.trim();
 
@@ -519,293 +532,348 @@ window.cadastrar = async function () {
         return;
     }
 
-    const userRef = ref(db, "usuarios/" + user);
-    const snap = await get(userRef);
-
-    if (snap.exists()) {
+    if (localStorage.getItem("user_" + user)) {
         alert("Usuário já existe.");
         return;
     }
 
-    await set(userRef, {
-        senha: pass,
-        foto: "https://cdn-icons-png.flaticon.com/512/149/149071.png"
-    });
-
+    localStorage.setItem("user_" + user, pass);
     alert("Cadastro realizado!");
     fecharCadastro();
-};
+}
 
-/* --------------------------
-            LOGIN
---------------------------- */
-window.login = async function () {
-
+function login() {
     const user = loginUser.value.trim();
     const pass = loginPass.value.trim();
 
-    const userRef = ref(db, "usuarios/" + user);
-    const snap = await get(userRef);
+    const savedPass = localStorage.getItem("user_" + user);
 
-    if (!snap.exists()) {
-        alert("Usuário não encontrado.");
-        return;
-    }
-
-    const dados = snap.val();
-
-    if (dados.senha !== pass) {
-        alert("Senha incorreta.");
-        return;
-    }
+    if (!savedPass) return alert("Usuário não encontrado.");
+    if (savedPass !== pass) return alert("Senha incorreta.");
 
     usuario = user;
     localStorage.setItem("usuarioLogado", user);
 
-    perfilFoto.src = dados.foto;
-    nomeUsuarioMenu.textContent = user;
-
     loginBox.style.display = "none";
     document.body.style.overflow = "auto";
-};
 
-/* --------------------------
-            LOGOUT
---------------------------- */
-window.logout = function () {
+    const fotoSalva = localStorage.getItem("fotoPerfil_" + user);
+    if (fotoSalva) perfilFoto.src = fotoSalva;
+
+    // MOSTRAR NOME NO MENU AO LOGAR
+    nomeUsuarioMenu.textContent = user;
+}
+
+function logout() {
     localStorage.removeItem("usuarioLogado");
-    location.reload();
-};
+    loginBox.style.display = "flex";
+    document.body.style.overflow = "hidden";
+}
+/* RADIO */
+let tocando = false;
+function toggleRadio() {
+    const player = document.getElementById("radioPlayer");
+    const btn = document.getElementById("playBtn");
 
-/* --------------------------
-     FOTO DO PERFIL (STORAGE)
---------------------------- */
-document.getElementById("fotoPerfilUpload").addEventListener("change", async function () {
+    if (!tocando) {
+        player.play();
+        btn.textContent = "⏸";
+        tocando = true;
+    } else {
+        player.pause();
+        btn.textContent = "▶";
+        tocando = false;
+    }
+}
 
-    if (!usuario) return alert("Faça login.");
+/* MENU */
+function toggleMenu() {
+    const menu = document.getElementById("sideMenu");
+    menu.style.right = (menu.style.right === "0px") ? "-260px" : "0px";
+}
 
+document.addEventListener("click", function(e) {
+    const menu = sideMenu;
+    const icon = menuIcon;
+
+    if (!menu.contains(e.target) && !icon.contains(e.target)) {
+        menu.style.right = "-260px";
+    }
+});
+
+/* FOTO DO PERFIL */
+document.getElementById("fotoPerfilUpload").addEventListener("change", function () {
     const file = this.files[0];
     if (!file) return;
 
-    const caminho = "fotos_perfil/" + usuario + ".jpg";
-    const storageRef = sRef(storage, caminho);
+    const reader = new FileReader();
+    reader.onload = e => {
+        const imgBase64 = e.target.result;
 
-    await uploadBytes(storageRef, file);
+        const user = localStorage.getItem("usuarioLogado");
+        if (user) {
+            localStorage.setItem("fotoPerfil_" + user, imgBase64);
+        }
 
-    const url = await getDownloadURL(storageRef);
+        perfilFoto.src = imgBase64;
+    };
 
-    // Salvar no database
-    await set(ref(db, "usuarios/" + usuario + "/foto"), url);
-
-    perfilFoto.src = url;
-
-    alert("Foto atualizada!");
+    reader.readAsDataURL(file);
 });
-
 </script>
+
+<!-- FIREBASE -->
 <script type="module">
-
-/* --------------------------
-       IMPORTS FIREBASE
---------------------------- */
-import { initializeApp }
+import { initializeApp } 
     from "https://www.gstatic.com/firebasejs/10.14.0/firebase-app.js";
-
-import { getDatabase, ref, get, push, set }
+import { getDatabase, ref, push, onValue, remove, update, set }
     from "https://www.gstatic.com/firebasejs/10.14.0/firebase-database.js";
 
-import { getStorage, ref as sRef, uploadBytes, getDownloadURL }
-    from "https://www.gstatic.com/firebasejs/10.14.0/firebase-storage.js";
-
-/* --------------------------
-      CONFIGURAÇÃO FIREBASE
---------------------------- */
 const firebaseConfig = {
     apiKey: "AIzaSyAt4CeGjdbjzdtMH1qZHw6RuBFJ6SeTDKk",
     authDomain: "coletivo-f34d4.firebaseapp.com",
     databaseURL: "https://coletivo-f34d4-default-rtdb.firebaseio.com",
     projectId: "coletivo-f34d4",
-    storageBucket: "coletivo-f34d4.appspot.com",
+    storageBucket: "coletivo-f34d4.firebasestorage.app",
     messagingSenderId: "296376447787",
     appId: "1:296376447787:web:1341c59c8087d6ac1e4b6e"
 };
 
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
-const storage = getStorage(app);
+const postsRef = ref(db, "coletivo_mural/posts");
 
-let usuario = localStorage.getItem("usuarioLogado");
+let imagemTemp = null;
+let tipoMidia = null;
 
-/* ----------------------------------------------------------------------
-    FUNÇÃO: CARREGAR POSTS GLOBAIS (todos os usuários — modelo A2)
----------------------------------------------------------------------- */
-async function carregarFeed() {
+document.getElementById("imgUpload").addEventListener("change", function () {
+    const file = this.files[0];
+    if (!file) return;
 
-    mural.innerHTML = `<p style="text-align:center;color:#888">Carregando...</p>`;
+    tipoMidia = file.type.startsWith("video/") ? "video" : "imagem";
 
-    const postsRef = ref(db, "posts");
-    const snap = await get(postsRef);
+    const reader = new FileReader();
+    reader.onload = e => {
+        imagemTemp = e.target.result;
 
-    if (!snap.exists()) {
-        mural.innerHTML = `<p style="text-align:center;color:#888">Nenhum post ainda.</p>`;
-        return;
-    }
+        if (tipoMidia === "video") {
+            preview.innerHTML = `
+                <video controls autoplay muted playsinline>
+                    <source src="${imagemTemp}">
+                </video>
+                <div class="remove-preview" onclick="removerPreview()">Excluir vídeo</div>
+            `;
+        } else {
+            preview.innerHTML = `
+                <img src="${imagemTemp}">
+                <div class="remove-preview" onclick="removerPreview()">Excluir imagem</div>
+            `;
+        }
+    };
+    reader.readAsDataURL(file);
+});
 
-    let lista = [];
+window.removerPreview = function () {
+    imagemTemp = null;
+    tipoMidia = null;
+    preview.innerHTML = "";
+    imgUpload.value = "";
+};
 
-    snap.forEach(userFolder => {
-        const userName = userFolder.key;
-        userFolder.forEach(postSnap => {
-            let item = postSnap.val();
-            item.id = postSnap.key;
-            item.autor = userName;
-            lista.push(item);
-        });
-    });
+window.postar = function () {
+    if (!usuario) return alert("Faça login!");
 
-    // Ordenar do mais novo para o mais antigo
-    lista.sort((a, b) => b.timestamp - a.timestamp);
+    const texto = document.getElementById("texto").value.trim();
+    if (texto === "" && !imagemTemp) return;
 
-    mural.innerHTML = "";
+    const postData = {
+        usuario,
+        texto,
+        imagem: tipoMidia === "imagem" ? imagemTemp : null,
+        video: tipoMidia === "video" ? imagemTemp : null,
+        reacoes: {},  
+        comentarios: {}
+    };
 
-    lista.forEach(post => {
-        mural.innerHTML += criarPostHTML(post);
-    });
-}
+    push(postsRef, postData);
 
-/* --------------------------
-  GERAR HTML DO POST
---------------------------- */
-function criarPostHTML(post) {
-    return `
-    <div class="post">
-        <div class="post-topo">
-            <img src="${post.fotoAutor}" class="post-foto">
-            <span class="post-autor">@${post.autor}</span>
-        </div>
+    // APÓS POSTAR, LIMPA TUDO:
+    document.getElementById("texto").value = "";  // <<< CORRIGIDO
+    removerPreview();                             // <<< LIMPA A PRÉVIA
+};
 
-        <div class="post-conteudo">
-            <p>${post.texto}</p>
-            ${post.imagem ? `<img src="${post.imagem}" class="post-imagem">` : ""}
-        </div>
 
-        <div class="post-comentarios" id="coment-${post.autor}-${post.id}">
-            ${gerarComentarios(post.comentarios)}
-        </div>
+onValue(postsRef, snap => {
+    const feed = document.getElementById("feed");
+    feed.innerHTML = "";
 
-        <div class="post-comentar">
-            <input type="text" class="input-comentario" id="input-${post.autor}-${post.id}" placeholder="Escreva um comentário...">
-            <button onclick="comentar('${post.autor}','${post.id}')">Enviar</button>
-        </div>
-    </div>`;
-}
+    snap.forEach(postSnap => {
+        const id = postSnap.key;
+        const p = postSnap.val();
 
-/* --------------------------
-GERAR HTML DOS COMENTÁRIOS
---------------------------- */
-function gerarComentarios(lista) {
-    if (!lista) return "";
+        const totalCurtidas = p.reacoes ? Object.keys(p.reacoes).length : 0;
+        const numComentarios = p.comentarios ? Object.keys(p.comentarios).length : 0;
+        const jaCurtiu = p.reacoes && p.reacoes[usuario];
 
-    let html = "";
-    Object.values(lista).forEach(c => {
-        html += `
-        <div class="comentario">
-            <img src="${c.foto}" class="coment-foto">
-            <div class="coment-texto">
-                <b>@${c.usuario}</b><br>
+        const div = document.createElement("div");
+        div.className = "post";
+
+        let midiaHTML = "";
+        if (p.imagem) midiaHTML = `<img src="${p.imagem}" onclick="abreModal('${p.imagem}')">`;
+        if (p.video) midiaHTML = `<video controls autoplay muted playsinline><source src="${p.video}"></video>`;
+
+        div.innerHTML = `
+            <strong style="color:#00ffcc;">${p.usuario}</strong><br><br>
+            ${midiaHTML}
+            <p>${p.texto}</p>
+
+            <div class="reaction-count" onclick="mostrarCurtidas('${id}')">👍 ${totalCurtidas} curtidas</div>
+            <div class="comment-count" onclick="toggleComentarios('${id}')">💬 ${numComentarios} comentários</div>
+
+            <div class="actions">
+                <div onclick="toggleCurtir('${id}')">👍 ${jaCurtiu ? "Você curtiu" : "Curtir"}</div>
+                <div onclick="toggleComentarioBox('${id}')">💬 Comentar</div>
+                <div onclick="apagarPost('${id}')">🗑 Excluir</div>
+            </div>
+
+            <div class="comment-box" id="cb_${id}" style="display:none;">
+                <textarea id="ct_${id}" rows="2" placeholder="Escreva um comentário..."></textarea>
+                <button onclick="comentar('${id}')">Enviar</button>
+            </div>
+
+            <div class="comment-list" id="cl_${id}"></div>
+
+            <div class="comment-list" id="likes_${id}" style="display:none;"></div>
+        `;
+
+        feed.prepend(div);
+
+        const lista = document.getElementById("cl_" + id);
+        lista.innerHTML = "";
+
+       if (p.comentarios) {
+    Object.entries(p.comentarios).forEach(([cid, c]) => {
+
+        // FOTO DO PERFIL SALVA NO FIREBASE (NÃO MAIS NO LOCALSTORAGE)
+        const foto = c.fotoPerfil || "https://cdn-icons-png.flaticon.com/512/149/149071.png";
+
+        const cdiv = document.createElement("div");
+        cdiv.className = "comment-entry";
+
+        cdiv.innerHTML = `
+            <img src="${foto}" 
+                 style="width:40px; height:40px; border-radius:50%; margin-right:10px; object-fit:cover; border:2px solid #00ffaa;">
+            
+            <div style="flex:1;">
+                <strong style="color:#00ffaa;">${c.usuario}:</strong> 
                 ${c.texto}
             </div>
-        </div>`;
-    });
 
-    return html;
+            <span onclick="excluirComentario('${id}','${cid}')"
+                  style="cursor:pointer;">❌</span>
+        `;
+
+        lista.appendChild(cdiv);
+    });
 }
 
-/* --------------------------
-      PUBLICAR POST
---------------------------- */
-publicarBtn.onclick = async function () {
-
-    if (!usuario) {
-        alert("Faça login primeiro.");
-        return;
-    }
-
-    const texto = postTexto.value.trim();
-    const file = postImagem.files[0];
-
-    if (!texto && !file) {
-        alert("Escreva algo ou selecione uma imagem.");
-        return;
-    }
-
-    publicarBtn.innerText = "Enviando...";
-
-    // Buscar foto global do usuário
-    const userRef = ref(db, "usuarios/" + usuario);
-    const snap = await get(userRef);
-    const dadosUser = snap.val();
-    const fotoAutor = dadosUser.foto;
-
-    let urlImg = null;
-
-    if (file) {
-        const caminho = `posts/${usuario}/${Date.now()}.jpg`;
-        const store = sRef(storage, caminho);
-
-        await uploadBytes(store, file);
-        urlImg = await getDownloadURL(store);
-    }
-
-    // Criar post
-    const novoPostRef = push(ref(db, "posts/" + usuario));
-
-    await set(novoPostRef, {
-        texto: texto,
-        imagem: urlImg,
-        fotoAutor: fotoAutor,
-        timestamp: Date.now()
     });
+});
 
-    postTexto.value = "";
-    postImagem.value = "";
-    publicarBtn.innerText = "Publicar";
+window.toggleCurtir = function (postId) {
+    if (!usuario) return;
 
-    carregarFeed();
+    const likeRef = ref(db, `coletivo_mural/posts/${postId}/reacoes/${usuario}`);
+
+    onValue(likeRef, snap => {
+        if (snap.exists()) {
+            remove(likeRef);
+        } else {
+            set(likeRef, true);
+        }
+    }, { onlyOnce: true });
 };
 
-/* --------------------------
-       COMENTAR POST
---------------------------- */
-window.comentar = async function (autorPost, postId) {
+window.mostrarCurtidas = function (postId) {
+    const caixa = document.getElementById("likes_" + postId);
+    caixa.style.display = caixa.style.display === "block" ? "none" : "block";
 
-    if (!usuario) return alert("Faça login.");
+    onValue(ref(db, `coletivo_mural/posts/${postId}/reacoes`), snap => {
+        caixa.innerHTML = "";
 
-    const input = document.getElementById(`input-${autorPost}-${postId}`);
-    const texto = input.value.trim();
+        if (!snap.exists()) {
+            caixa.innerHTML = "<p>Ninguém curtiu ainda</p>";
+            return;
+        }
+
+        snap.forEach(s => {
+            const pessoa = s.key;
+            const item = document.createElement("div");
+            item.className = "comment-entry";
+            item.innerHTML = `<strong>${pessoa}</strong> curtiu 👍`;
+            caixa.appendChild(item);
+        });
+    });
+};
+
+window.toggleComentarios = function (id) {
+    const lista = document.getElementById("cl_" + id);
+    lista.style.display = lista.style.display === "block" ? "none" : "block";
+};
+
+window.toggleComentarioBox = function (id) {
+    const box = document.getElementById("cb_" + id);
+    box.style.display = box.style.display === "block" ? "none" : "block";
+};
+
+window.comentar = function (postId) {
+    if (!usuario) return;
+
+    const campo = document.getElementById("ct_" + postId);
+    const texto = campo.value.trim();
     if (!texto) return;
 
-    // Buscar foto do usuário
-    const snap = await get(ref(db, "usuarios/" + usuario));
-    const fotoUser = snap.val().foto;
+    // PEGA A FOTO DO PERFIL DO USUÁRIO LOGADO
+    const foto = localStorage.getItem("fotoPerfil_" + usuario) 
+                 || "https://cdn-icons-png.flaticon.com/512/149/149071.png";
 
-    const comentariosRef = ref(db, `posts/${autorPost}/${postId}/comentarios`);
-    const novo = push(comentariosRef);
-
-    await set(novo, {
-        usuario: usuario,
-        foto: fotoUser,
-        texto: texto
+    push(ref(db, `coletivo_mural/posts/${postId}/comentarios`), {
+        usuario,
+        texto,
+        fotoPerfil: foto,
+        hora: new Date().toLocaleString("pt-BR")
     });
 
-    input.value = "";
-
-    carregarFeed();
+    campo.value = "";
 };
 
-/* --------------------------
-   INICIAR FEED AUTOMATICO
---------------------------- */
-carregarFeed();
 
+window.excluirComentario = function (postId, cid) {
+    if (confirm("Apagar este comentário?")) {
+        remove(ref(db, `coletivo_mural/posts/${postId}/comentarios/${cid}`));
+    }
+};
+
+window.apagarPost = function (id) {
+    if (confirm("Apagar este post completo?")) {
+        remove(ref(db, "coletivo_mural/posts/" + id));
+    }
+};
+
+window.abreModal = function (src) {
+    modalImg.src = src;
+    imgModal.style.display = "flex";
+};
+
+window.fechaModal = function () {
+    imgModal.style.display = "none";
+};
 </script>
+
+</body>
+</html>
+
+
+
+
+
