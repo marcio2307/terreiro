@@ -694,10 +694,11 @@ onValue(postsRef, snap => {
             <div class="comment-count" onclick="toggleComentarios('${id}')">💬 ${numComentarios} comentários</div>
 
             <div class="actions">
-                <div onclick="toggleCurtir('${id}')">👍 ${jaCurtiu ? "Você curtiu" : "Curtir"}</div>
-                <div onclick="toggleComentarioBox('${id}')">💬 Comentar</div>
-                <div onclick="apagarPost('${id}')">🗑 Excluir</div>
-            </div>
+    <div onclick="toggleCurtir('${id}')">👍 ${jaCurtiu ? "Você curtiu" : "Curtir"}</div>
+    <div onclick="toggleComentarioBox('${id}')">💬 Comentar</div>
+    <div onclick="compartilhar('${id}')">📤 Compartilhar</div>
+    <div onclick="apagarPost('${id}')">🗑 Excluir</div>
+</div>
 
             <div class="comment-box" id="cb_${id}" style="display:none;">
                 <textarea id="ct_${id}" rows="2" placeholder="Escreva um comentário..."></textarea>
@@ -828,8 +829,26 @@ window.abreModal = function (src) {
 window.fechaModal = function () {
     imgModal.style.display = "none";
 };
+
+/* ----------------------------- */
+/* 👇 FUNÇÃO NOVA: COMPARTILHAR */
+/* ----------------------------- */
+
+window.compartilhar = function(postId) {
+
+    // 🔗 LINK DA PUBLICAÇÃO — TROQUE SE TIVER UM DOMÍNIO REAL
+    const link = `https://seusite.com/post?id=${postId}`;
+
+    // Abre a publicação em nova aba
+    window.open(link, "_blank");
+
+    // Copia automaticamente para a área de transferência
+    navigator.clipboard.writeText(link).then(() => {
+        alert("🔗 Link copiado!\nAgora você pode colar onde quiser.");
+    });
+};
+
 </script>
 
 </body>
 </html>
-
