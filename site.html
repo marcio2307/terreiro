@@ -829,25 +829,28 @@ window.abreModal = function (src) {
 window.fechaModal = function () {
     imgModal.style.display = "none";
 };
+</script> <!-- FECHA O SCRIPT MODULE DO FIREBASE -->
 
-/* ----------------------------- */
-/* 👇 FUNÇÃO NOVA: COMPARTILHAR */
-/* ----------------------------- */
-
+<!-- AGORA SIM: SCRIPT SEPARADO -->
+<script>
 window.compartilhar = function(postId) {
 
-    // 🔗 LINK REAL DA SUA PUBLICAÇÃO
     const link = "https://marcio2307.github.io/terreiro/site.html";
 
-    // Abre o link em uma nova aba
-    window.open(link, "_blank");
-
-    // Copia automaticamente para a área de transferência
     navigator.clipboard.writeText(link).then(() => {
         alert("🔗 Link copiado!\nAgora você pode colar onde quiser.");
+
+        setTimeout(() => {
+            window.open(link, "_blank");
+        }, 150);
+
+    }).catch(() => {
+        alert("❌ Seu navegador bloqueou o copiar. Mas abrimos o link!");
+        window.open(link, "_blank");
     });
 };
 </script>
 
 </body>
 </html>
+
