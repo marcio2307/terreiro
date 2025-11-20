@@ -501,7 +501,6 @@ background:rgba(0,0,0,0.95); z-index:999999; justify-content:center; align-items
     <div id="feed"></div>
 </div>
 
-
 <!-- MODAL -->
 <div id="imgModal">
     <span id="closeModal" onclick="fechaModal()">✖</span>
@@ -522,41 +521,33 @@ window.addEventListener("DOMContentLoaded", () => {
         if (temPost) {
             visitante = true;
 
-            // remover login
             loginBox.style.display = "none";
             document.body.style.overflow = "auto";
             usuario = null;
 
-            // 🔒 DESATIVAR ÁREA DE POSTAGEM
             document.querySelector(".post-box").style.display = "none";
             document.querySelector("button[onclick='postar()']").style.display = "none";
 
-            // 🔒 OCULTAR MENU E RADIO
             document.getElementById("menuIcon").style.display = "none";
             document.getElementById("playBtn").style.display = "none";
             document.getElementById("radioPlayer").style.display = "none";
 
-            // 🔒 OCULTAR LOGO
             document.querySelector(".main-logo").style.display = "none";
 
-            // 🔒 DESATIVAR ENVIO DE IMAGENS
             document.getElementById("imgUpload").disabled = true;
 
-            // 🔒 ALTERAR BOTÃO “Voltar ao mural” → “Entrar no site”
             setTimeout(() => {
                 let btn = document.querySelector("button[onclick=\"window.location.href='site.html'\"]");
                 if (btn) btn.innerHTML = "⬅ Entrar no site";
             }, 600);
 
         } else {
-            // mural só com login
             loginBox.style.display = "flex";
             document.body.style.overflow = "hidden";
         }
 
     } else {
 
-        // usuário logado
         usuario = logado;
         loginBox.style.display = "none";
         document.body.style.overflow = "auto";
@@ -1177,5 +1168,6 @@ function logout() {
     window.location.reload();
 }
 </script>
+
 
 
