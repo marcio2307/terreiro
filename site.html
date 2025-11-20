@@ -794,30 +794,52 @@ onValue(storiesRef, snap => {
 
         if (agora - s.timestamp > 24 * 60 * 60 * 1000) return;
 
-        const div = document.createElement("div");
-        div.style.width = "70px";
-        div.style.height = "70px";
-        div.style.borderRadius = "50%";
-        div.style.border = "3px solid #00ffaa";
-        div.style.overflow = "hidden";
-        div.style.cursor = "pointer";
-        div.style.flexShrink = "0";
-        div.style.display = "flex";
-        div.style.alignItems = "center";
-        div.style.justifyContent = "center";
-        div.style.background = "#000";
+       // CONTAINER do círculo + nome abaixo
+const storyBox = document.createElement("div");
+storyBox.style.textAlign = "center";
+storyBox.style.flexShrink = "0";
+storyBox.style.width = "70px";
 
-        div.onclick = () => abrirStory(id, s);
+// Círculo do story
+const circle = document.createElement("div");
+circle.style.width = "70px";
+circle.style.height = "70px";
+circle.style.borderRadius = "50%";
+circle.style.border = "3px solid #00ffaa";
+circle.style.overflow = "hidden";
+circle.style.cursor = "pointer";
+circle.style.display = "flex";
+circle.style.alignItems = "center";
+circle.style.justifyContent = "center";
+circle.style.background = "#000";
 
-        if (s.imagem) {
-            div.innerHTML = `<img src="${s.imagem}" style="width:100%;height:100%;object-fit:cover;">`;
-        } else if (s.video) {
-            div.innerHTML = `<video src="${s.video}" muted style="width:100%;height:100%;object-fit:cover;"></video>`;
-        } else {
-            div.innerHTML = `<span style='color:#00ffaa;font-size:.8rem;'>TXT</span>`;
-        }
+circle.onclick = () => abrirStory(id, s);
 
-        bar.appendChild(div);
+// Mídia dentro do círculo
+if (s.imagem) {
+    circle.innerHTML = `<img src="${s.imagem}" style="width:100%;height:100%;object-fit:cover;">`;
+} else if (s.video) {
+    circle.innerHTML = `<video src="${s.video}" muted style="width:100%;height:100%;object-fit:cover;"></video>`;
+} else {
+    circle.innerHTML = `<span style='color:#00ffaa;font-size:.8rem;'>TXT</span>`;
+}
+
+// Nome do usuário abaixo do story
+const nome = document.createElement("div");
+nome.style.color = "#00ffaa";
+nome.style.fontSize = "0.78rem";
+nome.style.fontWeight = "bold";
+nome.style.marginTop = "6px";
+nome.style.whiteSpace = "nowrap";
+nome.style.overflow = "hidden";
+nome.style.textOverflow = "ellipsis";
+nome.textContent = s.usuario;
+
+// Monta o bloco final
+storyBox.appendChild(circle);
+storyBox.appendChild(nome);
+
+bar.appendChild(storyBox);
     });
 });
 
@@ -1303,4 +1325,5 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
 f
+
 
