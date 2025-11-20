@@ -594,6 +594,12 @@ import { initializeApp }
 import { getDatabase, ref, push, onValue, remove, update, set }
     from "https://www.gstatic.com/firebasejs/10.14.0/firebase-database.js";
 
+/* ------------------------------------------------------- */
+/* ✔ DETECTAR ID DO POST NA URL                            */
+/* ------------------------------------------------------- */
+const urlParams = new URLSearchParams(window.location.search);
+const postID_URL = urlParams.get("post");
+
 const firebaseConfig = {
     apiKey: "AIzaSyAt4CeGjdbjzdtMH1qZHw6RuBFJ6SeTDKk",
     authDomain: "coletivo-f34d4.firebaseapp.com",
@@ -611,6 +617,9 @@ const postsRef = ref(db, "coletivo_mural/posts");
 let imagemTemp = null;
 let tipoMidia = null;
 
+/* ------------------------------------------------------- */
+/* ENVIO DE MÍDIA / PRÉ-VISUALIZAÇÃO                       */
+/* ------------------------------------------------------- */
 document.getElementById("imgUpload").addEventListener("change", function () {
     const file = this.files[0];
     if (!file) return;
@@ -645,6 +654,9 @@ window.removerPreview = function () {
     imgUpload.value = "";
 };
 
+/* ------------------------------------------------------- */
+/* POSTAR NO MURAL                                          */
+/* ------------------------------------------------------- */
 window.postar = function () {
     if (!usuario) return alert("Faça login!");
 
@@ -666,94 +678,141 @@ window.postar = function () {
     removerPreview();
 };
 
+/* ------------------------------------------------------- */
+/* ❗ TRECHO NOVO — MURAL + POST INDIVIDUAL                 */
+/* ------------------------------------------------------- */
+
 onValue(postsRef, snap => {
     const feed = document.getElementById("feed");
     feed.innerHTML = "";
 
+    /* 👉 SE TIVER ?post=ID → MOSTRAR SÓ ESTE POST */
+    if (postID_URL) {
+        const p = snap.child(postID_URL).val();
+
+        if (!p) {
+            feed.innerHTML = "<p style='color:white;font-size:20px;'>Post não encontrado.</p>";
+            return;
+        }
+
+        mostrarPostIndividual(postID_URL, p);
+        return;
+    }
+
+    /* 👉 SEM ?post → MURAL NORMAL */
     snap.forEach(postSnap => {
         const id = postSnap.key;
         const p = postSnap.val();
+        adicionarPostAoMural(id, p);
+    });
+});
 
-        const totalCurtidas = p.reacoes ? Object.keys(p.reacoes).length : 0;
-        const numComentarios = p.comentarios ? Object.keys(p.comentarios).length : 0;
-        const jaCurtiu = p.reacoes && p.reacoes[usuario];
+/* ------------------------------------------------------- */
+/* FUNÇÃO — EXIBIR SÓ UM POST                              */
+/* ------------------------------------------------------- */
+window.mostrarPostIndividual = function(id, p) {
 
-        const div = document.createElement("div");
-        div.className = "post";
+    const feed = document.getElementById("feed");
 
-        let midiaHTML = "";
-        if (p.imagem) midiaHTML = `<img src="${p.imagem}" onclick="abreModal('${p.imagem}')">`;
-        if (p.video) midiaHTML = `<video controls autoplay muted playsinline><source src="${p.video}"></video>`;
+    let midiaHTML = "";
+    if (p.imagem) midiaHTML = `<img src="${p.imagem}" onclick="abreModal('${p.imagem}')">`;
+    if (p.video) midiaHTML = `<video controls autoplay muted playsinline><source src="${p.video}"></video>`;
 
-        div.innerHTML = `
+    feed.innerHTML = `
+        <div class="post">
             <strong style="color:#00ffcc;">${p.usuario}</strong><br><br>
             ${midiaHTML}
             <p>${p.texto}</p>
 
-            <div class="reaction-count" onclick="mostrarCurtidas('${id}')">👍 ${totalCurtidas} curtidas</div>
-            <div class="comment-count" onclick="toggleComentarios('${id}')">💬 ${numComentarios} comentários</div>
+            <button onclick="window.location.href='site.html'"
+                style="margin-top:20px;padding:12px 20px;background:#00ffaa;border:none;border-radius:10px;font-size:1rem;font-weight:bold;cursor:pointer;">
+                ⬅ Voltar ao mural
+            </button>
+        </div>
+    `;
+};
 
-            <div class="actions">
-    <div onclick="toggleCurtir('${id}')">👍 ${jaCurtiu ? "Você curtiu" : "Curtir"}</div>
-    <div onclick="toggleComentarioBox('${id}')">💬 Comentar</div>
-    <div onclick="compartilhar('${id}')">📤 Compartilhar</div>
-    <div onclick="apagarPost('${id}')">🗑 Excluir</div>
-</div>
+/* ------------------------------------------------------- */
+/* FUNÇÃO — ADICIONAR POST NA TIMELINE NORMAL              */
+/* ------------------------------------------------------- */
+window.adicionarPostAoMural = function(id, p) {
 
-            <div class="comment-box" id="cb_${id}" style="display:none;">
-                <textarea id="ct_${id}" rows="2" placeholder="Escreva um comentário..."></textarea>
-                <button onclick="comentar('${id}')">Enviar</button>
-            </div>
+    const totalCurtidas = p.reacoes ? Object.keys(p.reacoes).length : 0;
+    const numComentarios = p.comentarios ? Object.keys(p.comentarios).length : 0;
+    const jaCurtiu = p.reacoes && p.reacoes[usuario];
 
-            <div class="comment-list" id="cl_${id}"></div>
+    const div = document.createElement("div");
+    div.className = "post";
 
-            <div class="comment-list" id="likes_${id}" style="display:none;"></div>
-        `;
+    let midiaHTML = "";
+    if (p.imagem) midiaHTML = `<img src="${p.imagem}" onclick="abreModal('${p.imagem}')">`;
+    if (p.video) midiaHTML = `<video controls autoplay muted playsinline><source src="${p.video}"></video>`;
 
-        feed.prepend(div);
+    div.innerHTML = `
+        <strong style="color:#00ffcc;">${p.usuario}</strong><br><br>
+        ${midiaHTML}
+        <p>${p.texto}</p>
 
-        const lista = document.getElementById("cl_" + id);
-        lista.innerHTML = "";
+        <div class="reaction-count" onclick="mostrarCurtidas('${id}')">👍 ${totalCurtidas} curtidas</div>
+        <div class="comment-count" onclick="toggleComentarios('${id}')">💬 ${numComentarios} comentários</div>
 
-        if (p.comentarios) {
-            Object.entries(p.comentarios).forEach(([cid, c]) => {
+        <div class="actions">
+            <div onclick="toggleCurtir('${id}')">👍 ${jaCurtiu ? "Você curtiu" : "Curtir"}</div>
+            <div onclick="toggleComentarioBox('${id}')">💬 Comentar</div>
+            <div onclick="compartilhar('${id}')">📤 Compartilhar</div>
+            <div onclick="apagarPost('${id}')">🗑 Excluir</div>
+        </div>
 
-                const foto = c.fotoPerfil || "https://cdn-icons-png.flaticon.com/512/149/149071.png";
+        <div class="comment-box" id="cb_${id}" style="display:none;">
+            <textarea id="ct_${id}" rows="2" placeholder="Escreva um comentário..."></textarea>
+            <button onclick="comentar('${id}')">Enviar</button>
+        </div>
 
-                const cdiv = document.createElement("div");
-                cdiv.className = "comment-entry";
+        <div class="comment-list" id="cl_${id}"></div>
+        <div class="comment-list" id="likes_${id}" style="display:none;"></div>
+    `;
 
-                cdiv.innerHTML = `
-                    <img src="${foto}" 
-                         style="width:40px; height:40px; border-radius:50%; margin-right:10px; object-fit:cover; border:2px solid #00ffaa;">
-                    
-                    <div style="flex:1;">
-                        <strong style="color:#00ffaa;">${c.usuario}:</strong> 
-                        ${c.texto}
-                    </div>
+    feed.prepend(div);
 
-                    <span onclick="excluirComentario('${id}','${cid}')"
-                          style="cursor:pointer;">❌</span>
-                `;
+    /* LISTAR COMENTÁRIOS */
+    const lista = document.getElementById("cl_" + id);
+    lista.innerHTML = "";
 
-                lista.appendChild(cdiv);
-            });
-        }
+    if (p.comentarios) {
+        Object.entries(p.comentarios).forEach(([cid, c]) => {
+            const foto = c.fotoPerfil || "https://cdn-icons-png.flaticon.com/512/149/149071.png";
 
-    });
-});
+            const cdiv = document.createElement("div");
+            cdiv.className = "comment-entry";
+
+            cdiv.innerHTML = `
+                <img src="${foto}"
+                     style="width:40px;height:40px;border-radius:50%;margin-right:10px;object-fit:cover;border:2px solid #00ffaa;">
+                <div style="flex:1;">
+                    <strong style="color:#00ffcc;">${c.usuario}:</strong>
+                    ${c.texto}
+                </div>
+                <span onclick="excluirComentario('${id}','${cid}')" style="cursor:pointer;">❌</span>
+            `;
+
+            lista.appendChild(cdiv);
+        });
+    }
+};
+
+/* ------------------------------------------------------- */
+/* RESTANTE DO SEU CÓDIGO (curtir, comentar, apagar)       */
+/* ------------------------------------------------------- */
 
 window.toggleCurtir = function (postId) {
     if (!usuario) return;
 
-    const likeRef = ref(db, `coletivo_mural/posts/${postId}/reacoes/${usuario}`);
+    const likeRef =
+ ref(db, `coletivo_mural/posts/${postId}/reacoes/${usuario}`);
 
     onValue(likeRef, snap => {
-        if (snap.exists()) {
-            remove(likeRef);
-        } else {
-            set(likeRef, true);
-        }
+        if (snap.exists()) remove(likeRef);
+        else set(likeRef, true);
     }, { onlyOnce: true });
 };
 
@@ -829,28 +888,25 @@ window.abreModal = function (src) {
 window.fechaModal = function () {
     imgModal.style.display = "none";
 };
-</script> <!-- FECHA O SCRIPT MODULE DO FIREBASE -->
 
-<!-- AGORA SIM: SCRIPT SEPARADO -->
+</script>
+
+<!-- FUNÇÃO COMPARTILHAR — FORA DO MÓDULO -->
 <script>
 window.compartilhar = function(postId) {
 
-    const link = "https://marcio2307.github.io/terreiro/site.html";
+    const link = `https://marcio2307.github.io/terreiro/site.html?post=${postId}`;
 
     navigator.clipboard.writeText(link).then(() => {
-        alert("🔗 Link copiado!\nAgora você pode colar onde quiser.");
+        alert("🔗 Link do post copiado!\nAgora você pode colar onde quiser.");
 
         setTimeout(() => {
             window.open(link, "_blank");
         }, 150);
 
     }).catch(() => {
-        alert("❌ Seu navegador bloqueou o copiar. Mas abrimos o link!");
+        alert("❌ Seu navegador bloqueou o copiar, mas abrimos o post!");
         window.open(link, "_blank");
     });
 };
 </script>
-
-</body>
-</html>
-
