@@ -437,6 +437,49 @@ button {
     <img src="https://i.ibb.co/JRvgqKGM/5c081edd-21e9-48fb-9a91-834cfdd112fc-removebg-preview.png">
 </div>
 
+<!-- STORIES – ESTILO INSTAGRAM -->
+<div id="storiesBar" 
+style="display:flex; gap:12px; overflow-x:auto; padding:12px; margin-top:15px; width:95%; margin-left:auto; margin-right:auto;">
+</div>
+
+<button onclick="abrirCriarStory()" 
+style="width:92%;margin:auto;display:block;background:#00ffaa;border:none;padding:10px;border-radius:12px;margin-bottom:20px;font-weight:bold;">
++ Criar Story
+</button>
+
+<!-- MODAL CRIAR STORY -->
+<div id="storyModal" style="
+display:none; position:fixed; top:0; left:0; width:100%; height:100%;
+background:rgba(0,0,0,0.9); z-index:999999; justify-content:center; align-items:center;
+flex-direction:column; color:white;">
+
+    <textarea id="storyTexto" placeholder="Escreva algo..." 
+    style="width:80%;max-width:300px;height:80px;border-radius:10px;padding:10px;background:#222;color:white;"></textarea>
+
+    <input type="file" id="storyMedia" accept="image/*,video/*" style="margin-top:15px;">
+
+    <button onclick="enviarStory()" 
+    style="margin-top:20px;background:#00ffaa;padding:10px 25px;border:none;border-radius:10px;font-weight:bold;">
+        Postar Story
+    </button>
+
+    <button onclick="fecharCriarStory()" 
+    style="margin-top:15px;background:#ff5555;padding:10px 25px;border:none;border-radius:10px;">
+        Cancelar
+    </button>
+</div>
+
+<!-- MODAL VER STORY -->
+<div id="storyViewer" style="
+display:none; position:fixed; top:0; left:0; width:100%; height:100%;
+background:rgba(0,0,0,0.95); z-index:999999; justify-content:center; align-items:center; flex-direction:column;">
+    
+    <div id="storyContent"></div>
+
+    <span onclick="fecharStory()" 
+    style="position:absolute;top:20px;right:25px;font-size:2rem;cursor:pointer;color:#fff;">✖</span>
+</div>
+
 <!-- FEED -->
 <div class="feed">
 
@@ -457,6 +500,7 @@ button {
     <h2 style="color:#00ffcc; margin-top:25px;">Publicações</h2>
     <div id="feed"></div>
 </div>
+
 
 <!-- MODAL -->
 <div id="imgModal">
@@ -642,6 +686,117 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 const postsRef = ref(db, "coletivo_mural/posts");
+
+/* STORIES – BANCO */
+const storiesRef = ref(db, "coletivo_mural/stories");
+
+/* ABRIR / FECHAR MODAL */
+window.abrirCriarStory = function () {
+    if (!usuario) return alert("Faça login!");
+    storyModal.style.display = "flex";
+};
+
+window.fecharCriarStory = function () {
+    storyModal.style.display = "none";
+    storyTexto.value = "";
+    storyMedia.value = "";
+};
+
+/* ENVIAR STORY */
+window.enviarStory = function () {
+    if (!usuario) return alert("Faça login!");
+
+    const texto = storyTexto.value.trim();
+    const file = storyMedia.files[0];
+
+    let mediaBase64 = null;
+    let tipoMidia = null;
+
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = e => {
+            mediaBase64 = e.target.result;
+            tipoMidia = file.type.startsWith("video") ? "video" : "imagem";
+            salvarStory(texto, mediaBase64, tipoMidia);
+        };
+        reader.readAsDataURL(file);
+    } else {
+        salvarStory(texto, null, null);
+    }
+};
+
+function salvarStory(texto, media, tipo) {
+    push(storiesRef, {
+        usuario,
+        texto,
+        timestamp: Date.now(),
+        imagem: tipo === "imagem" ? media : null,
+        video: tipo === "video" ? media : null
+    });
+
+    fecharCriarStory();
+}
+
+/* MOSTRAR STORIES */
+onValue(storiesRef, snap => {
+    const bar = document.getElementById("storiesBar");
+    bar.innerHTML = "";
+
+    const agora = Date.now();
+
+    snap.forEach(story => {
+        const s = story.val();
+        const id = story.key;
+
+        if (agora - s.timestamp > 24 * 60 * 60 * 1000) return;
+
+        const div = document.createElement("div");
+        div.style.width = "70px";
+        div.style.height = "70px";
+        div.style.borderRadius = "50%";
+        div.style.border = "3px solid #00ffaa";
+        div.style.overflow = "hidden";
+        div.style.cursor = "pointer";
+        div.style.flexShrink = "0";
+        div.style.display = "flex";
+        div.style.alignItems = "center";
+        div.style.justifyContent = "center";
+        div.style.background = "#000";
+
+        div.onclick = () => abrirStory(id, s);
+
+        if (s.imagem) {
+            div.innerHTML = `<img src="${s.imagem}" style="width:100%;height:100%;object-fit:cover;">`;
+        } else if (s.video) {
+            div.innerHTML = `<video src="${s.video}" muted style="width:100%;height:100%;object-fit:cover;"></video>`;
+        } else {
+            div.innerHTML = `<span style='color:#00ffaa;font-size:.8rem;'>TXT</span>`;
+        }
+
+        bar.appendChild(div);
+    });
+});
+
+/* ABRIR STORY */
+window.abrirStory = function (id, s) {
+    const content = document.getElementById("storyContent");
+
+    if (s.imagem) {
+        content.innerHTML = `<img src="${s.imagem}" style="max-width:92%;max-height:92%;border-radius:15px;">`;
+    } else if (s.video) {
+        content.innerHTML = `<video src="${s.video}" controls autoplay style="max-width:92%;max-height:92%;border-radius:15px;"></video>`;
+    } else {
+        content.innerHTML = `<p style="color:white;font-size:1.4rem;padding:25px;text-align:center;">${s.texto}</p>`;
+    }
+
+    storyViewer.style.display = "flex";
+};
+
+/* FECHAR STORY */
+window.fecharStory = function () {
+    storyViewer.style.display = "none";
+};
+
 
 let imagemTemp = null;
 let tipoMidia = null;
@@ -1022,4 +1177,5 @@ function logout() {
     window.location.reload();
 }
 </script>
+
 
