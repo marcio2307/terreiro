@@ -708,7 +708,7 @@ onValue(postsRef, snap => {
 });
 
 /* ------------------------------------------------------- */
-/* FUNÇÃO — EXIBIR SÓ UM POST                              */
+/* FUNÇÃO — EXIBIR SÓ UM POST (COM CURTIR + COMENTAR)      */
 /* ------------------------------------------------------- */
 window.mostrarPostIndividual = function(id, p) {
 
@@ -718,18 +718,62 @@ window.mostrarPostIndividual = function(id, p) {
     if (p.imagem) midiaHTML = `<img src="${p.imagem}" onclick="abreModal('${p.imagem}')">`;
     if (p.video) midiaHTML = `<video controls autoplay muted playsinline><source src="${p.video}"></video>`;
 
+    const totalCurtidas = p.reacoes ? Object.keys(p.reacoes).length : 0;
+    const numComentarios = p.comentarios ? Object.keys(p.comentarios).length : 0;
+    const jaCurtiu = p.reacoes && p.reacoes[usuario];
+
     feed.innerHTML = `
         <div class="post">
             <strong style="color:#00ffcc;">${p.usuario}</strong><br><br>
             ${midiaHTML}
             <p>${p.texto}</p>
 
+            <div class="reaction-count">👍 ${totalCurtidas} curtidas</div>
+            <div class="comment-count">💬 ${numComentarios} comentários</div>
+
+            <div class="actions">
+                <div onclick="toggleCurtir('${id}')">👍 ${jaCurtiu ? "Você curtiu" : "Curtir"}</div>
+                <div onclick="toggleComentarioBox('${id}')">💬 Comentar</div>
+                <div onclick="compartilhar('${id}')">📤 Compartilhar</div>
+            </div>
+
+            <div class="comment-box" id="cb_${id}" style="display:none;">
+                <textarea id="ct_${id}" rows="2" placeholder="Escreva um comentário..."></textarea>
+                <button onclick="comentar('${id}')">Enviar</button>
+            </div>
+
+            <div class="comment-list" id="cl_${id}"></div>
+
             <button onclick="window.location.href='site.html'"
-                style="margin-top:20px;padding:12px 20px;background:#00ffaa;border:none;border-radius:10px;font-size:1rem;font-weight:bold;cursor:pointer;">
+                style="margin-top:25px;padding:12px 20px;background:#00ffaa;border:none;border-radius:10px;font-size:1rem;font-weight:bold;cursor:pointer;">
                 ⬅ Voltar ao mural
             </button>
         </div>
     `;
+
+    /* LISTAR COMENTÁRIOS */
+    const lista = document.getElementById("cl_" + id);
+    lista.innerHTML = "";
+
+    if (p.comentarios) {
+        Object.entries(p.comentarios).forEach(([cid, c]) => {
+            const foto = c.fotoPerfil || "https://cdn-icons-png.flaticon.com/512/149/149071.png";
+
+            const cdiv = document.createElement("div");
+            cdiv.className = "comment-entry";
+
+            cdiv.innerHTML = `
+                <img src="${foto}"
+                    style="width:40px;height:40px;border-radius:50%;margin-right:10px;object-fit:cover;border:2px solid #00ffaa;">
+                <div style="flex:1;">
+                    <strong style="color:#00ffcc;">${c.usuario}:</strong>
+                    ${c.texto}
+                </div>
+            `;
+
+            lista.appendChild(cdiv);
+        });
+    }
 };
 
 /* ------------------------------------------------------- */
@@ -787,7 +831,7 @@ window.adicionarPostAoMural = function(id, p) {
 
             cdiv.innerHTML = `
                 <img src="${foto}"
-                     style="width:40px;height:40px;border-radius:50%;margin-right:10px;object-fit:cover;border:2px solid #00ffaa;">
+                    style="width:40px;height:40px;border-radius:50%;margin-right:10px;object-fit:cover;border:2px solid #00ffaa;">
                 <div style="flex:1;">
                     <strong style="color:#00ffcc;">${c.usuario}:</strong>
                     ${c.texto}
@@ -807,8 +851,7 @@ window.adicionarPostAoMural = function(id, p) {
 window.toggleCurtir = function (postId) {
     if (!usuario) return;
 
-    const likeRef =
- ref(db, `coletivo_mural/posts/${postId}/reacoes/${usuario}`);
+    const likeRef = ref(db, `coletivo_mural/posts/${postId}/reacoes/${usuario}`);
 
     onValue(likeRef, snap => {
         if (snap.exists()) remove(likeRef);
