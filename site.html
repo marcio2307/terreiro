@@ -472,21 +472,10 @@ window.addEventListener("DOMContentLoaded", () => {
 
     const logado = localStorage.getItem("usuarioLogado");
 
-// SE a URL tiver ?post=ID → NÃO exigir login
-if (!logado && !postID_URL) {
-    loginBox.style.display = "flex";
-    document.body.style.overflow = "hidden";
-} else {
-    usuario = logado;
-    loginBox.style.display = "none";
-    document.body.style.overflow = "auto";
-
-    const fotoSalva = localStorage.getItem("fotoPerfil_" + usuario);
-    if (fotoSalva) perfilFoto.src = fotoSalva;
-
-    nomeUsuarioMenu.textContent = usuario || "";
-}
- else {
+    if (!logado) {
+        loginBox.style.display = "flex";
+        document.body.style.overflow = "hidden";
+    } else {
         usuario = logado;
         loginBox.style.display = "none";
         document.body.style.overflow = "auto";
