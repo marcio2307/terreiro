@@ -440,17 +440,14 @@ button {
 <!-- STORIES – ESTILO INSTAGRAM -->
 <div id="storiesBar" 
 style="display:flex; gap:12px; overflow-x:auto; padding:12px; margin-top:15px; width:95%; margin-left:auto; margin-right:auto;">
-</div>
 
-<!-- STORY DO USUÁRIO -->
-<div style="width:95%; margin: auto; display:flex; justify-content:flex-start; margin-bottom:20px;">
-    <div style="text-align:center;">
+    <!-- SEU STORY DENTRO DA BARRA -->
+    <div id="seuStoryBox" style="text-align:center; flex-shrink:0;">
         
-        <!-- CÍRCULO DO SEU STORY -->
         <div onclick="abrirCriarStory()" id="meuStoryBtn"
             style="
-                width:75px;
-                height:75px;
+                width:70px;
+                height:70px;
                 border-radius:50%;
                 border:3px solid #00ffaa;
                 overflow:hidden;
@@ -465,12 +462,13 @@ style="display:flex; gap:12px; overflow-x:auto; padding:12px; margin-top:15px; w
                  style="width:100%; height:100%; object-fit:cover;">
         </div>
 
-        <div style="color:#00ffaa;font-size:0.85rem;font-weight:bold;margin-top:5px;">
+        <div style="color:#00ffaa;font-size:0.80rem;font-weight:bold;margin-top:5px;">
             Seu Story
         </div>
-
     </div>
+
 </div>
+
 
 <!-- MODAL CRIAR STORY -->
 <div id="storyModal" style="
@@ -494,6 +492,7 @@ flex-direction:column; color:white;">
     </button>
 </div>
 
+
 <!-- MODAL VER STORY -->
 <div id="storyViewer" style="
 display:none; position:fixed; top:0; left:0; width:100%; height:100%;
@@ -504,6 +503,7 @@ background:rgba(0,0,0,0.95); z-index:999999; justify-content:center; align-items
     <span onclick="fecharStory()" 
     style="position:absolute;top:20px;right:25px;font-size:2rem;cursor:pointer;color:#fff;">✖</span>
 </div>
+
 
 <!-- FEED -->
 <div class="feed">
@@ -526,11 +526,13 @@ background:rgba(0,0,0,0.95); z-index:999999; justify-content:center; align-items
     <div id="feed"></div>
 </div>
 
+
 <!-- MODAL -->
 <div id="imgModal">
     <span id="closeModal" onclick="fechaModal()">✖</span>
     <img id="modalImg">
 </div>
+
 
 <script>
 let usuario = null;
@@ -584,7 +586,6 @@ window.addEventListener("DOMContentLoaded", () => {
     }
 });
 </script>
-
 <!-- LOGIN COM GOOGLE -->
 <script>
 window.onload = function () {
@@ -1272,3 +1273,4 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 });
 </script>
+
