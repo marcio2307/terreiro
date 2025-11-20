@@ -768,19 +768,82 @@ onValue(storiesRef, snap => {
     });
 });
 
-/* ABRIR STORY */
+/* ABRIR STORY – com visualizações, lista de quem viu e botão excluir do dono */
 window.abrirStory = function (id, s) {
     const content = document.getElementById("storyContent");
 
+    let midiaHTML = "";
+
     if (s.imagem) {
-        content.innerHTML = `<img src="${s.imagem}" style="max-width:92%;max-height:92%;border-radius:15px;">`;
+        midiaHTML = `<img src="${s.imagem}" style="max-width:92%;max-height:92%;border-radius:15px;">`;
     } else if (s.video) {
-        content.innerHTML = `<video src="${s.video}" controls autoplay style="max-width:92%;max-height:92%;border-radius:15px;"></video>`;
+        midiaHTML = `<video src="${s.video}" controls autoplay style="max-width:92%;max-height:92%;border-radius:15px;"></video>`;
     } else {
-        content.innerHTML = `<p style="color:white;font-size:1.4rem;padding:25px;text-align:center;">${s.texto}</p>`;
+        midiaHTML = `<p style="color:white;font-size:1.4rem;padding:25px;text-align:center;">${s.texto}</p>`;
     }
 
+    // 🔹 Mostra a mídia imediatamente para não ficar vazio
+    content.innerHTML = midiaHTML;
     storyViewer.style.display = "flex";
+
+    // 👁️ Registrar visualização (sem duplicar) se estiver logado
+    if (usuario) {
+        const viewRef = ref(db, `coletivo_mural/stories/${id}/views/${usuario}`);
+        set(viewRef, {
+            usuario: usuario,
+            hora: Date.now()
+        });
+    }
+
+    // 👁️ Buscar lista de quem viu e total de visualizações
+    const viewsRef = ref(db, `coletivo_mural/stories/${id}/views`);
+
+    onValue(viewsRef, snap => {
+        let total = 0;
+        let listaViuHTML = "";
+
+        if (snap.exists()) {
+            snap.forEach(vSnap => {
+                total++;
+                const v = vSnap.val();
+                listaViuHTML += `
+                    <div style="padding:6px;color:#00ffaa;font-size:1rem;">
+                        👁️ ${v.usuario}
+                    </div>
+                `;
+            });
+        }
+
+        if (!listaViuHTML) {
+            listaViuHTML = `<p style="color:white;">Ninguém viu ainda</p>`;
+        }
+
+        // 🗑 Botão excluir só aparece para o dono do story
+        let btnExcluir = "";
+        if (usuario && s.usuario === usuario) {
+            btnExcluir = `
+                <button onclick="excluirStory('${id}')"
+                    style="margin-top:18px;background:#ff4444;color:white;padding:10px 20px;border:none;border-radius:10px;font-weight:bold;">
+                    Excluir Story
+                </button>
+            `;
+        }
+
+        content.innerHTML = `
+            ${midiaHTML}
+
+            <div style="margin-top:20px;color:#00ffaa;font-size:1.2rem;font-weight:bold;">
+                👁️ ${total} visualizaç${total === 1 ? "ão" : "ões"}
+            </div>
+
+            <div style="margin-top:10px;background:rgba(255,255,255,0.1);padding:10px;border-radius:10px;width:90%;max-width:300px;">
+                <div style="color:#00ffaa;font-weight:bold;margin-bottom:5px;">Quem viu:</div>
+                ${listaViuHTML}
+            </div>
+
+            ${btnExcluir}
+        `;
+    }, { onlyOnce: true });
 };
 
 /* FECHAR STORY */
@@ -788,6 +851,26 @@ window.fecharStory = function () {
     storyViewer.style.display = "none";
 };
 
+/* EXCLUIR STORY – só o dono pode apagar */
+window.excluirStory = function(id) {
+
+    onValue(ref(db, "coletivo_mural/stories/" + id), snap => {
+        if (!snap.exists()) return;
+
+        const dono = snap.val().usuario;
+
+        if (dono !== usuario) {
+            alert("❌ Você não pode excluir stories de outras pessoas!");
+            return;
+        }
+
+        if (confirm("Excluir seu story?")) {
+            remove(ref(db, "coletivo_mural/stories/" + id));
+            fecharStory();
+        }
+
+    }, { onlyOnce: true });
+};
 
 let imagemTemp = null;
 let tipoMidia = null;
@@ -1168,6 +1251,7 @@ function logout() {
     window.location.reload();
 }
 </script>
+
 
 
 
