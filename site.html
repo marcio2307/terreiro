@@ -543,37 +543,42 @@ window.addEventListener("DOMContentLoaded", () => {
     const logado = localStorage.getItem("usuarioLogado");
     const temPost = new URLSearchParams(window.location.search).get("post");
 
-    if (!logado) {
+   if (!logado) {
 
-        if (temPost) {
-            visitante = true;
+    if (temPost) {
+        visitante = true;
 
-            loginBox.style.display = "none";
-            document.body.style.overflow = "auto";
-            usuario = null;
+        loginBox.style.display = "none";
+        document.body.style.overflow = "auto";
+        usuario = null;
 
-            document.querySelector(".post-box").style.display = "none";
-            document.querySelector("button[onclick='postar()']").style.display = "none";
+        // desabilitar criação de posts
+        document.querySelector(".post-box").style.display = "none";
+        document.querySelector("button[onclick='postar()']").style.display = "none";
+        document.getElementById("imgUpload").disabled = true;
 
-            document.getElementById("menuIcon").style.display = "none";
-            document.getElementById("playBtn").style.display = "none";
-            document.getElementById("radioPlayer").style.display = "none";
+        // esconder menus e rádio
+        document.getElementById("menuIcon").style.display = "none";
+        document.getElementById("playBtn").style.display = "none";
+        document.getElementById("radioPlayer").style.display = "none";
+        document.querySelector(".main-logo").style.display = "none";
 
-            document.querySelector(".main-logo").style.display = "none";
+        // ❌ ESCONDER COMPLETAMENTE OS STORIES PARA VISITANTE
+        document.getElementById("storiesBar").style.display = "none";
 
-            document.getElementById("imgUpload").disabled = true;
-
-            setTimeout(() => {
-                let btn = document.querySelector("button[onclick=\"window.location.href='site.html'\"]");
-                if (btn) btn.innerHTML = "⬅ Entrar no site";
-            }, 600);
-
-        } else {
-            loginBox.style.display = "flex";
-            document.body.style.overflow = "hidden";
-        }
+        // modificar botão de voltar (opcional)
+        setTimeout(() => {
+            let btn = document.querySelector("button[onclick=\"window.location.href='site.html'\"]");
+            if (btn) btn.innerHTML = "⬅ Entrar no site";
+        }, 600);
 
     } else {
+        // login normal
+        loginBox.style.display = "flex";
+        document.body.style.overflow = "hidden";
+    }
+}
+ else {
 
         usuario = logado;
         loginBox.style.display = "none";
@@ -1325,5 +1330,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
 
 f
+
 
 
