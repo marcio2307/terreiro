@@ -753,6 +753,7 @@ window.mostrarPostIndividual = function(id, p) {
                 <div onclick="toggleCurtir('${id}')">👍 ${jaCurtiu ? "Você curtiu" : "Curtir"}</div>
                 <div onclick="toggleComentarioBox('${id}')">💬 Comentar</div>
                 <div onclick="compartilhar('${id}')">📤 Compartilhar</div>
+                ${p.usuario === usuario ? `<div onclick="apagarPost('${id}')">🗑 Excluir</div>` : ""}
             </div>
 
             <div class="comment-box" id="cb_${id}" style="display:none;">
@@ -786,6 +787,7 @@ window.mostrarPostIndividual = function(id, p) {
                     <strong style="color:#00ffcc;">${c.usuario}:</strong>
                     ${c.texto}
                 </div>
+                ${c.usuario === usuario ? `<span onclick="excluirComentario('${id}','${cid}')" style="cursor:pointer;">❌</span>` : ""}
             `;
 
             lista.appendChild(cdiv);
@@ -819,7 +821,7 @@ window.adicionarPostAoMural = function(id, p) {
             <div onclick="toggleCurtir('${id}')">👍 ${jaCurtiu ? "Você curtiu" : "Curtir"}</div>
             <div onclick="toggleComentarioBox('${id}')">💬 Comentar</div>
             <div onclick="compartilhar('${id}')">📤 Compartilhar</div>
-            <div onclick="apagarPost('${id}')">🗑 Excluir</div>
+            ${p.usuario === usuario ? `<div onclick="apagarPost('${id}')">🗑 Excluir</div>` : ""}
         </div>
 
         <div class="comment-box" id="cb_${id}" style="display:none;">
@@ -850,7 +852,7 @@ window.adicionarPostAoMural = function(id, p) {
                     <strong style="color:#00ffcc;">${c.usuario}:</strong>
                     ${c.texto}
                 </div>
-                <span onclick="excluirComentario('${id}','${cid}')" style="cursor:pointer;">❌</span>
+                ${c.usuario === usuario ? `<span onclick="excluirComentario('${id}','${cid}')" style="cursor:pointer;">❌</span>` : ""}
             `;
 
             lista.appendChild(cdiv);
@@ -911,7 +913,7 @@ window.toggleComentarioBox = function (id) {
     box.style.display = box.style.display === "block" ? "none" : "block";
 };
 
-/* 🔥 ATUALIZADA — AGORA ABRE LOGIN SE NÃO ESTIVER LOGADO */
+/* 🔥 ATUALIZADA — AGORA COM PERMISSÃO DE DONO PARA APAGAR */
 window.comentar = function (postId) {
 
     if (!usuario) {
@@ -938,16 +940,44 @@ window.comentar = function (postId) {
     campo.value = "";
 };
 
+/* ❌ AGORA SÓ O DONO DO COMENTÁRIO PODE EXCLUIR */
 window.excluirComentario = function (postId, cid) {
-    if (confirm("Apagar este comentário?")) {
-        remove(ref(db, `coletivo_mural/posts/${postId}/comentarios/${cid}`));
-    }
+
+    onValue(ref(db, `coletivo_mural/posts/${postId}/comentarios/${cid}`), snap => {
+        if (!snap.exists()) return;
+
+        const dono = snap.val().usuario;
+
+        if (dono !== usuario) {
+            alert("❌ Você não pode apagar comentários de outras pessoas!");
+            return;
+        }
+
+        if (confirm("Excluir seu comentário?")) {
+            remove(ref(db, `coletivo_mural/posts/${postId}/comentarios/${cid}`));
+        }
+
+    }, { onlyOnce: true });
 };
 
+/* ❌ APAGAR POST — AGORA SÓ O DONO PODE */
 window.apagarPost = function (id) {
-    if (confirm("Apagar este post completo?")) {
-        remove(ref(db, "coletivo_mural/posts/" + id));
-    }
+
+    onValue(ref(db, "coletivo_mural/posts/" + id), snap => {
+        if (!snap.exists()) return;
+
+        const dono = snap.val().usuario;
+
+        if (dono !== usuario) {
+            alert("❌ Você não pode apagar postagens de outras pessoas!");
+            return;
+        }
+
+        if (confirm("Apagar seu post?")) {
+            remove(ref(db, "coletivo_mural/posts/" + id));
+        }
+
+    }, { onlyOnce: true });
 };
 
 window.abreModal = function (src) {
@@ -992,3 +1022,4 @@ function logout() {
     window.location.reload();
 }
 </script>
+
