@@ -964,5 +964,21 @@ window.compartilhar = function(postId) {
 };
 </script>
 
+<!-- LOGOUT -->
+<script>
+function logout() {
+    // Remove login
+    localStorage.removeItem("usuarioLogado");
+
+    // Remove foto se existir
+    if (usuario) {
+        localStorage.removeItem("fotoPerfil_" + usuario);
+    }
+
+    // Recarrega e volta para o login
+    window.location.reload();
+}
+</script>
+
 
 
