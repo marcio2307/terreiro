@@ -398,24 +398,8 @@ button {
 <div id="loginBox">
     <img src="https://i.ibb.co/JRvgqKGM/5c081edd-21e9-48fb-9a91-834cfdd112fc-removebg-preview.png">
 
-    <input type="text" id="loginUser" placeholder="Usuário">
-    <input type="password" id="loginPass" placeholder="Senha">
-    <button onclick="login()">Entrar</button>
-
-    <!-- BOTÃO GOOGLE -->
+    <!-- SOMENTE LOGIN COM GOOGLE -->
     <div id="googleLogin" class="google-btn"></div>
-
-    <div id="cadastroLink" onclick="abrirCadastro()">Criar conta</div>
-</div>
-
-<div id="cadastroBox">
-    <img src="https://i.ibb.co/JRvgqKGM/5c081edd-21e9-48fb-9a91-834cfdd112fc-removebg-preview.png">
-
-    <input type="text" id="cadUser" placeholder="Novo usuário">
-    <input type="password" id="cadPass" placeholder="Nova senha">
-    <button onclick="cadastrar()">Cadastrar</button>
-
-    <div id="voltarLogin" onclick="fecharCadastro()">Voltar</div>
 </div>
 
 <!-- TOPO -->
@@ -479,8 +463,9 @@ button {
     <span id="closeModal" onclick="fechaModal()">✖</span>
     <img id="modalImg">
 </div>
+
 <script>
-/* LOGIN */
+/* LOGIN APENAS COM GOOGLE */
 let usuario = null;
 
 window.addEventListener("DOMContentLoaded", () => {
@@ -501,56 +486,6 @@ window.addEventListener("DOMContentLoaded", () => {
         nomeUsuarioMenu.textContent = usuario;
     }
 });
-
-function abrirCadastro() {
-    loginBox.style.display = "none";
-    cadastroBox.style.display = "flex";
-}
-
-function fecharCadastro() {
-    cadastroBox.style.display = "none";
-    loginBox.style.display = "flex";
-}
-
-function cadastrar() {
-    const user = cadUser.value.trim();
-    const pass = cadPass.value.trim();
-
-    if (user.length < 2 || pass.length < 2) {
-        alert("Preencha usuário e senha.");
-        return;
-    }
-
-    if (localStorage.getItem("user_" + user)) {
-        alert("Usuário já existe.");
-        return;
-    }
-
-    localStorage.setItem("user_" + user, pass);
-    alert("Cadastro realizado!");
-    fecharCadastro();
-}
-
-function login() {
-    const user = loginUser.value.trim();
-    const pass = loginPass.value.trim();
-
-    const savedPass = localStorage.getItem("user_" + user);
-
-    if (!savedPass) return alert("Usuário não encontrado.");
-    if (savedPass !== pass) return alert("Senha incorreta.");
-
-    usuario = user;
-    localStorage.setItem("usuarioLogado", user);
-
-    loginBox.style.display = "none";
-    document.body.style.overflow = "auto";
-
-    const fotoSalva = localStorage.getItem("fotoPerfil_" + user);
-    if (fotoSalva) perfilFoto.src = fotoSalva;
-
-    nomeUsuarioMenu.textContent = user;
-}
 
 function logout() {
     localStorage.removeItem("usuarioLogado");
@@ -897,3 +832,4 @@ window.fechaModal = function () {
 
 </body>
 </html>
+
