@@ -859,8 +859,16 @@ window.adicionarPostAoMural = function(id, p) {
 };
 
 /* FUNÇÕES DE CURTIR / COMENTAR / APAGAR */
+
+/* 🔥 ATUALIZADA — AGORA ABRE LOGIN SE NÃO ESTIVER LOGADO */
 window.toggleCurtir = function (postId) {
-    if (!usuario) return;
+
+    if (!usuario) {
+        alert("Você precisa entrar para curtir.");
+        loginBox.style.display = "flex";
+        document.body.style.overflow = "hidden";
+        return;
+    }
 
     const likeRef = ref(db, `coletivo_mural/posts/${postId}/reacoes/${usuario}`);
 
@@ -870,6 +878,7 @@ window.toggleCurtir = function (postId) {
     }, { onlyOnce: true });
 };
 
+/* LISTAR CURTIDAS */
 window.mostrarCurtidas = function (postId) {
     const caixa = document.getElementById("likes_" + postId);
     caixa.style.display = caixa.style.display === "block" ? "none" : "block";
@@ -902,8 +911,15 @@ window.toggleComentarioBox = function (id) {
     box.style.display = box.style.display === "block" ? "none" : "block";
 };
 
+/* 🔥 ATUALIZADA — AGORA ABRE LOGIN SE NÃO ESTIVER LOGADO */
 window.comentar = function (postId) {
-    if (!usuario) return;
+
+    if (!usuario) {
+        alert("Você precisa entrar para comentar.");
+        loginBox.style.display = "flex";
+        document.body.style.overflow = "hidden";
+        return;
+    }
 
     const campo = document.getElementById("ct_" + postId);
     const texto = campo.value.trim();
@@ -967,18 +983,12 @@ window.compartilhar = function(postId) {
 <!-- LOGOUT -->
 <script>
 function logout() {
-    // Remove login
     localStorage.removeItem("usuarioLogado");
 
-    // Remove foto se existir
     if (usuario) {
         localStorage.removeItem("fotoPerfil_" + usuario);
     }
 
-    // Recarrega e volta para o login
     window.location.reload();
 }
 </script>
-
-
-
