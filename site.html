@@ -465,47 +465,64 @@ button {
 </div>
 
 <script>
-/* LOGIN APENAS COM GOOGLE */
 let usuario = null;
+let visitante = false;
 
 window.addEventListener("DOMContentLoaded", () => {
 
     const logado = localStorage.getItem("usuarioLogado");
-
-   if (!logado) {
-
-    // 👉 SE A URL TEM ?post=ID, ENTRAR SEM LOGIN
     const temPost = new URLSearchParams(window.location.search).get("post");
 
-    if (temPost) {
-        // visitante - sem login
+    if (!logado) {
+
+        if (temPost) {
+            visitante = true;
+
+            // remover login
+            loginBox.style.display = "none";
+            document.body.style.overflow = "auto";
+            usuario = null;
+
+            // 🔒 DESATIVAR ÁREA DE POSTAGEM
+            document.querySelector(".post-box").style.display = "none";
+            document.querySelector("button[onclick='postar()']").style.display = "none";
+
+            // 🔒 OCULTAR MENU E RADIO
+            document.getElementById("menuIcon").style.display = "none";
+            document.getElementById("playBtn").style.display = "none";
+            document.getElementById("radioPlayer").style.display = "none";
+
+            // 🔒 OCULTAR LOGO
+            document.querySelector(".main-logo").style.display = "none";
+
+            // 🔒 DESATIVAR ENVIO DE IMAGENS
+            document.getElementById("imgUpload").disabled = true;
+
+            // 🔒 ALTERAR BOTÃO “Voltar ao mural” → “Entrar no site”
+            setTimeout(() => {
+                let btn = document.querySelector("button[onclick=\"window.location.href='site.html'\"]");
+                if (btn) btn.innerHTML = "⬅ Entrar no site";
+            }, 600);
+
+        } else {
+            // mural só com login
+            loginBox.style.display = "flex";
+            document.body.style.overflow = "hidden";
+        }
+
+    } else {
+
+        // usuário logado
+        usuario = logado;
         loginBox.style.display = "none";
         document.body.style.overflow = "auto";
-        usuario = null; // visitante não modifica nada
-    } else {
-        // mural só com login
-        loginBox.style.display = "flex";
-        document.body.style.overflow = "hidden";
+
+        const fotoSalva = localStorage.getItem("fotoPerfil_" + usuario);
+        if (fotoSalva) perfilFoto.src = fotoSalva;
+
+        nomeUsuarioMenu.textContent = usuario;
     }
-
-} else {
-    // usuário logado normalmente
-    usuario = logado;
-    loginBox.style.display = "none";
-    document.body.style.overflow = "auto";
-
-    const fotoSalva = localStorage.getItem("fotoPerfil_" + usuario);
-    if (fotoSalva) perfilFoto.src = fotoSalva;
-
-    nomeUsuarioMenu.textContent = usuario;
-}
 });
-
-function logout() {
-    localStorage.removeItem("usuarioLogado");
-    loginBox.style.display = "flex";
-    document.body.style.overflow = "hidden";
-}
 </script>
 
 <!-- LOGIN COM GOOGLE -->
@@ -571,6 +588,7 @@ document.getElementById("fotoPerfilUpload").addEventListener("change", function 
 <!-- RADIO + MENU -->
 <script>
 let tocando = false;
+
 function toggleRadio() {
     const player = document.getElementById("radioPlayer");
     const btn = document.getElementById("playBtn");
@@ -608,9 +626,6 @@ import { initializeApp }
 import { getDatabase, ref, push, onValue, remove, update, set }
     from "https://www.gstatic.com/firebasejs/10.14.0/firebase-database.js";
 
-/* ------------------------------------------------------- */
-/* ✔ DETECTAR ID DO POST NA URL                            */
-/* ------------------------------------------------------- */
 const urlParams = new URLSearchParams(window.location.search);
 const postID_URL = urlParams.get("post");
 
@@ -631,9 +646,7 @@ const postsRef = ref(db, "coletivo_mural/posts");
 let imagemTemp = null;
 let tipoMidia = null;
 
-/* ------------------------------------------------------- */
-/* ENVIO DE MÍDIA / PRÉ-VISUALIZAÇÃO                       */
-/* ------------------------------------------------------- */
+/* ENVIO DE MÍDIA */
 document.getElementById("imgUpload").addEventListener("change", function () {
     const file = this.files[0];
     if (!file) return;
@@ -668,9 +681,7 @@ window.removerPreview = function () {
     imgUpload.value = "";
 };
 
-/* ------------------------------------------------------- */
-/* POSTAR NO MURAL                                          */
-/* ------------------------------------------------------- */
+/* POSTAR */
 window.postar = function () {
     if (!usuario) return alert("Faça login!");
 
@@ -692,15 +703,11 @@ window.postar = function () {
     removerPreview();
 };
 
-/* ------------------------------------------------------- */
-/* ❗ TRECHO NOVO — MURAL + POST INDIVIDUAL                 */
-/* ------------------------------------------------------- */
-
+/* MURAL + POST INDIVIDUAL */
 onValue(postsRef, snap => {
     const feed = document.getElementById("feed");
     feed.innerHTML = "";
 
-    /* 👉 SE TIVER ?post=ID → MOSTRAR SÓ ESTE POST */
     if (postID_URL) {
         const p = snap.child(postID_URL).val();
 
@@ -713,7 +720,6 @@ onValue(postsRef, snap => {
         return;
     }
 
-    /* 👉 SEM ?post → MURAL NORMAL */
     snap.forEach(postSnap => {
         const id = postSnap.key;
         const p = postSnap.val();
@@ -721,9 +727,7 @@ onValue(postsRef, snap => {
     });
 });
 
-/* ------------------------------------------------------- */
-/* FUNÇÃO — EXIBIR SÓ UM POST (COM CURTIR + COMENTAR)      */
-/* ------------------------------------------------------- */
+/* EXIBIR POST INDIVIDUAL */
 window.mostrarPostIndividual = function(id, p) {
 
     const feed = document.getElementById("feed");
@@ -765,7 +769,6 @@ window.mostrarPostIndividual = function(id, p) {
         </div>
     `;
 
-    /* LISTAR COMENTÁRIOS */
     const lista = document.getElementById("cl_" + id);
     lista.innerHTML = "";
 
@@ -790,9 +793,7 @@ window.mostrarPostIndividual = function(id, p) {
     }
 };
 
-/* ------------------------------------------------------- */
-/* FUNÇÃO — ADICIONAR POST NA TIMELINE NORMAL              */
-/* ------------------------------------------------------- */
+/* TIMELINE NORMAL */
 window.adicionarPostAoMural = function(id, p) {
 
     const totalCurtidas = p.reacoes ? Object.keys(p.reacoes).length : 0;
@@ -832,7 +833,6 @@ window.adicionarPostAoMural = function(id, p) {
 
     feed.prepend(div);
 
-    /* LISTAR COMENTÁRIOS */
     const lista = document.getElementById("cl_" + id);
     lista.innerHTML = "";
 
@@ -858,10 +858,7 @@ window.adicionarPostAoMural = function(id, p) {
     }
 };
 
-/* ------------------------------------------------------- */
-/* RESTANTE DO SEU CÓDIGO (curtir, comentar, apagar)       */
-/* ------------------------------------------------------- */
-
+/* FUNÇÕES DE CURTIR / COMENTAR / APAGAR */
 window.toggleCurtir = function (postId) {
     if (!usuario) return;
 
@@ -945,10 +942,9 @@ window.abreModal = function (src) {
 window.fechaModal = function () {
     imgModal.style.display = "none";
 };
-
 </script>
 
-<!-- FUNÇÃO COMPARTILHAR — FORA DO MÓDULO -->
+<!-- COMPARTILHAR -->
 <script>
 window.compartilhar = function(postId) {
 
@@ -967,5 +963,6 @@ window.compartilhar = function(postId) {
     });
 };
 </script>
+
 
 
