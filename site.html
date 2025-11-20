@@ -5,6 +5,9 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Mural Público</title>
 
+<!-- LOGIN COM GOOGLE -->
+<script src="https://accounts.google.com/gsi/client" async defer></script>
+
 <style>
 
 html, body {
@@ -30,95 +33,83 @@ body {
     text-align: center;
 }
 
-@media (max-width: 600px) {
+.google-btn {
+    width: 80%;
+    max-width: 260px;
+    margin-top: 12px;
+}
 
+@media (max-width: 600px) {
     #loginBox img, #cadastroBox img {
         height: 95px;
     }
-
     #loginBox input, #cadastroBox input {
         max-width: 92%;
         padding: 11px;
         font-size: 0.95rem;
     }
-
     #loginBox button, #cadastroBox button {
         max-width: 92%;
         padding: 12px;
         font-size: 1rem;
     }
-
     .topbar {
         padding: 10px;
         flex-direction: row;
         justify-content: space-between;
     }
-
     .radio-btn {
         width: 48px;
         height: 48px;
         font-size: 1.4rem;
     }
-
     #menuIcon {
         font-size: 2rem;
     }
-
     #sideMenu {
         width: 200px;
         padding-left: 15px;
     }
-
     .main-logo img {
         height: 85px;
         margin-top: 10px;
     }
-
     .feed {
         width: 96%;
         margin: 10px auto;
     }
-
     .post-box {
         padding: 14px;
         flex-direction: column;
         align-items: stretch;
     }
-
     .post-box textarea {
         height: 60px;
         font-size: 1rem;
     }
-
     .img-icon img {
         height: 32px;
         margin-top: 10px;
     }
-
     .preview img, .preview video {
         max-height: 130px;
     }
-
     .post {
         padding: 14px;
     }
-
     .post img, .post video {
         max-height: 280px;
     }
-
     .actions {
         flex-direction: column;
         gap: 12px;
         text-align: center;
     }
-
     .comment-entry {
         flex-direction: column;
         gap: 8px;
         font-size: 0.9rem;
     }
-
     button {
         font-size: 1rem;
         padding: 12px;
@@ -260,7 +251,6 @@ body {
     align-items: center;
     gap: 12px;
 }
-
 .post-box textarea {
     width: 100%;
     padding: 12px 15px;
@@ -412,6 +402,9 @@ button {
     <input type="password" id="loginPass" placeholder="Senha">
     <button onclick="login()">Entrar</button>
 
+    <!-- BOTÃO GOOGLE -->
+    <div id="googleLogin" class="google-btn"></div>
+
     <div id="cadastroLink" onclick="abrirCadastro()">Criar conta</div>
 </div>
 
@@ -438,15 +431,12 @@ button {
     <!-- FOTO + NOME DO USUÁRIO -->
     <div style="text-align:center; margin-bottom:10px;">
         <label for="fotoPerfilUpload">
-
             <img id="perfilFoto" src="https://cdn-icons-png.flaticon.com/512/149/149071.png"
                  style="width:95px; height:95px; border-radius:50%; border:3px solid #00ffcc; cursor:pointer; object-fit:cover;">
         </label>
         <input type="file" id="fotoPerfilUpload" accept="image/*" style="display:none;">
 
-        <!-- *** NOME DO USUÁRIO AQUI *** -->
         <div id="nomeUsuarioMenu" style="color:#00ffcc; font-weight:bold; margin-top:8px; font-size:1.1rem;"></div>
-
     </div>
 
     <a href="https://sites.google.com/view/ceusaosebastiao/nossas-origens" target="_blank">Nossas Origens</a>
@@ -489,12 +479,12 @@ button {
     <span id="closeModal" onclick="fechaModal()">✖</span>
     <img id="modalImg">
 </div>
-
 <script>
 /* LOGIN */
 let usuario = null;
 
 window.addEventListener("DOMContentLoaded", () => {
+
     const logado = localStorage.getItem("usuarioLogado");
 
     if (!logado) {
@@ -508,7 +498,6 @@ window.addEventListener("DOMContentLoaded", () => {
         const fotoSalva = localStorage.getItem("fotoPerfil_" + usuario);
         if (fotoSalva) perfilFoto.src = fotoSalva;
 
-        // MOSTRAR NOME NO MENU
         nomeUsuarioMenu.textContent = usuario;
     }
 });
@@ -560,7 +549,6 @@ function login() {
     const fotoSalva = localStorage.getItem("fotoPerfil_" + user);
     if (fotoSalva) perfilFoto.src = fotoSalva;
 
-    // MOSTRAR NOME NO MENU AO LOGAR
     nomeUsuarioMenu.textContent = user;
 }
 
@@ -569,7 +557,70 @@ function logout() {
     loginBox.style.display = "flex";
     document.body.style.overflow = "hidden";
 }
-/* RADIO */
+</script>
+
+<!-- LOGIN COM GOOGLE -->
+<script>
+window.onload = function () {
+
+    google.accounts.id.initialize({
+        client_id: "SEU_CLIENT_ID_AQUI",
+        callback: handleGoogleLogin
+    });
+
+    google.accounts.id.renderButton(
+        document.getElementById("googleLogin"),
+        { theme: "filled_black", size: "large", width: 265 }
+    );
+};
+
+function handleGoogleLogin(response) {
+    const data = decodeJwt(response.credential);
+
+    const user = data.email.split("@")[0];
+    usuario = user;
+
+    localStorage.setItem("usuarioLogado", usuario);
+
+    loginBox.style.display = "none";
+    document.body.style.overflow = "auto";
+
+    if (data.picture) {
+        perfilFoto.src = data.picture;
+        localStorage.setItem("fotoPerfil_" + usuario, data.picture);
+    }
+
+    nomeUsuarioMenu.textContent = usuario;
+}
+
+function decodeJwt(token) {
+    return JSON.parse(atob(token.split('.')[1]));
+}
+</script>
+
+<!-- FOTO DO PERFIL -->
+<script>
+document.getElementById("fotoPerfilUpload").addEventListener("change", function () {
+    const file = this.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = e => {
+        const imgBase64 = e.target.result;
+
+        if (usuario) {
+            localStorage.setItem("fotoPerfil_" + usuario, imgBase64);
+        }
+
+        perfilFoto.src = imgBase64;
+    };
+
+    reader.readAsDataURL(file);
+});
+</script>
+
+<!-- RADIO + MENU -->
+<script>
 let tocando = false;
 function toggleRadio() {
     const player = document.getElementById("radioPlayer");
@@ -586,7 +637,6 @@ function toggleRadio() {
     }
 }
 
-/* MENU */
 function toggleMenu() {
     const menu = document.getElementById("sideMenu");
     menu.style.right = (menu.style.right === "0px") ? "-260px" : "0px";
@@ -599,26 +649,6 @@ document.addEventListener("click", function(e) {
     if (!menu.contains(e.target) && !icon.contains(e.target)) {
         menu.style.right = "-260px";
     }
-});
-
-/* FOTO DO PERFIL */
-document.getElementById("fotoPerfilUpload").addEventListener("change", function () {
-    const file = this.files[0];
-    if (!file) return;
-
-    const reader = new FileReader();
-    reader.onload = e => {
-        const imgBase64 = e.target.result;
-
-        const user = localStorage.getItem("usuarioLogado");
-        if (user) {
-            localStorage.setItem("fotoPerfil_" + user, imgBase64);
-        }
-
-        perfilFoto.src = imgBase64;
-    };
-
-    reader.readAsDataURL(file);
 });
 </script>
 
@@ -691,17 +721,15 @@ window.postar = function () {
         texto,
         imagem: tipoMidia === "imagem" ? imagemTemp : null,
         video: tipoMidia === "video" ? imagemTemp : null,
-        reacoes: {},  
+        reacoes: {},
         comentarios: {}
     };
 
     push(postsRef, postData);
 
-    // APÓS POSTAR, LIMPA TUDO:
-    document.getElementById("texto").value = "";  // <<< CORRIGIDO
-    removerPreview();                             // <<< LIMPA A PRÉVIA
+    document.getElementById("texto").value = "";
+    removerPreview();
 };
-
 
 onValue(postsRef, snap => {
     const feed = document.getElementById("feed");
@@ -751,31 +779,30 @@ onValue(postsRef, snap => {
         const lista = document.getElementById("cl_" + id);
         lista.innerHTML = "";
 
-       if (p.comentarios) {
-    Object.entries(p.comentarios).forEach(([cid, c]) => {
+        if (p.comentarios) {
+            Object.entries(p.comentarios).forEach(([cid, c]) => {
 
-        // FOTO DO PERFIL SALVA NO FIREBASE (NÃO MAIS NO LOCALSTORAGE)
-        const foto = c.fotoPerfil || "https://cdn-icons-png.flaticon.com/512/149/149071.png";
+                const foto = c.fotoPerfil || "https://cdn-icons-png.flaticon.com/512/149/149071.png";
 
-        const cdiv = document.createElement("div");
-        cdiv.className = "comment-entry";
+                const cdiv = document.createElement("div");
+                cdiv.className = "comment-entry";
 
-        cdiv.innerHTML = `
-            <img src="${foto}" 
-                 style="width:40px; height:40px; border-radius:50%; margin-right:10px; object-fit:cover; border:2px solid #00ffaa;">
-            
-            <div style="flex:1;">
-                <strong style="color:#00ffaa;">${c.usuario}:</strong> 
-                ${c.texto}
-            </div>
+                cdiv.innerHTML = `
+                    <img src="${foto}" 
+                         style="width:40px; height:40px; border-radius:50%; margin-right:10px; object-fit:cover; border:2px solid #00ffaa;">
+                    
+                    <div style="flex:1;">
+                        <strong style="color:#00ffaa;">${c.usuario}:</strong> 
+                        ${c.texto}
+                    </div>
 
-            <span onclick="excluirComentario('${id}','${cid}')"
-                  style="cursor:pointer;">❌</span>
-        `;
+                    <span onclick="excluirComentario('${id}','${cid}')"
+                          style="cursor:pointer;">❌</span>
+                `;
 
-        lista.appendChild(cdiv);
-    });
-}
+                lista.appendChild(cdiv);
+            });
+        }
 
     });
 });
@@ -833,7 +860,6 @@ window.comentar = function (postId) {
     const texto = campo.value.trim();
     if (!texto) return;
 
-    // PEGA A FOTO DO PERFIL DO USUÁRIO LOGADO
     const foto = localStorage.getItem("fotoPerfil_" + usuario) 
                  || "https://cdn-icons-png.flaticon.com/512/149/149071.png";
 
@@ -846,7 +872,6 @@ window.comentar = function (postId) {
 
     campo.value = "";
 };
-
 
 window.excluirComentario = function (postId, cid) {
     if (confirm("Apagar este comentário?")) {
@@ -872,8 +897,3 @@ window.fechaModal = function () {
 
 </body>
 </html>
-
-
-
-
-
