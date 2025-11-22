@@ -1334,36 +1334,29 @@ document.addEventListener("DOMContentLoaded", () => {
 
 <!-- 🔔 REGISTRA ONLINE + NOTIFICA NOVAS MENSAGENS -->
 
-<!-- Pré-carregar o áudio -->
-<link rel="preload" href="som.mp3" as="audio">
+<!-- 🔔 SOM DE NOTIFICAÇÃO 100% COMPATÍVEL -->
+<audio id="notificaChat" preload="none">
+    <source src="https://marcio2307.github.io/terreiro/som.mp3" type="audio/mpeg">
+</audio>
 
-<!-- Elemento de áudio -->
-<audio id="notificaChat" src="som.mp3" preload="auto"></audio>
-
-<!-- 🔊 DESBLOQUEIO UNIVERSAL (PC + ANDROID + IPHONE + TUDO) -->
 <script>
 (function(){
     const audio = document.getElementById("notificaChat");
     if (!audio) return;
 
-    function tentarDesbloquear() {
-        audio.volume = 0; // inicia mudo
+    function liberarSom() {
+        audio.volume = 1;
+
         audio.play().then(() => {
             audio.pause();
             audio.currentTime = 0;
-            audio.volume = 1; // som real liberado
-            console.log("🔓 ÁUDIO LIBERADO");
+            console.log("🔓 Áudio liberado com sucesso");
         }).catch(()=>{});
     }
 
-    // 1) Clique libera
-    document.addEventListener("click", tentarDesbloquear, { once: true });
-
-    // 2) Toque (mobile) libera
-    document.addEventListener("touchstart", tentarDesbloquear, { once: true });
-
-    // 3) Tentativa automática após 1 segundo
-    setTimeout(tentarDesbloquear, 1200);
+    ["click","touchstart","mousedown"].forEach(ev=>{
+        document.addEventListener(ev, liberarSom, { once: true });
+    });
 })();
 </script>
 
@@ -1450,3 +1443,4 @@ function iniciarNotificacoes() {
     });
 }
 </script>
+
