@@ -1340,28 +1340,38 @@ document.addEventListener("DOMContentLoaded", () => {
 <!-- Elemento de áudio -->
 <audio id="notificaChat" src="som.mp3" preload="auto"></audio>
 
-<!-- 🔊 DESBLOQUEIO 100% EFETIVO PARA CELULAR + NAVEGADOR -->
+<!-- 🔊 DESBLOQUEIO UNIVERSAL (PC + ANDROID + IPHONE + TUDO) -->
 <script>
-document.addEventListener("click", () => {
+(function(){
     const audio = document.getElementById("notificaChat");
     if (!audio) return;
 
-    audio.volume = 0;
+    function tentarDesbloquear() {
+        audio.volume = 0; // inicia mudo
+        audio.play().then(() => {
+            audio.pause();
+            audio.currentTime = 0;
+            audio.volume = 1; // som real liberado
+            console.log("🔓 ÁUDIO LIBERADO");
+        }).catch(()=>{});
+    }
 
-    audio.play().then(() => {
-        audio.pause();
-        audio.currentTime = 0;
-        audio.volume = 1;
-    }).catch(()=>{});
+    // 1) Clique libera
+    document.addEventListener("click", tentarDesbloquear, { once: true });
 
-}, { once: true });
+    // 2) Toque (mobile) libera
+    document.addEventListener("touchstart", tentarDesbloquear, { once: true });
+
+    // 3) Tentativa automática após 1 segundo
+    setTimeout(tentarDesbloquear, 1200);
+})();
 </script>
 
 <script type="module">
 import { initializeApp } 
-  from "https://www.gstatic.com/firebasejs/10.14.0/firebase-app.js";
+    from "https://www.gstatic.com/firebasejs/10.14.0/firebase-app.js";
 import { getDatabase, ref, set, onValue }
-  from "https://www.gstatic.com/firebasejs/10.14.0/firebase-database.js";
+    from "https://www.gstatic.com/firebasejs/10.14.0/firebase-database.js";
 
 /* FIREBASE CONFIG */
 const firebaseConfig = {
