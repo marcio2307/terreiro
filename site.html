@@ -405,9 +405,31 @@ button {
 <!-- TOPO -->
 <div class="topbar">
     <div class="radio-btn" id="playBtn" onclick="toggleRadio()">▶</div>
+
+    <!-- 🔔 MENSAGEM ENTRE RÁDIO E MENU -->
+    <div id="alertaMensagem" style="
+        display:none;
+        background:#00ffcc;
+        color:#000;
+        padding:6px 12px;
+        border-radius:10px;
+        font-weight:bold;
+        font-size:0.9rem;
+        margin:0 10px;
+        animation: pisca 1s infinite;
+        white-space: nowrap;
+    "></div>
+
     <div id="menuIcon" onclick="toggleMenu()">☰</div>
+
     <audio id="radioPlayer" src="https://stream.zeno.fm/l8ocj9i6ka2uv"></audio>
 </div>
+
+<style>
+@keyframes pisca {
+    50% { opacity: 0.3; }
+}
+</style>
 
 <!-- MENU LATERAL -->
 <div id="sideMenu">
@@ -1429,7 +1451,21 @@ function iniciarNotificacoes() {
                 som.currentTime = 0;
                 som.play().catch(()=>{});
             }
+/* 🔔 MOSTRAR AVISO ENTRE RÁDIO E MENU */
+const alerta = document.getElementById("alertaMensagem");
+
+if (ultima.de !== usuarioLogado) {
+    alerta.innerHTML = `💬 Nova mensagem de: <strong>${ultima.de}</strong>`;
+    alerta.style.display = "inline-block";
+
+    // some depois de 6s
+    setTimeout(() => {
+        alerta.style.display = "none";
+    }, 6000);
+}
+
         });
     });
 }
 </script>
+
