@@ -1429,9 +1429,12 @@ function iniciarOnline() {
     iniciarNotificacoes();
 }
 
-/* NOTIFICAÇÕES */
+/* 🔔 NOTIFICAÇÕES CORRIGIDAS */
 function iniciarNotificacoes() {
     const convRef = ref(db, "chat/conversas");
+
+    // Guarda a última mensagem de cada sala
+    const ultimaMensagemSala = {};
 
     onValue(convRef, snap => {
         if (!snap.exists()) return;
@@ -1439,33 +1442,44 @@ function iniciarNotificacoes() {
         snap.forEach(roomSnap => {
             const roomId = roomSnap.key;
 
+            // Só salas que envolvem este usuário
             if (!roomId.includes(usuarioLogado)) return;
 
+            // Pega última mensagem
             let ultima = null;
-            roomSnap.forEach(msg => ultima = msg.val());
-
+            roomSnap.forEach(msgSnap => ultima = msgSnap.val());
             if (!ultima) return;
 
-            if (ultima.de !== usuarioLogado) {
-                const som = document.getElementById("notificaChat");
-                som.currentTime = 0;
-                som.play().catch(()=>{});
+            // Se primeira vez vendo esta sala, salva e não notifica
+            if (!ultimaMensagemSala[roomId]) {
+                ultimaMensagemSala[roomId] = ultima;
+                return;
             }
-/* 🔔 MOSTRAR AVISO ENTRE RÁDIO E MENU */
-const alerta = document.getElementById("alertaMensagem");
 
-if (ultima.de !== usuarioLogado) {
-    alerta.innerHTML = `💬 Nova mensagem de: <strong>${ultima.de}</strong>`;
-    alerta.style.display = "inline-block";
+            const ultimaAnterior = ultimaMensagemSala[roomId];
 
-    // some depois de 6s
-    setTimeout(() => {
-        alerta.style.display = "none";
-    }, 6000);
-}
+            // Se mudou a mensagem REAL
+            if (ultima.msg !== ultimaAnterior.msg || ultima.timestamp !== ultimaAnterior.timestamp) {
 
+                // Se veio de outra pessoa → notificar
+                if (ultima.de !== usuarioLogado) {
+
+                    const som = document.getElementById("notificaChat");
+                    som.currentTime = 0;
+                    som.play().catch(()=>{});
+
+                    const alerta = document.getElementById("alertaMensagem");
+                    alerta.innerHTML = `💬 Nova mensagem no bate-papo`;
+                    alerta.style.display = "inline-block";
+
+                    setTimeout(() => {
+                        alerta.style.display = "none";
+                    }, 5000);
+                }
+            }
+
+            // Atualiza última mensagem conhecida
+            ultimaMensagemSala[roomId] = ultima;
         });
     });
 }
-</script>
-
