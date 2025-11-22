@@ -1333,49 +1333,87 @@ document.addEventListener("DOMContentLoaded", () => {
 </script>
 
 <!-- REGISTRA ONLINE NO CHAT -->
+<!-- 🔔 REGISTRA ONLINE + NOTIFICA NOVAS MENSAGENS -->
+<audio id="notificaChat" src="som.mp3"></audio>
+
 <script type="module">
 import { initializeApp } 
   from "https://www.gstatic.com/firebasejs/10.14.0/firebase-app.js";
-import { getDatabase, ref, set }
+import { getDatabase, ref, set, onValue }
   from "https://www.gstatic.com/firebasejs/10.14.0/firebase-database.js";
 
-const usuarioLogadoParaChat = localStorage.getItem("usuarioLogado");
-const fotoPerfil = localStorage.getItem("fotoPerfil_" + usuarioLogadoParaChat) 
+const usuarioLogado = localStorage.getItem("usuarioLogado");
+const fotoPerfil = localStorage.getItem("fotoPerfil_" + usuarioLogado) 
     || "https://cdn-icons-png.flaticon.com/512/149/149071.png";
 
-if (usuarioLogadoParaChat) {
+if (!usuarioLogado) return;
 
-    const firebaseConfig = {
-        apiKey: "AIzaSyAt4CeGjdbjzdtMH1qZHw6RuBFJ6SeTDKk",
-        authDomain: "coletivo-f34d4.firebaseapp.com",
-        databaseURL: "https://coletivo-f34d4-default-rtdb.firebaseio.com",
-        projectId: "coletivo-f34d4",
-        storageBucket: "coletivo-f34d4.firebasestorage.app",
-        messagingSenderId: "296376447787",
-        appId: "1:296376447787:web:1341c59c8087d6ac1e4b6e"
-    };
+// 🔊 desbloqueia áudio no celular
+document.addEventListener("click", () => {
+    const a = document.getElementById("notificaChat");
+    a.play().catch(()=>{});
+    a.pause();
+    a.currentTime = 0;
+}, { once:true });
 
-    const app = initializeApp(firebaseConfig);
-    const db = getDatabase(app);
+/* FIREBASE */
+const firebaseConfig = {
+    apiKey: "AIzaSyAt4CeGjdbjzdtMH1qZHw6RuBFJ6SeTDKk",
+    authDomain: "coletivo-f34d4.firebaseapp.com",
+    databaseURL: "https://coletivo-f34d4-default-rtdb.firebaseio.com",
+    projectId: "coletivo-f34d4",
+    storageBucket: "coletivo-f34d4.firebasestorage.app",
+    messagingSenderId: "296376447787",
+    appId: "1:296376447787:web:1341c59c8087d6ac1e4b6e"
+};
 
-    const userRef = ref(db, "chat/usuariosOnline/" + usuarioLogadoParaChat);
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
 
-    // Marca como online
+/* MARCA O USUÁRIO ONLINE NO CHAT */
+const userRef = ref(db, "chat/usuariosOnline/" + usuarioLogado);
+set(userRef, {
+    nome: usuarioLogado,
+    foto: fotoPerfil,
+    online: true
+});
+
+window.addEventListener("beforeunload", () => {
     set(userRef, {
-        nome: usuarioLogadoParaChat,
+        nome: usuarioLogado,
         foto: fotoPerfil,
-        online: true
+        online: false
     });
+});
 
-    // Sai do online quando fechar aba/janela
-    window.addEventListener("beforeunload", () => {
-        set(userRef, {
-            nome: usuarioLogadoParaChat,
-            foto: fotoPerfil,
-            online: false
-        });
+/* 🔥 NOTIFICAR NOVAS MENSAGENS ENQUANTO O USUÁRIO ESTÁ NO MURAL */
+function sala(a,b){ return [a,b].sort().join("_"); }
+
+const conversasRef = ref(db, "chat/conversas");
+
+onValue(conversasRef, snap => {
+    if (!snap.exists()) return;
+
+    snap.forEach(roomSnap => {
+        const roomId = roomSnap.key;
+
+        // sala que não pertence ao usuário → ignora
+        if (!roomId.includes(usuarioLogado)) return;
+
+        // pega a última mensagem
+        let ultima = null;
+        roomSnap.forEach(msg => ultima = msg.val());
+
+        if (!ultima) return;
+
+        // se a mensagem for DE OUTRA pessoa → toca som
+        if (ultima.de !== usuarioLogado) {
+            const som = document.getElementById("notificaChat");
+            som.currentTime = 0;
+            som.play().catch(()=>{});
+        }
     });
-}
+});
 </script>
 
 
