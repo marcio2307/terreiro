@@ -1435,11 +1435,11 @@ function iniciarNotificacoes() {
 </script>
 
 
-<!-- 🔥 FICAR OFFLINE APÓS 30s DE INATIVIDADE (SEM FECHAR A PÁGINA) -->
+<!-- 🔥 FICAR OFFLINE APÓS 2 MINUTOS DE INATIVIDADE (SEM FECHAR A PÁGINA) -->
 <script>
 let ultimoToque = Date.now();
 
-// Detecta atividade
+// Detecta qualquer atividade na página
 [
     "click", "touchstart", "mousemove",
     "keydown", "scroll", "touchmove"
@@ -1452,7 +1452,7 @@ let ultimoToque = Date.now();
 function verificarInatividade() {
     const parado = Date.now() - ultimoToque;
 
-    if (parado >= 30000) { // 30 segundos
+    if (parado >= 120000) { // ⏳ 2 MINUTOS = 120.000 ms
         console.log("⛔ Inativo – marcando usuário como OFFLINE");
 
         const usuario = localStorage.getItem("usuarioLogado");
@@ -1488,6 +1488,6 @@ function verificarInatividade() {
     }
 }
 
-// Verifica a cada 1s
+// Verifica a cada 1 segundo
 setInterval(verificarInatividade, 1000);
 </script>
