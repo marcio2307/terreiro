@@ -1435,7 +1435,7 @@ function iniciarNotificacoes() {
 </script>
 
 
-<!-- 🔥 FECHAR A PÁGINA POR INATIVIDADE (10s) + FICAR OFFLINE -->
+<!-- 🔥 FICAR OFFLINE APÓS 30s DE INATIVIDADE (SEM FECHAR A PÁGINA) -->
 <script>
 let ultimoToque = Date.now();
 
@@ -1452,8 +1452,8 @@ let ultimoToque = Date.now();
 function verificarInatividade() {
     const parado = Date.now() - ultimoToque;
 
-    if (parado >= 10000) { // 10s inativo
-        console.log("⛔ Inativo – definindo OFFLINE + fechando página");
+    if (parado >= 30000) { // 30 segundos
+        console.log("⛔ Inativo – marcando usuário como OFFLINE");
 
         const usuario = localStorage.getItem("usuarioLogado");
         if (usuario) {
@@ -1463,7 +1463,7 @@ function verificarInatividade() {
             // Marca offline no Firebase
             import("https://www.gstatic.com/firebasejs/10.14.0/firebase-app.js").then(m1 => {
                 import("https://www.gstatic.com/firebasejs/10.14.0/firebase-database.js").then(m2 => {
-                    
+
                     const firebaseConfig = {
                         apiKey: "AIzaSyAt4CeGjdbjzdtMH1qZHw6RuBFJ6SeTDKk",
                         authDomain: "coletivo-f34d4.firebaseapp.com",
@@ -1485,12 +1485,9 @@ function verificarInatividade() {
                 });
             });
         }
-
-        // FECHA A ABA
-        window.open('', '_self').close();
     }
 }
 
-// Roda a cada 1s
+// Verifica a cada 1s
 setInterval(verificarInatividade, 1000);
 </script>
