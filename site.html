@@ -1332,8 +1332,6 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 </script>
 
-<!-- 🔔 REGISTRA ONLINE + NOTIFICA NOVAS MENSAGENS -->
-
 <!-- 🔔 SOM DE NOTIFICAÇÃO 100% FUNCIONAL VIA GITHUB -->
 <audio id="notificaChat" preload="none">
     <source src="https://marcio2307.github.io/terreiro/som.mp3" type="audio/mpeg">
@@ -1360,54 +1358,80 @@ document.addEventListener("DOMContentLoaded", () => {
 })();
 </script>
 
+<!-- 🔥 PRESENÇA + ONDISCONNECT + NOTIFICAÇÕES + INATIVIDADE -->
 <script type="module">
-import { getApp } 
-    from "https://www.gstatic.com/firebasejs/10.14.0/firebase-app.js";
-import { getDatabase, ref, set, onValue }
-    from "https://www.gstatic.com/firebasejs/10.14.0/firebase-database.js";
+import { 
+    getApp, initializeApp 
+} from "https://www.gstatic.com/firebasejs/10.14.0/firebase-app.js";
 
-/* PEGAR O APP JÁ INICIALIZADO */
-const app = getApp();
+import { 
+    getDatabase, ref, set, onValue, onDisconnect 
+} from "https://www.gstatic.com/firebasejs/10.14.0/firebase-database.js";
+
+/* 🔥 GARANTE APP INICIALIZADO (SEM DUPLICAR) */
+let app;
+try {
+    app = getApp();
+} catch {
+    app = initializeApp({
+        apiKey: "AIzaSyAt4CeGjdbjzdtMH1qZHw6RuBFJ6SeTDKk",
+        authDomain: "coletivo-f34d4.firebaseapp.com",
+        databaseURL: "https://coletivo-f34d4-default-rtdb.firebaseio.com",
+        projectId: "coletivo-f34d4",
+        storageBucket: "coletivo-f34d4.firebasestorage.app",
+        messagingSenderId: "296376447787",
+        appId: "1:296376447787:web:1341c59c8087d6ac1e4b6e"
+    });
+}
+
 const db = getDatabase(app);
 
-/* Aguarda login estar pronto */
-let usuarioLogado = localStorage.getItem("usuarioLogado");
+let usuario = localStorage.getItem("usuarioLogado");
+const foto = localStorage.getItem("fotoPerfil_" + usuario)
+    || "https://cdn-icons-png.flaticon.com/512/149/149071.png";
 
-if (!usuarioLogado) {
-    document.addEventListener("DOMContentLoaded", () => {
-        usuarioLogado = localStorage.getItem("usuarioLogado");
-        if (usuarioLogado) iniciarOnline();
+/* 🔥 PRESENÇA ONLINE */
+function iniciarPresenca() {
+
+    const userRef = ref(db, "chat/usuariosOnline/" + usuario);
+
+    // Marca online
+    set(userRef, { nome: usuario, foto, online: true });
+
+    // Sai do online se fechar aba, perder internet, travar app, bloquear tela etc.
+    onDisconnect(userRef).set({
+        nome: usuario,
+        foto,
+        online: false
     });
-} else {
-    iniciarOnline();
+
+    /* 🔥 SISTEMA DE INATIVIDADE - 2 MINUTOS */
+    let ultimoToque = Date.now();
+
+    function atividade() {
+        ultimoToque = Date.now();
+        set(userRef, { nome: usuario, foto, online: true });
+    }
+
+    ["click","mousemove","keydown","touchstart","touchmove","scroll"]
+    .forEach(ev => {
+        document.addEventListener(ev, atividade, { passive:true });
+    });
+
+    setInterval(() => {
+        const tempoParado = Date.now() - ultimoToque;
+
+        if (tempoParado >= 120000) {
+            // offline por inatividade
+            set(userRef, { nome: usuario, foto, online: false });
+        } else {
+            // online novamente se mexer
+            set(userRef, { nome: usuario, foto, online: true });
+        }
+    }, 4000);
 }
 
-/* REGISTRA ONLINE */
-function iniciarOnline() {
-
-    const fotoPerfil = localStorage.getItem("fotoPerfil_" + usuarioLogado)
-        || "https://cdn-icons-png.flaticon.com/512/149/149071.png";
-
-    const userRef = ref(db, "chat/usuariosOnline/" + usuarioLogado);
-
-    set(userRef, {
-        nome: usuarioLogado,
-        foto: fotoPerfil,
-        online: true
-    });
-
-    window.addEventListener("beforeunload", () => {
-        set(userRef, {
-            nome: usuarioLogado,
-            foto: fotoPerfil,
-            online: false
-        });
-    });
-
-    iniciarNotificacoes();
-}
-
-/* NOTIFICAÇÕES */
+/* 🔔 NOTIFICAÇÕES DE CHAT */
 function iniciarNotificacoes() {
     const convRef = ref(db, "chat/conversas");
 
@@ -1417,14 +1441,15 @@ function iniciarNotificacoes() {
         snap.forEach(roomSnap => {
             const roomId = roomSnap.key;
 
-            if (!roomId.includes(usuarioLogado)) return;
+            if (!roomId.includes(usuario)) return;
 
             let ultima = null;
-            roomSnap.forEach(msg => ultima = msg.val());
+
+            roomSnap.forEach(m => ultima = m.val());
 
             if (!ultima) return;
 
-            if (ultima.de !== usuarioLogado) {
+            if (ultima.de !== usuario) {
                 const som = document.getElementById("notificaChat");
                 som.currentTime = 0;
                 som.play().catch(()=>{});
@@ -1432,62 +1457,9 @@ function iniciarNotificacoes() {
         });
     });
 }
-</script>
 
-
-<!-- 🔥 FICAR OFFLINE APÓS 2 MINUTOS DE INATIVIDADE (SEM FECHAR A PÁGINA) -->
-<script>
-let ultimoToque = Date.now();
-
-// Detecta qualquer atividade na página
-[
-    "click", "touchstart", "mousemove",
-    "keydown", "scroll", "touchmove"
-].forEach(ev => {
-    document.addEventListener(ev, () => {
-        ultimoToque = Date.now();
-    }, { passive: true });
-});
-
-function verificarInatividade() {
-    const parado = Date.now() - ultimoToque;
-
-    if (parado >= 120000) { // ⏳ 2 MINUTOS = 120.000 ms
-        console.log("⛔ Inativo – marcando usuário como OFFLINE");
-
-        const usuario = localStorage.getItem("usuarioLogado");
-        if (usuario) {
-            const foto = localStorage.getItem("fotoPerfil_" + usuario) 
-                || "https://cdn-icons-png.flaticon.com/512/149/149071.png";
-
-            // Marca offline no Firebase
-            import("https://www.gstatic.com/firebasejs/10.14.0/firebase-app.js").then(m1 => {
-                import("https://www.gstatic.com/firebasejs/10.14.0/firebase-database.js").then(m2 => {
-
-                    const firebaseConfig = {
-                        apiKey: "AIzaSyAt4CeGjdbjzdtMH1qZHw6RuBFJ6SeTDKk",
-                        authDomain: "coletivo-f34d4.firebaseapp.com",
-                        databaseURL: "https://coletivo-f34d4-default-rtdb.firebaseio.com",
-                        projectId: "coletivo-f34d4",
-                        storageBucket: "coletivo-f34d4.firebasestorage.app",
-                        messagingSenderId: "296376447787",
-                        appId: "1:296376447787:web:1341c59c8087d6ac1e4b6e"
-                    };
-
-                    const app = m1.initializeApp(firebaseConfig);
-                    const db = m2.getDatabase(app);
-
-                    m2.set(m2.ref(db, "chat/usuariosOnline/" + usuario), {
-                        nome: usuario,
-                        foto: foto,
-                        online: false
-                    });
-                });
-            });
-        }
-    }
+if (usuario) {
+    iniciarPresenca();
+    iniciarNotificacoes();
 }
-
-// Verifica a cada 1 segundo
-setInterval(verificarInatividade, 1000);
 </script>
