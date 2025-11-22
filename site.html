@@ -1336,7 +1336,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
 <!-- 🔔 SOM DE NOTIFICAÇÃO 100% COMPATÍVEL -->
 <audio id="notificaChat" preload="none">
-    <source src="https://marcio2307.github.io/terreiro/som.mp3" type="audio/mpeg">
+    <source src="https://marcio2307.github.io/som.mp3" type="audio/mpeg">
+
 </audio>
 
 <script>
@@ -1361,23 +1362,13 @@ document.addEventListener("DOMContentLoaded", () => {
 </script>
 
 <script type="module">
-import { initializeApp } 
+import { getApp } 
     from "https://www.gstatic.com/firebasejs/10.14.0/firebase-app.js";
 import { getDatabase, ref, set, onValue }
     from "https://www.gstatic.com/firebasejs/10.14.0/firebase-database.js";
 
-/* FIREBASE CONFIG */
-const firebaseConfig = {
-    apiKey: "AIzaSyAt4CeGjdbjzdtMH1qZHw6RuBFJ6SeTDKk",
-    authDomain: "coletivo-f34d4.firebaseapp.com",
-    databaseURL: "https://coletivo-f34d4-default-rtdb.firebaseio.com",
-    projectId: "coletivo-f34d4",
-    storageBucket: "coletivo-f34d4.firebasestorage.app",
-    messagingSenderId: "296376447787",
-    appId: "1:296376447787:web:1341c59c8087d6ac1e4b6e"
-};
-
-const app = initializeApp(firebaseConfig);
+/* PEGAR O APP JÁ INICIALIZADO */
+const app = getApp();
 const db = getDatabase(app);
 
 /* Aguarda login estar pronto */
@@ -1443,4 +1434,5 @@ function iniciarNotificacoes() {
     });
 }
 </script>
+
 
