@@ -1332,10 +1332,13 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 </script>
 
-<!-- REGISTRA ONLINE NO CHAT -->
-<!-- 🔔 REGISTRA ONLINE + NOTIFICA NOVAS MENSAGENS -->
-<!-- 🔔 REGISTRA ONLINE + NOTIFICA NOVAS MENSAGENS -->
-<audio id="notificaChat" src="som.mp3"></audio>
+<!-- 🔔 REGISTRA ONLINE + NOTIFICA NOVAS MENSAGENS (VERSÃO ESTÁVEL) -->
+
+<!-- Pré-carregar o áudio -->
+<link rel="preload" href="som.mp3" as="audio">
+
+<!-- Elemento de áudio -->
+<audio id="notificaChat" src="som.mp3" preload="auto"></audio>
 
 <script type="module">
 import { initializeApp } 
@@ -1343,13 +1346,22 @@ import { initializeApp }
 import { getDatabase, ref, set, onValue }
   from "https://www.gstatic.com/firebasejs/10.14.0/firebase-database.js";
 
-/* 🔊 DESBLOQUEIA ÁUDIO NO CELULAR */
-document.addEventListener("click", () => {
-    const a = document.getElementById("notificaChat");
-    a.play().catch(()=>{});
-    a.pause();
-    a.currentTime = 0;
-}, { once:true });
+/* 🔊 DESBLOQUEIO UNIVERSAL DO ÁUDIO */
+function liberarAudio() {
+    const audio = document.getElementById("notificaChat");
+    audio.volume = 0;
+    audio.play().catch(()=>{}).finally(() => {
+        audio.pause();
+        audio.currentTime = 0;
+        audio.volume = 1;
+    });
+}
+
+/* Desbloqueia ao clicar */
+document.addEventListener("click", liberarAudio, { once: true });
+
+/* Desbloqueio automático após 0.8s */
+setTimeout(liberarAudio, 800);
 
 /* FIREBASE CONFIG */
 const firebaseConfig = {
@@ -1365,7 +1377,7 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 
-/* 🔥 GARANTE QUE O LOGIN CARREGOU */
+/* Aguarda login estar pronto */
 let usuarioLogado = localStorage.getItem("usuarioLogado");
 
 if (!usuarioLogado) {
@@ -1377,21 +1389,20 @@ if (!usuarioLogado) {
     iniciarOnline();
 }
 
-/* 🟢 FUNÇÃO PRINCIPAL — REGISTRA ONLINE + INICIA NOTIFICAÇÃO */
+/* REGISTRA ONLINE */
 function iniciarOnline() {
-    const fotoPerfil = localStorage.getItem("fotoPerfil_" + usuarioLogado) 
+
+    const fotoPerfil = localStorage.getItem("fotoPerfil_" + usuarioLogado)
         || "https://cdn-icons-png.flaticon.com/512/149/149071.png";
 
     const userRef = ref(db, "chat/usuariosOnline/" + usuarioLogado);
 
-    /* Marca como ONLINE */
     set(userRef, {
         nome: usuarioLogado,
         foto: fotoPerfil,
         online: true
     });
 
-    /* Marca como OFFLINE ao sair */
     window.addEventListener("beforeunload", () => {
         set(userRef, {
             nome: usuarioLogado,
@@ -1400,15 +1411,14 @@ function iniciarOnline() {
         });
     });
 
-    /* Inicia o sistema de notificações */
     iniciarNotificacoes();
 }
 
-/* 🔔 MONITORA NOVAS MENSAGENS */
+/* NOTIFICAÇÕES */
 function iniciarNotificacoes() {
-    const conversasRef = ref(db, "chat/conversas");
+    const convRef = ref(db, "chat/conversas");
 
-    onValue(conversasRef, snap => {
+    onValue(convRef, snap => {
         if (!snap.exists()) return;
 
         snap.forEach(roomSnap => {
