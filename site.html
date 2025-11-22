@@ -621,6 +621,12 @@ function handleGoogleLogin(response) {
     }
 
     nomeUsuarioMenu.textContent = usuario;
+
+    // ⬇⬇⬇ ADICIONE ESTA PARTE ⬇⬇⬇
+    setTimeout(() => {
+        location.reload();
+    }, 1000);
+    // ⬆⬆⬆ ADICIONE ESTA PARTE ⬆⬆⬆
 }
 
 function decodeJwt(token) {
@@ -1371,3 +1377,4 @@ if (usuarioLogadoParaChat) {
     });
 }
 </script>
+
