@@ -405,31 +405,9 @@ button {
 <!-- TOPO -->
 <div class="topbar">
     <div class="radio-btn" id="playBtn" onclick="toggleRadio()">▶</div>
-
-    <!-- 🔔 MENSAGEM ENTRE RÁDIO E MENU -->
-    <div id="alertaMensagem" style="
-        display:none;
-        background:#00ffcc;
-        color:#000;
-        padding:6px 12px;
-        border-radius:10px;
-        font-weight:bold;
-        font-size:0.9rem;
-        margin:0 10px;
-        animation: pisca 1s infinite;
-        white-space: nowrap;
-    "></div>
-
     <div id="menuIcon" onclick="toggleMenu()">☰</div>
-
     <audio id="radioPlayer" src="https://stream.zeno.fm/l8ocj9i6ka2uv"></audio>
 </div>
-
-<style>
-@keyframes pisca {
-    50% { opacity: 0.3; }
-}
-</style>
 
 <!-- MENU LATERAL -->
 <div id="sideMenu">
@@ -1429,12 +1407,9 @@ function iniciarOnline() {
     iniciarNotificacoes();
 }
 
-/* 🔔 NOTIFICAÇÕES CORRIGIDAS */
+/* NOTIFICAÇÕES */
 function iniciarNotificacoes() {
     const convRef = ref(db, "chat/conversas");
-
-    // Guarda a última mensagem de cada sala
-    const ultimaMensagemSala = {};
 
     onValue(convRef, snap => {
         if (!snap.exists()) return;
@@ -1442,44 +1417,20 @@ function iniciarNotificacoes() {
         snap.forEach(roomSnap => {
             const roomId = roomSnap.key;
 
-            // Só salas que envolvem este usuário
             if (!roomId.includes(usuarioLogado)) return;
 
-            // Pega última mensagem
             let ultima = null;
-            roomSnap.forEach(msgSnap => ultima = msgSnap.val());
+            roomSnap.forEach(msg => ultima = msg.val());
+
             if (!ultima) return;
 
-            // Se primeira vez vendo esta sala, salva e não notifica
-            if (!ultimaMensagemSala[roomId]) {
-                ultimaMensagemSala[roomId] = ultima;
-                return;
+            if (ultima.de !== usuarioLogado) {
+                const som = document.getElementById("notificaChat");
+                som.currentTime = 0;
+                som.play().catch(()=>{});
             }
-
-            const ultimaAnterior = ultimaMensagemSala[roomId];
-
-            // Se mudou a mensagem REAL
-            if (ultima.msg !== ultimaAnterior.msg || ultima.timestamp !== ultimaAnterior.timestamp) {
-
-                // Se veio de outra pessoa → notificar
-                if (ultima.de !== usuarioLogado) {
-
-                    const som = document.getElementById("notificaChat");
-                    som.currentTime = 0;
-                    som.play().catch(()=>{});
-
-                    const alerta = document.getElementById("alertaMensagem");
-                    alerta.innerHTML = `💬 Nova mensagem no bate-papo`;
-                    alerta.style.display = "inline-block";
-
-                    setTimeout(() => {
-                        alerta.style.display = "none";
-                    }, 5000);
-                }
-            }
-
-            // Atualiza última mensagem conhecida
-            ultimaMensagemSala[roomId] = ultima;
         });
     });
 }
+</script>
+
