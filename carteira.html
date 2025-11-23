@@ -6,10 +6,10 @@
 <title>Carteira de Cambone</title>
 
 <!-- GOOGLE LOGIN -->
-<script src="https://accounts.google.com/gsi/client" async defer></script>
+<script src="https://accounts.google.com/gsi/client"></script>
 
 <style>
-/* 🔥 TELA PRETA DE LOGIN */
+/* TELA PRETA */
 #loginTela {
     position: fixed;
     top: 0; left: 0;
@@ -28,15 +28,14 @@
 }
 
 #googleLogin {
-    margin-top: 10px;
+    background: transparent;
+    padding: 10px;
 }
 
-/* 🔥 OCULTA A CARTEIRA ATÉ FAZER LOGIN */
-#conteudo {
-    display: none;
-}
+/* OCULTAR CONTEÚDO */
+#conteudo { display: none; }
 
-/* --- ESTILO ORIGINAL DA CARTEIRINHA --- */
+/* ESTILO DA CARTEIRA */
 body {
     font-family: Arial, sans-serif;
     background: #e6e6e6;
@@ -45,221 +44,72 @@ body {
     flex-direction: column;
     align-items: center;
 }
-
-.carteira {
-    width: 920px;
-    height: 360px;
-    background-image: url('/mnt/data/nova carteira serpro.png');
-    background-size: cover;
-    background-position: center;
-    border-radius: 16px;
-    border: 3px solid #0f5e29;
-    display: flex;
-    justify-content: space-between;
-    padding: 25px;
-    box-shadow: 0 0 20px rgba(0,0,0,0.22);
-}
-
-.lado {
-    width: 48%;
-    background: rgba(255,255,255,0.8);
-    padding: 15px;
-    border-radius: 10px;
-    box-sizing: border-box;
-}
-
-.titulo {
-    font-weight: bold;
-    text-align: center;
-    margin-bottom: 10px;
-    font-size: 14px;
-    color: #0f5e29;
-}
-
-.campo {
-    font-size: 12px;
-    margin-bottom: 6px;
-    line-height: 1.2;
-    color: #000;
-}
-
-.campo span {
-    font-weight: bold;
-    color: #0f5e29;
-}
-
-.escrito {
-    font-family: "Comic Sans MS", cursive;
-    font-size: 16px;
-    color: #0047ab;
-    font-weight: bold;
-}
-
-.upload-foto {
-    width: 110px;
-    height: 140px;
-    border-radius: 6px;
-    border: 2px dashed #0f5e29;
-    background: rgba(255,255,255,0.6);
-    cursor: pointer;
-    margin-top: 15px;
-    text-align: center;
-    font-size: 11px;
-    color: #0f5e29;
-    overflow: hidden;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.upload-foto img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    display: none;
-}
-
-input[type="file"] {
-    display: none;
-}
-
-.assinatura-img {
-    width: 90px;
-    margin-left: 10px;
-    opacity: 1;
-    filter: contrast(1.3);
-}
-
-.formulario {
-    width: 920px;
-    margin-top: 20px;
-    background: #fff;
-    padding: 15px;
-    border-radius: 10px;
-    border: 2px solid #0f5e29;
-}
-
-.formulario label {
-    font-weight: bold;
-    color: #0f5e29;
-}
-
-.formulario input {
-    width: 100%;
-    padding: 6px;
-    font-size: 14px;
-    margin-top: 3px;
-    border: 1px solid #0f5e29;
-    border-radius: 5px;
-}
-
-.btn-salvar, .btn-editar {
-    padding: 12px;
-    width: 100%;
-    background: #0f5e29;
-    color: #fff;
-    border-radius: 8px;
-    border: none;
-    cursor: pointer;
-    margin-top: 10px;
-    font-size: 16px;
-}
-
-.btn-editar {
-    background: #0f5e29 !important;
-}
 </style>
 </head>
 <body>
 
-<!-- 🔥 TELA DE LOGIN PRETA -->
+<!-- LOGIN -->
 <div id="loginTela">
     <img src="https://i.ibb.co/4RnPgkSN/5c081edd-21e9-48fb-9a91-834cfdd112fc-removebg-preview.png">
     <div id="googleLogin"></div>
+
+    <!-- DEBUG (MOSTRA ERROS) -->
+    <div id="debug" style="color:red; font-size:14px; margin-top:20px;"></div>
 </div>
 
-<!-- 🔥 CONTEÚDO DA CARTEIRA -->
+<!-- CONTEÚDO DA CARTEIRA -->
 <div id="conteudo">
-
-<div class="carteira">
-
-    <div class="lado">
-        <div class="titulo">C.E.U SÃO SEBASTIÃO REI OXOSSI</div>
-
-        <div class="campo">Rua A nº 1058 – Coaçu – Messejana – Fortaleza – CE</div>
-        <div class="campo">Sacerdote: Pai Márcio de Oxóssi – CNPJ: 50.446.555/0001-30</div>
-        <div class="campo">Fone: (85) 9 8696-6786</div>
-
-        <hr>
-
-        <div class="campo"><span>Nome:</span> <span id="nomeTexto" class="escrito">_________</span></div>
-        <div class="campo"><span>Estado Civil:</span> <span id="civilTexto" class="escrito">_________</span></div>
-        <div class="campo"><span>Endereço:</span> <span id="endTexto" class="escrito">_________</span></div>
-        <div class="campo"><span>RG:</span> <span id="rgTexto" class="escrito">_________</span></div>
-        <div class="campo"><span>CPF:</span> <span id="cpfTexto" class="escrito">_________</span></div>
-        <div class="campo"><span>Cargo:</span> <span id="cargoTexto" class="escrito">_________</span></div>
-    </div>
-
-    <div class="lado">
-
-        <div class="campo" style="font-size:13px; color:#000;">
-            O Código Penal Brasileiro (Decreto-Lei 2.848/1940), em seu artigo 208,
-            estabelece que é crime “escarnecer de alguém publicamente, por motivo de crença
-            ou função religiosa; impedir ou perturbar cerimônia ou prática de culto religioso;
-            vilipendiar publicamente ato ou objeto de culto religioso”.
-        </div>
-
-        <div class="campo" style="margin-top:10px;">
-            <span>Válida até:</span> <span class="escrito">00160</span>
-        </div>
-
-        <label class="upload-foto" for="fileInput">
-            <span id="textoFoto">Clique para enviar<br>uma foto</span>
-            <img id="previewFoto">
-        </label>
-
-        <input type="file" id="fileInput" accept="image/*">
-
-        <div class="campo" style="margin-top:10px; display:flex; align-items:center; color:#000;">
-            <span>Assinatura da Dirigente:</span>
-
-            <img class="assinatura-img"
-                 src="https://i.ibb.co/FL7Sb2zF/Captura-de-tela-2025-11-22-223959.png">
-        </div>
-
-    </div>
+    <h1>LOGIN OK — CARTEIRA AQUI</h1>
 </div>
 
-<!-- FORMULÁRIO -->
-<div id="formulario" class="formulario">
-    <div><label>Nome:</label><input type="text" id="nomeInput"></div>
-    <div><label>Estado Civil:</label><input type="text" id="civilInput"></div>
-    <div><label>Endereço:</label><input type="text" id="endInput"></div>
-    <div><label>RG:</label><input type="text" id="rgInput"></div>
-    <div><label>CPF:</label><input type="text" id="cpfInput"></div>
-    <div><label>Cargo:</label><input type="text" id="cargoInput"></div>
+<!-- ---------------- GOOGLE LOGIN (sempre fora do módulo) ---------------- -->
+<script>
+document.addEventListener("DOMContentLoaded", function () {
 
-    <button class="btn-salvar" onclick="salvar()">SALVAR INFORMAÇÕES</button>
-</div>
+    console.log("DOM carregado — iniciando Google Login");
 
-<button id="btnEditar" class="btn-editar" style="display:none;" onclick="editar()">ATUALIZAR INFORMAÇÕES</button>
+    if (!google || !google.accounts || !google.accounts.id) {
+        document.getElementById("debug").innerText = "❌ ERRO: Google Identity NÃO carregou!";
+        return;
+    }
 
-</div> <!-- FIM CONTEÚDO -->
+    google.accounts.id.initialize({
+        client_id: "627442405379-srqriainr8okj7ldg96njd1va5bvt7oi.apps.googleusercontent.com",
+        callback: googleLoginOK
+    });
 
-<!-- 🔥🔥 SCRIPTS FIREBASE + LOGIN + SALVAR + CARREGAR -->
+    google.accounts.id.renderButton(
+        document.getElementById("googleLogin"),
+        { theme: "filled_white", size: "large", width: 260 }
+    );
+
+    google.accounts.id.prompt();
+});
+
+function decodeJwt(token) {
+    return JSON.parse(atob(token.split('.')[1]));
+}
+
+function googleLoginOK(response) {
+    if (!response || !response.credential) {
+        document.getElementById("debug").innerText = "❌ ERRO: Google retornou resposta inválida.";
+        return;
+    }
+
+    window.googleToken = response.credential;
+
+    // Dispara evento para o Firebase fazer login
+    window.dispatchEvent(new Event("GoogleOK"));
+}
+</script>
+
+<!-- ---------------- FIREBASE (EM MÓDULO) ---------------- -->
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.0/firebase-app.js";
-import { 
-    getAuth, signInWithCredential, GoogleAuthProvider, onAuthStateChanged 
-} from "https://www.gstatic.com/firebasejs/10.14.0/firebase-auth.js";
-import { 
-    getDatabase, ref, set, get 
-} from "https://www.gstatic.com/firebasejs/10.14.0/firebase-database.js";
 import {
-    getStorage, ref as sRef, uploadString, getDownloadURL
-} from "https://www.gstatic.com/firebasejs/10.14.0/firebase-storage.js";
+    getAuth, GoogleAuthProvider, signInWithCredential, onAuthStateChanged
+} from "https://www.gstatic.com/firebasejs/10.14.0/firebase-auth.js";
 
-/* 🔥 CONFIG FIREBASE */
 const firebaseConfig = {
     apiKey: "AIzaSyAt4CeGjdbjzdtMH1qZHw6RuBFJ6SeTDKk",
     authDomain: "coletivo-f34d4.firebaseapp.com",
@@ -272,113 +122,23 @@ const firebaseConfig = {
 
 const app = initializeApp(firebaseConfig);
 const auth = getAuth();
-const db = getDatabase();
-const storage = getStorage();
 
-/* 🔥 CONFIG BOTÃO GOOGLE */
-google.accounts.id.initialize({
-    client_id: "627442405379-srqriainr8okj7ldg96njd1va5bvt7oi.apps.googleusercontent.com",
-    callback: loginGoogle
+/* QUANDO O GOOGLE FINALIZAR O LOGIN */
+window.addEventListener("GoogleOK", () => {
+    try {
+        const cred = GoogleAuthProvider.credential(window.googleToken);
+        signInWithCredential(auth, cred);
+    } catch (e) {
+        document.getElementById("debug").innerText = "ERRO FIREBASE: " + e.message;
+    }
 });
 
-google.accounts.id.renderButton(
-    document.getElementById("googleLogin"),
-    { theme: "filled_white", size: "large" }
-);
-
-/* LOGIN GOOGLE */
-function loginGoogle(response) {
-    const cred = GoogleAuthProvider.credential(response.credential);
-    signInWithCredential(auth, cred);
-}
-
-/* QUANDO ESTIVER LOGADO */
-onAuthStateChanged(auth, async (user) => {
-    if (!user) return;
-
-    window.user = user;
-
-    loginTela.style.display = "none";
-    conteudo.style.display = "block";
-
-    carregar();
-});
-
-/* CARREGAR DADOS */
-async function carregar() {
-    const snap = await get(ref(db, "carteirinhas/" + user.uid));
-
-    if (snap.exists()) {
-        const d = snap.val();
-
-        nomeTexto.innerText = d.nome || "________";
-        civilTexto.innerText = d.civil || "________";
-        endTexto.innerText = d.end || "________";
-        rgTexto.innerText = d.rg || "________";
-        cpfTexto.innerText = d.cpf || "________";
-        cargoTexto.innerText = d.cargo || "________";
-
-        nomeInput.value = d.nome || "";
-        civilInput.value = d.civil || "";
-        endInput.value = d.end || "";
-        rgInput.value = d.rg || "";
-        cpfInput.value = d.cpf || "";
-        cargoInput.value = d.cargo || "";
-
-        if (d.foto) {
-            previewFoto.src = d.foto;
-            previewFoto.style.display = "block";
-            textoFoto.style.display = "none";
-        }
-
-        formulario.style.display = "none";
-        btnEditar.style.display = "block";
+/* LOGADO */
+onAuthStateChanged(auth, (user) => {
+    if (user) {
+        loginTela.style.display = "none";
+        conteudo.style.display = "block";
     }
-}
-
-/* SALVAR */
-window.salvar = async function() {
-
-    let fotoURL = null;
-
-    if (previewFoto.src && previewFoto.style.display !== "none") {
-        const fotoRef = sRef(storage, "carteirinhas/" + user.uid + ".jpg");
-
-        await uploadString(fotoRef, previewFoto.src, "data_url");
-
-        fotoURL = await getDownloadURL(fotoRef);
-    }
-
-    await set(ref(db, "carteirinhas/" + user.uid), {
-        nome: nomeInput.value,
-        civil: civilInput.value,
-        end: endInput.value,
-        rg: rgInput.value,
-        cpf: cpfInput.value,
-        cargo: cargoInput.value,
-        foto: fotoURL
-    });
-
-    alert("Informações salvas!");
-    carregar();
-};
-
-/* EDITAR */
-window.editar = function() {
-    formulario.style.display = "block";
-    btnEditar.style.display = "none";
-};
-
-/* FOTO PREVIEW */
-fileInput.addEventListener("change", function() {
-    const file = this.files[0];
-    const r = new FileReader();
-    r.onload = e => {
-        previewFoto.src = e.target.result;
-        previewFoto.style.display = "block";
-        textoFoto.style.display = "none";
-    };
-    r.readAsDataURL(file);
 });
 </script>
 
