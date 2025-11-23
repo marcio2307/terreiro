@@ -591,18 +591,34 @@ window.addEventListener("DOMContentLoaded", () => {
 </script>
 <!-- LOGIN COM GOOGLE -->
 <script>
-window.onload = function () {
+document.addEventListener("DOMContentLoaded", () => {
+    setTimeout(() => {
 
-    google.accounts.id.initialize({
-        client_id: "627442405379-srqriainr8okj7ldg96njd1va5bvt7oi.apps.googleusercontent.com",
-        callback: handleGoogleLogin
-    });
+        google.accounts.id.initialize({
+            client_id: "627442405379-srqriainr8okj7ldg96njd1va5bvt7oi.apps.googleusercontent.com",
+            callback: handleGoogleLogin,
+            auto_select: false,
+            cancel_on_tap_outside: false
+        });
 
-    google.accounts.id.renderButton(
-        document.getElementById("googleLogin"),
-        { theme: "filled_black", size: "large", width: 265 }
-    );
-};
+        // Necessário para Safari + Chrome Android + Firefox Mobile
+        document.getElementById("googleLogin").style.display = "block";
+
+        google.accounts.id.renderButton(
+            document.getElementById("googleLogin"),
+            { 
+                theme: "filled_black",
+                size: "large",
+                width: 270,
+                type: "standard"
+            }
+        );
+
+        // Safari iPhone só exibe se o container estiver visível
+        document.getElementById("loginBox").style.display = "flex";
+
+    }, 250);
+});
 
 function handleGoogleLogin(response) {
     const data = decodeJwt(response.credential);
@@ -622,17 +638,16 @@ function handleGoogleLogin(response) {
 
     nomeUsuarioMenu.textContent = usuario;
 
-    // ⬇⬇⬇ ADICIONE ESTA PARTE ⬇⬇⬇
     setTimeout(() => {
         location.reload();
     }, 1000);
-    // ⬆⬆⬆ ADICIONE ESTA PARTE ⬆⬆⬆
 }
 
 function decodeJwt(token) {
     return JSON.parse(atob(token.split('.')[1]));
 }
 </script>
+
 
 <!-- FOTO DO PERFIL -->
 <script>
@@ -1463,3 +1478,4 @@ if (usuario) {
     iniciarNotificacoes();
 }
 </script>
+
