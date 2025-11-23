@@ -531,12 +531,12 @@ background:rgba(0,0,0,0.95); z-index:999999; justify-content:center; align-items
     <img id="modalImg">
 </div>
 
-
 <script>
-let usuario = null;
+let usuario = localStorage.getItem("usuarioLogado") || null;
 let visitante = false;
 
 window.addEventListener("DOMContentLoaded", () => {
+
 
     const logado = localStorage.getItem("usuarioLogado");
     const temPost = new URLSearchParams(window.location.search).get("post");
@@ -1401,7 +1401,7 @@ try {
 
 const db = getDatabase(app);
 
-let usuario = localStorage.getItem("usuarioLogado");
+usuario = localStorage.getItem("usuarioLogado");
 const foto = localStorage.getItem("fotoPerfil_" + usuario)
     || "https://cdn-icons-png.flaticon.com/512/149/149071.png";
 
