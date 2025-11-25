@@ -14,7 +14,7 @@
     overflow: hidden;
   }
 
-  /* ===== BOTÃO ENTRAR ===== */
+  /* === BOTÃO ENTRAR NA REUNIÃO === */
   #enterButton {
     position: fixed;
     top: 50%;
@@ -24,10 +24,10 @@
     color: #000;
     border: none;
     padding: 18px 32px;
-    font-size: 22px;
+    font-size: 24px;
     font-weight: bold;
     border-radius: 14px;
-    box-shadow: 0 0 25px #00ff66;
+    box-shadow: 0 0 20px #00ff66;
     cursor: pointer;
     z-index: 999999;
     animation: pulse 1.5s infinite;
@@ -41,7 +41,7 @@
 
   /* === GRID PADRÃO (3+ USUÁRIOS) === */
   #videos {
-    display: none; /* só mostra após clicar no botão */
+    display: none; /* só aparece após clicar no botão */
     gap: 8px;
     padding: 8px;
     height: calc(100vh - 90px);
@@ -110,8 +110,9 @@
     color: #fff;
   }
 
-  #btnEnd { background: #e30000; }
-
+  #btnEnd {
+    background: #e30000;
+  }
 </style>
 </head>
 
@@ -128,9 +129,7 @@
 
 <script type="module">
 
-/* ============================================================
-   DESBLOQUEIO PARA SAFARI / IPHONE / ANDROID ANTIGO
-============================================================ */
+/* ===== UNLOCK SAFARI / iPHONE ===== */
 function unlockAutoplay() {
     const v = document.createElement("video");
     v.setAttribute("playsinline", "");
@@ -147,7 +146,8 @@ document.addEventListener("touchstart", function start() {
 });
 document.addEventListener("click", unlockAutoplay);
 
-/* FIREBASE */
+/* ============================================================ */
+
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-app.js";
 import {
   getDatabase, ref, push, set, onChildAdded, onValue,
@@ -169,19 +169,20 @@ const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 
 const ROOM = "sala_global_31b3f";
-
 let localStream;
 let peers = {};
 let remoteVideos = {};
 let myId;
 
 const enterButton = document.getElementById("enterButton");
-const videoGrid  = document.getElementById("videos");
-const ctrlMe     = document.getElementById("controlsMe");
-const btnMic     = document.getElementById("btnMic");
-const btnEnd     = document.getElementById("btnEnd");
+const videoGrid   = document.getElementById("videos");
+const ctrlMe      = document.getElementById("controlsMe");
+const btnMic      = document.getElementById("btnMic");
+const btnEnd      = document.getElementById("btnEnd");
 
-/* VIDEO BOX */
+/* =======================================================
+   CRIA VIDEO COMPATÍVEL COM TODOS OS CELULARES
+======================================================= */
 function addVideoBox(stream, isMe = false) {
   const box = document.createElement("div");
   box.className = "video-box";
@@ -198,29 +199,42 @@ function addVideoBox(stream, isMe = false) {
   return { box, vid };
 }
 
-/* LAYOUT DINÂMICO */
+/* =======================================================
+   AJUSTE DO GRID
+======================================================= */
 function adjustLayout() {
   const total = videoGrid.children.length;
   videoGrid.classList.remove("one-user","two-users");
+
   if (total === 1) videoGrid.classList.add("one-user");
   else if (total === 2) videoGrid.classList.add("two-users");
 }
 
-/* INICIAR CÂMERA */
+/* =======================================================
+   START CAMERA (só após clicar no botão)
+======================================================= */
 async function startCamera() {
-  const constraints = {
-    video: { facingMode: "user", width: { ideal: 640 }, height: { ideal: 480 } },
-    audio: true
-  };
+  try {
+    const constraints = {
+      video: { facingMode: "user" },
+      audio: true
+    };
 
-  localStream = await navigator.mediaDevices.getUserMedia(constraints);
+    localStream = await navigator.mediaDevices.getUserMedia(constraints);
 
-  addVideoBox(localStream, true);
-  ctrlMe.style.display = "flex";
-  adjustLayout();
+    addVideoBox(localStream, true);
+    ctrlMe.style.display = "flex";
+    adjustLayout();
+
+  } catch (err) {
+    alert("Permita a câmera e o microfone.");
+    console.error(err);
+  }
 }
 
-/* PEER */
+/* =======================================================
+   PEER
+======================================================= */
 function createPeer(remoteId) {
   const pc = new RTCPeerConnection({
     iceServers: [{ urls: ["stun:stun.l.google.com:19302"] }]
@@ -232,13 +246,17 @@ function createPeer(remoteId) {
     if (!remoteVideos[remoteId]) {
       remoteVideos[remoteId] = addVideoBox(e.streams[0], false);
       adjustLayout();
+    } else {
+      remoteVideos[remoteId].vid.srcObject = e.streams[0];
     }
   };
 
   pc.onicecandidate = e => {
     if (e.candidate) {
       set(push(ref(db, ROOM+"/ice")), {
-        from: myId, to: remoteId, candidate: JSON.stringify(e.candidate)
+        from: myId,
+        to: remoteId,
+        candidate: JSON.stringify(e.candidate)
       });
     }
   };
@@ -246,12 +264,15 @@ function createPeer(remoteId) {
   return pc;
 }
 
-/* ENTRAR NA SALA */
+/* =======================================================
+   ENTRAR NA SALA (só inicia depois do botão)
+======================================================= */
 async function joinRoom() {
-  await startCamera();
 
   videoGrid.classList.add("show");
   enterButton.style.display = "none";
+
+  await startCamera();
 
   myId = push(ref(db, ROOM+"/users")).key;
   set(ref(db, ROOM+"/users/"+myId), true);
@@ -276,13 +297,12 @@ async function joinRoom() {
 
       if (myId < uid) {
         const pc = peers[uid] = createPeer(uid);
-        pc.createOffer()
-          .then(o => pc.setLocalDescription(o))
-          .then(() => {
-            set(push(ref(db, ROOM+"/signals")), {
-              type:"offer", from:myId, to:uid, sdp:JSON.stringify(o)
-            });
+        pc.createOffer().then(o => {
+          pc.setLocalDescription(o);
+          set(push(ref(db, ROOM+"/signals")), {
+            type:"offer", from:myId, to:uid, sdp:JSON.stringify(o)
           });
+        });
       }
     }
   });
@@ -301,6 +321,7 @@ async function joinRoom() {
       set(push(ref(db, ROOM+"/signals")), {
         type:"answer", from:myId, to:msg.from, sdp:JSON.stringify(ans)
       });
+
     } else if (msg.type === "answer") {
       await pc.setRemoteDescription(JSON.parse(msg.sdp));
     }
@@ -320,10 +341,8 @@ async function joinRoom() {
   });
 }
 
-/* ===== BOTÃO ENTRAR ===== */
-enterButton.onclick = () => {
-  joinRoom();
-};
+/* === CLICOU NO BOTÃO → ENTRA === */
+enterButton.onclick = () => joinRoom();
 
 /* MICROFONE */
 btnMic.onclick = () => {
@@ -333,7 +352,9 @@ btnMic.onclick = () => {
 };
 
 /* ENCERRAR */
-btnEnd.onclick = () => window.location.href = "https://marcio2307.github.io/terreiro/";
+btnEnd.onclick = () => {
+  window.location.href = "https://marcio2307.github.io/terreiro/";
+};
 
 </script>
 
