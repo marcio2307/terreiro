@@ -413,7 +413,7 @@ button {
 <div id="sideMenu">
 
     <!-- FOTO + NOME DO USUÁRIO -->
-    <div style="text-align:center; margin-bottom:10px;">
+        <div style="text-align:center; margin-bottom:10px;">
         <label for="fotoPerfilUpload">
             <img id="perfilFoto" src="https://cdn-icons-png.flaticon.com/512/149/149071.png"
                  style="width:95px; height:95px; border-radius:50%; border:3px solid #00ffcc; cursor:pointer; object-fit:cover;">
@@ -423,15 +423,12 @@ button {
         <div id="nomeUsuarioMenu" style="color:#00ffcc; font-weight:bold; margin-top:8px; font-size:1.1rem;"></div>
     </div>
 <a href="https://marcio2307.github.io/chatterreiro/chatterreiro.html" target="_blank">Bate Papo</a>
-    <a href="https://marcio2307.github.io/terreiro/origens.html" target="_blank">Nossas Origens</a>
-    <a href="https://marcio2307.github.io/terreiro/estudo.html" target="_blank">Estudo da Umbanda</a>
-    <a href="https://marcio2307.github.io/terreiro/sala.html" target="_blank">Reunião Online</a
+<a href="https://marcio2307.github.io/terreiro/origens.html" target="_blank">Nossas Origens</a>
+<a href="https://marcio2307.github.io/terreiro/estudo.html" target="_blank">Estudo da Umbanda</a>
+<a href="https://marcio2307.github.io/terreiro/sala.html" target="_blank">Reunião Online</a>
 
-  <div onclick="logout()"
-     style="color:#00ffcc; font-weight:bold; font-size:1.1rem; text-align:center; margin-top:12px; cursor:pointer;">
-     Sair da Conta
-</div>
-
+<!-- BOTÃO SAIR NO MESMO ESTILO DOS LINKS -->
+<a onclick="logout()" style="cursor:pointer;">Sair da Conta</a>
 <!-- LOGO -->
 <div class="main-logo">
     <img src="https://i.ibb.co/JRvgqKGM/5c081edd-21e9-48fb-9a91-834cfdd112fc-removebg-preview.png">
@@ -1325,14 +1322,31 @@ window.compartilhar = function(postId) {
 
 <!-- LOGOUT -->
 <script>
+
 function logout() {
+
+    // Remove login salvo no navegador
     localStorage.removeItem("usuarioLogado");
 
     if (usuario) {
         localStorage.removeItem("fotoPerfil_" + usuario);
     }
 
-    window.location.reload();
+    // Logout do Google (Identity Services)
+    try {
+        google.accounts.id.disableAutoSelect();
+
+        google.accounts.id.revoke(usuario, () => {
+            console.log("Google desconectado com sucesso");
+        });
+    } catch (e) {
+        console.warn("Revoke não disponível, continuando logout local");
+    }
+
+    // Voltar para a tela de login
+    setTimeout(() => {
+        window.location.reload();
+    }, 300);
 }
 </script>
 
@@ -1481,6 +1495,7 @@ if (usuario) {
     iniciarNotificacoes();
 }
 </script>
+
 
 
 
