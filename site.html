@@ -422,19 +422,19 @@ button {
 
         <div id="nomeUsuarioMenu" style="color:#00ffcc; font-weight:bold; margin-top:8px; font-size:1.1rem;"></div>
     </div>
-<a href="https://marcio2307.github.io/chatterreiro/chatterreiro.html" target="_blank">Bate Papo</a>
+
+    <a href="https://marcio2307.github.io/chatterreiro/chatterreiro.html" target="_blank">Bate Papo</a>
     <a href="https://marcio2307.github.io/terreiro/origens.html" target="_blank">Nossas Origens</a>
     <a href="https://marcio2307.github.io/terreiro/estudo.html" target="_blank">Estudo da Umbanda</a>
-    <a href="https://marcio2307.github.io/terreiro/sala.html" target="_blank">Reunião Online</a
+    <a href="https://marcio2307.github.io/terreiro/sala.html" target="_blank">Reunião Online</a>
 
-  <div onclick="logout()"
-     style="color:#00ffcc; font-weight:bold; font-size:1.1rem; text-align:center; margin-top:12px; cursor:pointer;">
-     Sair da Conta
-</div>
+    <!-- BOTÃO SAIR DA CONTA NO MESMO ESTILO -->
+    <a onclick="logout()" style="cursor:pointer;">Sair da Conta</a>
 
-<!-- LOGO -->
-<div class="main-logo">
-    <img src="https://i.ibb.co/JRvgqKGM/5c081edd-21e9-48fb-9a91-834cfdd112fc-removebg-preview.png">
+    <!-- LOGO -->
+    <div class="main-logo">
+        <img src="https://i.ibb.co/JRvgqKGM/5c081edd-21e9-48fb-9a91-834cfdd112fc-removebg-preview.png">
+    </div>
 </div>
 
 <!-- STORIES – ESTILO INSTAGRAM -->
@@ -1326,16 +1326,29 @@ window.compartilhar = function(postId) {
 <!-- LOGOUT -->
 <script>
 function logout() {
+
+    // remove login salvo
     localStorage.removeItem("usuarioLogado");
 
     if (usuario) {
         localStorage.removeItem("fotoPerfil_" + usuario);
     }
 
-    window.location.reload();
+    // logout Google Identity
+    try {
+        google.accounts.id.disableAutoSelect();
+
+        google.accounts.id.revoke(usuario, () => {
+            console.log("Google desconectado.");
+        });
+    } catch(e){}
+
+    // volta para login
+    setTimeout(() => {
+        window.location.reload();
+    }, 300);
 }
 </script>
-
 <!-- STORY DO USUÁRIO – CARREGA FOTO NO CÍRCULO -->
 <script>
 document.addEventListener("DOMContentLoaded", () => {
