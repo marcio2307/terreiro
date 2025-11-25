@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Sala Global – Reunião</title>
+<title>Sala Global – Videoconferência</title>
 
 <style>
   * { box-sizing: border-box; }
@@ -11,44 +11,56 @@
   body {
     margin: 0;
     background: #000;
-    color: #fff;
-    font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
     overflow: hidden;
+    font-family: sans-serif;
   }
 
+  /* === GRADE ESTILO ZOOM / FACETIME === */
   #videos {
     display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-    gap: 6px;
-    padding: 6px;
+    grid-template-columns: repeat(2, 1fr); /* 🔥 FIXO EM 2 COLUNAS NO CELULAR */
+    gap: 8px;
+    padding: 8px;
     height: 100vh;
     overflow-y: auto;
     background: #000;
   }
 
-  /* Tablet */
-  @media (max-width: 768px) {
+  /* TABLET OU TELAS MAIORES = 3 COLUNAS */
+  @media (min-width: 800px) {
     #videos {
-      grid-template-columns: repeat(2, 1fr);
+      grid-template-columns: repeat(3, 1fr);
     }
   }
 
-  /* Celular pequeno */
-  @media (max-width: 480px) {
+  /* PC GRANDE = 4 COLUNAS */
+  @media (min-width: 1200px) {
     #videos {
-      grid-template-columns: 1fr;
-      gap: 4px;
-      padding: 4px;
+      grid-template-columns: repeat(4, 1fr);
     }
   }
 
-  video {
+  /* === VÍDEO ESTILO CARTÃO, SEM ESTICAR === */
+  .video-box {
+    position: relative;
+    width: 100%;
+    padding-top: 130%; /* 🔥 proporção perfeita da imagem de exemplo */
+    background: #111;
+    border-radius: 14px;
+    overflow: hidden;
+    box-shadow: 0 0 12px rgba(0,0,0,0.8);
+  }
+
+  .video-box video {
+    position: absolute;
+    top: 0;
+    left: 0;
     width: 100%;
     height: 100%;
-    background: #111;
-    object-fit: cover;
-    border-radius: 10px;
+    object-fit: cover;  /* 🔥 mantém o rosto perfeito */
+    border-radius: 14px;
   }
+
 </style>
 </head>
 <body>
@@ -56,14 +68,13 @@
 <div id="videos"></div>
 
 <script type="module">
-/* ====== IMPORTS FIREBASE ====== */
+/* ===== FIREBASE ===== */
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-app.js";
 import {
-  getDatabase, ref, push, set, onChildAdded, onValue,
-  onDisconnect, remove
+  getDatabase, ref, push, set, onChildAdded,
+  onValue, onDisconnect, remove
 } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-database.js";
 
-/* 🔥 SEU FIREBASE – rastreio-31b3f */
 const firebaseConfig = {
   apiKey: "AIzaSyCrX9MuOeKyaWLCwgGjYMyrjKCXQXe-ZXY",
   authDomain: "rastreio-31b3f.firebaseapp.com",
@@ -78,64 +89,57 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 
-/* ====== CONFIG SALA ====== */
 const ROOM = "sala_global_31b3f";
 let localStream;
-let peers = {};      // { remoteId: RTCPeerConnection }
-let remoteVideos = {}; // { remoteId: HTMLVideoElement }
+let peers = {};
+let remoteVideos = {};
 let myId;
 
 const videoGrid = document.getElementById("videos");
 
-/* ====== FUNÇÃO: CRIAR VÍDEO NO GRID ====== */
-function createVideoElement(stream, isMe = false) {
+/* === CRIAR CAIXA DE VÍDEO === */
+function addVideoBox(stream, isMe = false) {
+  const box = document.createElement("div");
+  box.className = "video-box";
+
   const vid = document.createElement("video");
   vid.srcObject = stream;
   vid.autoplay = true;
-  vid.playsInline = true;         // 🔑 importante pro celular
-  if (isMe) vid.muted = true;     // você não quer ouvir eco de si mesmo
-  videoGrid.appendChild(vid);
+  vid.playsInline = true;
+  if (isMe) vid.muted = true;
+
+  box.appendChild(vid);
+  videoGrid.appendChild(box);
+
   return vid;
 }
 
-/* ====== INICIAR CÂMERA LOCAL ====== */
+/* === MINHA CÂMERA === */
 async function startCamera() {
   localStream = await navigator.mediaDevices.getUserMedia({
-    video: {
-      width: { ideal: 320 },
-      height: { ideal: 240 },
-      facingMode: "user"
-    },
+    video: { width: 640, height: 480, facingMode: "user" },
     audio: true
   });
 
-  // Mostra minha câmera
-  createVideoElement(localStream, true);
+  addVideoBox(localStream, true);
 }
 
-/* ====== CRIAR PEER CONNECTION ====== */
+/* === PEER === */
 function createPeer(remoteId) {
   const pc = new RTCPeerConnection({
-    iceServers: [
-      { urls: "stun:stun.l.google.com:19302" }
-    ]
+    iceServers: [{ urls: "stun:stun.l.google.com:19302" }]
   });
 
-  // Enviar minha câmera para o outro
   localStream.getTracks().forEach(track => pc.addTrack(track, localStream));
 
-  // Quando chegar vídeo do outro
-  pc.ontrack = event => {
-    let existing = remoteVideos[remoteId];
-    if (!existing) {
-      const vid = createVideoElement(event.streams[0], false);
-      remoteVideos[remoteId] = vid;
+  pc.ontrack = e => {
+    if (!remoteVideos[remoteId]) {
+      remoteVideos[remoteId] = addVideoBox(e.streams[0]);
     } else {
-      existing.srcObject = event.streams[0];
+      remoteVideos[remoteId].srcObject = e.streams[0];
     }
   };
 
-  // Candidatos ICE
   pc.onicecandidate = e => {
     if (e.candidate) {
       set(push(ref(db, `${ROOM}/ice`)), {
@@ -149,57 +153,47 @@ function createPeer(remoteId) {
   return pc;
 }
 
-/* ====== ENTRAR NA SALA ====== */
+/* === ENTRAR NA SALA === */
 async function joinRoom() {
   await startCamera();
 
-  // Gerar ID único
   myId = push(ref(db, `${ROOM}/users`)).key;
-  await set(ref(db, `${ROOM}/users/${myId}`), true);
+  set(ref(db, `${ROOM}/users/${myId}`), true);
   onDisconnect(ref(db, `${ROOM}/users/${myId}`)).remove();
 
-  // Sempre que lista de usuários mudar
-  onValue(ref(db, `${ROOM}/users`), async snap => {
-    const users = snap.val();
-    if (!users) return;
+  onValue(ref(db, `${ROOM}/users`), snap => {
+    const users = snap.val() || {};
 
     for (let uid of Object.keys(users)) {
       if (uid === myId) continue;
       if (peers[uid]) continue;
 
-      // 🔑 Regra anti-conflito: só quem tem ID MENOR cria a offer
       if (myId < uid) {
         const pc = createPeer(uid);
         peers[uid] = pc;
 
-        const offer = await pc.createOffer();
-        await pc.setLocalDescription(offer);
-
-        set(push(ref(db, `${ROOM}/signals`)), {
-          type: "offer",
-          from: myId,
-          to: uid,
-          sdp: JSON.stringify(offer)
-        });
+        pc.createOffer()
+          .then(o => pc.setLocalDescription(o))
+          .then(() => {
+            set(push(ref(db, `${ROOM}/signals`)), {
+              type: "offer",
+              from: myId,
+              to: uid,
+              sdp: JSON.stringify(pc.localDescription)
+            });
+          });
       }
     }
   });
 
-  /* ====== RECEBER OFFER / ANSWER ====== */
   onChildAdded(ref(db, `${ROOM}/signals`), async snap => {
     const msg = snap.val();
-    if (!msg || msg.to !== myId) {
-      return;
-    }
+    if (msg.to !== myId) return;
+
+    if (!peers[msg.from]) peers[msg.from] = createPeer(msg.from);
+    const pc = peers[msg.from];
 
     if (msg.type === "offer") {
-      // Se ainda não tenho peer com essa pessoa, crio
-      let pc = peers[msg.from];
-      if (!pc) {
-        pc = createPeer(msg.from);
-        peers[msg.from] = pc;
-      }
-
       await pc.setRemoteDescription(JSON.parse(msg.sdp));
       const answer = await pc.createAnswer();
       await pc.setLocalDescription(answer);
@@ -210,46 +204,27 @@ async function joinRoom() {
         to: msg.from,
         sdp: JSON.stringify(answer)
       });
+    } else if (msg.type === "answer") {
+      await pc.setRemoteDescription(JSON.parse(msg.sdp));
     }
 
-    if (msg.type === "answer") {
-      const pc = peers[msg.from];
-      if (pc) {
-        await pc.setRemoteDescription(JSON.parse(msg.sdp));
-      }
-    }
-
-    // Apaga o sinal depois de usar
     remove(ref(db, `${ROOM}/signals/${snap.key}`));
   });
 
-  /* ====== RECEBER ICE ====== */
   onChildAdded(ref(db, `${ROOM}/ice`), async snap => {
     const msg = snap.val();
-    if (!msg || msg.to !== myId) {
-      return;
+    if (msg.to !== myId) return;
+
+    if (peers[msg.from]) {
+      await peers[msg.from].addIceCandidate(JSON.parse(msg.candidate));
     }
 
-    const pc = peers[msg.from];
-    if (pc) {
-      try {
-        await pc.addIceCandidate(JSON.parse(msg.candidate));
-      } catch (err) {
-        console.error("Erro ao adicionar ICE:", err);
-      }
-    }
-
-    // Apaga o ICE depois
     remove(ref(db, `${ROOM}/ice/${snap.key}`));
   });
 }
 
-joinRoom().catch(err => {
-  console.error("Erro ao entrar na sala:", err);
-  alert("Erro ao acessar câmera/microfone: " + err.message);
-});
+joinRoom();
 </script>
 
 </body>
 </html>
-
