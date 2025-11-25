@@ -15,40 +15,35 @@
     font-family: sans-serif;
   }
 
-  /* === GRADE ESTILO ZOOM / FACETIME === */
+  /* === GRADE DINÂMICA === */
   #videos {
     display: grid;
-    grid-template-columns: repeat(2, 1fr); /* 🔥 FIXO EM 2 COLUNAS NO CELULAR */
     gap: 8px;
     padding: 8px;
     height: 100vh;
     overflow-y: auto;
     background: #000;
+
+    /* 🔥 Ajuste automático da grade */
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
   }
 
-  /* TABLET OU TELAS MAIORES = 3 COLUNAS */
-  @media (min-width: 800px) {
+  /* 🔥 CELULAR — 2 colunas fixas, estilo FaceTime */
+  @media (max-width: 600px) {
     #videos {
-      grid-template-columns: repeat(3, 1fr);
+      grid-template-columns: repeat(2, 1fr);
     }
   }
 
-  /* PC GRANDE = 4 COLUNAS */
-  @media (min-width: 1200px) {
-    #videos {
-      grid-template-columns: repeat(4, 1fr);
-    }
-  }
-
-  /* === VÍDEO ESTILO CARTÃO, SEM ESTICAR === */
+  /* === CAIXA DO VÍDEO === */
   .video-box {
     position: relative;
     width: 100%;
-    padding-top: 130%; /* 🔥 proporção perfeita da imagem de exemplo */
+    padding-top: 120%; 
     background: #111;
     border-radius: 14px;
     overflow: hidden;
-    box-shadow: 0 0 12px rgba(0,0,0,0.8);
+    box-shadow: 0 0 12px rgba(0,0,0,0.7);
   }
 
   .video-box video {
@@ -57,7 +52,7 @@
     left: 0;
     width: 100%;
     height: 100%;
-    object-fit: cover;  /* 🔥 mantém o rosto perfeito */
+    object-fit: cover;
     border-radius: 14px;
   }
 
@@ -97,7 +92,7 @@ let myId;
 
 const videoGrid = document.getElementById("videos");
 
-/* === CRIAR CAIXA DE VÍDEO === */
+/* === CRIA CAIXA DO VÍDEO === */
 function addVideoBox(stream, isMe = false) {
   const box = document.createElement("div");
   box.className = "video-box";
@@ -124,13 +119,15 @@ async function startCamera() {
   addVideoBox(localStream, true);
 }
 
-/* === PEER === */
+/* === PEER CONNECTION === */
 function createPeer(remoteId) {
   const pc = new RTCPeerConnection({
     iceServers: [{ urls: "stun:stun.l.google.com:19302" }]
   });
 
-  localStream.getTracks().forEach(track => pc.addTrack(track, localStream));
+  localStream.getTracks().forEach(track =>
+    pc.addTrack(track, localStream)
+  );
 
   pc.ontrack = e => {
     if (!remoteVideos[remoteId]) {
