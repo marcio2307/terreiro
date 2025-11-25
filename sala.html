@@ -20,27 +20,20 @@
     display: grid;
     gap: 8px;
     padding: 8px;
-    height: calc(100vh - 70px);
+    height: 100vh;
     overflow-y: auto;
     background: #000;
     grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
   }
 
-  /* CELULAR: 2 colunas */
+  /* CELULAR — 2 colunas */
   @media (max-width: 600px) {
     #videos {
       grid-template-columns: repeat(2, 1fr);
     }
   }
 
-  /* 1 usuário = tela cheia */
-  .full-screen {
-    grid-column: 1 / -1 !important;
-    padding-top: 0 !important;
-    height: calc(100vh - 70px);
-  }
-
-  /* QUADRADOS PERFEITOS */
+  /* QUADRADO PERFEITO */
   .video-box {
     position: relative;
     width: 100%;
@@ -59,37 +52,38 @@
     border-radius: 14px;
   }
 
-  /* === CONTROLES === */
-  #controls {
-    height: 70px;
-    background: #000;
+  /* === BOTÕES EM CIMA DO VÍDEO === */
+  .controls-small {
+    position: absolute;
+    top: 6px;
+    right: 6px;
     display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 18px;
+    gap: 6px;
+    z-index: 10;
   }
 
-  .btn {
-    width: 55px;
-    height: 55px;
+  .btn-small {
+    width: 34px;
+    height: 34px;
     border-radius: 50%;
     border: none;
-    font-size: 22px;
-    color: #fff;
+    font-size: 18px;
+    color: white;
+    cursor: pointer;
     display: flex;
-    align-items: center;
     justify-content: center;
+    align-items: center;
   }
 
-  #btnEnd {
+  .btn-end {
     background: #d50000;
   }
 
-  #btnMic {
+  .btn-mic {
     background: #444;
   }
 
-  #btnMic.off {
+  .btn-mic.off {
     background: #888;
   }
 
@@ -98,11 +92,6 @@
 <body>
 
 <div id="videos"></div>
-
-<div id="controls">
-  <button id="btnMic" class="btn">🎤</button>
-  <button id="btnEnd" class="btn">📞</button>
-</div>
 
 <script type="module">
 /* ===== FIREBASE ===== */
@@ -134,10 +123,8 @@ let remoteVideos = {};
 let myId;
 
 const videoGrid = document.getElementById("videos");
-const btnMic = document.getElementById("btnMic");
-const btnEnd = document.getElementById("btnEnd");
 
-/* === CRIAR BOX DE VÍDEO === */
+/* === CRIAR QUADRADO DE VÍDEO + BOTÕES === */
 function addVideoBox(stream, isMe = false) {
   const box = document.createElement("div");
   box.className = "video-box";
@@ -148,20 +135,70 @@ function addVideoBox(stream, isMe = false) {
   vid.playsInline = true;
   if (isMe) vid.muted = true;
 
+  /* === BOTÕES INDIVIDUAIS === */
+  const ctrl = document.createElement("div");
+  ctrl.className = "controls-small";
+
+  const micBtn = document.createElement("button");
+  micBtn.className = "btn-small btn-mic";
+  micBtn.innerText = "🎤";
+
+  if (isMe) {
+    micBtn.onclick = () => {
+      const track = localStream.getAudioTracks()[0];
+      track.enabled = !track.enabled;
+      micBtn.classList.toggle("off");
+      micBtn.innerText = track.enabled ? "🎤" : "🔇";
+    };
+  } else {
+    micBtn.style.opacity = "0.5";
+    micBtn.style.pointerEvents = "none";
+  }
+
+  const endBtn = document.createElement("button");
+  endBtn.className = "btn-small btn-end";
+  endBtn.innerText = "📞";
+
+  if (isMe) {
+    endBtn.onclick = () => {
+      window.location.href = "https://marcio2307.github.io/terreiro/";
+    };
+  } else {
+    endBtn.style.opacity = "0.5";
+    endBtn.style.pointerEvents = "none";
+  }
+
+  ctrl.appendChild(micBtn);
+  ctrl.appendChild(endBtn);
+
   box.appendChild(vid);
+  box.appendChild(ctrl);
+
   videoGrid.appendChild(box);
 
   return { box, vid };
 }
 
-/* === AJUSTAR TAMANHO AUTOMÁTICO === */
+/* === AJUSTAR TAMANHO === */
 function adjustLayout() {
-  const count = videoGrid.children.length;
+  const total = videoGrid.children.length;
 
-  [...videoGrid.children].forEach(el => el.classList.remove("full-screen"));
+  [...videoGrid.children].forEach(el => el.classList.remove("full"));
 
-  if (count === 1) {
-    videoGrid.children[0].classList.add("full-screen");
+  // 1 usuário = tela cheia
+  if (total === 1) {
+    const box = videoGrid.children[0];
+    box.style.gridColumn = "1 / -1";
+    box.style.height = "calc(100vh - 20px)";
+    box.style.paddingTop = "0";
+  } 
+  else {
+    // restaura quadrado normal
+    [...videoGrid.children].forEach(box => {
+      box.style.gridColumn = "auto";
+      box.style.height = "auto";
+      box.style.paddingTop = "100%";
+    });
   }
 }
 
@@ -188,9 +225,8 @@ function createPeer(remoteId) {
 
   pc.ontrack = event => {
     if (!remoteVideos[remoteId]) {
-      const { box, vid } = addVideoBox(event.streams[0]);
-      remoteVideos[remoteId] = { box, vid };
-      box.dataset.id = remoteId;
+      const box = addVideoBox(event.streams[0], false);
+      remoteVideos[remoteId] = box;
       adjustLayout();
     } else {
       remoteVideos[remoteId].vid.srcObject = event.streams[0];
@@ -218,7 +254,6 @@ async function joinRoom() {
   set(ref(db, `${ROOM}/users/${myId}`), true);
   onDisconnect(ref(db, `${ROOM}/users/${myId}`)).remove();
 
-  /* === ATUALIZAÇÃO AUTOMÁTICA === */
   onValue(ref(db, `${ROOM}/users`), snap => {
     const users = snap.val() || {};
 
@@ -231,6 +266,7 @@ async function joinRoom() {
           peers[uid].close();
           delete peers[uid];
         }
+
         adjustLayout();
       }
     }
@@ -256,7 +292,6 @@ async function joinRoom() {
     }
   });
 
-  /* === SIGNALS === */
   onChildAdded(ref(db, `${ROOM}/signals`), async snap => {
     const msg = snap.val();
     if (msg.to !== myId) return;
@@ -283,7 +318,6 @@ async function joinRoom() {
     remove(ref(db, `${ROOM}/signals/${snap.key}`));
   });
 
-  /* === ICE === */
   onChildAdded(ref(db, `${ROOM}/ice`), async snap => {
     const msg = snap.val();
     if (msg.to !== myId) return;
@@ -297,23 +331,6 @@ async function joinRoom() {
 }
 
 joinRoom();
-
-/* ======== CONTROLES ======== */
-
-/* MICROFONE */
-btnMic.onclick = () => {
-  const audioTrack = localStream.getAudioTracks()[0];
-  audioTrack.enabled = !audioTrack.enabled;
-
-  btnMic.classList.toggle("off");
-
-  btnMic.innerText = audioTrack.enabled ? "🎤" : "🔇";
-};
-
-/* ENCERRAR CHAMADA */
-btnEnd.onclick = () => {
-  window.location.href = "https://marcio2307.github.io/terreiro/";
-};
 </script>
 
 </body>
