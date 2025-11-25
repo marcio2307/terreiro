@@ -61,7 +61,6 @@
     border-radius: 14px;
   }
 
-  /* BOTÕES MYSELF */
   #controlsMe {
     position: fixed;
     bottom: 12px;
@@ -99,17 +98,31 @@
 
 <script type="module">
 
-/* === HACK PARA SAFARI/iPHONE PERMITIR AUTOPLAY === */
-document.addEventListener("touchstart", function start() {
+/* ============================================================
+   DESBLOQUEIO PARA SAFARI / IPHONE / ANDROID ANTIGO
+   TORNA O VÍDEO INLINE + AUTOPLAY POSSÍVEL
+============================================================ */
+function unlockAutoplay() {
     const v = document.createElement("video");
+    v.setAttribute("playsinline", "");
+    v.setAttribute("webkit-playsinline", "");
     v.muted = true;
-    v.playsInline = true;
     v.autoplay = true;
+    v.src = "";
     document.body.appendChild(v);
+}
+
+/* Safari iOS exige gesto inicial */
+document.addEventListener("touchstart", function start() {
+    unlockAutoplay();
     document.removeEventListener("touchstart", start);
 });
 
-/* === FIREBASE === */
+/* Clicar em qualquer lugar inicia */
+document.addEventListener("click", unlockAutoplay);
+
+/* ============================================================ */
+
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-app.js";
 import {
   getDatabase, ref, push, set, onChildAdded, onValue,
@@ -141,18 +154,21 @@ const ctrlMe = document.getElementById("controlsMe");
 const btnMic = document.getElementById("btnMic");
 const btnEnd = document.getElementById("btnEnd");
 
-/* CRIA BOX */
+/* =======================================================
+   CRIA VIDEO COMPATÍVEL COM TODOS OS CELULARES
+======================================================= */
 function addVideoBox(stream, isMe = false) {
   const box = document.createElement("div");
   box.className = "video-box";
 
   const vid = document.createElement("video");
+
   vid.srcObject = stream;
   vid.autoplay = true;
+  vid.muted = isMe;
+  vid.playsInline = true;
   vid.setAttribute("playsinline", "true");
   vid.setAttribute("webkit-playsinline", "true");
-
-  if (isMe) vid.muted = true;
 
   box.appendChild(vid);
   videoGrid.appendChild(box);
@@ -160,37 +176,50 @@ function addVideoBox(stream, isMe = false) {
   return { box, vid };
 }
 
-/* REGRAS DO LAYOUT */
+/* =======================================================
+   REGRAS DE LAYOUT
+======================================================= */
 function adjustLayout() {
   const total = videoGrid.children.length;
-
   videoGrid.classList.remove("one-user","two-users");
-
   if (total === 1) videoGrid.classList.add("one-user");
   else if (total === 2) videoGrid.classList.add("two-users");
 }
 
-/* CAMERA LOCAL */
+/* =======================================================
+   INICIAR CÂMERA UNIVERSAL
+======================================================= */
 async function startCamera() {
   try {
-    localStream = await navigator.mediaDevices.getUserMedia({
-      video: { facingMode: "user" },
+    const constraints = {
+      video: {
+        facingMode: "user",
+        width: { ideal: 640, max: 1280 },
+        height: { ideal: 480, max: 720 }
+      },
       audio: true
-    });
+    };
+
+    localStream = await navigator.mediaDevices.getUserMedia(constraints);
 
     addVideoBox(localStream, true);
     ctrlMe.style.display = "flex";
     adjustLayout();
 
-  } catch (e) {
-    alert("Você precisa permitir a câmera e o microfone.");
+  } catch (err) {
+    alert("Habilite câmera e microfone para entrar.");
+    console.error(err);
   }
 }
 
-/* PEER */
+/* =======================================================
+   PEER UNIVERSAL
+======================================================= */
 function createPeer(remoteId) {
   const pc = new RTCPeerConnection({
-    iceServers: [{ urls: "stun:stun.l.google.com:19302" }]
+    iceServers: [
+      { urls: ["stun:stun.l.google.com:19302", "stun:global.stun.twilio.com:3478"] }
+    ]
   });
 
   localStream.getTracks().forEach(t => pc.addTrack(t, localStream));
@@ -217,7 +246,9 @@ function createPeer(remoteId) {
   return pc;
 }
 
-/* SALA */
+/* =======================================================
+   ENTRAR NA SALA
+======================================================= */
 async function joinRoom() {
   await startCamera();
 
@@ -228,15 +259,18 @@ async function joinRoom() {
   onValue(ref(db, ROOM+"/users"), snap => {
     const users = snap.val() || {};
 
+    /* remover quem caiu */
     for (let uid in remoteVideos) {
       if (!users[uid]) {
         remoteVideos[uid].box.remove();
         delete remoteVideos[uid];
-        if (peers[uid]) { peers[uid].close(); delete peers[uid]; }
+        if (peers[uid]) peers[uid].close();
+        delete peers[uid];
         adjustLayout();
       }
     }
 
+    /* conectar novos */
     for (let uid of Object.keys(users)) {
       if (uid === myId) continue;
       if (peers[uid]) continue;
@@ -253,6 +287,7 @@ async function joinRoom() {
     }
   });
 
+  /* sinalização */
   onChildAdded(ref(db, ROOM+"/signals"), async snap => {
     const msg = snap.val();
     if (msg.to !== myId) return;
@@ -267,8 +302,9 @@ async function joinRoom() {
       set(push(ref(db, ROOM+"/signals")), {
         type:"answer", from:myId, to:msg.from, sdp:JSON.stringify(ans)
       });
+    }
 
-    } else if (msg.type === "answer") {
+    if (msg.type === "answer") {
       await pc.setRemoteDescription(JSON.parse(msg.sdp));
     }
 
@@ -289,17 +325,22 @@ async function joinRoom() {
 
 joinRoom();
 
-/* MICROFONE */
+/* =======================================================
+   MICROFONE
+======================================================= */
 btnMic.onclick = () => {
   const audio = localStream.getAudioTracks()[0];
   audio.enabled = !audio.enabled;
   btnMic.textContent = audio.enabled ? "🎤" : "🔇";
 };
 
-/* ENCERRAR */
+/* =======================================================
+   ENCERRAR
+======================================================= */
 btnEnd.onclick = () => {
   window.location.href = "https://marcio2307.github.io/terreiro/";
 };
+
 </script>
 
 </body>
