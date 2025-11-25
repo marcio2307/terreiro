@@ -1,223 +1,186 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Sala de Videoconferência</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Sala de Videoconferência – Estilo Google Meet</title>
 
-<!-- FIREBASE -->
-<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js"></script>
+  <style>
+    body {
+      margin: 0;
+      background: #0f172a;
+      font-family: Arial, sans-serif;
+      color: white;
+      overflow: hidden;
+    }
 
-<style>
-body {
-    margin: 0;
-    background: #000;
-    color: #fff;
-    font-family: Arial;
-    text-align: center;
-}
+    h1 {
+      text-align: center;
+      padding: 15px;
+      background: #1e1b4b;
+      margin: 0;
+      border-bottom: 1px solid #4338ca;
+    }
 
-#permissionBox {
-    position: fixed;
-    inset: 0;
-    background: rgba(0,0,0,0.90);
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    gap: 25px;
-    z-index: 99999;
-}
+    #videos {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 10px;
+      padding: 10px;
+      height: calc(100vh - 70px);
+      overflow-y: auto;
+    }
 
-#videos {
-    display: grid;
-    grid-template-columns: repeat(auto-fill,minmax(200px,1fr));
-    gap: 10px;
-    padding: 10px;
-    margin-top: 10px;
-}
-
-video {
-    width: 100%;
-    height: 180px;
-    background: #000;
-    border-radius: 10px;
-    object-fit: cover;
-}
-
-#allowBtn {
-    background: #00ffaa;
-    color: #000;
-    border: none;
-    padding: 15px 25px;
-    font-size: 18px;
-    font-weight: bold;
-    border-radius: 10px;
-    cursor: pointer;
-}
-</style>
+    video {
+      width: 100%;
+      height: auto;
+      border-radius: 10px;
+      background: #000;
+      object-fit: cover;
+      box-shadow: 0 0 15px #000;
+    }
+  </style>
 </head>
 <body>
 
-<h2>Sala de Videoconferência</h2>
+  <h1>Sala Global – Videoconferência</h1>
 
-<!-- PERMISSÃO ANTES DE TUDO -->
-<div id="permissionBox">
-    <img src="https://cdn-icons-png.flaticon.com/512/4221/4221419.png" width="90">
-    <h3>Permitir acesso à câmera e ao microfone</h3>
-    <button id="allowBtn">Permitir agora</button>
-</div>
+  <div id="videos"></div>
 
-<div id="videos"></div>
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-app.js";
+    import { getDatabase, ref, push, set, onChildAdded, onDisconnect } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-database.js";
 
-<script>
-/* 
-===========================================
-🔥 FIREBASE CONFIG
-===========================================
-*/
-const firebaseConfig = {
-    apiKey: "AIzaSyAt4CeGjdbjzdtMH1qZHw6RuBFJ6SeTDKk",
-    authDomain: "coletivo-f34d4.firebaseapp.com",
-    projectId: "coletivo-f34d4",
-    storageBucket: "coletivo-f34d4.firebasestorage.app",
-    messagingSenderId: "296376447787",
-    appId: "1:296376447787:web:1341c59c8087d6ac1e4b6e"
-};
-
-firebase.initializeApp(firebaseConfig);
-const db = firebase.firestore();
-
-/*
-===========================================
-🔥 FUNÇÃO DE PERMISSÃO
-===========================================
-*/
-let localStream;
-let peers = {};
-const roomId = "sala-global";
-
-document.getElementById("allowBtn").onclick = async function () {
-
-    try {
-        // 🔥 AGORA PEDE PERMISSÃO DE VERDADE
-        localStream = await navigator.mediaDevices.getUserMedia({
-            video: true,
-            audio: true
-        });
-
-        document.getElementById("permissionBox").style.display = "none";
-
-        iniciarSala();
-
-    } catch (e) {
-        alert("Você precisa permitir a câmera e o microfone.");
-    }
-};
-
-/*
-===========================================
-🔥 ADICIONAR VÍDEO NA TELA
-===========================================
-*/
-function addVideo(stream) {
-    const video = document.createElement("video");
-    video.srcObject = stream;
-    video.autoplay = true;
-    video.playsinline = true;
-    video.muted = (stream === localStream);
-    document.getElementById("videos").appendChild(video);
-}
-
-/*
-===========================================
-🔥 INICIAR SALA DE VIDEOCONFERÊNCIA
-===========================================
-*/
-async function iniciarSala() {
-
-    addVideo(localStream);
-
-    const roomRef = db.collection("salas").doc(roomId);
-    const candRef = roomRef.collection("candidates");
-
-    // RECEBE OFERTAS
-    roomRef.onSnapshot((snap) => {
-        const data = snap.data();
-        if (!data) return;
-
-        if (data.offer && !peers[data.offerId]) {
-            answerOffer(data.offer, data.offerId);
-        }
-    });
-
-    // RECEBE CANDIDATOS ICE
-    candRef.onSnapshot(snapshot => {
-        snapshot.docChanges().forEach(change => {
-            const data = change.doc.data();
-
-            if (peers[data.id] && data.candidate) {
-                peers[data.id].addIceCandidate(new RTCIceCandidate(data.candidate));
-            }
-        });
-    });
-
-    createOffer(roomRef, candRef);
-}
-
-/*
-===========================================
-🔥 CRIAR OFFER
-===========================================
-*/
-async function createOffer(roomRef, candRef) {
-
-    const peer = new RTCPeerConnection();
-    const id = Math.random().toString(36).substring(2);
-
-    peers[id] = peer;
-
-    localStream.getTracks().forEach(t => peer.addTrack(t, localStream));
-
-    peer.ontrack = e => addVideo(e.streams[0]);
-
-    peer.onicecandidate = e => {
-        if (e.candidate) {
-            candRef.add({ id, candidate: e.candidate.toJSON() });
-        }
+    // 🔥 Firebase (o mesmo do código original)
+    const firebaseConfig = {
+      apiKey: "AIzaSyAYhKhK5SFaWkFlqZhXi3nVbsWzdbjteO0",
+      authDomain: "rastreio-8bb0a.firebaseapp.com",
+      databaseURL: "https://rastreio-8bb0a-default-rtdb.firebaseio.com",
+      projectId: "rastreio-8bb0a",
+      storageBucket: "rastreio-8bb0a.appspot.com",
+      messagingSenderId: "676710436203",
+      appId: "1:676710436203:web:b48ebc7189ff71e564d02e"
     };
 
-    const offer = await peer.createOffer();
-    await peer.setLocalDescription(offer);
+    const app = initializeApp(firebaseConfig);
+    const db = getDatabase(app);
 
-    await roomRef.set({ offer, offerId: id });
-}
+    const ROOM = "global_room";    // 🔥 Sala única para todos
+    const peers = {};
+    let localStream;
 
-/*
-===========================================
-🔥 RESPONDER OFFER (ANSWER)
-===========================================
-*/
-async function answerOffer(offer, offerId) {
+    const videosDiv = document.getElementById("videos");
 
-    const peer = new RTCPeerConnection();
-    peers[offerId] = peer;
+    // ------------------------------------------------------------
+    // 1) Abre câmera e microfone
+    // ------------------------------------------------------------
+    async function loadCamera() {
+      localStream = await navigator.mediaDevices.getUserMedia({
+        video: true,
+        audio: true
+      });
 
-    localStream.getTracks().forEach(t => peer.addTrack(t, localStream));
+      const myVideo = document.createElement("video");
+      myVideo.srcObject = localStream;
+      myVideo.autoplay = true;
+      myVideo.muted = true;
+      videosDiv.appendChild(myVideo);
+    }
 
-    peer.ontrack = e => addVideo(e.streams[0]);
+    // ------------------------------------------------------------
+    // 2) Cria PeerConnection
+    // ------------------------------------------------------------
+    function createPeer(id) {
+      const pc = new RTCPeerConnection({
+        iceServers: [{ urls: "stun:stun.l.google.com:19302" }]
+      });
 
-    await peer.setRemoteDescription(new RTCSessionDescription(offer));
-    const answer = await peer.createAnswer();
-    await peer.setLocalDescription(answer);
+      peers[id] = pc;
 
-    db.collection("salas").doc(roomId).update({
-        answer,
-        answerId: offerId
-    });
-}
-</script>
+      localStream.getTracks().forEach(track => {
+        pc.addTrack(track, localStream);
+      });
 
+      pc.ontrack = (event) => {
+        const vid = document.createElement("video");
+        vid.srcObject = event.streams[0];
+        vid.autoplay = true;
+        videosDiv.appendChild(vid);
+      };
+
+      pc.onicecandidate = (e) => {
+        if (e.candidate) {
+          push(ref(db, `${ROOM}/signals/${id}/ice`), JSON.stringify(e.candidate));
+        }
+      };
+
+      return pc;
+    }
+
+    // ------------------------------------------------------------
+    // 3) Entrar na sala: cria um ID único
+    // ------------------------------------------------------------
+    async function joinRoom() {
+      await loadCamera();
+
+      const myId = push(ref(db, `${ROOM}/users`)).key;
+
+      const myRef = ref(db, `${ROOM}/users/${myId}`);
+      set(myRef, true);
+
+      onDisconnect(myRef).remove();
+
+      onChildAdded(ref(db, `${ROOM}/users`), async (snap) => {
+        const userId = snap.key;
+        if (userId === myId) return;
+
+        const pc = createPeer(userId);
+        const offer = await pc.createOffer();
+        await pc.setLocalDescription(offer);
+
+        set(ref(db, `${ROOM}/signals/${userId}/offer`), {
+          from: myId,
+          sdp: JSON.stringify(offer)
+        });
+      });
+
+      // Recebe offers
+      onChildAdded(ref(db, `${ROOM}/signals/${myId}/offer`), async (snap) => {
+        const data = snap.val();
+        const from = data.from;
+
+        const pc = createPeer(from);
+
+        await pc.setRemoteDescription(JSON.parse(data.sdp));
+        const answer = await pc.createAnswer();
+        await pc.setLocalDescription(answer);
+
+        set(ref(db, `${ROOM}/signals/${from}/answer`), {
+          from: myId,
+          sdp: JSON.stringify(answer)
+        });
+      });
+
+      // Recebe answers
+      onChildAdded(ref(db, `${ROOM}/signals/${myId}/answer`), async (snap) => {
+        const data = snap.val();
+        const from = data.from;
+
+        if (peers[from] && !peers[from].currentRemoteDescription) {
+          peers[from].setRemoteDescription(JSON.parse(data.sdp));
+        }
+      });
+
+      // Recebe ICE Candidates
+      onChildAdded(ref(db, `${ROOM}/signals/${myId}/ice`), async (snap) => {
+        const candidate = JSON.parse(snap.val());
+        for (const p in peers) {
+          try { peers[p].addIceCandidate(candidate); } catch { }
+        }
+      });
+    }
+
+    joinRoom();
+  </script>
 </body>
 </html>
