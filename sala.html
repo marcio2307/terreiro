@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Sala de Videoconferência</title>
 
-<!-- LOGIN GOOGLE -->
+<!-- GOOGLE LOGIN -->
 <script src="https://accounts.google.com/gsi/client" async defer></script>
 
 <!-- FIREBASE -->
@@ -16,31 +16,31 @@
 body {
     margin: 0;
     font-family: Arial;
+    background: #000; /* FUNDO PRETO */
     color: white;
-    background: #111;
 }
 
-/* LOGIN */
-#loginScreen {
+/* LOGIN GOOGLE */
+#loginBox {
     position: fixed;
     inset: 0;
-    background: rgba(0,0,0,.92);
+    background: rgba(0,0,0,0.92);
     display: flex;
     justify-content: center;
     align-items: center;
     flex-direction: column;
-    z-index: 9999;
+    z-index: 99999;
 }
 
-#loginScreen img {
+#loginBox img {
     height: 130px;
-    margin-bottom: 20px;
+    margin-bottom: 25px;
 }
 
-/* VIDEOS */
+/* GRID DOS VÍDEOS */
 #videos {
     display: grid;
-    grid-template-columns: repeat(auto-fill,minmax(240px,1fr));
+    grid-template-columns: repeat(auto-fill, minmax(240px,1fr));
     gap: 12px;
     padding: 15px;
 }
@@ -48,37 +48,37 @@ body {
 video {
     width: 100%;
     height: 180px;
-    object-fit: cover;
-    border-radius: 12px;
     background: black;
+    border-radius: 12px;
+    object-fit: cover;
 }
 
 /* CONTROLES */
 #controls {
+    display: none;
+    gap: 12px;
     position: fixed;
-    bottom: 15px;
+    bottom: 20px;
     left: 50%;
     transform: translateX(-50%);
-    display: none;
-    gap: 10px;
 }
 
 button {
-    padding: 12px 18px;
     background: #00ffaa;
-    border: none;
+    color: #000;
+    padding: 12px 18px;
     border-radius: 10px;
+    border: none;
     font-size: 16px;
     font-weight: bold;
     cursor: pointer;
-    color: black;
 }
 </style>
 </head>
 <body>
 
-<!-- LOGIN GOOGLE -->
-<div id="loginScreen">
+<!-- LOGIN -->
+<div id="loginBox">
     <img src="https://i.ibb.co/JRvgqKGM/5c081edd-21e9-48fb-9a91-834cfdd112fc-removebg-preview.png">
     <div id="googleBtn"></div>
 </div>
@@ -93,9 +93,9 @@ button {
 </div>
 
 <script>
-/* ============================================================
-   🔥 FIREBASE OFICIAL DO SEU PROJETO
-   ============================================================ */
+/* =====================================
+   🔥 CONFIG FIREBASE DO SEU PROJETO
+   ===================================== */
 const firebaseConfig = {
     apiKey: "AIzaSyAt4CeGjdbjzdtMH1qZHw6RuBFJ6SeTDKk",
     authDomain: "coletivo-f34d4.firebaseapp.com",
@@ -108,60 +108,59 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 const db = firebase.firestore();
 
-/* ============================================================
-   🔥 LOGIN GOOGLE AUTOMÁTICO
-   ============================================================ */
+/* =====================================
+   🔥 LOGIN GOOGLE
+   ===================================== */
 let usuario = localStorage.getItem("usuario");
 
-function decodeJwt(t) {
-    return JSON.parse(atob(t.split('.')[1]));
+function decodeJwt(token) {
+    return JSON.parse(atob(token.split('.')[1]));
 }
 
-function handleLogin(resp) {
-    const data = decodeJwt(resp.credential);
+function googleLogin(response) {
+    const data = decodeJwt(response.credential);
     usuario = data.email;
 
     localStorage.setItem("usuario", usuario);
 
-    loginScreen.style.display = "none";
+    loginBox.style.display = "none";
     iniciarSala();
 }
 
 google.accounts.id.initialize({
     client_id: "627442405379-srqriainr8okj7ldg96njd1va5bvt7oi.apps.googleusercontent.com",
-    callback: handleLogin,
+    callback: googleLogin,
     auto_select: true
 });
 
 google.accounts.id.renderButton(
     document.getElementById("googleBtn"),
-    { theme: "filled_black", size: "large" }
+    { theme: "filled_black", size: "large", width: 270 }
 );
 
-/* ============================================================
-   🔥 SE JÁ ESTIVER LOGADO → ENTRA DIRETO NA SALA
-   ============================================================ */
+/* SE JÁ ESTAVA LOGADO, ENTRA DIRETO */
 document.addEventListener("DOMContentLoaded", () => {
     if (usuario) {
-        loginScreen.style.display = "none";
+        loginBox.style.display = "none";
         iniciarSala();
     }
 });
 </script>
 
 <script>
-/* ============================================================
-   🔥 SALA WEBRTC COMPLETA
-   ============================================================ */
+/* =====================================
+   🔥 SISTEMA DE VIDEOCONFERÊNCIA
+   ===================================== */
+
 const roomId = "sala-global";
 const peers = {};
 let localStream;
 
 async function iniciarSala() {
 
-    document.getElementById("controls").style.display = "flex";
+    controls.style.display = "flex";
 
-    // pede câmera automaticamente
+    /* PEDIR CÂMERA AUTOMATICAMENTE */
     localStream = await navigator.mediaDevices.getUserMedia({
         video: true,
         audio: true
@@ -172,7 +171,7 @@ async function iniciarSala() {
     const roomRef = db.collection("salas").doc(roomId);
     const candRef = roomRef.collection("candidates");
 
-    roomRef.onSnapshot(snap => {
+    roomRef.onSnapshot((snap) => {
         const data = snap.data();
         if (!data) return;
 
@@ -184,6 +183,7 @@ async function iniciarSala() {
     candRef.onSnapshot(snapshot => {
         snapshot.docChanges().forEach(async change => {
             const data = change.doc.data();
+
             if (peers[data.id] && data.candidate) {
                 await peers[data.id].addIceCandidate(
                     new RTCIceCandidate(data.candidate)
@@ -195,17 +195,18 @@ async function iniciarSala() {
     createOffer(roomRef, candRef);
 }
 
-/* insere vídeos no grid */
+/* Adiciona vídeo no grid */
 function addVideo(stream) {
-    const v = document.createElement("video");
-    v.srcObject = stream;
-    v.autoplay = true;
-    v.playsinline = true;
-    v.muted = (stream === localStream);
-    document.getElementById("videos").appendChild(v);
+    const video = document.createElement("video");
+    video.srcObject = stream;
+    video.autoplay = true;
+    video.playsinline = true;
+    video.muted = (stream === localStream);
+
+    document.getElementById("videos").appendChild(video);
 }
 
-/* cria oferta */
+/* Cria oferta */
 async function createOffer(roomRef, candRef) {
 
     const peer = new RTCPeerConnection();
@@ -228,7 +229,7 @@ async function createOffer(roomRef, candRef) {
     await roomRef.set({ offer, offerId: id });
 }
 
-/* responde a oferta */
+/* Responde oferta */
 async function answerOffer(offer, offerId) {
 
     const peer = new RTCPeerConnection();
@@ -242,18 +243,19 @@ async function answerOffer(offer, offerId) {
     await peer.setLocalDescription(answer);
 
     db.collection("salas").doc(roomId).update({
-        answer, answerId: offerId
+        answer,
+        answerId: offerId
     });
 }
 
 /* CONTROLES */
 toggleCam.onclick = () => {
-    let t = localStream.getVideoTracks()[0];
+    const t = localStream.getVideoTracks()[0];
     t.enabled = !t.enabled;
 };
 
 toggleMic.onclick = () => {
-    let t = localStream.getAudioTracks()[0];
+    const t = localStream.getAudioTracks()[0];
     t.enabled = !t.enabled;
 };
 </script>
