@@ -15,33 +15,39 @@
     font-family: sans-serif;
   }
 
-  /* === GRADE DINÂMICA IGUAL À FOTO (2 colunas no celular) === */
+  /* === GRADE DINÂMICA === */
   #videos {
     display: grid;
     gap: 8px;
     padding: 8px;
-    height: 100vh;
+    height: calc(100vh - 70px);
     overflow-y: auto;
     background: #000;
     grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
   }
 
-  /* CELULAR: 2 colunas perfeitas */
+  /* CELULAR: 2 colunas */
   @media (max-width: 600px) {
     #videos {
       grid-template-columns: repeat(2, 1fr);
     }
   }
 
-  /* === QUADRADOS PERFEITOS IGUAIS À FOTO === */
+  /* 1 usuário = tela cheia */
+  .full-screen {
+    grid-column: 1 / -1 !important;
+    padding-top: 0 !important;
+    height: calc(100vh - 70px);
+  }
+
+  /* QUADRADOS PERFEITOS */
   .video-box {
     position: relative;
     width: 100%;
-    padding-top: 100%; /* QUADRADO 1:1 */
+    padding-top: 100%;
     background: #111;
     border-radius: 14px;
     overflow: hidden;
-    box-shadow: 0 0 12px rgba(0,0,0,0.7);
   }
 
   .video-box video {
@@ -49,14 +55,54 @@
     top: 0; left: 0;
     width: 100%;
     height: 100%;
-    object-fit: cover; 
+    object-fit: cover;
     border-radius: 14px;
   }
+
+  /* === CONTROLES === */
+  #controls {
+    height: 70px;
+    background: #000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 18px;
+  }
+
+  .btn {
+    width: 55px;
+    height: 55px;
+    border-radius: 50%;
+    border: none;
+    font-size: 22px;
+    color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  #btnEnd {
+    background: #d50000;
+  }
+
+  #btnMic {
+    background: #444;
+  }
+
+  #btnMic.off {
+    background: #888;
+  }
+
 </style>
 </head>
 <body>
 
 <div id="videos"></div>
+
+<div id="controls">
+  <button id="btnMic" class="btn">🎤</button>
+  <button id="btnEnd" class="btn">📞</button>
+</div>
 
 <script type="module">
 /* ===== FIREBASE ===== */
@@ -81,14 +127,17 @@ const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 
 const ROOM = "sala_global_31b3f";
+
 let localStream;
 let peers = {};
 let remoteVideos = {};  
 let myId;
 
 const videoGrid = document.getElementById("videos");
+const btnMic = document.getElementById("btnMic");
+const btnEnd = document.getElementById("btnEnd");
 
-/* === CRIAR QUADRADO DE VÍDEO === */
+/* === CRIAR BOX DE VÍDEO === */
 function addVideoBox(stream, isMe = false) {
   const box = document.createElement("div");
   box.className = "video-box";
@@ -102,7 +151,18 @@ function addVideoBox(stream, isMe = false) {
   box.appendChild(vid);
   videoGrid.appendChild(box);
 
-  return vid;
+  return { box, vid };
+}
+
+/* === AJUSTAR TAMANHO AUTOMÁTICO === */
+function adjustLayout() {
+  const count = videoGrid.children.length;
+
+  [...videoGrid.children].forEach(el => el.classList.remove("full-screen"));
+
+  if (count === 1) {
+    videoGrid.children[0].classList.add("full-screen");
+  }
 }
 
 /* === CÂMERA LOCAL === */
@@ -112,7 +172,10 @@ async function startCamera() {
     audio: true
   });
 
-  addVideoBox(localStream, true);
+  const me = addVideoBox(localStream, true);
+  me.box.dataset.id = "me";
+
+  adjustLayout();
 }
 
 /* === PEER === */
@@ -125,9 +188,12 @@ function createPeer(remoteId) {
 
   pc.ontrack = event => {
     if (!remoteVideos[remoteId]) {
-      remoteVideos[remoteId] = addVideoBox(event.streams[0]);
+      const { box, vid } = addVideoBox(event.streams[0]);
+      remoteVideos[remoteId] = { box, vid };
+      box.dataset.id = remoteId;
+      adjustLayout();
     } else {
-      remoteVideos[remoteId].srcObject = event.streams[0];
+      remoteVideos[remoteId].vid.srcObject = event.streams[0];
     }
   };
 
@@ -152,34 +218,32 @@ async function joinRoom() {
   set(ref(db, `${ROOM}/users/${myId}`), true);
   onDisconnect(ref(db, `${ROOM}/users/${myId}`)).remove();
 
-  /* === REMOVE TELA TRAVADA QUANDO ALGUÉM ATUALIZA === */
+  /* === ATUALIZAÇÃO AUTOMÁTICA === */
   onValue(ref(db, `${ROOM}/users`), snap => {
     const users = snap.val() || {};
 
-    // remover vídeos de quem saiu
     for (let uid in remoteVideos) {
       if (!users[uid]) {
-        remoteVideos[uid].parentNode.remove();
+        remoteVideos[uid].box.remove();
         delete remoteVideos[uid];
 
         if (peers[uid]) {
           peers[uid].close();
           delete peers[uid];
         }
+        adjustLayout();
       }
     }
 
-    // conectar novos usuários
     for (let uid of Object.keys(users)) {
       if (uid === myId) continue;
       if (peers[uid]) continue;
 
       if (myId < uid) {
-        const pc = createPeer(uid);
-        peers[uid] = pc;
+        const pc = peers[uid] = createPeer(uid);
 
         pc.createOffer()
-          .then(offer => pc.setLocalDescription(offer))
+          .then(o => pc.setLocalDescription(o))
           .then(() => {
             set(push(ref(db, `${ROOM}/signals`)), {
               type: "offer",
@@ -211,9 +275,8 @@ async function joinRoom() {
         to: msg.from,
         sdp: JSON.stringify(ans)
       });
-    }
 
-    if (msg.type === "answer") {
+    } else if (msg.type === "answer") {
       await pc.setRemoteDescription(JSON.parse(msg.sdp));
     }
 
@@ -226,9 +289,7 @@ async function joinRoom() {
     if (msg.to !== myId) return;
 
     if (peers[msg.from]) {
-      try {
-        await peers[msg.from].addIceCandidate(JSON.parse(msg.candidate));
-      } catch(e) {}
+      await peers[msg.from].addIceCandidate(JSON.parse(msg.candidate));
     }
 
     remove(ref(db, `${ROOM}/ice/${snap.key}`));
@@ -236,6 +297,23 @@ async function joinRoom() {
 }
 
 joinRoom();
+
+/* ======== CONTROLES ======== */
+
+/* MICROFONE */
+btnMic.onclick = () => {
+  const audioTrack = localStream.getAudioTracks()[0];
+  audioTrack.enabled = !audioTrack.enabled;
+
+  btnMic.classList.toggle("off");
+
+  btnMic.innerText = audioTrack.enabled ? "🎤" : "🔇";
+};
+
+/* ENCERRAR CHAMADA */
+btnEnd.onclick = () => {
+  window.location.href = "https://marcio2307.github.io/terreiro/";
+};
 </script>
 
 </body>
