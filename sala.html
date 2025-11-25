@@ -39,14 +39,14 @@
     100% { box-shadow: 0 0 10px #00ff66; }
   }
 
-  /* === GRID PADRÃO (AGORA IGUAL CELULAR E TABLET) === */
+  /* === GRID PADRÃO (3+ USUÁRIOS) === */
   #videos {
-    display: none;
+    display: none; /* só aparece após clicar no botão */
     gap: 8px;
     padding: 8px;
     height: calc(100vh - 90px);
     overflow-y: auto;
-    grid-template-columns: repeat(2, 1fr); /* 🔥 FIXO 2 COLUNAS EM QUALQUER CELULAR/TABLET */
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
   }
 
   #videos.show {
@@ -57,7 +57,9 @@
   #videos.two-users {
     display: flex !important;
     flex-direction: column;
+    height: calc(100vh - 90px);
   }
+
   #videos.two-users .video-box {
     flex: 1;
     height: 50vh !important;
@@ -88,7 +90,6 @@
     border-radius: 14px;
   }
 
-  /* === CONTROLES DO USUÁRIO === */
   #controlsMe {
     position: fixed;
     bottom: 12px;
@@ -128,7 +129,7 @@
 
 <script type="module">
 
-/* ===== DESBLOQUEIO SAFARI ===== */
+/* ===== UNLOCK SAFARI / iPHONE ===== */
 function unlockAutoplay() {
     const v = document.createElement("video");
     v.setAttribute("playsinline", "");
@@ -138,13 +139,15 @@ function unlockAutoplay() {
     v.src = "";
     document.body.appendChild(v);
 }
+
 document.addEventListener("touchstart", function start() {
     unlockAutoplay();
     document.removeEventListener("touchstart", start);
 });
 document.addEventListener("click", unlockAutoplay);
 
-/* =========== FIREBASE =========== */
+/* ============================================================ */
+
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-app.js";
 import {
   getDatabase, ref, push, set, onChildAdded, onValue,
@@ -177,7 +180,9 @@ const ctrlMe      = document.getElementById("controlsMe");
 const btnMic      = document.getElementById("btnMic");
 const btnEnd      = document.getElementById("btnEnd");
 
-/* === ADICIONAR VÍDEO === */
+/* =======================================================
+   CRIA VIDEO COMPATÍVEL COM TODOS OS CELULARES
+======================================================= */
 function addVideoBox(stream, isMe = false) {
   const box = document.createElement("div");
   box.className = "video-box";
@@ -194,23 +199,28 @@ function addVideoBox(stream, isMe = false) {
   return { box, vid };
 }
 
-/* === LAYOUT === */
+/* =======================================================
+   AJUSTE DO GRID
+======================================================= */
 function adjustLayout() {
   const total = videoGrid.children.length;
-
   videoGrid.classList.remove("one-user","two-users");
 
   if (total === 1) videoGrid.classList.add("one-user");
   else if (total === 2) videoGrid.classList.add("two-users");
 }
 
-/* === CAMERA === */
+/* =======================================================
+   START CAMERA (só após clicar no botão)
+======================================================= */
 async function startCamera() {
   try {
-    localStream = await navigator.mediaDevices.getUserMedia({
+    const constraints = {
       video: { facingMode: "user" },
       audio: true
-    });
+    };
+
+    localStream = await navigator.mediaDevices.getUserMedia(constraints);
 
     addVideoBox(localStream, true);
     ctrlMe.style.display = "flex";
@@ -218,10 +228,13 @@ async function startCamera() {
 
   } catch (err) {
     alert("Permita a câmera e o microfone.");
+    console.error(err);
   }
 }
 
-/* === PEER === */
+/* =======================================================
+   PEER
+======================================================= */
 function createPeer(remoteId) {
   const pc = new RTCPeerConnection({
     iceServers: [{ urls: ["stun:stun.l.google.com:19302"] }]
@@ -241,7 +254,8 @@ function createPeer(remoteId) {
   pc.onicecandidate = e => {
     if (e.candidate) {
       set(push(ref(db, ROOM+"/ice")), {
-        from: myId, to: remoteId,
+        from: myId,
+        to: remoteId,
         candidate: JSON.stringify(e.candidate)
       });
     }
@@ -250,7 +264,9 @@ function createPeer(remoteId) {
   return pc;
 }
 
-/* === ENTRAR === */
+/* =======================================================
+   ENTRAR NA SALA (só inicia depois do botão)
+======================================================= */
 async function joinRoom() {
 
   videoGrid.classList.add("show");
@@ -325,17 +341,17 @@ async function joinRoom() {
   });
 }
 
-/* === BOTÃO ENTRAR === */
+/* === CLICOU NO BOTÃO → ENTRA === */
 enterButton.onclick = () => joinRoom();
 
-/* === MICROFONE === */
+/* MICROFONE */
 btnMic.onclick = () => {
   const audio = localStream.getAudioTracks()[0];
   audio.enabled = !audio.enabled;
   btnMic.textContent = audio.enabled ? "🎤" : "🔇";
 };
 
-/* === ENCERRAR === */
+/* ENCERRAR */
 btnEnd.onclick = () => {
   window.location.href = "https://marcio2307.github.io/terreiro/";
 };
@@ -344,3 +360,4 @@ btnEnd.onclick = () => {
 
 </body>
 </html>
+
