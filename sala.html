@@ -1,136 +1,116 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Sala de Videoconferência – Estilo Google Meet</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Sala Global – Videoconferência</title>
 
-  <style>
+<style>
     body {
-      margin: 0;
-      background: #0f172a;
-      font-family: Arial, sans-serif;
-      color: white;
-      overflow: hidden;
-    }
-
-    h1 {
-      text-align: center;
-      padding: 15px;
-      background: #1e1b4b;
-      margin: 0;
-      border-bottom: 1px solid #4338ca;
+        margin: 0;
+        background: #000;
+        overflow: hidden;
+        font-family: Arial, sans-serif;
     }
 
     #videos {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      gap: 10px;
-      padding: 10px;
-      height: calc(100vh - 70px);
-      overflow-y: auto;
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+        gap: 10px;
+        padding: 10px;
+        height: 100vh;
+        overflow-y: auto;
+        background: #000;
     }
 
     video {
-      width: 100%;
-      height: auto;
-      border-radius: 10px;
-      background: #000;
-      object-fit: cover;
-      box-shadow: 0 0 15px #000;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        border-radius: 8px;
+        background: #111;
+        box-shadow: 0 0 10px #000;
     }
-  </style>
+</style>
 </head>
 <body>
 
-  <h1>Sala Global – Videoconferência</h1>
+<div id="videos"></div>
 
-  <div id="videos"></div>
+<script type="module">
+/* ---------------------- Firebase ---------------------- */
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-app.js";
+import { getDatabase, ref, push, set, onChildAdded, onDisconnect } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-database.js";
 
-  <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-app.js";
-    import { getDatabase, ref, push, set, onChildAdded, onDisconnect } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-database.js";
+const firebaseConfig = {
+  apiKey: "AIzaSyAYhKhK5SFaWkFlqZhXi3nVbsWzdbjteO0",
+  authDomain: "rastreio-8bb0a.firebaseapp.com",
+  databaseURL: "https://rastreio-8bb0a-default-rtdb.firebaseio.com",
+  projectId: "rastreio-8bb0a",
+  storageBucket: "rastreio-8bb0a.appspot.com",
+  messagingSenderId: "676710436203",
+  appId: "1:676710436203:web:b48ebc7189ff71e564d02e"
+};
 
-    // 🔥 Firebase (o mesmo do código original)
-    const firebaseConfig = {
-      apiKey: "AIzaSyAYhKhK5SFaWkFlqZhXi3nVbsWzdbjteO0",
-      authDomain: "rastreio-8bb0a.firebaseapp.com",
-      databaseURL: "https://rastreio-8bb0a-default-rtdb.firebaseio.com",
-      projectId: "rastreio-8bb0a",
-      storageBucket: "rastreio-8bb0a.appspot.com",
-      messagingSenderId: "676710436203",
-      appId: "1:676710436203:web:b48ebc7189ff71e564d02e"
-    };
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
 
-    const app = initializeApp(firebaseConfig);
-    const db = getDatabase(app);
+const ROOM = "global_room_zoom";
+const peers = {};
+let localStream;
 
-    const ROOM = "global_room";    // 🔥 Sala única para todos
-    const peers = {};
-    let localStream;
+const videosDiv = document.getElementById("videos");
 
-    const videosDiv = document.getElementById("videos");
+/* ---------------------- 1. Abre Câmera ---------------------- */
+async function initCamera() {
+    localStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
 
-    // ------------------------------------------------------------
-    // 1) Abre câmera e microfone
-    // ------------------------------------------------------------
-    async function loadCamera() {
-      localStream = await navigator.mediaDevices.getUserMedia({
-        video: true,
-        audio: true
-      });
+    const myVid = document.createElement("video");
+    myVid.srcObject = localStream;
+    myVid.autoplay = true;
+    myVid.muted = true;
+    videosDiv.appendChild(myVid);
+}
 
-      const myVideo = document.createElement("video");
-      myVideo.srcObject = localStream;
-      myVideo.autoplay = true;
-      myVideo.muted = true;
-      videosDiv.appendChild(myVideo);
-    }
-
-    // ------------------------------------------------------------
-    // 2) Cria PeerConnection
-    // ------------------------------------------------------------
-    function createPeer(id) {
-      const pc = new RTCPeerConnection({
+/* ---------------------- 2. Cria Peer ---------------------- */
+function createPeer(id) {
+    const pc = new RTCPeerConnection({
         iceServers: [{ urls: "stun:stun.l.google.com:19302" }]
-      });
+    });
 
-      peers[id] = pc;
+    peers[id] = pc;
 
-      localStream.getTracks().forEach(track => {
+    localStream.getTracks().forEach(track => {
         pc.addTrack(track, localStream);
-      });
+    });
 
-      pc.ontrack = (event) => {
+    pc.ontrack = event => {
         const vid = document.createElement("video");
         vid.srcObject = event.streams[0];
         vid.autoplay = true;
         videosDiv.appendChild(vid);
-      };
+    };
 
-      pc.onicecandidate = (e) => {
+    pc.onicecandidate = e => {
         if (e.candidate) {
-          push(ref(db, `${ROOM}/signals/${id}/ice`), JSON.stringify(e.candidate));
+            push(ref(db, `${ROOM}/signals/${id}/ice`), JSON.stringify(e.candidate));
         }
-      };
+    };
 
-      return pc;
-    }
+    return pc;
+}
 
-    // ------------------------------------------------------------
-    // 3) Entrar na sala: cria um ID único
-    // ------------------------------------------------------------
-    async function joinRoom() {
-      await loadCamera();
+/* ---------------------- 3. Entra na sala ---------------------- */
+async function joinRoom() {
+    await initCamera();
 
-      const myId = push(ref(db, `${ROOM}/users`)).key;
+    const myId = push(ref(db, `${ROOM}/users`)).key;
 
-      const myRef = ref(db, `${ROOM}/users/${myId}`);
-      set(myRef, true);
+    const myRef = ref(db, `${ROOM}/users/${myId}`);
+    set(myRef, true);
+    onDisconnect(myRef).remove();
 
-      onDisconnect(myRef).remove();
-
-      onChildAdded(ref(db, `${ROOM}/users`), async (snap) => {
+    onChildAdded(ref(db, `${ROOM}/users`), async snap => {
         const userId = snap.key;
         if (userId === myId) return;
 
@@ -139,48 +119,46 @@
         await pc.setLocalDescription(offer);
 
         set(ref(db, `${ROOM}/signals/${userId}/offer`), {
-          from: myId,
-          sdp: JSON.stringify(offer)
+            from: myId,
+            sdp: JSON.stringify(offer)
         });
-      });
+    });
 
-      // Recebe offers
-      onChildAdded(ref(db, `${ROOM}/signals/${myId}/offer`), async (snap) => {
+    onChildAdded(ref(db, `${ROOM}/signals/${myId}/offer`), async snap => {
         const data = snap.val();
         const from = data.from;
 
         const pc = createPeer(from);
-
         await pc.setRemoteDescription(JSON.parse(data.sdp));
+
         const answer = await pc.createAnswer();
         await pc.setLocalDescription(answer);
 
         set(ref(db, `${ROOM}/signals/${from}/answer`), {
-          from: myId,
-          sdp: JSON.stringify(answer)
+            from: myId,
+            sdp: JSON.stringify(answer)
         });
-      });
+    });
 
-      // Recebe answers
-      onChildAdded(ref(db, `${ROOM}/signals/${myId}/answer`), async (snap) => {
+    onChildAdded(ref(db, `${ROOM}/signals/${myId}/answer`), async snap => {
         const data = snap.val();
         const from = data.from;
 
         if (peers[from] && !peers[from].currentRemoteDescription) {
-          peers[from].setRemoteDescription(JSON.parse(data.sdp));
+            peers[from].setRemoteDescription(JSON.parse(data.sdp));
         }
-      });
+    });
 
-      // Recebe ICE Candidates
-      onChildAdded(ref(db, `${ROOM}/signals/${myId}/ice`), async (snap) => {
+    onChildAdded(ref(db, `${ROOM}/signals/${myId}/ice`), async snap => {
         const candidate = JSON.parse(snap.val());
         for (const p in peers) {
-          try { peers[p].addIceCandidate(candidate); } catch { }
+            try { peers[p].addIceCandidate(candidate); } catch {}
         }
-      });
-    }
+    });
+}
 
-    joinRoom();
-  </script>
+joinRoom();
+</script>
+
 </body>
 </html>
