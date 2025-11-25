@@ -18,7 +18,6 @@
     background: #000;
   }
 
-  /* Celular – 3 por linha */
   @media (max-width: 768px) {
     #videos { grid-template-columns: repeat(3, 1fr); }
   }
@@ -37,10 +36,13 @@
 <div id="videos"></div>
 
 <script type="module">
+/* Firebase */
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-app.js";
-import { getDatabase, ref, push, set, onValue, onDisconnect } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-database.js";
+import { 
+  getDatabase, ref, push, set, onChildAdded, onValue, onDisconnect, remove 
+} from "https://www.gstatic.com/firebasejs/10.13.1/firebase-database.js";
 
-/* 🔥 SEU FIREBASE REAL (rastreio-31b3f) */
+/* 🔥 Firebase oficial – rastreio-31b3f */
 const firebaseConfig = {
   apiKey: "AIzaSyCrX9MuOeKyaWLCwgGjYMyrjKCXQXe-ZXY",
   authDomain: "rastreio-31b3f.firebaseapp.com",
@@ -55,14 +57,15 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 
-/* 🔥 Sala nova, limpa */
 const ROOM = "sala_global_31b3f";
+
 let localStream;
 let peers = {};
 let myId;
 
 const videoGrid = document.getElementById("videos");
 
+/* 📷 Iniciar câmera local */
 async function startCamera() {
   localStream = await navigator.mediaDevices.getUserMedia({
     video: { width: 320, height: 240 },
@@ -76,6 +79,7 @@ async function startCamera() {
   videoGrid.appendChild(me);
 }
 
+/* 🎥 Criar peer para outro usuário */
 function createPeer(remoteId) {
   const pc = new RTCPeerConnection({
     iceServers: [{ urls: "stun:stun.l.google.com:19302" }]
@@ -103,15 +107,16 @@ function createPeer(remoteId) {
   return pc;
 }
 
+/* 🚀 Entrar na sala */
 async function joinRoom() {
   await startCamera();
 
-  /* Gerar ID único */
+  /* Criar ID único */
   myId = push(ref(db, `${ROOM}/users`)).key;
   set(ref(db, `${ROOM}/users/${myId}`), true);
   onDisconnect(ref(db, `${ROOM}/users/${myId}`)).remove();
 
-  /* Detectar usuários */
+  /* Detectar novos usuários */
   onValue(ref(db, `${ROOM}/users`), async snap => {
     const users = snap.val();
     if (!users) return;
@@ -124,7 +129,7 @@ async function joinRoom() {
       peers[uid] = pc;
 
       const offer = await pc.createOffer();
-      pc.setLocalDescription(offer);
+      await pc.setLocalDescription(offer);
 
       set(push(ref(db, `${ROOM}/signals`)), {
         type: "offer",
@@ -135,50 +140,46 @@ async function joinRoom() {
     }
   });
 
-  /* Receber OFFER e ANSWER */
-  onValue(ref(db, `${ROOM}/signals`), async snap => {
-    const data = snap.val();
-    if (!data) return;
+  /* Receber OFFER ou ANSWER */
+  onChildAdded(ref(db, `${ROOM}/signals`), async snap => {
+    const msg = snap.val();
+    if (msg.to !== myId) return;
 
-    for (let key of Object.keys(data)) {
-      const msg = data[key];
-      if (msg.to !== myId) continue;
+    if (msg.type === "offer") {
+      const pc = createPeer(msg.from);
+      peers[msg.from] = pc;
 
-      if (msg.type === "offer") {
-        const pc = createPeer(msg.from);
-        peers[msg.from] = pc;
+      await pc.setRemoteDescription(JSON.parse(msg.sdp));
+      const answer = await pc.createAnswer();
+      await pc.setLocalDescription(answer);
 
-        pc.setRemoteDescription(JSON.parse(msg.sdp));
-        const answer = await pc.createAnswer();
-        pc.setLocalDescription(answer);
-
-        set(push(ref(db, `${ROOM}/signals`)), {
-          type: "answer",
-          from: myId,
-          to: msg.from,
-          sdp: JSON.stringify(answer)
-        });
-      }
-
-      if (msg.type === "answer") {
-        const pc = peers[msg.from];
-        if (pc) pc.setRemoteDescription(JSON.parse(msg.sdp));
-      }
+      set(push(ref(db, `${ROOM}/signals`)), {
+        type: "answer",
+        from: myId,
+        to: msg.from,
+        sdp: JSON.stringify(answer)
+      });
     }
+
+    if (msg.type === "answer") {
+      const pc = peers[msg.from];
+      if (pc) await pc.setRemoteDescription(JSON.parse(msg.sdp));
+    }
+
+    /* Apagar sinal antigo */
+    remove(ref(db, `${ROOM}/signals/${snap.key}`));
   });
 
   /* Receber ICE */
-  onValue(ref(db, `${ROOM}/ice`), async snap => {
-    const data = snap.val();
-    if (!data) return;
+  onChildAdded(ref(db, `${ROOM}/ice`), async snap => {
+    const msg = snap.val();
+    if (msg.to !== myId) return;
 
-    for (let key of Object.keys(data)) {
-      const msg = data[key];
-      if (msg.to !== myId) continue;
+    const pc = peers[msg.from];
+    if (pc) await pc.addIceCandidate(JSON.parse(msg.candidate));
 
-      const pc = peers[msg.from];
-      if (pc) pc.addIceCandidate(JSON.parse(msg.candidate));
-    }
+    /* Apagar candidatos antigos */
+    remove(ref(db, `${ROOM}/ice/${snap.key}`));
   });
 }
 
