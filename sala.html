@@ -7,33 +7,43 @@
 
 <style>
   * { box-sizing: border-box; }
-
   body {
     margin: 0;
     background: #000;
-    overflow: hidden;
     font-family: sans-serif;
+    overflow: hidden;
   }
 
-  /* === GRADE DINÂMICA === */
+  /* === GRID PADRÃO (3+ USUÁRIOS) === */
   #videos {
     display: grid;
     gap: 8px;
     padding: 8px;
-    height: 100vh;
+    height: calc(100vh - 90px);
     overflow-y: auto;
-    background: #000;
     grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
   }
 
-  /* CELULAR — 2 colunas */
-  @media (max-width: 600px) {
-    #videos {
-      grid-template-columns: repeat(2, 1fr);
-    }
+  /* === 2 USUÁRIOS: MODO WHATSAPP === */
+  #videos.two-users {
+    display: flex !important;
+    flex-direction: column;
+    height: calc(100vh - 90px);
   }
 
-  /* QUADRADO PERFEITO */
+  #videos.two-users .video-box {
+    flex: 1;
+    height: 50vh !important;
+    padding-top: 0 !important;
+  }
+
+  /* === 1 USUÁRIO: TELA CHEIA === */
+  #videos.one-user .video-box {
+    height: calc(100vh - 90px) !important;
+    padding-top: 0 !important;
+  }
+
+  /* === QUADRADO (3+ usuários) === */
   .video-box {
     position: relative;
     width: 100%;
@@ -46,61 +56,55 @@
   .video-box video {
     position: absolute;
     top: 0; left: 0;
-    width: 100%;
-    height: 100%;
+    width: 100%; height: 100%;
     object-fit: cover;
     border-radius: 14px;
   }
 
-  /* === BOTÕES EM CIMA DO VÍDEO === */
-  .controls-small {
-    position: absolute;
-    top: 6px;
-    right: 6px;
+  /* BOTÕES MYSELF */
+  #controlsMe {
+    position: fixed;
+    bottom: 12px;
+    left: 50%;
+    transform: translateX(-50%);
     display: flex;
-    gap: 6px;
-    z-index: 10;
+    gap: 18px;
+    z-index: 99999;
   }
 
-  .btn-small {
-    width: 34px;
-    height: 34px;
-    border-radius: 50%;
+  .btn {
+    width: 55px;
+    height: 55px;
     border: none;
-    font-size: 18px;
-    color: white;
-    cursor: pointer;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    border-radius: 50%;
+    font-size: 22px;
+    background: rgba(0,0,0,0.6);
+    color: #fff;
   }
 
-  .btn-end {
-    background: #d50000;
+  #btnEnd {
+    background: #e30000;
   }
-
-  .btn-mic {
-    background: #444;
-  }
-
-  .btn-mic.off {
-    background: #888;
-  }
-
 </style>
 </head>
+
 <body>
 
 <div id="videos"></div>
 
+<div id="controlsMe" style="display:none;">
+  <button id="btnMic" class="btn">🎤</button>
+  <button id="btnEnd" class="btn">📞</button>
+</div>
+
 <script type="module">
-/* ===== FIREBASE ===== */
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-app.js";
 import {
   getDatabase, ref, push, set, onChildAdded, onValue,
   onDisconnect, remove
 } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-database.js";
 
+/* FIREBASE */
 const firebaseConfig = {
   apiKey: "AIzaSyCrX9MuOeKyaWLCwgGjYMyrjKCXQXe-ZXY",
   authDomain: "rastreio-31b3f.firebaseapp.com",
@@ -116,15 +120,17 @@ const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 
 const ROOM = "sala_global_31b3f";
-
 let localStream;
 let peers = {};
-let remoteVideos = {};  
+let remoteVideos = {};
 let myId;
 
 const videoGrid = document.getElementById("videos");
+const ctrlMe = document.getElementById("controlsMe");
+const btnMic = document.getElementById("btnMic");
+const btnEnd = document.getElementById("btnEnd");
 
-/* === CRIAR QUADRADO DE VÍDEO + BOTÕES === */
+/* CRIA BOX */
 function addVideoBox(stream, isMe = false) {
   const box = document.createElement("div");
   box.className = "video-box";
@@ -135,109 +141,60 @@ function addVideoBox(stream, isMe = false) {
   vid.playsInline = true;
   if (isMe) vid.muted = true;
 
-  /* === BOTÕES INDIVIDUAIS === */
-  const ctrl = document.createElement("div");
-  ctrl.className = "controls-small";
-
-  const micBtn = document.createElement("button");
-  micBtn.className = "btn-small btn-mic";
-  micBtn.innerText = "🎤";
-
-  if (isMe) {
-    micBtn.onclick = () => {
-      const track = localStream.getAudioTracks()[0];
-      track.enabled = !track.enabled;
-      micBtn.classList.toggle("off");
-      micBtn.innerText = track.enabled ? "🎤" : "🔇";
-    };
-  } else {
-    micBtn.style.opacity = "0.5";
-    micBtn.style.pointerEvents = "none";
-  }
-
-  const endBtn = document.createElement("button");
-  endBtn.className = "btn-small btn-end";
-  endBtn.innerText = "📞";
-
-  if (isMe) {
-    endBtn.onclick = () => {
-      window.location.href = "https://marcio2307.github.io/terreiro/";
-    };
-  } else {
-    endBtn.style.opacity = "0.5";
-    endBtn.style.pointerEvents = "none";
-  }
-
-  ctrl.appendChild(micBtn);
-  ctrl.appendChild(endBtn);
-
   box.appendChild(vid);
-  box.appendChild(ctrl);
-
   videoGrid.appendChild(box);
 
   return { box, vid };
 }
 
-/* === AJUSTAR TAMANHO === */
+/* REGRAS DO LAYOUT */
 function adjustLayout() {
   const total = videoGrid.children.length;
 
-  [...videoGrid.children].forEach(el => el.classList.remove("full"));
+  videoGrid.classList.remove("one-user","two-users");
 
-  // 1 usuário = tela cheia
   if (total === 1) {
-    const box = videoGrid.children[0];
-    box.style.gridColumn = "1 / -1";
-    box.style.height = "calc(100vh - 20px)";
-    box.style.paddingTop = "0";
-  } 
-  else {
-    // restaura quadrado normal
-    [...videoGrid.children].forEach(box => {
-      box.style.gridColumn = "auto";
-      box.style.height = "auto";
-      box.style.paddingTop = "100%";
-    });
+    videoGrid.classList.add("one-user");
+  }
+  else if (total === 2) {
+    videoGrid.classList.add("two-users");
   }
 }
 
-/* === CÂMERA LOCAL === */
+/* CAMERA LOCAL */
 async function startCamera() {
   localStream = await navigator.mediaDevices.getUserMedia({
     video: { facingMode: "user" },
     audio: true
   });
 
-  const me = addVideoBox(localStream, true);
-  me.box.dataset.id = "me";
-
+  addVideoBox(localStream, true);
+  ctrlMe.style.display = "flex";
   adjustLayout();
 }
 
-/* === PEER === */
+/* PEER */
 function createPeer(remoteId) {
   const pc = new RTCPeerConnection({
     iceServers: [{ urls: "stun:stun.l.google.com:19302" }]
   });
 
-  localStream.getTracks().forEach(track => pc.addTrack(track, localStream));
+  localStream.getTracks().forEach(t => pc.addTrack(t, localStream));
 
-  pc.ontrack = event => {
+  pc.ontrack = e => {
     if (!remoteVideos[remoteId]) {
-      const box = addVideoBox(event.streams[0], false);
+      const box = addVideoBox(e.streams[0], false);
       remoteVideos[remoteId] = box;
       adjustLayout();
     } else {
-      remoteVideos[remoteId].vid.srcObject = event.streams[0];
+      remoteVideos[remoteId].vid.srcObject = e.streams[0];
     }
   };
 
   pc.onicecandidate = e => {
     if (e.candidate) {
-      set(push(ref(db, `${ROOM}/ice`)), {
-        from: myId,
-        to: remoteId,
+      set(push(ref(db, ROOM+"/ice")), {
+        from: myId, to: remoteId,
         candidate: JSON.stringify(e.candidate)
       });
     }
@@ -246,27 +203,22 @@ function createPeer(remoteId) {
   return pc;
 }
 
-/* === ENTRAR NA SALA === */
+/* SALA */
 async function joinRoom() {
   await startCamera();
 
-  myId = push(ref(db, `${ROOM}/users`)).key;
-  set(ref(db, `${ROOM}/users/${myId}`), true);
-  onDisconnect(ref(db, `${ROOM}/users/${myId}`)).remove();
+  myId = push(ref(db, ROOM+"/users")).key;
+  set(ref(db, ROOM+"/users/"+myId), true);
+  onDisconnect(ref(db, ROOM+"/users/"+myId)).remove();
 
-  onValue(ref(db, `${ROOM}/users`), snap => {
+  onValue(ref(db, ROOM+"/users"), snap => {
     const users = snap.val() || {};
 
     for (let uid in remoteVideos) {
       if (!users[uid]) {
         remoteVideos[uid].box.remove();
         delete remoteVideos[uid];
-
-        if (peers[uid]) {
-          peers[uid].close();
-          delete peers[uid];
-        }
-
+        if (peers[uid]) { peers[uid].close(); delete peers[uid]; }
         adjustLayout();
       }
     }
@@ -277,22 +229,17 @@ async function joinRoom() {
 
       if (myId < uid) {
         const pc = peers[uid] = createPeer(uid);
-
-        pc.createOffer()
-          .then(o => pc.setLocalDescription(o))
-          .then(() => {
-            set(push(ref(db, `${ROOM}/signals`)), {
-              type: "offer",
-              from: myId,
-              to: uid,
-              sdp: JSON.stringify(pc.localDescription)
-            });
+        pc.createOffer().then(o => {
+          pc.setLocalDescription(o);
+          set(push(ref(db, ROOM+"/signals")), {
+            type:"offer", from:myId, to:uid, sdp:JSON.stringify(o)
           });
+        });
       }
     }
   });
 
-  onChildAdded(ref(db, `${ROOM}/signals`), async snap => {
+  onChildAdded(ref(db, ROOM+"/signals"), async snap => {
     const msg = snap.val();
     if (msg.to !== myId) return;
 
@@ -302,35 +249,41 @@ async function joinRoom() {
     if (msg.type === "offer") {
       await pc.setRemoteDescription(JSON.parse(msg.sdp));
       const ans = await pc.createAnswer();
-      await pc.setLocalDescription(ans);
-
-      set(push(ref(db, `${ROOM}/signals`)), {
-        type: "answer",
-        from: myId,
-        to: msg.from,
-        sdp: JSON.stringify(ans)
+      pc.setLocalDescription(ans);
+      set(push(ref(db, ROOM+"/signals")), {
+        type:"answer", from:myId, to:msg.from, sdp:JSON.stringify(ans)
       });
-
-    } else if (msg.type === "answer") {
+    }
+    else if (msg.type === "answer") {
       await pc.setRemoteDescription(JSON.parse(msg.sdp));
     }
 
-    remove(ref(db, `${ROOM}/signals/${snap.key}`));
+    remove(ref(db, ROOM+"/signals/"+snap.key));
   });
 
-  onChildAdded(ref(db, `${ROOM}/ice`), async snap => {
+  onChildAdded(ref(db, ROOM+"/ice"), async snap => {
     const msg = snap.val();
     if (msg.to !== myId) return;
-
     if (peers[msg.from]) {
       await peers[msg.from].addIceCandidate(JSON.parse(msg.candidate));
     }
-
-    remove(ref(db, `${ROOM}/ice/${snap.key}`));
+    remove(ref(db, ROOM+"/ice/"+snap.key));
   });
 }
 
 joinRoom();
+
+/* MICROFONE */
+btnMic.onclick = () => {
+  const audio = localStream.getAudioTracks()[0];
+  audio.enabled = !audio.enabled;
+  btnMic.textContent = audio.enabled ? "🎤" : "🔇";
+};
+
+/* ENCERRAR */
+btnEnd.onclick = () => {
+  window.location.href = "https://marcio2307.github.io/terreiro/";
+};
 </script>
 
 </body>
