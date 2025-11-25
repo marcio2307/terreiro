@@ -40,20 +40,23 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-app.js";
 import { getDatabase, ref, push, set, onValue, onDisconnect } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-database.js";
 
+/* 🔥 SEU FIREBASE REAL (rastreio-31b3f) */
 const firebaseConfig = {
-  apiKey: "AIzaSyAYhKhK5SFaWkFlqZhXi3nVbsWzdbjteO0",
-  authDomain: "rastreio-8bb0a.firebaseapp.com",
-  databaseURL: "https://rastreio-8bb0a-default-rtdb.firebaseio.com",
-  projectId: "rastreio-8bb0a",
-  storageBucket: "rastreio-8bb0a.appspot.com",
-  messagingSenderId: "676710436203",
-  appId: "1:676710436203:web:b48ebc7189ff71e564d02e"
+  apiKey: "AIzaSyCrX9MuOeKyaWLCwgGjYMyrjKCXQXe-ZXY",
+  authDomain: "rastreio-31b3f.firebaseapp.com",
+  databaseURL: "https://rastreio-31b3f-default-rtdb.firebaseio.com",
+  projectId: "rastreio-31b3f",
+  storageBucket: "rastreio-31b3f.firebasestorage.app",
+  messagingSenderId: "1133443616013",
+  appId: "1:1133443616013:web:b155ef7b855ac48d6f2ee4",
+  measurementId: "G-QDSNM5PWDX"
 };
 
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 
-const ROOM = "sala_global_final";  // 🔥 Sala única e limpa
+/* 🔥 Sala nova, limpa */
+const ROOM = "sala_global_31b3f";
 let localStream;
 let peers = {};
 let myId;
@@ -103,11 +106,12 @@ function createPeer(remoteId) {
 async function joinRoom() {
   await startCamera();
 
+  /* Gerar ID único */
   myId = push(ref(db, `${ROOM}/users`)).key;
   set(ref(db, `${ROOM}/users/${myId}`), true);
   onDisconnect(ref(db, `${ROOM}/users/${myId}`)).remove();
 
-  // Detecta novos participantes
+  /* Detectar usuários */
   onValue(ref(db, `${ROOM}/users`), async snap => {
     const users = snap.val();
     if (!users) return;
@@ -131,7 +135,7 @@ async function joinRoom() {
     }
   });
 
-  // Recebe ofertas e respostas
+  /* Receber OFFER e ANSWER */
   onValue(ref(db, `${ROOM}/signals`), async snap => {
     const data = snap.val();
     if (!data) return;
@@ -163,7 +167,7 @@ async function joinRoom() {
     }
   });
 
-  // Recebe ICE
+  /* Receber ICE */
   onValue(ref(db, `${ROOM}/ice`), async snap => {
     const data = snap.val();
     if (!data) return;
