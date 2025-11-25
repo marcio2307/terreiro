@@ -15,8 +15,8 @@
     #videos {
         display: grid;
         grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
-        gap: 10px;
-        padding: 10px;
+        gap: 8px;
+        padding: 8px;
         height: 100vh;
         overflow-y: auto;
         background: #000;
@@ -26,9 +26,9 @@
         width: 100%;
         height: 100%;
         object-fit: cover;
-        border-radius: 8px;
+        border-radius: 6px;
         background: #111;
-        box-shadow: 0 0 10px #000;
+        box-shadow: 0 0 8px #000;
     }
 </style>
 </head>
@@ -55,28 +55,28 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 
-const ROOM = "sala_lotada";
+const ROOM = "zoom_global_room";
 const peers = {};
 let localStream;
 
-const videosDiv = document.getElementById("videos");
+const videos = document.getElementById("videos");
 
-/* ---------------------- 1. Iniciar câmera ---------------------- */
+/* ---------------------- 1. CÂMERA E MIC ---------------------- */
 async function startCamera() {
     localStream = await navigator.mediaDevices.getUserMedia({
         video: true,
         audio: true
     });
 
-    const myVideo = document.createElement("video");
-    myVideo.srcObject = localStream;
-    myVideo.autoplay = true;
-    myVideo.muted = true;
-    videosDiv.appendChild(myVideo);
+    const myVid = document.createElement("video");
+    myVid.srcObject = localStream;
+    myVid.autoplay = true;
+    myVid.muted = true;
+    videos.appendChild(myVid);
 }
 
-/* ---------------------- 2. Criar PeerConnection ---------------------- */
-function createPeerConnection(peerId) {
+/* ---------------------- 2. PeerConnection ---------------------- */
+function createPeer(remoteId) {
     const pc = new RTCPeerConnection({
         iceServers: [{ urls: "stun:stun.l.google.com:19302" }]
     });
@@ -85,19 +85,18 @@ function createPeerConnection(peerId) {
         pc.addTrack(track, localStream);
     });
 
-    pc.ontrack = e => {
+    pc.ontrack = event => {
         const vid = document.createElement("video");
-        vid.srcObject = e.streams[0];
+        vid.srcObject = event.streams[0];
         vid.autoplay = true;
-        videosDiv.appendChild(vid);
+        videos.appendChild(vid);
     };
 
     pc.onicecandidate = e => {
         if (e.candidate) {
-            set(push(ref(db, `${ROOM}/ice/${peerId}`)), {
-                type: "ice",
-                candidate: JSON.stringify(e.candidate),
-                from: myId
+            set(push(ref(db, `${ROOM}/ice/${remoteId}`)), {
+                from: myId,
+                candidate: JSON.stringify(e.candidate)
             });
         }
     };
@@ -105,7 +104,7 @@ function createPeerConnection(peerId) {
     return pc;
 }
 
-/* ---------------------- 3. Entrar na sala ---------------------- */
+/* ---------------------- 3. ENTRAR NA SALA ---------------------- */
 let myId;
 
 async function joinRoom() {
@@ -113,18 +112,17 @@ async function joinRoom() {
 
     myId = push(ref(db, `${ROOM}/users`)).key;
     set(ref(db, `${ROOM}/users/${myId}`), true);
-
     onDisconnect(ref(db, `${ROOM}/users/${myId}`)).remove();
 
     onValue(ref(db, `${ROOM}/users`), async snapshot => {
         const users = snapshot.val();
         if (!users) return;
 
-        for (const userId of Object.keys(users)) {
+        for (let userId of Object.keys(users)) {
             if (userId === myId) continue;
             if (peers[userId]) continue;
 
-            const pc = createPeerConnection(userId);
+            const pc = createPeer(userId);
             peers[userId] = pc;
 
             const offer = await pc.createOffer();
@@ -132,9 +130,9 @@ async function joinRoom() {
 
             set(push(ref(db, `${ROOM}/signals`)), {
                 type: "offer",
-                sdp: JSON.stringify(offer),
                 from: myId,
-                to: userId
+                to: userId,
+                sdp: JSON.stringify(offer)
             });
         }
     });
@@ -149,18 +147,19 @@ async function joinRoom() {
             if (msg.to !== myId) continue;
 
             if (msg.type === "offer") {
-                const pc = createPeerConnection(msg.from);
+                const pc = createPeer(msg.from);
                 peers[msg.from] = pc;
 
                 await pc.setRemoteDescription(JSON.parse(msg.sdp));
+
                 const answer = await pc.createAnswer();
                 await pc.setLocalDescription(answer);
 
                 set(push(ref(db, `${ROOM}/signals`)), {
                     type: "answer",
-                    sdp: JSON.stringify(answer),
                     from: myId,
-                    to: msg.from
+                    to: msg.from,
+                    sdp: JSON.stringify(answer)
                 });
             }
 
@@ -178,18 +177,16 @@ async function joinRoom() {
         if (!data) return;
 
         for (const key of Object.keys(data)) {
-            const msg = data[key];
+            const item = data[key];
 
-            if (msg.to !== myId) continue;
+            if (item.to !== myId) continue;
 
-            const pc = peers[msg.from];
+            const pc = peers[item.from];
             if (!pc) continue;
 
-            if (msg.type === "ice") {
-                try {
-                    await pc.addIceCandidate(JSON.parse(msg.candidate));
-                } catch {}
-            }
+            try {
+                await pc.addIceCandidate(JSON.parse(item.candidate));
+            } catch {}
         }
     });
 }
