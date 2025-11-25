@@ -14,50 +14,77 @@
     overflow: hidden;
   }
 
-  /* === BOTÃO ENTRAR NA REUNIÃO === */
+  /* =====================================================
+        BOTÃO "ENTRAR NA REUNIÃO" – MODERNO / RESPONSIVO
+     ===================================================== */
   #enterButton {
     position: fixed;
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    background: #00ff66;
+    background: linear-gradient(145deg, #00ff88, #00cc66);
     color: #000;
     border: none;
-    padding: 18px 32px;
-    font-size: 24px;
+    padding: 20px 38px;
+    font-size: 26px;
     font-weight: bold;
-    border-radius: 14px;
-    box-shadow: 0 0 20px #00ff66;
+    border-radius: 16px;
     cursor: pointer;
     z-index: 999999;
-    animation: pulse 1.5s infinite;
+    box-shadow: 0 0 25px #00ff88, 0 0 45px #00cc66 inset;
+    animation: neonPulse 1.2s infinite alternate ease-in-out;
+    transition: transform 0.2s;
   }
 
-  @keyframes pulse {
-    0% { box-shadow: 0 0 10px #00ff66; }
-    50% { box-shadow: 0 0 25px #00ff66; }
-    100% { box-shadow: 0 0 10px #00ff66; }
+  #enterButton:hover {
+    transform: translate(-50%, -50%) scale(1.05);
   }
 
-  /* === GRID PADRÃO (3+ USUÁRIOS) === */
+  @keyframes neonPulse {
+    0% { box-shadow: 0 0 12px #00ff88; }
+    100% { box-shadow: 0 0 28px #00ff88; }
+  }
+
+  /* =====================================================
+        GRID GERAL – SE ADAPTA A CELULAR / TABLET / PC
+     ===================================================== */
   #videos {
-    display: none; /* só aparece após clicar no botão */
-    gap: 8px;
-    padding: 8px;
-    height: calc(100vh - 90px);
+    display: none;
+    gap: 12px;
+    padding: 10px;
+    height: calc(100vh - 110px);
     overflow-y: auto;
-    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    transition: 0.3s;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
   }
 
   #videos.show {
     display: grid;
   }
 
-  /* === 2 USUÁRIOS: MODO WHATSAPP === */
+  /* TABLET – telas entre 700 e 1100px */
+  @media (min-width: 700px) and (max-width: 1100px) {
+    #videos {
+      grid-template-columns: repeat(2, 1fr) !important;
+      gap: 14px;
+    }
+  }
+
+  /* CELULAR – 2 colunas */
+  @media (max-width: 600px) {
+    #videos {
+      grid-template-columns: repeat(2, 1fr) !important;
+    }
+  }
+
+  /* =====================================================
+          MODOS ESPECIAIS
+     ===================================================== */
+
+  /* 2 usuários – estilo WhatsApp */
   #videos.two-users {
     display: flex !important;
     flex-direction: column;
-    height: calc(100vh - 90px);
   }
 
   #videos.two-users .video-box {
@@ -66,20 +93,23 @@
     padding-top: 0 !important;
   }
 
-  /* === 1 USUÁRIO: TELA CHEIA === */
+  /* 1 usuário – tela cheia */
   #videos.one-user .video-box {
-    height: calc(100vh - 90px) !important;
+    height: calc(100vh - 110px) !important;
     padding-top: 0 !important;
   }
 
-  /* === QUADRADO (3+ usuários) === */
+  /* =====================================================
+          VIDEO QUADRADO – PROFISSIONAL
+     ===================================================== */
   .video-box {
     position: relative;
     width: 100%;
     padding-top: 100%;
-    background: #111;
-    border-radius: 14px;
+    background: #0d0d0d;
+    border-radius: 16px;
     overflow: hidden;
+    box-shadow: 0 0 15px rgba(0,0,0,0.6);
   }
 
   .video-box video {
@@ -87,32 +117,38 @@
     top: 0; left: 0;
     width: 100%; height: 100%;
     object-fit: cover;
-    border-radius: 14px;
+    border-radius: 16px;
   }
 
+  /* =====================================================
+          CONTROLES DO USUÁRIO
+     ===================================================== */
   #controlsMe {
     position: fixed;
-    bottom: 12px;
+    bottom: 18px;
     left: 50%;
     transform: translateX(-50%);
     display: none;
-    gap: 18px;
+    gap: 22px;
     z-index: 99999;
   }
 
   .btn {
-    width: 55px;
-    height: 55px;
+    width: 62px;
+    height: 62px;
     border: none;
     border-radius: 50%;
-    font-size: 22px;
-    background: rgba(0,0,0,0.6);
+    font-size: 24px;
+    background: rgba(20,20,20,0.75);
     color: #fff;
+    box-shadow: 0 0 15px #000;
   }
 
   #btnEnd {
-    background: #e30000;
+    background: #ff0033;
+    box-shadow: 0 0 15px #ff0033;
   }
+
 </style>
 </head>
 
@@ -129,7 +165,7 @@
 
 <script type="module">
 
-/* ===== UNLOCK SAFARI / iPHONE ===== */
+/* ===== DESBLOQUEIO SAFARI / IPHONE ===== */
 function unlockAutoplay() {
     const v = document.createElement("video");
     v.setAttribute("playsinline", "");
@@ -139,14 +175,13 @@ function unlockAutoplay() {
     v.src = "";
     document.body.appendChild(v);
 }
-
 document.addEventListener("touchstart", function start() {
     unlockAutoplay();
     document.removeEventListener("touchstart", start);
 });
 document.addEventListener("click", unlockAutoplay);
 
-/* ============================================================ */
+/* ========================================== FIREBASE ========================================== */
 
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-app.js";
 import {
@@ -169,6 +204,7 @@ const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 
 const ROOM = "sala_global_31b3f";
+
 let localStream;
 let peers = {};
 let remoteVideos = {};
@@ -181,7 +217,7 @@ const btnMic      = document.getElementById("btnMic");
 const btnEnd      = document.getElementById("btnEnd");
 
 /* =======================================================
-   CRIA VIDEO COMPATÍVEL COM TODOS OS CELULARES
+      ADICIONA BOX DE VÍDEO
 ======================================================= */
 function addVideoBox(stream, isMe = false) {
   const box = document.createElement("div");
@@ -200,40 +236,37 @@ function addVideoBox(stream, isMe = false) {
 }
 
 /* =======================================================
-   AJUSTE DO GRID
+      LAYOUT AUTOMÁTICO
 ======================================================= */
 function adjustLayout() {
   const total = videoGrid.children.length;
-  videoGrid.classList.remove("one-user","two-users");
+  videoGrid.classList.remove("one-user", "two-users");
 
   if (total === 1) videoGrid.classList.add("one-user");
   else if (total === 2) videoGrid.classList.add("two-users");
 }
 
 /* =======================================================
-   START CAMERA (só após clicar no botão)
+      INICIAR CÂMERA (DEPOIS DO BOTÃO)
 ======================================================= */
 async function startCamera() {
   try {
-    const constraints = {
+    localStream = await navigator.mediaDevices.getUserMedia({
       video: { facingMode: "user" },
       audio: true
-    };
-
-    localStream = await navigator.mediaDevices.getUserMedia(constraints);
+    });
 
     addVideoBox(localStream, true);
     ctrlMe.style.display = "flex";
     adjustLayout();
 
   } catch (err) {
-    alert("Permita a câmera e o microfone.");
-    console.error(err);
+    alert("Permita câmera e microfone.");
   }
 }
 
 /* =======================================================
-   PEER
+      PEER CONNECTION
 ======================================================= */
 function createPeer(remoteId) {
   const pc = new RTCPeerConnection({
@@ -253,10 +286,8 @@ function createPeer(remoteId) {
 
   pc.onicecandidate = e => {
     if (e.candidate) {
-      set(push(ref(db, ROOM+"/ice")), {
-        from: myId,
-        to: remoteId,
-        candidate: JSON.stringify(e.candidate)
+      set(push(ref(db, `${ROOM}/ice`)), {
+        from: myId, to: remoteId, candidate: JSON.stringify(e.candidate)
       });
     }
   };
@@ -265,7 +296,7 @@ function createPeer(remoteId) {
 }
 
 /* =======================================================
-   ENTRAR NA SALA (só inicia depois do botão)
+      ENTRAR NA REUNIÃO
 ======================================================= */
 async function joinRoom() {
 
@@ -274,13 +305,15 @@ async function joinRoom() {
 
   await startCamera();
 
-  myId = push(ref(db, ROOM+"/users")).key;
-  set(ref(db, ROOM+"/users/"+myId), true);
-  onDisconnect(ref(db, ROOM+"/users/"+myId)).remove();
+  myId = push(ref(db, `${ROOM}/users`)).key;
+  set(ref(db, `${ROOM}/users/${myId}`), true);
+  onDisconnect(ref(db, `${ROOM}/users/${myId}`)).remove();
 
-  onValue(ref(db, ROOM+"/users"), snap => {
+  /* Atualização de usuários */
+  onValue(ref(db, `${ROOM}/users`), snap => {
     const users = snap.val() || {};
 
+    /* Remover desconectados */
     for (let uid in remoteVideos) {
       if (!users[uid]) {
         remoteVideos[uid].box.remove();
@@ -291,15 +324,17 @@ async function joinRoom() {
       }
     }
 
+    /* Conectar novos */
     for (let uid of Object.keys(users)) {
       if (uid === myId) continue;
       if (peers[uid]) continue;
 
+      const pc = peers[uid] = createPeer(uid);
+
       if (myId < uid) {
-        const pc = peers[uid] = createPeer(uid);
         pc.createOffer().then(o => {
           pc.setLocalDescription(o);
-          set(push(ref(db, ROOM+"/signals")), {
+          set(push(ref(db, `${ROOM}/signals`)), {
             type:"offer", from:myId, to:uid, sdp:JSON.stringify(o)
           });
         });
@@ -307,18 +342,21 @@ async function joinRoom() {
     }
   });
 
-  onChildAdded(ref(db, ROOM+"/signals"), async snap => {
+  /* Recebendo respostas */
+  onChildAdded(ref(db, `${ROOM}/signals`), async snap => {
     const msg = snap.val();
     if (msg.to !== myId) return;
 
     if (!peers[msg.from]) peers[msg.from] = createPeer(msg.from);
+
     const pc = peers[msg.from];
 
     if (msg.type === "offer") {
       await pc.setRemoteDescription(JSON.parse(msg.sdp));
       const ans = await pc.createAnswer();
       pc.setLocalDescription(ans);
-      set(push(ref(db, ROOM+"/signals")), {
+
+      set(push(ref(db, `${ROOM}/signals`)), {
         type:"answer", from:myId, to:msg.from, sdp:JSON.stringify(ans)
       });
 
@@ -326,10 +364,11 @@ async function joinRoom() {
       await pc.setRemoteDescription(JSON.parse(msg.sdp));
     }
 
-    remove(ref(db, ROOM+"/signals/"+snap.key));
+    remove(ref(db, `${ROOM}/signals/${snap.key}`));
   });
 
-  onChildAdded(ref(db, ROOM+"/ice"), async snap => {
+  /* Ice candidates */
+  onChildAdded(ref(db, `${ROOM}/ice`), async snap => {
     const msg = snap.val();
     if (msg.to !== myId) return;
 
@@ -337,11 +376,13 @@ async function joinRoom() {
       await peers[msg.from].addIceCandidate(JSON.parse(msg.candidate));
     }
 
-    remove(ref(db, ROOM+"/ice/"+snap.key));
+    remove(ref(db, `${ROOM}/ice/${snap.key}`));
   });
 }
 
-/* === CLICOU NO BOTÃO → ENTRA === */
+/* =======================================================
+      BOTÃO → ENTRAR NA REUNIÃO
+======================================================= */
 enterButton.onclick = () => joinRoom();
 
 /* MICROFONE */
