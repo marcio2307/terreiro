@@ -15,7 +15,7 @@
     font-family: sans-serif;
   }
 
-  /* === GRADE DINÂMICA === */
+  /* === GRADE DINÂMICA IGUAL À FOTO (2 colunas no celular) === */
   #videos {
     display: grid;
     gap: 8px;
@@ -26,18 +26,18 @@
     grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
   }
 
-  /* CELULAR — 2 COLUNAS FIXAS */
+  /* CELULAR: 2 colunas perfeitas */
   @media (max-width: 600px) {
     #videos {
       grid-template-columns: repeat(2, 1fr);
     }
   }
 
-  /* CAIXA DE VÍDEO */
+  /* === QUADRADOS PERFEITOS IGUAIS À FOTO === */
   .video-box {
     position: relative;
     width: 100%;
-    padding-top: 120%;
+    padding-top: 100%; /* QUADRADO 1:1 */
     background: #111;
     border-radius: 14px;
     overflow: hidden;
@@ -49,7 +49,7 @@
     top: 0; left: 0;
     width: 100%;
     height: 100%;
-    object-fit: cover;
+    object-fit: cover; 
     border-radius: 14px;
   }
 </style>
@@ -83,12 +83,12 @@ const db = getDatabase(app);
 const ROOM = "sala_global_31b3f";
 let localStream;
 let peers = {};
-let remoteVideos = {};  // vídeo HTML dos outros
+let remoteVideos = {};  
 let myId;
 
 const videoGrid = document.getElementById("videos");
 
-/* === CRIAR BLOCO DE VÍDEO === */
+/* === CRIAR QUADRADO DE VÍDEO === */
 function addVideoBox(stream, isMe = false) {
   const box = document.createElement("div");
   box.className = "video-box";
@@ -152,22 +152,20 @@ async function joinRoom() {
   set(ref(db, `${ROOM}/users/${myId}`), true);
   onDisconnect(ref(db, `${ROOM}/users/${myId}`)).remove();
 
-  /* === MONITOR DE USUÁRIOS (REMOVE TELA TRAVADA) === */
+  /* === REMOVE TELA TRAVADA QUANDO ALGUÉM ATUALIZA === */
   onValue(ref(db, `${ROOM}/users`), snap => {
     const users = snap.val() || {};
 
-    // remover vídeos de usuários que saíram
-    for (let rid in remoteVideos) {
-      if (!users[rid]) {
-        // remover bloco visual congelado
-        remoteVideos[rid].parentNode.remove();
+    // remover vídeos de quem saiu
+    for (let uid in remoteVideos) {
+      if (!users[uid]) {
+        remoteVideos[uid].parentNode.remove();
+        delete remoteVideos[uid];
 
-        if (peers[rid]) {
-          peers[rid].close();
-          delete peers[rid];
+        if (peers[uid]) {
+          peers[uid].close();
+          delete peers[uid];
         }
-
-        delete remoteVideos[rid];
       }
     }
 
@@ -194,7 +192,7 @@ async function joinRoom() {
     }
   });
 
-  /* === OFFER / ANSWER === */
+  /* === SIGNALS === */
   onChildAdded(ref(db, `${ROOM}/signals`), async snap => {
     const msg = snap.val();
     if (msg.to !== myId) return;
@@ -204,14 +202,14 @@ async function joinRoom() {
 
     if (msg.type === "offer") {
       await pc.setRemoteDescription(JSON.parse(msg.sdp));
-      const answer = await pc.createAnswer();
-      await pc.setLocalDescription(answer);
+      const ans = await pc.createAnswer();
+      await pc.setLocalDescription(ans);
 
       set(push(ref(db, `${ROOM}/signals`)), {
         type: "answer",
         from: myId,
         to: msg.from,
-        sdp: JSON.stringify(answer)
+        sdp: JSON.stringify(ans)
       });
     }
 
@@ -230,7 +228,7 @@ async function joinRoom() {
     if (peers[msg.from]) {
       try {
         await peers[msg.from].addIceCandidate(JSON.parse(msg.candidate));
-      } catch (err) {}
+      } catch(e) {}
     }
 
     remove(ref(db, `${ROOM}/ice/${snap.key}`));
