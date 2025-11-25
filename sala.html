@@ -1,44 +1,35 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Sala Global – Videoconferência</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sala Global – Reunião</title>
 
 <style>
-    body {
-        margin: 0;
-        background: #000;
-        overflow: hidden;
-        font-family: Arial, sans-serif;
-    }
+  body { margin: 0; background: #000; overflow: hidden; }
 
-    /* 🟩 Grade responsiva */
-    #videos {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
-        gap: 6px;
-        padding: 6px;
-        height: 100vh;
-        overflow-y: auto;
-        background: #000;
-    }
+  #videos {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 6px;
+    padding: 6px;
+    height: 100vh;
+    overflow-y: auto;
+    background: #000;
+  }
 
-    /* 🟥 Layout especial para celular: 3 vídeos por linha */
-    @media (max-width: 768px) {
-        #videos {
-            grid-template-columns: repeat(3, 1fr);
-        }
-    }
+  /* Celular – 3 por linha */
+  @media (max-width: 768px) {
+    #videos { grid-template-columns: repeat(3, 1fr); }
+  }
 
-    video {
-        width: 100%;
-        height: 100%;
-        object-fit: cover;
-        border-radius: 8px;
-        background: #111;
-        box-shadow: 0 0 6px #000;
-    }
+  video {
+    width: 100%;
+    height: 100%;
+    background: #111;
+    object-fit: cover;
+    border-radius: 8px;
+  }
 </style>
 </head>
 <body>
@@ -46,8 +37,6 @@
 <div id="videos"></div>
 
 <script type="module">
-
-/* ---------------------- Firebase ---------------------- */
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-app.js";
 import { getDatabase, ref, push, set, onValue, onDisconnect } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-database.js";
 
@@ -64,143 +53,129 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 
-const ROOM = "sala_3_por_linha_mobile";
-const peers = {};
+const ROOM = "sala_global_final";  // 🔥 Sala única e limpa
 let localStream;
+let peers = {};
 let myId;
 
-const videos = document.getElementById("videos");
+const videoGrid = document.getElementById("videos");
 
-/* ---------------------- 1. CÂMERA E MICROFONE ---------------------- */
 async function startCamera() {
-    localStream = await navigator.mediaDevices.getUserMedia({
-        video: { width: 320, height: 240 }, /* vídeo menor para celular */
-        audio: true
-    });
+  localStream = await navigator.mediaDevices.getUserMedia({
+    video: { width: 320, height: 240 },
+    audio: true
+  });
 
-    const myVid = document.createElement("video");
-    myVid.srcObject = localStream;
-    myVid.autoplay = true;
-    myVid.muted = true;
-    videos.appendChild(myVid);
+  const me = document.createElement("video");
+  me.srcObject = localStream;
+  me.autoplay = true;
+  me.muted = true;
+  videoGrid.appendChild(me);
 }
 
-/* ---------------------- 2. PeerConnection ---------------------- */
 function createPeer(remoteId) {
-    const pc = new RTCPeerConnection({
-        iceServers: [{ urls: "stun:stun.l.google.com:19302" }]
-    });
+  const pc = new RTCPeerConnection({
+    iceServers: [{ urls: "stun:stun.l.google.com:19302" }]
+  });
 
-    localStream.getTracks().forEach(track => pc.addTrack(track, localStream));
+  localStream.getTracks().forEach(track => pc.addTrack(track, localStream));
 
-    pc.ontrack = event => {
-        const vid = document.createElement("video");
-        vid.srcObject = event.streams[0];
-        vid.autoplay = true;
-        videos.appendChild(vid);
-    };
+  pc.ontrack = event => {
+    const vid = document.createElement("video");
+    vid.srcObject = event.streams[0];
+    vid.autoplay = true;
+    videoGrid.appendChild(vid);
+  };
 
-    pc.onicecandidate = e => {
-        if (e.candidate) {
-            set(push(ref(db, `${ROOM}/ice/${remoteId}`)), {
-                from: myId,
-                candidate: JSON.stringify(e.candidate)
-            });
-        }
-    };
+  pc.onicecandidate = e => {
+    if (e.candidate) {
+      set(push(ref(db, `${ROOM}/ice`)), {
+        from: myId,
+        to: remoteId,
+        candidate: JSON.stringify(e.candidate)
+      });
+    }
+  };
 
-    return pc;
+  return pc;
 }
 
-/* ---------------------- 3. ENTRAR NA SALA ---------------------- */
 async function joinRoom() {
-    await startCamera();
+  await startCamera();
 
-    /* ID único para cada usuário que entra */
-    myId = push(ref(db, `${ROOM}/users`)).key;
-    set(ref(db, `${ROOM}/users/${myId}`), true);
-    onDisconnect(ref(db, `${ROOM}/users/${myId}`)).remove();
+  myId = push(ref(db, `${ROOM}/users`)).key;
+  set(ref(db, `${ROOM}/users/${myId}`), true);
+  onDisconnect(ref(db, `${ROOM}/users/${myId}`)).remove();
 
-    /* Detecta novos usuários e cria conexão P2P */
-    onValue(ref(db, `${ROOM}/users`), async snapshot => {
-        const users = snapshot.val();
-        if (!users) return;
+  // Detecta novos participantes
+  onValue(ref(db, `${ROOM}/users`), async snap => {
+    const users = snap.val();
+    if (!users) return;
 
-        for (let userId of Object.keys(users)) {
-            if (userId === myId) continue;
-            if (peers[userId]) continue;
+    for (let uid of Object.keys(users)) {
+      if (uid === myId) continue;
+      if (peers[uid]) continue;
 
-            const pc = createPeer(userId);
-            peers[userId] = pc;
+      const pc = createPeer(uid);
+      peers[uid] = pc;
 
-            const offer = await pc.createOffer();
-            await pc.setLocalDescription(offer);
+      const offer = await pc.createOffer();
+      pc.setLocalDescription(offer);
 
-            set(push(ref(db, `${ROOM}/signals`)), {
-                type: "offer",
-                from: myId,
-                to: userId,
-                sdp: JSON.stringify(offer)
-            });
-        }
-    });
+      set(push(ref(db, `${ROOM}/signals`)), {
+        type: "offer",
+        from: myId,
+        to: uid,
+        sdp: JSON.stringify(offer)
+      });
+    }
+  });
 
-    /* Recebe offers e answers */
-    onValue(ref(db, `${ROOM}/signals`), async snapshot => {
-        const sig = snapshot.val();
-        if (!sig) return;
+  // Recebe ofertas e respostas
+  onValue(ref(db, `${ROOM}/signals`), async snap => {
+    const data = snap.val();
+    if (!data) return;
 
-        for (let key of Object.keys(sig)) {
-            const msg = sig[key];
+    for (let key of Object.keys(data)) {
+      const msg = data[key];
+      if (msg.to !== myId) continue;
 
-            if (msg.to !== myId) continue;
+      if (msg.type === "offer") {
+        const pc = createPeer(msg.from);
+        peers[msg.from] = pc;
 
-            /* RECEBE OFERTA */
-            if (msg.type === "offer") {
-                const pc = createPeer(msg.from);
-                peers[msg.from] = pc;
+        pc.setRemoteDescription(JSON.parse(msg.sdp));
+        const answer = await pc.createAnswer();
+        pc.setLocalDescription(answer);
 
-                await pc.setRemoteDescription(JSON.parse(msg.sdp));
+        set(push(ref(db, `${ROOM}/signals`)), {
+          type: "answer",
+          from: myId,
+          to: msg.from,
+          sdp: JSON.stringify(answer)
+        });
+      }
 
-                const answer = await pc.createAnswer();
-                await pc.setLocalDescription(answer);
+      if (msg.type === "answer") {
+        const pc = peers[msg.from];
+        if (pc) pc.setRemoteDescription(JSON.parse(msg.sdp));
+      }
+    }
+  });
 
-                set(push(ref(db, `${ROOM}/signals`)), {
-                    type: "answer",
-                    from: myId,
-                    to: msg.from,
-                    sdp: JSON.stringify(answer)
-                });
-            }
+  // Recebe ICE
+  onValue(ref(db, `${ROOM}/ice`), async snap => {
+    const data = snap.val();
+    if (!data) return;
 
-            /* RECEBE ANSWER */
-            if (msg.type === "answer") {
-                const pc = peers[msg.from];
-                if (pc && !pc.currentRemoteDescription) {
-                    await pc.setRemoteDescription(JSON.parse(msg.sdp));
-                }
-            }
-        }
-    });
+    for (let key of Object.keys(data)) {
+      const msg = data[key];
+      if (msg.to !== myId) continue;
 
-    /* Recebe ICE */
-    onValue(ref(db, `${ROOM}/ice`), async snapshot => {
-        const data = snapshot.val();
-        if (!data) return;
-
-        for (const key of Object.keys(data)) {
-            const item = data[key];
-
-            if (item.to !== myId) continue;
-
-            const pc = peers[item.from];
-            if (!pc) continue;
-
-            try {
-                await pc.addIceCandidate(JSON.parse(item.candidate));
-            } catch {}
-        }
-    });
+      const pc = peers[msg.from];
+      if (pc) pc.addIceCandidate(JSON.parse(msg.candidate));
+    }
+  });
 }
 
 joinRoom();
