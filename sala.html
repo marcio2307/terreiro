@@ -14,14 +14,43 @@
     overflow: hidden;
   }
 
+  /* ===== BOTÃO ENTRAR ===== */
+  #enterButton {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: #00ff66;
+    color: #000;
+    border: none;
+    padding: 18px 32px;
+    font-size: 22px;
+    font-weight: bold;
+    border-radius: 14px;
+    box-shadow: 0 0 25px #00ff66;
+    cursor: pointer;
+    z-index: 999999;
+    animation: pulse 1.5s infinite;
+  }
+
+  @keyframes pulse {
+    0% { box-shadow: 0 0 10px #00ff66; }
+    50% { box-shadow: 0 0 25px #00ff66; }
+    100% { box-shadow: 0 0 10px #00ff66; }
+  }
+
   /* === GRID PADRÃO (3+ USUÁRIOS) === */
   #videos {
-    display: grid;
+    display: none; /* só mostra após clicar no botão */
     gap: 8px;
     padding: 8px;
     height: calc(100vh - 90px);
     overflow-y: auto;
     grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  }
+
+  #videos.show {
+    display: grid;
   }
 
   /* === 2 USUÁRIOS: MODO WHATSAPP === */
@@ -66,7 +95,7 @@
     bottom: 12px;
     left: 50%;
     transform: translateX(-50%);
-    display: flex;
+    display: none;
     gap: 18px;
     z-index: 99999;
   }
@@ -81,17 +110,18 @@
     color: #fff;
   }
 
-  #btnEnd {
-    background: #e30000;
-  }
+  #btnEnd { background: #e30000; }
+
 </style>
 </head>
 
 <body>
 
+<button id="enterButton">ENTRAR NA REUNIÃO</button>
+
 <div id="videos"></div>
 
-<div id="controlsMe" style="display:none;">
+<div id="controlsMe">
   <button id="btnMic" class="btn">🎤</button>
   <button id="btnEnd" class="btn">📞</button>
 </div>
@@ -100,7 +130,6 @@
 
 /* ============================================================
    DESBLOQUEIO PARA SAFARI / IPHONE / ANDROID ANTIGO
-   TORNA O VÍDEO INLINE + AUTOPLAY POSSÍVEL
 ============================================================ */
 function unlockAutoplay() {
     const v = document.createElement("video");
@@ -112,17 +141,13 @@ function unlockAutoplay() {
     document.body.appendChild(v);
 }
 
-/* Safari iOS exige gesto inicial */
 document.addEventListener("touchstart", function start() {
     unlockAutoplay();
     document.removeEventListener("touchstart", start);
 });
-
-/* Clicar em qualquer lugar inicia */
 document.addEventListener("click", unlockAutoplay);
 
-/* ============================================================ */
-
+/* FIREBASE */
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-app.js";
 import {
   getDatabase, ref, push, set, onChildAdded, onValue,
@@ -144,31 +169,28 @@ const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 
 const ROOM = "sala_global_31b3f";
+
 let localStream;
 let peers = {};
 let remoteVideos = {};
 let myId;
 
-const videoGrid = document.getElementById("videos");
-const ctrlMe = document.getElementById("controlsMe");
-const btnMic = document.getElementById("btnMic");
-const btnEnd = document.getElementById("btnEnd");
+const enterButton = document.getElementById("enterButton");
+const videoGrid  = document.getElementById("videos");
+const ctrlMe     = document.getElementById("controlsMe");
+const btnMic     = document.getElementById("btnMic");
+const btnEnd     = document.getElementById("btnEnd");
 
-/* =======================================================
-   CRIA VIDEO COMPATÍVEL COM TODOS OS CELULARES
-======================================================= */
+/* VIDEO BOX */
 function addVideoBox(stream, isMe = false) {
   const box = document.createElement("div");
   box.className = "video-box";
 
   const vid = document.createElement("video");
-
   vid.srcObject = stream;
   vid.autoplay = true;
   vid.muted = isMe;
   vid.playsInline = true;
-  vid.setAttribute("playsinline", "true");
-  vid.setAttribute("webkit-playsinline", "true");
 
   box.appendChild(vid);
   videoGrid.appendChild(box);
@@ -176,9 +198,7 @@ function addVideoBox(stream, isMe = false) {
   return { box, vid };
 }
 
-/* =======================================================
-   REGRAS DE LAYOUT
-======================================================= */
+/* LAYOUT DINÂMICO */
 function adjustLayout() {
   const total = videoGrid.children.length;
   videoGrid.classList.remove("one-user","two-users");
@@ -186,59 +206,39 @@ function adjustLayout() {
   else if (total === 2) videoGrid.classList.add("two-users");
 }
 
-/* =======================================================
-   INICIAR CÂMERA UNIVERSAL
-======================================================= */
+/* INICIAR CÂMERA */
 async function startCamera() {
-  try {
-    const constraints = {
-      video: {
-        facingMode: "user",
-        width: { ideal: 640, max: 1280 },
-        height: { ideal: 480, max: 720 }
-      },
-      audio: true
-    };
+  const constraints = {
+    video: { facingMode: "user", width: { ideal: 640 }, height: { ideal: 480 } },
+    audio: true
+  };
 
-    localStream = await navigator.mediaDevices.getUserMedia(constraints);
+  localStream = await navigator.mediaDevices.getUserMedia(constraints);
 
-    addVideoBox(localStream, true);
-    ctrlMe.style.display = "flex";
-    adjustLayout();
-
-  } catch (err) {
-    alert("Habilite câmera e microfone para entrar.");
-    console.error(err);
-  }
+  addVideoBox(localStream, true);
+  ctrlMe.style.display = "flex";
+  adjustLayout();
 }
 
-/* =======================================================
-   PEER UNIVERSAL
-======================================================= */
+/* PEER */
 function createPeer(remoteId) {
   const pc = new RTCPeerConnection({
-    iceServers: [
-      { urls: ["stun:stun.l.google.com:19302", "stun:global.stun.twilio.com:3478"] }
-    ]
+    iceServers: [{ urls: ["stun:stun.l.google.com:19302"] }]
   });
 
   localStream.getTracks().forEach(t => pc.addTrack(t, localStream));
 
   pc.ontrack = e => {
     if (!remoteVideos[remoteId]) {
-      const box = addVideoBox(e.streams[0], false);
-      remoteVideos[remoteId] = box;
+      remoteVideos[remoteId] = addVideoBox(e.streams[0], false);
       adjustLayout();
-    } else {
-      remoteVideos[remoteId].vid.srcObject = e.streams[0];
     }
   };
 
   pc.onicecandidate = e => {
     if (e.candidate) {
       set(push(ref(db, ROOM+"/ice")), {
-        from: myId, to: remoteId,
-        candidate: JSON.stringify(e.candidate)
+        from: myId, to: remoteId, candidate: JSON.stringify(e.candidate)
       });
     }
   };
@@ -246,11 +246,12 @@ function createPeer(remoteId) {
   return pc;
 }
 
-/* =======================================================
-   ENTRAR NA SALA
-======================================================= */
+/* ENTRAR NA SALA */
 async function joinRoom() {
   await startCamera();
+
+  videoGrid.classList.add("show");
+  enterButton.style.display = "none";
 
   myId = push(ref(db, ROOM+"/users")).key;
   set(ref(db, ROOM+"/users/"+myId), true);
@@ -259,7 +260,6 @@ async function joinRoom() {
   onValue(ref(db, ROOM+"/users"), snap => {
     const users = snap.val() || {};
 
-    /* remover quem caiu */
     for (let uid in remoteVideos) {
       if (!users[uid]) {
         remoteVideos[uid].box.remove();
@@ -270,24 +270,23 @@ async function joinRoom() {
       }
     }
 
-    /* conectar novos */
     for (let uid of Object.keys(users)) {
       if (uid === myId) continue;
       if (peers[uid]) continue;
 
       if (myId < uid) {
         const pc = peers[uid] = createPeer(uid);
-        pc.createOffer().then(o => {
-          pc.setLocalDescription(o);
-          set(push(ref(db, ROOM+"/signals")), {
-            type:"offer", from:myId, to:uid, sdp:JSON.stringify(o)
+        pc.createOffer()
+          .then(o => pc.setLocalDescription(o))
+          .then(() => {
+            set(push(ref(db, ROOM+"/signals")), {
+              type:"offer", from:myId, to:uid, sdp:JSON.stringify(o)
+            });
           });
-        });
       }
     }
   });
 
-  /* sinalização */
   onChildAdded(ref(db, ROOM+"/signals"), async snap => {
     const msg = snap.val();
     if (msg.to !== myId) return;
@@ -302,9 +301,7 @@ async function joinRoom() {
       set(push(ref(db, ROOM+"/signals")), {
         type:"answer", from:myId, to:msg.from, sdp:JSON.stringify(ans)
       });
-    }
-
-    if (msg.type === "answer") {
+    } else if (msg.type === "answer") {
       await pc.setRemoteDescription(JSON.parse(msg.sdp));
     }
 
@@ -323,23 +320,20 @@ async function joinRoom() {
   });
 }
 
-joinRoom();
+/* ===== BOTÃO ENTRAR ===== */
+enterButton.onclick = () => {
+  joinRoom();
+};
 
-/* =======================================================
-   MICROFONE
-======================================================= */
+/* MICROFONE */
 btnMic.onclick = () => {
   const audio = localStream.getAudioTracks()[0];
   audio.enabled = !audio.enabled;
   btnMic.textContent = audio.enabled ? "🎤" : "🔇";
 };
 
-/* =======================================================
-   ENCERRAR
-======================================================= */
-btnEnd.onclick = () => {
-  window.location.href = "https://marcio2307.github.io/terreiro/";
-};
+/* ENCERRAR */
+btnEnd.onclick = () => window.location.href = "https://marcio2307.github.io/terreiro/";
 
 </script>
 
