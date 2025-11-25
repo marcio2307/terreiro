@@ -23,23 +23,21 @@
     height: 100vh;
     overflow-y: auto;
     background: #000;
-
-    /* 🔥 Ajuste automático da grade */
     grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
   }
 
-  /* 🔥 CELULAR — 2 colunas fixas, estilo FaceTime */
+  /* CELULAR — 2 COLUNAS FIXAS */
   @media (max-width: 600px) {
     #videos {
       grid-template-columns: repeat(2, 1fr);
     }
   }
 
-  /* === CAIXA DO VÍDEO === */
+  /* CAIXA DE VÍDEO */
   .video-box {
     position: relative;
     width: 100%;
-    padding-top: 120%; 
+    padding-top: 120%;
     background: #111;
     border-radius: 14px;
     overflow: hidden;
@@ -48,14 +46,12 @@
 
   .video-box video {
     position: absolute;
-    top: 0;
-    left: 0;
+    top: 0; left: 0;
     width: 100%;
     height: 100%;
     object-fit: cover;
     border-radius: 14px;
   }
-
 </style>
 </head>
 <body>
@@ -66,8 +62,8 @@
 /* ===== FIREBASE ===== */
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-app.js";
 import {
-  getDatabase, ref, push, set, onChildAdded,
-  onValue, onDisconnect, remove
+  getDatabase, ref, push, set, onChildAdded, onValue,
+  onDisconnect, remove
 } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-database.js";
 
 const firebaseConfig = {
@@ -87,12 +83,12 @@ const db = getDatabase(app);
 const ROOM = "sala_global_31b3f";
 let localStream;
 let peers = {};
-let remoteVideos = {};
+let remoteVideos = {};  // vídeo HTML dos outros
 let myId;
 
 const videoGrid = document.getElementById("videos");
 
-/* === CRIA CAIXA DO VÍDEO === */
+/* === CRIAR BLOCO DE VÍDEO === */
 function addVideoBox(stream, isMe = false) {
   const box = document.createElement("div");
   box.className = "video-box";
@@ -109,31 +105,29 @@ function addVideoBox(stream, isMe = false) {
   return vid;
 }
 
-/* === MINHA CÂMERA === */
+/* === CÂMERA LOCAL === */
 async function startCamera() {
   localStream = await navigator.mediaDevices.getUserMedia({
-    video: { width: 640, height: 480, facingMode: "user" },
+    video: { facingMode: "user" },
     audio: true
   });
 
   addVideoBox(localStream, true);
 }
 
-/* === PEER CONNECTION === */
+/* === PEER === */
 function createPeer(remoteId) {
   const pc = new RTCPeerConnection({
     iceServers: [{ urls: "stun:stun.l.google.com:19302" }]
   });
 
-  localStream.getTracks().forEach(track =>
-    pc.addTrack(track, localStream)
-  );
+  localStream.getTracks().forEach(track => pc.addTrack(track, localStream));
 
-  pc.ontrack = e => {
+  pc.ontrack = event => {
     if (!remoteVideos[remoteId]) {
-      remoteVideos[remoteId] = addVideoBox(e.streams[0]);
+      remoteVideos[remoteId] = addVideoBox(event.streams[0]);
     } else {
-      remoteVideos[remoteId].srcObject = e.streams[0];
+      remoteVideos[remoteId].srcObject = event.streams[0];
     }
   };
 
@@ -158,9 +152,26 @@ async function joinRoom() {
   set(ref(db, `${ROOM}/users/${myId}`), true);
   onDisconnect(ref(db, `${ROOM}/users/${myId}`)).remove();
 
+  /* === MONITOR DE USUÁRIOS (REMOVE TELA TRAVADA) === */
   onValue(ref(db, `${ROOM}/users`), snap => {
     const users = snap.val() || {};
 
+    // remover vídeos de usuários que saíram
+    for (let rid in remoteVideos) {
+      if (!users[rid]) {
+        // remover bloco visual congelado
+        remoteVideos[rid].parentNode.remove();
+
+        if (peers[rid]) {
+          peers[rid].close();
+          delete peers[rid];
+        }
+
+        delete remoteVideos[rid];
+      }
+    }
+
+    // conectar novos usuários
     for (let uid of Object.keys(users)) {
       if (uid === myId) continue;
       if (peers[uid]) continue;
@@ -170,7 +181,7 @@ async function joinRoom() {
         peers[uid] = pc;
 
         pc.createOffer()
-          .then(o => pc.setLocalDescription(o))
+          .then(offer => pc.setLocalDescription(offer))
           .then(() => {
             set(push(ref(db, `${ROOM}/signals`)), {
               type: "offer",
@@ -183,6 +194,7 @@ async function joinRoom() {
     }
   });
 
+  /* === OFFER / ANSWER === */
   onChildAdded(ref(db, `${ROOM}/signals`), async snap => {
     const msg = snap.val();
     if (msg.to !== myId) return;
@@ -201,19 +213,24 @@ async function joinRoom() {
         to: msg.from,
         sdp: JSON.stringify(answer)
       });
-    } else if (msg.type === "answer") {
+    }
+
+    if (msg.type === "answer") {
       await pc.setRemoteDescription(JSON.parse(msg.sdp));
     }
 
     remove(ref(db, `${ROOM}/signals/${snap.key}`));
   });
 
+  /* === ICE === */
   onChildAdded(ref(db, `${ROOM}/ice`), async snap => {
     const msg = snap.val();
     if (msg.to !== myId) return;
 
     if (peers[msg.from]) {
-      await peers[msg.from].addIceCandidate(JSON.parse(msg.candidate));
+      try {
+        await peers[msg.from].addIceCandidate(JSON.parse(msg.candidate));
+      } catch (err) {}
     }
 
     remove(ref(db, `${ROOM}/ice/${snap.key}`));
