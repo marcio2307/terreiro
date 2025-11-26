@@ -867,78 +867,173 @@ bar.appendChild(storyBox);
     });
 });
 
-/* ABRIR STORY – com visualizações + excluir */
+/* SUPER STORIES — IGUAL INSTAGRAM */
+let storiesLista = [];
+let storiesIndex = 0;
+let barraInterval = null;
+let pausado = false;
+
 window.abrirStory = function (id, s) {
-    const content = document.getElementById("storyContent");
 
-    let midiaHTML = "";
+    /* Carrega TODOS os stories do usuário selecionado em sequência */
+    onValue(storiesRef, snap => {
 
-    if (s.imagem) {
-        midiaHTML = `<img src="${s.imagem}" style="max-width:92%;max-height:92%;border-radius:15px;">`;
-    } else if (s.video) {
-        midiaHTML = `<video src="${s.video}" controls autoplay style="max-width:92%;max-height:92%;border-radius:15px;"></video>`;
-    } else {
-        midiaHTML = `<p style="color:white;font-size:1.4rem;padding:25px;text-align:center;">${s.texto}</p>`;
-    }
+        storiesLista = [];
+        snap.forEach(st => {
+            const v = st.val();
+            if (v.usuario === s.usuario) {
+                storiesLista.push({ 
+                    id: st.key,
+                    ...v
+                });
+            }
+        });
 
-    content.innerHTML = midiaHTML;
-    storyViewer.style.display = "flex";
+        /* descobre o índice do story atual */
+        storiesIndex = storiesLista.findIndex(x => x.id === id);
 
-    if (usuario) {
-        const viewRef = ref(db, `coletivo_mural/stories/${id}/views/${usuario}`);
-        set(viewRef, { usuario, hora: Date.now() });
-    }
-
-    const viewsRef = ref(db, `coletivo_mural/stories/${id}/views`);
-
-    onValue(viewsRef, snap => {
-        let total = 0;
-        let listaViuHTML = "";
-
-        if (snap.exists()) {
-            snap.forEach(vSnap => {
-                total++;
-                const v = vSnap.val();
-                listaViuHTML += `
-                    <div style="padding:6px;color:#00ffaa;font-size:1rem;">
-                        👁️ ${v.usuario}
-                    </div>
-                `;
-            });
-        }
-
-        if (!listaViuHTML) listaViuHTML = `<p style="color:white;">Ninguém viu ainda</p>`;
-
-        let btnExcluir = "";
-        if (usuario && s.usuario === usuario) {
-            btnExcluir = `
-                <button onclick="excluirStory('${id}')"
-                    style="margin-top:18px;background:#ff4444;color:white;padding:10px 20px;border:none;border-radius:10px;font-weight:bold;">
-                    Excluir Story
-                </button>
-            `;
-        }
-
-        content.innerHTML = `
-            ${midiaHTML}
-
-            <div style="margin-top:20px;color:#00ffaa;font-size:1.2rem;font-weight:bold;">
-                👁️ ${total} visualizaç${total === 1 ? "ão" : "ões"}
-            </div>
-
-            <div style="margin-top:10px;background:rgba(255,255,255,0.1);padding:10px;border-radius:10px;width:90%;max-width:300px;">
-                <div style="color:#00ffaa;font-weight:bold;margin-bottom:5px;">Quem viu:</div>
-                ${listaViuHTML}
-            </div>
-
-            ${btnExcluir}
-        `;
+        abrirViewer();
     }, { onlyOnce: true });
 };
 
+function abrirViewer() {
+
+    const story = storiesLista[storiesIndex];
+    const content = document.getElementById("storyContent");
+
+    /* barra de progresso */
+    content.innerHTML = `
+        <div id="progressContainer" 
+            style="position:absolute;top:10px;width:90%;display:flex;gap:5px;">
+        </div>
+
+        <div id="storyMediaBox" 
+            style="width:100%;height:100%;display:flex;justify-content:center;align-items:center;">
+        </div>
+    `;
+
+    const box = document.getElementById("storyMediaBox");
+
+    if (story.imagem) {
+        box.innerHTML = `<img src="${story.imagem}" 
+            style="max-width:92%;max-height:92%;border-radius:15px;">`;
+    } 
+    else if (story.video) {
+        box.innerHTML = `
+            <video id="stv" src="${story.video}" autoplay muted playsinline 
+            style="max-width:92%;max-height:92%;border-radius:15px;"></video>`;
+    } 
+    else {
+        box.innerHTML = `<p style="color:white;font-size:1.4rem;padding:25px;text-align:center;">
+            ${story.texto}
+        </p>`;
+    }
+
+    storyViewer.style.display = "flex";
+
+    montarBarras();
+    iniciarBarra();
+    registrarVisualizacao(story);
+}
+
+/* BARRAS DE PROGRESSO */
+function montarBarras() {
+    const pc = document.getElementById("progressContainer");
+    pc.innerHTML = "";
+
+    storiesLista.forEach((_, i)=>{
+
+        const b = document.createElement("div");
+        b.style.flex = 1;
+        b.style.height = "4px";
+        b.style.background = i < storiesIndex ? "#fff" : "rgba(255,255,255,0.3)";
+        b.style.borderRadius = "10px";
+        b.id = "bar_" + i;
+
+        pc.appendChild(b);
+    });
+}
+
+function iniciarBarra() {
+
+    /* tempo padrão */
+    let tempo = 5000;
+
+    /* se for vídeo, usar duração */
+    const vid = document.getElementById("stv");
+    if (vid) {
+        if (vid.duration && !isNaN(vid.duration)) tempo = vid.duration * 1000;
+    }
+
+    let progresso = 0;
+    const barra = document.getElementById("bar_" + storiesIndex);
+
+    barra.style.background = "linear-gradient(to right, #fff 0%, rgba(255,255,255,0.3) 0%)";
+
+    clearInterval(barraInterval);
+    barraInterval = setInterval(()=>{
+
+        if (pausado) return;
+
+        progresso += 100 / (tempo / 50);
+
+        barra.style.background = 
+            `linear-gradient(to right, #fff ${progresso}%, rgba(255,255,255,0.3) 0%)`;
+
+        if (progresso >= 100) {
+            clearInterval(barraInterval);
+            proximoStory();
+        }
+
+    }, 50);
+}
+
+/* PASSAR / VOLTAR */
+storyViewer.addEventListener("click", e => {
+
+    const x = e.clientX;
+    const metade = window.innerWidth / 2;
+
+    if (x > metade) proximoStory();
+    else voltarStory();
+});
+
+/* PAUSE AO SEGURAR */
+storyViewer.addEventListener("mousedown", ()=> pausado = true);
+storyViewer.addEventListener("mouseup", ()=> pausado = false);
+storyViewer.addEventListener("touchstart", ()=> pausado = true);
+storyViewer.addEventListener("touchend", ()=> pausado = false);
+
+/* AVANÇAR */
+function proximoStory() {
+    storiesIndex++;
+    if (storiesIndex >= storiesLista.length) {
+        fecharStory();
+        return;
+    }
+    abrirViewer();
+}
+
+/* VOLTAR */
+function voltarStory() {
+    if (storiesIndex === 0) return;
+    storiesIndex--;
+    abrirViewer();
+}
+
+/* FECHAR */
 window.fecharStory = function () {
     storyViewer.style.display = "none";
+    clearInterval(barraInterval);
 };
+
+/* REGISTRA VISUALIZAÇÃO */
+function registrarVisualizacao(s) {
+    if (!usuario) return;
+    const vref = ref(db, `coletivo_mural/stories/${s.id}/views/${usuario}`);
+    set(vref, { usuario, hora: Date.now() });
+}
+
 
 window.excluirStory = function(id) {
     onValue(ref(db, "coletivo_mural/stories/" + id), snap => {
@@ -1491,5 +1586,6 @@ if (usuario) {
     iniciarNotificacoes();
 }
 </script>
+
 
 
