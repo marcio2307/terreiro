@@ -736,7 +736,6 @@ window.abrirCriarStory = function () {
     if (!usuario) return alert("Faça login!");
     storyModal.style.display = "flex";
 };
-
 window.fecharCriarStory = function () {
     storyModal.style.display = "none";
     storyTexto.value = "";
@@ -767,352 +766,299 @@ window.enviarStory = function () {
 };
 
 function salvarStory(texto, media, tipo) {
-    push(storiesRef, {
+    const novo = push(storiesRef);
+    set(novo, {
         usuario,
         texto,
         timestamp: Date.now(),
         imagem: tipo === "imagem" ? media : null,
-        video: tipo === "video" ? media : null
+        video: tipo === "video" ? media : null,
+        views: {},
+        reacoes: {}
     });
 
     fecharCriarStory();
 }
 
-/* MOSTRAR STORIES */
+/* LISTAGEM – STORIES NO TOPO */
 onValue(storiesRef, snap => {
     const bar = document.getElementById("storiesBar");
 
-    // RECOLOCA O SEU STORY PRIMEIRO
     bar.innerHTML = `
         <div id="seuStoryBox" style="text-align:center; flex-shrink:0;">
             <div onclick="abrirCriarStory()" id="meuStoryBtn"
                 style="
-                    width:70px;
-                    height:70px;
-                    border-radius:50%;
-                    border:3px solid #00ffaa;
-                    overflow:hidden;
-                    display:flex;
-                    align-items:center;
-                    justify-content:center;
-                    background:#000;
-                    cursor:pointer;
-                ">
-                <img id="meuStoryFoto" 
-                    src="${localStorage.getItem("fotoPerfil_" + usuario) || "https://cdn-icons-png.flaticon.com/512/149/149071.png"}"
-                    style="width:100%; height:100%; object-fit:cover;">
+                    width:70px; height:70px; border-radius:50%;
+                    border:3px solid #00ffaa; overflow:hidden;
+                    display:flex; align-items:center; justify-content:center;
+                    background:#000; cursor:pointer;">
+                <img id="meuStoryFoto"
+                     src="${localStorage.getItem("fotoPerfil_" + usuario) || "https://cdn-icons-png.flaticon.com/512/149/149071.png"}"
+                     style="width:100%; height:100%; object-fit:cover;">
             </div>
-
             <div style="color:#00ffaa;font-size:0.80rem;font-weight:bold;margin-top:5px;">
-                Seu Story
+                Novo Story
             </div>
         </div>
     `;
 
     const agora = Date.now();
 
+    /* LISTA TODOS STORIES */
     snap.forEach(story => {
-
         const s = story.val();
         const id = story.key;
 
         if (agora - s.timestamp > 24 * 60 * 60 * 1000) return;
 
-       // CONTAINER do círculo + nome abaixo
-const storyBox = document.createElement("div");
-storyBox.style.textAlign = "center";
-storyBox.style.flexShrink = "0";
-storyBox.style.width = "70px";
+        const storyBox = document.createElement("div");
+        storyBox.style.textAlign = "center";
+        storyBox.style.flexShrink = "0";
+        storyBox.style.width = "70px";
 
-// Círculo do story
-const circle = document.createElement("div");
-circle.style.width = "70px";
-circle.style.height = "70px";
-circle.style.borderRadius = "50%";
-circle.style.border = "3px solid #00ffaa";
-circle.style.overflow = "hidden";
-circle.style.cursor = "pointer";
-circle.style.display = "flex";
-circle.style.alignItems = "center";
-circle.style.justifyContent = "center";
-circle.style.background = "#000";
+        const circle = document.createElement("div");
+        circle.style.width = "70px";
+        circle.style.height = "70px";
+        circle.style.borderRadius = "50%";
+        circle.style.border = "3px solid #00ffaa";
+        circle.style.overflow = "hidden";
+        circle.style.cursor = "pointer";
+        circle.style.display = "flex";
+        circle.style.alignItems = "center";
+        circle.style.justifyContent = "center";
+        circle.style.background = "#000";
 
-circle.onclick = () => abrirStory(id, s);
+        circle.onclick = () => abrirStory(id, s);
 
-// Mídia dentro do círculo
-if (s.imagem) {
-    circle.innerHTML = `<img src="${s.imagem}" style="width:100%;height:100%;object-fit:cover;">`;
-} else if (s.video) {
-    circle.innerHTML = `<video src="${s.video}" muted style="width:100%;height:100%;object-fit:cover;"></video>`;
-} else {
-    circle.innerHTML = `<span style='color:#00ffaa;font-size:.8rem;'>TXT</span>`;
-}
+        if (s.imagem) {
+            circle.innerHTML = `<img src="${s.imagem}" style="width:100%;height:100%;object-fit:cover;">`;
+        } else if (s.video) {
+            circle.innerHTML = `<video src="${s.video}" muted style="width:100%;height:100%;object-fit:cover;"></video>`;
+        } else {
+            circle.innerHTML = `<span style='color:#00ffaa;font-size:.8rem;'>TXT</span>`;
+        }
 
-// Nome do usuário abaixo do story
-const nome = document.createElement("div");
-nome.style.color = "#00ffaa";
-nome.style.fontSize = "0.78rem";
-nome.style.fontWeight = "bold";
-nome.style.marginTop = "6px";
-nome.style.whiteSpace = "nowrap";
-nome.style.overflow = "hidden";
-nome.style.textOverflow = "ellipsis";
-nome.textContent = s.usuario;
+        const nome = document.createElement("div");
+        nome.style.color = "#00ffaa";
+        nome.style.fontSize = "0.78rem";
+        nome.style.fontWeight = "bold";
+        nome.style.marginTop = "6px";
+        nome.textContent = s.usuario;
 
-// Monta o bloco final
-storyBox.appendChild(circle);
-storyBox.appendChild(nome);
+        storyBox.appendChild(circle);
+        storyBox.appendChild(nome);
 
-bar.appendChild(storyBox);
+        bar.appendChild(storyBox);
     });
 });
 
-/* SUPER STORIES — IGUAL INSTAGRAM */
+/* ===========================
+   VISUALIZAÇÃO DE STORIES
+   =========================== */
 let storiesLista = [];
 let storiesIndex = 0;
 let barraInterval = null;
 let pausado = false;
 
 window.abrirStory = function (id, s) {
-
-    /* Carrega TODOS os stories do usuário selecionado em sequência */
     onValue(storiesRef, snap => {
-
         storiesLista = [];
+
         snap.forEach(st => {
             const v = st.val();
             if (v.usuario === s.usuario) {
-                storiesLista.push({ 
+                storiesLista.push({
                     id: st.key,
                     ...v
                 });
             }
         });
 
-        /* descobre o índice do story atual */
         storiesIndex = storiesLista.findIndex(x => x.id === id);
-
         abrirViewer();
     }, { onlyOnce: true });
 };
 
 function abrirViewer() {
-
-    const story = storiesLista[storiesIndex];
+    const st = storiesLista[storiesIndex];
     const content = document.getElementById("storyContent");
 
-    /* barra de progresso */
     content.innerHTML = `
-        <div id="progressContainer" 
-            style="position:absolute;top:10px;width:90%;display:flex;gap:5px;">
+        <div id="progressContainer"
+             style="position:absolute;top:10px;width:90%;display:flex;gap:5px;"></div>
+
+        <div id="storyMediaBox"
+             style="width:100%;height:100%;display:flex;justify-content:center;align-items:center;"></div>
+
+        <div id="reacoesBox" 
+             style="position:absolute; bottom:35px; display:flex; gap:15px; font-size:2.2rem; cursor:pointer;">
+            <span onclick="reagirStory('${st.id}','❤️')">❤️</span>
+            <span onclick="reagirStory('${st.id}','😂')">😂</span>
+            <span onclick="reagirStory('${st.id}','😢')">😢</span>
+            <span onclick="reagirStory('${st.id}','🔥')">🔥</span>
         </div>
 
-        <div id="storyMediaBox" 
-            style="width:100%;height:100%;display:flex;justify-content:center;align-items:center;">
-        </div>
+        ${st.usuario === usuario ? `
+            <button onclick="excluirStory('${st.id}')"
+                style="
+                    position:absolute; bottom:15px; right:20px;
+                    background:#ff4444; border:none; padding:8px 15px;
+                    color:white; border-radius:10px; font-weight:bold;">
+                Excluir
+            </button>
+        ` : ""}
+        
+        <button onclick="mostrarViews('${st.id}')"
+            style="
+                position:absolute; bottom:15px; left:20px;
+                background:#00ffaa; border:none; padding:8px 15px;
+                border-radius:10px; font-weight:bold;">
+            👁 Ver visualizações
+        </button>
     `;
 
     const box = document.getElementById("storyMediaBox");
 
-    if (story.imagem) {
-        box.innerHTML = `<img src="${story.imagem}" 
-            style="max-width:92%;max-height:92%;border-radius:15px;">`;
-    } 
-    else if (story.video) {
+    if (st.imagem) {
+        box.innerHTML = `<img src="${st.imagem}" style="max-width:92%;max-height:92%;border-radius:15px;">`;
+    } else if (st.video) {
         box.innerHTML = `
-            <video id="stv" src="${story.video}" autoplay muted playsinline 
-            style="max-width:92%;max-height:92%;border-radius:15px;"></video>`;
-    } 
-    else {
-        box.innerHTML = `<p style="color:white;font-size:1.4rem;padding:25px;text-align:center;">
-            ${story.texto}
-        </p>`;
+            <video id="stv" src="${st.video}" autoplay muted playsinline
+                   style="max-width:92%;max-height:92%;border-radius:15px;"></video>`;
+    } else {
+        box.innerHTML = `<p style="color:white;font-size:1.4rem;">${st.texto}</p>`;
     }
 
     storyViewer.style.display = "flex";
 
     montarBarras();
     iniciarBarra();
-    registrarVisualizacao(story);
+    registrarVisualizacao(st);
 }
 
-/* BARRAS DE PROGRESSO */
+/* ===========================
+     BARRA SUPER INSTAGRAM
+   =========================== */
 function montarBarras() {
     const pc = document.getElementById("progressContainer");
     pc.innerHTML = "";
 
-    storiesLista.forEach((_, i)=>{
-
+    storiesLista.forEach((_, i) => {
         const b = document.createElement("div");
         b.style.flex = 1;
         b.style.height = "4px";
         b.style.background = i < storiesIndex ? "#fff" : "rgba(255,255,255,0.3)";
         b.style.borderRadius = "10px";
         b.id = "bar_" + i;
-
         pc.appendChild(b);
     });
 }
 
 function iniciarBarra() {
-
-    /* tempo padrão */
     let tempo = 5000;
 
-    /* se for vídeo, usar duração */
     const vid = document.getElementById("stv");
-    if (vid) {
-        if (vid.duration && !isNaN(vid.duration)) tempo = vid.duration * 1000;
-    }
+    if (vid && vid.duration) tempo = vid.duration * 1000;
 
     let progresso = 0;
     const barra = document.getElementById("bar_" + storiesIndex);
 
-    barra.style.background = "linear-gradient(to right, #fff 0%, rgba(255,255,255,0.3) 0%)";
-
     clearInterval(barraInterval);
-    barraInterval = setInterval(()=>{
-
+    barraInterval = setInterval(() => {
         if (pausado) return;
 
         progresso += 100 / (tempo / 50);
-
-        barra.style.background = 
+        barra.style.background =
             `linear-gradient(to right, #fff ${progresso}%, rgba(255,255,255,0.3) 0%)`;
 
         if (progresso >= 100) {
             clearInterval(barraInterval);
             proximoStory();
         }
-
     }, 50);
 }
 
 /* PASSAR / VOLTAR */
 storyViewer.addEventListener("click", e => {
-
     const x = e.clientX;
     const metade = window.innerWidth / 2;
 
     if (x > metade) proximoStory();
     else voltarStory();
 });
+storyViewer.addEventListener("mousedown", () => pausado = true);
+storyViewer.addEventListener("mouseup", () => pausado = false);
+storyViewer.addEventListener("touchstart", () => pausado = true);
+storyViewer.addEventListener("touchend", () => pausado = false);
 
-/* PAUSE AO SEGURAR */
-storyViewer.addEventListener("mousedown", ()=> pausado = true);
-storyViewer.addEventListener("mouseup", ()=> pausado = false);
-storyViewer.addEventListener("touchstart", ()=> pausado = true);
-storyViewer.addEventListener("touchend", ()=> pausado = false);
-
-/* AVANÇAR */
 function proximoStory() {
     storiesIndex++;
-    if (storiesIndex >= storiesLista.length) {
-        fecharStory();
-        return;
-    }
+    if (storiesIndex >= storiesLista.length) return fecharStory();
     abrirViewer();
 }
-
-/* VOLTAR */
 function voltarStory() {
     if (storiesIndex === 0) return;
     storiesIndex--;
     abrirViewer();
 }
 
-/* FECHAR */
 window.fecharStory = function () {
     storyViewer.style.display = "none";
     clearInterval(barraInterval);
 };
 
-/* REGISTRA VISUALIZAÇÃO */
-function registrarVisualizacao(s) {
+/* ===========================
+       VISUALIZAÇÕES
+   =========================== */
+function registrarVisualizacao(st) {
     if (!usuario) return;
-    const vref = ref(db, `coletivo_mural/stories/${s.id}/views/${usuario}`);
+    const vref = ref(db, `coletivo_mural/stories/${st.id}/views/${usuario}`);
     set(vref, { usuario, hora: Date.now() });
 }
 
+window.mostrarViews = function (id) {
+    const vref = ref(db, `coletivo_mural/stories/${id}/views`);
 
-window.excluirStory = function(id) {
-    onValue(ref(db, "coletivo_mural/stories/" + id), snap => {
+    onValue(vref, snap => {
+        let lista = "👁 Pessoas que viram:\n\n";
+        if (!snap.exists()) lista += "Ninguém viu ainda.";
+
+        snap.forEach(v => lista += "• " + v.key + "\n");
+        alert(lista);
+    }, { onlyOnce: true });
+};
+
+/* ===========================
+       REAÇÕES DO STORY
+   =========================== */
+window.reagirStory = function (id, emoji) {
+    if (!usuario) return;
+
+    const rref = ref(db, `coletivo_mural/stories/${id}/reacoes/${usuario}`);
+    set(rref, { emoji, hora: Date.now() });
+
+    alert("Reação enviada: " + emoji);
+};
+
+/* ===========================
+        EXCLUIR STORY
+   =========================== */
+window.excluirStory = function (id) {
+    onValue(ref(db, `coletivo_mural/stories/${id}`), snap => {
         if (!snap.exists()) return;
 
-        const dono = snap.val().usuario;
-
-        if (dono !== usuario) {
-            alert("❌ Você não pode excluir stories de outras pessoas!");
+        if (snap.val().usuario !== usuario) {
+            alert("❌ Você só pode excluir SEUS stories.");
             return;
         }
 
         if (confirm("Excluir seu story?")) {
-            remove(ref(db, "coletivo_mural/stories/" + id));
+            remove(ref(db, `coletivo_mural/stories/${id}`));
             fecharStory();
         }
-
     }, { onlyOnce: true });
 };
 
-let imagemTemp = null;
-let tipoMidia = null;
-
-/* ENVIO DE MÍDIA */
-document.getElementById("imgUpload").addEventListener("change", function () {
-    const file = this.files[0];
-    if (!file) return;
-
-    tipoMidia = file.type.startsWith("video/") ? "video" : "imagem";
-
-    const reader = new FileReader();
-    reader.onload = e => {
-        imagemTemp = e.target.result;
-
-        if (tipoMidia === "video") {
-            preview.innerHTML = `
-                <video controls autoplay muted playsinline>
-                    <source src="${imagemTemp}">
-                </video>
-                <div class="remove-preview" onclick="removerPreview()">Excluir vídeo</div>
-            `;
-        } else {
-            preview.innerHTML = `
-                <img src="${imagemTemp}">
-                <div class="remove-preview" onclick="removerPreview()">Excluir imagem</div>
-            `;
-        }
-    };
-    reader.readAsDataURL(file);
-});
-
-window.removerPreview = function () {
-    imagemTemp = null;
-    tipoMidia = null;
-    preview.innerHTML = "";
-    imgUpload.value = "";
-};
-
-/* POSTAR */
-window.postar = function () {
-    if (!usuario) return alert("Faça login!");
-
-    const texto = document.getElementById("texto").value.trim();
-    if (texto === "" && !imagemTemp) return;
-
-    const postData = {
-        usuario,
-        texto,
-        imagem: tipoMidia === "imagem" ? imagemTemp : null,
-        video: tipoMidia === "video" ? imagemTemp : null,
-        reacoes: {},
-        comentarios: {}
-    };
-
-    push(postsRef, postData);
-
-    document.getElementById("texto").value = "";
-    removerPreview();
-};
 
 /* MURAL + POST INDIVIDUAL */
 onValue(postsRef, snap => {
@@ -1586,6 +1532,7 @@ if (usuario) {
     iniciarNotificacoes();
 }
 </script>
+
 
 
 
