@@ -730,40 +730,37 @@ const postsRef = ref(db, "coletivo_mural/posts");
 
 /* =====================================================
    STORIES — BANCO
-   =====================================================*/
+===================================================== */
 const storiesRef = ref(db, "coletivo_mural/stories");
 
 /* =====================================================
    ABRIR / FECHAR MODAL
-   =====================================================*/
+===================================================== */
 window.abrirCriarStory = () => {
     if (!usuario) return alert("Faça login!");
-    storyModal.style.display = "flex";
+    document.getElementById("storyModal").style.display = "flex";
 };
 
 window.fecharCriarStory = () => {
-    storyModal.style.display = "none";
+    document.getElementById("storyModal").style.display = "none";
     storyTexto.value = "";
     storyMedia.value = "";
 };
 
 /* =====================================================
    ENVIAR STORY
-   =====================================================*/
+===================================================== */
 window.enviarStory = () => {
     if (!usuario) return alert("Faça login!");
 
     const texto = storyTexto.value.trim();
     const file = storyMedia.files[0];
 
-    let base64 = null;
-    let tipo = null;
-
     if (file) {
         const reader = new FileReader();
         reader.onload = e => {
-            base64 = e.target.result;
-            tipo = file.type.startsWith("video") ? "video" : "imagem";
+            const base64 = e.target.result;
+            const tipo = file.type.startsWith("video") ? "video" : "imagem";
             salvarStory(texto, base64, tipo);
         };
         reader.readAsDataURL(file);
@@ -772,14 +769,15 @@ window.enviarStory = () => {
     }
 };
 
-function salvarStory(texto, media, tipo) {
+function salvarStory(texto, midia, tipo) {
     const novo = push(storiesRef);
+
     set(novo, {
         usuario,
         texto,
         timestamp: Date.now(),
-        imagem: tipo === "imagem" ? media : null,
-        video: tipo === "video" ? media : null,
+        imagem: tipo === "imagem" ? midia : null,
+        video: tipo === "video" ? midia : null,
         views: {},
         reacoes: {}
     });
@@ -788,27 +786,24 @@ function salvarStory(texto, media, tipo) {
 }
 
 /* =====================================================
-   EXIBIÇÃO NA BARRA IGUAL INSTAGRAM
-   =====================================================*/
+   EXIBIÇÃO NA BARRA
+===================================================== */
 onValue(storiesRef, snap => {
     const bar = document.getElementById("storiesBar");
     bar.innerHTML = "";
 
-    /** CÍRCULO DO USUÁRIO (NÃO ABRE STORY, ABRE LISTA) **/
+    /* MEU STORY */
     bar.innerHTML += `
         <div style="text-align:center;flex-shrink:0;">
             <div onclick="verMeusStories()"
-                style="width:70px;height:70px;border-radius:50%;
-                border:3px solid #00ffaa;overflow:hidden;background:#000;
-                display:flex;align-items:center;justify-content:center;
-                cursor:pointer;">
-                
-                <img src="${localStorage.getItem("fotoPerfil_" + usuario) ||
-                    "https://cdn-icons-png.flaticon.com/512/149/149071.png"}"
+                style="width:70px;height:70px;border-radius:50%;border:3px solid #00ffaa;
+                       overflow:hidden;display:flex;align-items:center;justify-content:center;
+                       background:#000;cursor:pointer;">
+                <img src="${localStorage.getItem("fotoPerfil_"+usuario) ||
+                    'https://cdn-icons-png.flaticon.com/512/149/149071.png'}"
                 style="width:100%;height:100%;object-fit:cover;">
             </div>
-
-            <div style="color:#00ffaa;font-size:.8rem;font-weight:bold;margin-top:5px;">
+            <div style="color:#00ffaa;font-size:0.8rem;font-weight:bold;margin-top:5px;">
                 Meu Story
             </div>
         </div>
@@ -816,24 +811,22 @@ onValue(storiesRef, snap => {
 
     const agora = Date.now();
 
-    /** Stories de outros usuários **/
+    /* OUTROS STORIES */
     snap.forEach(st => {
         const s = st.val();
         if (s.usuario === usuario) return;
         if (agora - s.timestamp > 86400000) return;
 
         const id = st.key;
-
         const bloco = document.createElement("div");
         bloco.style = "text-align:center;flex-shrink:0;width:70px;";
 
         const circle = document.createElement("div");
         circle.style = `
-            width:70px;height:70px;border-radius:50%;
-            border:3px solid #00ffaa;overflow:hidden;background:#000;
-            display:flex;align-items:center;justify-content:center;
-            cursor:pointer;
-        `;
+            width:70px;height:70px;border-radius:50%;border:3px solid #00ffaa;
+            overflow:hidden;background:#000;display:flex;align-items:center;
+            justify-content:center;cursor:pointer;`;
+
         circle.onclick = () => abrirStory(id, s);
 
         if (s.imagem)
@@ -843,46 +836,38 @@ onValue(storiesRef, snap => {
         else
             circle.innerHTML = `<span style="color:#00ffaa;font-size:.8rem;">TXT</span>`;
 
-        bloco.appendChild(circle);
-
         const nome = document.createElement("div");
-        nome.style = `
-            color:#00ffaa;font-size:.78rem;font-weight:bold;margin-top:6px;
-            white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
-        `;
+        nome.style =
+            "color:#00ffaa;font-size:.78rem;font-weight:bold;margin-top:6px;white-space:nowrap;";
         nome.textContent = s.usuario;
 
+        bloco.appendChild(circle);
         bloco.appendChild(nome);
         bar.appendChild(bloco);
     });
 });
 
 /* =====================================================
-   MEUS STORIES — LISTA
-   =====================================================*/
+   VER MEUS STORIES
+===================================================== */
 window.verMeusStories = () => {
     onValue(storiesRef, snap => {
         storiesLista = [];
-
         snap.forEach(st => {
             const v = st.val();
-            if (v.usuario === usuario)
-                storiesLista.push({ id: st.key, ...v });
+            if (v.usuario === usuario) storiesLista.push({ id: st.key, ...v });
         });
 
-        if (storiesLista.length === 0) {
-            alert("Você ainda não postou stories.");
-            return;
-        }
+        if (!storiesLista.length) return alert("Você ainda não postou stories.");
 
         storiesIndex = 0;
-        abrirViewer(true);
+        abrirViewer();
     }, { onlyOnce: true });
 };
 
 /* =====================================================
-   VISUALIZAÇÃO DE STORIES
-   =====================================================*/
+   VISOR DE STORIES
+===================================================== */
 let storiesLista = [];
 let storiesIndex = 0;
 let barraInterval = null;
@@ -891,76 +876,34 @@ let pausado = false;
 window.abrirStory = (id, s) => {
     onValue(storiesRef, snap => {
         storiesLista = [];
-
         snap.forEach(st => {
             const v = st.val();
-            if (v.usuario === s.usuario)
-                storiesLista.push({ id: st.key, ...v });
+            if (v.usuario === s.usuario) storiesLista.push({ id: st.key, ...v });
         });
 
         storiesIndex = storiesLista.findIndex(x => x.id === id);
-        abrirViewer(false);
+        abrirViewer();
     }, { onlyOnce: true });
 };
 
-function abrirViewer(ehMeuStoryList) {
+function abrirViewer() {
     const st = storiesLista[storiesIndex];
+    const viewer = document.getElementById("storyViewer");
     const cont = document.getElementById("storyContent");
 
-    const ehMeu = st.usuario === usuario;
+    cont.innerHTML = "";
 
-    cont.innerHTML = `
-        <div id="progressContainer"
-             style="position:absolute;top:10px;width:90%;display:flex;gap:5px;"></div>
+    /* BARRA DE PROGRESSO */
+    const progress = document.createElement("div");
+    progress.id = "progressContainer";
+    progress.style = "position:absolute;top:10px;width:90%;display:flex;gap:5px;";
+    cont.appendChild(progress);
 
-        <div id="storyMediaBox"
-             style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;"></div>
-
-        ${!ehMeu ? `
-        <div id="reacoesBox"
-             style="position:absolute;bottom:40px;display:flex;gap:20px;font-size:2.3rem;">
-            <span onclick="reagirStory('${st.id}','❤️')">❤️</span>
-            <span onclick="reagirStory('${st.id}','😂')">😂</span>
-            <span onclick="reagirStory('${st.id}','😢')">😢</span>
-            <span onclick="reagirStory('${st.id}','🔥')">🔥</span>
-        </div>` : ""}
-
-        ${ehMeu ? `
-            <span onclick="excluirStory('${st.id}')"
-                style="position:absolute;top:20px;left:20px;font-size:2.3rem;
-                color:#ff4444;cursor:pointer;">❌</span>
-        ` : ""}
-
-        <span onclick="fecharStory()"
-            style="position:absolute;top:20px;right:20px;font-size:2.3rem;color:#fff;cursor:pointer;">
-            ✖
-        </span>
-
-        ${ehMeu ? `
-            <button onclick="mostrarViews('${st.id}')"
-                style="position:absolute;bottom:20px;left:20px;background:#00ffaa;
-                color:black;border:none;padding:8px 15px;border-radius:10px;font-weight:bold;">
-                👁 Visualizações
-            </button>
-        ` : ""}
-
-        ${ehMeu && storiesIndex === storiesLista.length - 1 ? `
-            <button onclick="abrirCriarStory()"
-                style="position:absolute;bottom:20px;right:20px;background:#00ffaa;
-                color:black;border:none;padding:8px 15px;border-radius:10px;font-weight:bold;">
-                ➕ Novo Story
-            </button>
-        ` : ""}
-
-        <!-- BOTÃO PRÓXIMO STORY -->
-        <button onclick="proximoStory()"
-            style="position:absolute;top:50%;right:5%;background:rgba(0,0,0,0.4);
-            color:#fff;border:none;padding:10px 14px;border-radius:50%;font-size:1.4rem;">
-            ⏭
-        </button>
-    `;
-
-    const box = document.getElementById("storyMediaBox");
+    /* MÍDIA */
+    const box = document.createElement("div");
+    box.id = "storyMediaBox";
+    box.style = "width:100%;height:100%;display:flex;align-items:center;justify-content:center;";
+    cont.appendChild(box);
 
     if (st.imagem)
         box.innerHTML = `<img src="${st.imagem}" style="max-width:92%;max-height:92%;border-radius:15px;">`;
@@ -969,46 +912,66 @@ function abrirViewer(ehMeuStoryList) {
     else
         box.innerHTML = `<p style="color:white;font-size:1.4rem;">${st.texto}</p>`;
 
-    storyViewer.style.display = "flex";
+    /* BOTÃO FECHAR */
+    const fechar = document.createElement("span");
+    fechar.textContent = "✖";
+    fechar.style =
+        "position:absolute;top:20px;right:20px;font-size:2.3rem;color:#fff;cursor:pointer;";
+    fechar.onclick = fecharStory;
+    cont.appendChild(fechar);
 
+    /* REAÇÕES */
+    if (st.usuario !== usuario) {
+        cont.innerHTML += `
+            <div id="reacoesBox"
+                style="position:absolute;bottom:40px;display:flex;gap:25px;font-size:2.4rem;">
+                <span onclick="reagirStory('${st.id}','❤️')">❤️</span>
+                <span onclick="reagirStory('${st.id}','😂')">😂</span>
+                <span onclick="reagirStory('${st.id}','😢')">😢</span>
+                <span onclick="reagirStory('${st.id}','🔥')">🔥</span>
+            </div>`;
+    }
+
+    /* BARRAS */
     montarBarras();
     iniciarBarra();
     registrarVisualizacao(st);
+
+    viewer.style.display = "flex";
 }
 
 /* =====================================================
-   BARRA DE PROGRESSO — INSTAGRAM
-   =====================================================*/
+   PROGRESS BAR
+===================================================== */
 function montarBarras() {
     const pc = document.getElementById("progressContainer");
     pc.innerHTML = "";
 
     storiesLista.forEach((_, i) => {
         const b = document.createElement("div");
+        b.id = "bar_" + i;
         b.style = `
             flex:1;height:5px;border-radius:10px;
-            background:${i < storiesIndex ? "#fff" : "rgba(255,255,255,0.3)"};
-        `;
-        b.id = "bar_" + i;
+            background:${i < storiesIndex ? "#fff" : "rgba(255,255,255,0.3)"};`;
         pc.appendChild(b);
     });
 }
 
 function iniciarBarra() {
     let tempo = 5000;
-
     const vid = document.getElementById("stv");
     if (vid && vid.duration) tempo = vid.duration * 1000;
 
     let prog = 0;
-    const b = document.getElementById("bar_" + storiesIndex);
+    const bar = document.getElementById("bar_" + storiesIndex);
 
     clearInterval(barraInterval);
     barraInterval = setInterval(() => {
         if (pausado) return;
 
         prog += 100 / (tempo / 50);
-        b.style.background = `linear-gradient(to right,#fff ${prog}%,rgba(255,255,255,0.3) 0%)`;
+        bar.style.background =
+            `linear-gradient(to right,#fff ${prog}%,rgba(255,255,255,0.3) 0%)`;
 
         if (prog >= 100) {
             clearInterval(barraInterval);
@@ -1018,17 +981,12 @@ function iniciarBarra() {
 }
 
 /* =====================================================
-   NAVEGAÇÃO POR TOQUE
-   =====================================================*/
-storyViewer.onmousedown = () => pausado = true;
-storyViewer.onmouseup = () => pausado = false;
-storyViewer.ontouchstart = () => pausado = true;
-storyViewer.ontouchend = () => pausado = false;
-
-storyViewer.onclick = e => {
-    if (e.target.tagName === "BUTTON") return;
-    if (e.clientX > window.innerWidth / 2) proximoStory();
-    else voltarStory();
+   NAVEGAÇÃO
+===================================================== */
+document.getElementById("storyViewer").onclick = e => {
+    if (e.target.id === "storyMediaBox" || e.target.tagName === "IMG" || e.target.tagName === "VIDEO") {
+        proximoStory();
+    }
 };
 
 function proximoStory() {
@@ -1044,54 +1002,37 @@ function voltarStory() {
 }
 
 window.fecharStory = () => {
-    storyViewer.style.display = "none";
+    document.getElementById("storyViewer").style.display = "none";
     clearInterval(barraInterval);
 };
 
 /* =====================================================
-   QUEM VIU
-   =====================================================*/
+   VISUALIZAÇÕES
+===================================================== */
 function registrarVisualizacao(st) {
-    if (!usuario) return;
-    if (st.usuario === usuario) return;
-
+    if (!usuario || st.usuario === usuario) return;
     const v = ref(db, `coletivo_mural/stories/${st.id}/views/${usuario}`);
     set(v, { usuario, hora: Date.now() });
 }
 
-window.mostrarViews = id => {
-    const r = ref(db, `coletivo_mural/stories/${id}/views`);
-    onValue(r, snap => {
-        let t = "👁 Pessoas que viram seu Story:\n\n";
-        if (!snap.exists()) t += "Ninguém viu ainda.";
-
-        snap.forEach(s => t += "• " + s.key + "\n");
-
-        alert(t);
-    }, { onlyOnce: true });
-};
-
 /* =====================================================
    REAÇÕES
-   =====================================================*/
+===================================================== */
 window.reagirStory = (id, emoji) => {
     if (!usuario) return;
-
     const r = ref(db, `coletivo_mural/stories/${id}/reacoes/${usuario}`);
     set(r, { emoji, hora: Date.now() });
 };
 
 /* =====================================================
-   EXCLUIR STORY
-   =====================================================*/
+   EXCLUIR
+===================================================== */
 window.excluirStory = id => {
     onValue(ref(db, `coletivo_mural/stories/${id}`), snap => {
         if (!snap.exists()) return;
+        if (snap.val().usuario !== usuario) return alert("❌ Você só pode excluir seus próprios stories.");
 
-        if (snap.val().usuario !== usuario)
-            return alert("❌ Você só pode excluir seu próprio story.");
-
-        if (confirm("Excluir seu story?")) {
+        if (confirm("Excluir story?")) {
             remove(ref(db, `coletivo_mural/stories/${id}`));
             fecharStory();
         }
@@ -1572,6 +1513,7 @@ if (usuario) {
     iniciarNotificacoes();
 }
 </script>
+
 
 
 
