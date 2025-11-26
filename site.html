@@ -732,32 +732,33 @@ const postsRef = ref(db, "coletivo_mural/posts");
 const storiesRef = ref(db, "coletivo_mural/stories");
 
 /* ABRIR / FECHAR MODAL */
-window.abrirCriarStory = function () {
+window.abrirCriarStory = () => {
     if (!usuario) return alert("Faça login!");
     storyModal.style.display = "flex";
 };
-window.fecharCriarStory = function () {
+
+window.fecharCriarStory = () => {
     storyModal.style.display = "none";
     storyTexto.value = "";
     storyMedia.value = "";
 };
 
 /* ENVIAR STORY */
-window.enviarStory = function () {
+window.enviarStory = () => {
     if (!usuario) return alert("Faça login!");
 
     const texto = storyTexto.value.trim();
     const file = storyMedia.files[0];
 
-    let mediaBase64 = null;
-    let tipoMidia = null;
+    let base64 = null;
+    let tipo = null;
 
     if (file) {
         const reader = new FileReader();
         reader.onload = e => {
-            mediaBase64 = e.target.result;
-            tipoMidia = file.type.startsWith("video") ? "video" : "imagem";
-            salvarStory(texto, mediaBase64, tipoMidia);
+            base64 = e.target.result;
+            tipo = file.type.startsWith("video") ? "video" : "imagem";
+            salvarStory(texto, base64, tipo);
         };
         reader.readAsDataURL(file);
     } else {
@@ -780,98 +781,113 @@ function salvarStory(texto, media, tipo) {
     fecharCriarStory();
 }
 
-/* LISTAGEM – STORIES NO TOPO */
+/* EXIBIÇÃO NA BARRA */
 onValue(storiesRef, snap => {
     const bar = document.getElementById("storiesBar");
+    bar.innerHTML = "";
 
-    bar.innerHTML = `
-        <div id="seuStoryBox" style="text-align:center; flex-shrink:0;">
-            <div onclick="abrirCriarStory()" id="meuStoryBtn"
-                style="
-                    width:70px; height:70px; border-radius:50%;
-                    border:3px solid #00ffaa; overflow:hidden;
-                    display:flex; align-items:center; justify-content:center;
-                    background:#000; cursor:pointer;">
-                <img id="meuStoryFoto"
-                     src="${localStorage.getItem("fotoPerfil_" + usuario) || "https://cdn-icons-png.flaticon.com/512/149/149071.png"}"
-                     style="width:100%; height:100%; object-fit:cover;">
+    /* SEU CÍRCULO */
+    bar.innerHTML += `
+        <div style="text-align:center;flex-shrink:0;">
+            <div onclick="verMeusStories()"
+                style="width:70px;height:70px;border-radius:50%;
+                border:3px solid #00ffaa;overflow:hidden;
+                display:flex;align-items:center;justify-content:center;
+                background:#000;cursor:pointer;">
+                <img src="${localStorage.getItem("fotoPerfil_" + usuario) ||
+                    "https://cdn-icons-png.flaticon.com/512/149/149071.png"}"
+                style="width:100%;height:100%;object-fit:cover;">
             </div>
-            <div style="color:#00ffaa;font-size:0.80rem;font-weight:bold;margin-top:5px;">
-                Novo Story
+            <div style="color:#00ffaa;font-size:.8rem;font-weight:bold;margin-top:5px;">
+                Meu Story
             </div>
         </div>
     `;
 
     const agora = Date.now();
 
-    /* LISTA TODOS STORIES */
-    snap.forEach(story => {
-        const s = story.val();
-        const id = story.key;
+    /* STORIES DE OUTROS USUÁRIOS */
+    snap.forEach(st => {
+        const s = st.val();
 
-        if (agora - s.timestamp > 24 * 60 * 60 * 1000) return;
+        if (s.usuario === usuario) return; // NÃO cria círculo duplicado
+        if (agora - s.timestamp > 86400000) return;
 
-        const storyBox = document.createElement("div");
-        storyBox.style.textAlign = "center";
-        storyBox.style.flexShrink = "0";
-        storyBox.style.width = "70px";
+        const id = st.key;
+
+        const bloco = document.createElement("div");
+        bloco.style.textAlign = "center";
+        bloco.style.flexShrink = "0";
+        bloco.style.width = "70px";
 
         const circle = document.createElement("div");
-        circle.style.width = "70px";
-        circle.style.height = "70px";
-        circle.style.borderRadius = "50%";
-        circle.style.border = "3px solid #00ffaa";
-        circle.style.overflow = "hidden";
-        circle.style.cursor = "pointer";
-        circle.style.display = "flex";
-        circle.style.alignItems = "center";
-        circle.style.justifyContent = "center";
-        circle.style.background = "#000";
-
+        circle.style = `
+            width:70px;height:70px;border-radius:50%;
+            border:3px solid #00ffaa;overflow:hidden;background:#000;
+            display:flex;align-items:center;justify-content:center;
+            cursor:pointer;
+        `;
         circle.onclick = () => abrirStory(id, s);
 
-        if (s.imagem) {
+        if (s.imagem)
             circle.innerHTML = `<img src="${s.imagem}" style="width:100%;height:100%;object-fit:cover;">`;
-        } else if (s.video) {
+        else if (s.video)
             circle.innerHTML = `<video src="${s.video}" muted style="width:100%;height:100%;object-fit:cover;"></video>`;
-        } else {
-            circle.innerHTML = `<span style='color:#00ffaa;font-size:.8rem;'>TXT</span>`;
-        }
+        else
+            circle.innerHTML = `<span style="color:#00ffaa;font-size:.8rem;">TXT</span>`;
 
         const nome = document.createElement("div");
-        nome.style.color = "#00ffaa";
-        nome.style.fontSize = "0.78rem";
-        nome.style.fontWeight = "bold";
-        nome.style.marginTop = "6px";
+        nome.style = `
+            color:#00ffaa;font-size:.78rem;font-weight:bold;margin-top:6px;
+            white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+        `;
         nome.textContent = s.usuario;
 
-        storyBox.appendChild(circle);
-        storyBox.appendChild(nome);
-
-        bar.appendChild(storyBox);
+        bloco.appendChild(circle);
+        bloco.appendChild(nome);
+        bar.appendChild(bloco);
     });
 });
 
 /* ===========================
-   VISUALIZAÇÃO DE STORIES
-   =========================== */
-let storiesLista = [];
-let storiesIndex = 0;
-let barraInterval = null;
-let pausado = false;
-
-window.abrirStory = function (id, s) {
+     ABRIR MEUS STORIES
+=========================== */
+window.verMeusStories = () => {
     onValue(storiesRef, snap => {
         storiesLista = [];
 
         snap.forEach(st => {
             const v = st.val();
-            if (v.usuario === s.usuario) {
-                storiesLista.push({
-                    id: st.key,
-                    ...v
-                });
-            }
+            if (v.usuario === usuario)
+                storiesLista.push({ id: st.key, ...v });
+        });
+
+        if (storiesLista.length === 0) {
+            alert("Você ainda não postou stories.");
+            return;
+        }
+
+        storiesIndex = 0;
+        abrirViewer();
+    }, { onlyOnce: true });
+};
+
+/* ===========================
+   VISUALIZAÇÃO DE STORIES
+=========================== */
+let storiesLista = [];
+let storiesIndex = 0;
+let barraInterval = null;
+let pausado = false;
+
+window.abrirStory = (id, s) => {
+    onValue(storiesRef, snap => {
+        storiesLista = [];
+
+        snap.forEach(st => {
+            const v = st.val();
+            if (v.usuario === s.usuario)
+                storiesLista.push({ id: st.key, ...v });
         });
 
         storiesIndex = storiesLista.findIndex(x => x.id === id);
@@ -881,53 +897,51 @@ window.abrirStory = function (id, s) {
 
 function abrirViewer() {
     const st = storiesLista[storiesIndex];
-    const content = document.getElementById("storyContent");
+    const cont = document.getElementById("storyContent");
 
-    content.innerHTML = `
+    /* LAYOUT */
+    cont.innerHTML = `
         <div id="progressContainer"
-             style="position:absolute;top:10px;width:90%;display:flex;gap:5px;"></div>
+            style="position:absolute;top:10px;width:90%;display:flex;gap:5px;"></div>
 
         <div id="storyMediaBox"
-             style="width:100%;height:100%;display:flex;justify-content:center;align-items:center;"></div>
+            style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;"></div>
 
-        <div id="reacoesBox" 
-             style="position:absolute; bottom:35px; display:flex; gap:15px; font-size:2.2rem; cursor:pointer;">
+        <!-- REAÇÕES -->
+        <div id="reacoesBox"
+            style="position:absolute;bottom:35px;display:flex;gap:18px;font-size:2.2rem;">
             <span onclick="reagirStory('${st.id}','❤️')">❤️</span>
             <span onclick="reagirStory('${st.id}','😂')">😂</span>
             <span onclick="reagirStory('${st.id}','😢')">😢</span>
             <span onclick="reagirStory('${st.id}','🔥')">🔥</span>
         </div>
 
+        <!-- BOTÃO EXCLUIR (ESQUERDA) -->
         ${st.usuario === usuario ? `
-            <button onclick="excluirStory('${st.id}')"
-                style="
-                    position:absolute; bottom:15px; right:20px;
-                    background:#ff4444; border:none; padding:8px 15px;
-                    color:white; border-radius:10px; font-weight:bold;">
-                Excluir
+            <span onclick="excluirStory('${st.id}')"
+                style="position:absolute;top:20px;left:20px;
+                font-size:2.2rem;color:#ff4444;cursor:pointer;">✖</span>
+        ` : ""}
+
+        <!-- BOTÃO VER QUEM VIU -->
+        ${st.usuario === usuario ? `
+            <button onclick="mostrarViews('${st.id}')"
+                style="position:absolute;bottom:15px;left:20px;
+                background:#00ffaa;border:none;padding:8px 15px;
+                border-radius:10px;font-weight:bold;">
+                👁 Visualizações
             </button>
         ` : ""}
-        
-        <button onclick="mostrarViews('${st.id}')"
-            style="
-                position:absolute; bottom:15px; left:20px;
-                background:#00ffaa; border:none; padding:8px 15px;
-                border-radius:10px; font-weight:bold;">
-            👁 Ver visualizações
-        </button>
     `;
 
+    /* MÍDIA */
     const box = document.getElementById("storyMediaBox");
-
-    if (st.imagem) {
+    if (st.imagem)
         box.innerHTML = `<img src="${st.imagem}" style="max-width:92%;max-height:92%;border-radius:15px;">`;
-    } else if (st.video) {
-        box.innerHTML = `
-            <video id="stv" src="${st.video}" autoplay muted playsinline
-                   style="max-width:92%;max-height:92%;border-radius:15px;"></video>`;
-    } else {
+    else if (st.video)
+        box.innerHTML = `<video id="stv" src="${st.video}" autoplay muted playsinline style="max-width:92%;max-height:92%;border-radius:15px;"></video>`;
+    else
         box.innerHTML = `<p style="color:white;font-size:1.4rem;">${st.texto}</p>`;
-    }
 
     storyViewer.style.display = "flex";
 
@@ -937,18 +951,18 @@ function abrirViewer() {
 }
 
 /* ===========================
-     BARRA SUPER INSTAGRAM
-   =========================== */
+     BARRAS IGUAL INSTAGRAM
+=========================== */
 function montarBarras() {
     const pc = document.getElementById("progressContainer");
     pc.innerHTML = "";
 
     storiesLista.forEach((_, i) => {
         const b = document.createElement("div");
-        b.style.flex = 1;
-        b.style.height = "4px";
-        b.style.background = i < storiesIndex ? "#fff" : "rgba(255,255,255,0.3)";
-        b.style.borderRadius = "10px";
+        b.style = `
+            flex:1;height:4px;border-radius:10px;
+            background:${i < storiesIndex ? "#fff" : "rgba(255,255,255,0.3)"};
+        `;
         b.id = "bar_" + i;
         pc.appendChild(b);
     });
@@ -960,97 +974,92 @@ function iniciarBarra() {
     const vid = document.getElementById("stv");
     if (vid && vid.duration) tempo = vid.duration * 1000;
 
-    let progresso = 0;
-    const barra = document.getElementById("bar_" + storiesIndex);
+    let prog = 0;
+    const b = document.getElementById("bar_" + storiesIndex);
 
     clearInterval(barraInterval);
     barraInterval = setInterval(() => {
         if (pausado) return;
 
-        progresso += 100 / (tempo / 50);
-        barra.style.background =
-            `linear-gradient(to right, #fff ${progresso}%, rgba(255,255,255,0.3) 0%)`;
+        prog += 100 / (tempo / 50);
+        b.style.background =
+            `linear-gradient(to right,#fff ${prog}%,rgba(255,255,255,0.3) 0%)`;
 
-        if (progresso >= 100) {
+        if (prog >= 100) {
             clearInterval(barraInterval);
             proximoStory();
         }
     }, 50);
 }
 
-/* PASSAR / VOLTAR */
-storyViewer.addEventListener("click", e => {
-    const x = e.clientX;
-    const metade = window.innerWidth / 2;
-
-    if (x > metade) proximoStory();
+/* ===========================
+         NAVEGACAO
+=========================== */
+storyViewer.onclick = e => {
+    if (e.clientX > window.innerWidth / 2) proximoStory();
     else voltarStory();
-});
-storyViewer.addEventListener("mousedown", () => pausado = true);
-storyViewer.addEventListener("mouseup", () => pausado = false);
-storyViewer.addEventListener("touchstart", () => pausado = true);
-storyViewer.addEventListener("touchend", () => pausado = false);
+};
+
+storyViewer.onmousedown = () => pausado = true;
+storyViewer.onmouseup = () => pausado = false;
+storyViewer.ontouchstart = () => pausado = true;
+storyViewer.ontouchend = () => pausado = false;
 
 function proximoStory() {
     storiesIndex++;
     if (storiesIndex >= storiesLista.length) return fecharStory();
     abrirViewer();
 }
+
 function voltarStory() {
     if (storiesIndex === 0) return;
     storiesIndex--;
     abrirViewer();
 }
 
-window.fecharStory = function () {
+window.fecharStory = () => {
     storyViewer.style.display = "none";
     clearInterval(barraInterval);
 };
 
 /* ===========================
        VISUALIZAÇÕES
-   =========================== */
+=========================== */
 function registrarVisualizacao(st) {
     if (!usuario) return;
-    const vref = ref(db, `coletivo_mural/stories/${st.id}/views/${usuario}`);
-    set(vref, { usuario, hora: Date.now() });
+
+    const v = ref(db, `coletivo_mural/stories/${st.id}/views/${usuario}`);
+    set(v, { usuario, hora: Date.now() });
 }
 
-window.mostrarViews = function (id) {
-    const vref = ref(db, `coletivo_mural/stories/${id}/views`);
+window.mostrarViews = id => {
+    const r = ref(db, `coletivo_mural/stories/${id}/views`);
+    onValue(r, snap => {
+        let t = "👁 Pessoas que viram:\n\n";
+        if (!snap.exists()) t += "Ninguém viu ainda.";
 
-    onValue(vref, snap => {
-        let lista = "👁 Pessoas que viram:\n\n";
-        if (!snap.exists()) lista += "Ninguém viu ainda.";
-
-        snap.forEach(v => lista += "• " + v.key + "\n");
-        alert(lista);
+        snap.forEach(s => t += "• " + s.key + "\n");
+        alert(t);
     }, { onlyOnce: true });
 };
 
 /* ===========================
-       REAÇÕES DO STORY
-   =========================== */
-window.reagirStory = function (id, emoji) {
+        REAÇÕES
+=========================== */
+window.reagirStory = (id, emoji) => {
     if (!usuario) return;
-
-    const rref = ref(db, `coletivo_mural/stories/${id}/reacoes/${usuario}`);
-    set(rref, { emoji, hora: Date.now() });
-
-    alert("Reação enviada: " + emoji);
+    const r = ref(db, `coletivo_mural/stories/${id}/reacoes/${usuario}`);
+    set(r, { emoji, hora: Date.now() });
 };
 
 /* ===========================
-        EXCLUIR STORY
-   =========================== */
-window.excluirStory = function (id) {
+         EXCLUIR STORY
+=========================== */
+window.excluirStory = id => {
     onValue(ref(db, `coletivo_mural/stories/${id}`), snap => {
         if (!snap.exists()) return;
-
-        if (snap.val().usuario !== usuario) {
-            alert("❌ Você só pode excluir SEUS stories.");
-            return;
-        }
+        if (snap.val().usuario !== usuario)
+            return alert("❌ Você só pode excluir seu próprio story.");
 
         if (confirm("Excluir seu story?")) {
             remove(ref(db, `coletivo_mural/stories/${id}`));
