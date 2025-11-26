@@ -813,12 +813,15 @@ onValue(storiesRef, snap => {
 
     snap.forEach(story => {
 
-        const s = story.val();
-        const id = story.key;
+    const s = story.val();
+    const id = story.key;
 
-        if (agora - s.timestamp > 24 * 60 * 60 * 1000) return;
+    if (agora - s.timestamp > 24 * 60 * 60 * 1000) return;
 
-       // CONTAINER do círculo + nome abaixo
+    // ❌ IMPEDIR QUE O PRÓPRIO USUÁRIO APAREÇA NO STORY
+    if (s.usuario === usuario) return;
+
+    
 const storyBox = document.createElement("div");
 storyBox.style.textAlign = "center";
 storyBox.style.flexShrink = "0";
