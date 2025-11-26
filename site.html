@@ -728,10 +728,14 @@ const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 const postsRef = ref(db, "coletivo_mural/posts");
 
-/* STORIES – BANCO */
+/* =====================================================
+   STORIES — BANCO
+   =====================================================*/
 const storiesRef = ref(db, "coletivo_mural/stories");
 
-/* ABRIR / FECHAR MODAL */
+/* =====================================================
+   ABRIR / FECHAR MODAL
+   =====================================================*/
 window.abrirCriarStory = () => {
     if (!usuario) return alert("Faça login!");
     storyModal.style.display = "flex";
@@ -743,7 +747,9 @@ window.fecharCriarStory = () => {
     storyMedia.value = "";
 };
 
-/* ENVIAR STORY */
+/* =====================================================
+   ENVIAR STORY
+   =====================================================*/
 window.enviarStory = () => {
     if (!usuario) return alert("Faça login!");
 
@@ -781,25 +787,27 @@ function salvarStory(texto, media, tipo) {
     fecharCriarStory();
 }
 
-/* ===========================
-       EXIBIÇÃO NA BARRA
-=========================== */
+/* =====================================================
+   EXIBIÇÃO NA BARRA IGUAL INSTAGRAM
+   =====================================================*/
 onValue(storiesRef, snap => {
     const bar = document.getElementById("storiesBar");
     bar.innerHTML = "";
 
-    /* SEU CÍRCULO (NÃO ABRE STORY DENTRO) */
+    /** CÍRCULO DO USUÁRIO (NÃO ABRE STORY, ABRE LISTA) **/
     bar.innerHTML += `
         <div style="text-align:center;flex-shrink:0;">
             <div onclick="verMeusStories()"
                 style="width:70px;height:70px;border-radius:50%;
-                border:3px solid #00ffaa;overflow:hidden;
+                border:3px solid #00ffaa;overflow:hidden;background:#000;
                 display:flex;align-items:center;justify-content:center;
-                background:#000;cursor:pointer;">
+                cursor:pointer;">
+                
                 <img src="${localStorage.getItem("fotoPerfil_" + usuario) ||
                     "https://cdn-icons-png.flaticon.com/512/149/149071.png"}"
                 style="width:100%;height:100%;object-fit:cover;">
             </div>
+
             <div style="color:#00ffaa;font-size:.8rem;font-weight:bold;margin-top:5px;">
                 Meu Story
             </div>
@@ -808,19 +816,16 @@ onValue(storiesRef, snap => {
 
     const agora = Date.now();
 
-    /* STORIES DE OUTROS USUÁRIOS */
+    /** Stories de outros usuários **/
     snap.forEach(st => {
         const s = st.val();
-
         if (s.usuario === usuario) return;
         if (agora - s.timestamp > 86400000) return;
 
         const id = st.key;
 
         const bloco = document.createElement("div");
-        bloco.style.textAlign = "center";
-        bloco.style.flexShrink = "0";
-        bloco.style.width = "70px";
+        bloco.style = "text-align:center;flex-shrink:0;width:70px;";
 
         const circle = document.createElement("div");
         circle.style = `
@@ -838,6 +843,8 @@ onValue(storiesRef, snap => {
         else
             circle.innerHTML = `<span style="color:#00ffaa;font-size:.8rem;">TXT</span>`;
 
+        bloco.appendChild(circle);
+
         const nome = document.createElement("div");
         nome.style = `
             color:#00ffaa;font-size:.78rem;font-weight:bold;margin-top:6px;
@@ -845,15 +852,14 @@ onValue(storiesRef, snap => {
         `;
         nome.textContent = s.usuario;
 
-        bloco.appendChild(circle);
         bloco.appendChild(nome);
         bar.appendChild(bloco);
     });
 });
 
-/* ===========================
-     MEUS STORIES (SEQUÊNCIA)
-=========================== */
+/* =====================================================
+   MEUS STORIES — LISTA
+   =====================================================*/
 window.verMeusStories = () => {
     onValue(storiesRef, snap => {
         storiesLista = [];
@@ -870,13 +876,13 @@ window.verMeusStories = () => {
         }
 
         storiesIndex = 0;
-        abrirViewer(true); // TRUE = modo proprietário
+        abrirViewer(true);
     }, { onlyOnce: true });
 };
 
-/* ===========================
+/* =====================================================
    VISUALIZAÇÃO DE STORIES
-=========================== */
+   =====================================================*/
 let storiesLista = [];
 let storiesIndex = 0;
 let barraInterval = null;
@@ -893,68 +899,67 @@ window.abrirStory = (id, s) => {
         });
 
         storiesIndex = storiesLista.findIndex(x => x.id === id);
-        abrirViewer(false); // FALSE = não é do dono
+        abrirViewer(false);
     }, { onlyOnce: true });
 };
 
-function abrirViewer(eMeu) {
+function abrirViewer(ehMeuStoryList) {
     const st = storiesLista[storiesIndex];
     const cont = document.getElementById("storyContent");
 
     const ehMeu = st.usuario === usuario;
 
-    /* LAYOUT */
     cont.innerHTML = `
         <div id="progressContainer"
-            style="position:absolute;top:10px;width:90%;display:flex;gap:5px;"></div>
+             style="position:absolute;top:10px;width:90%;display:flex;gap:5px;"></div>
 
         <div id="storyMediaBox"
-            style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;"></div>
+             style="width:100%;height:100%;display:flex;align-items:center;justify-content:center;"></div>
 
-        <!-- REAÇÕES SOMENTE SE NÃO FOR MEU -->
         ${!ehMeu ? `
         <div id="reacoesBox"
-            style="position:absolute;bottom:35px;display:flex;gap:18px;font-size:2.2rem;">
+             style="position:absolute;bottom:40px;display:flex;gap:20px;font-size:2.3rem;">
             <span onclick="reagirStory('${st.id}','❤️')">❤️</span>
             <span onclick="reagirStory('${st.id}','😂')">😂</span>
             <span onclick="reagirStory('${st.id}','😢')">😢</span>
             <span onclick="reagirStory('${st.id}','🔥')">🔥</span>
         </div>` : ""}
 
-        <!-- EXCLUIR STORY (ESQUERDA) -->
         ${ehMeu ? `
             <span onclick="excluirStory('${st.id}')"
-                style="position:absolute;top:20px;left:20px;
-                font-size:2.2rem;color:#ff4444;cursor:pointer;">✖</span>
+                style="position:absolute;top:20px;left:20px;font-size:2.3rem;
+                color:#ff4444;cursor:pointer;">❌</span>
         ` : ""}
 
-        <!-- FECHAR (DIREITA) -->
         <span onclick="fecharStory()"
-            style="position:absolute;top:20px;right:25px;
-            font-size:2.2rem;color:#ffffff;cursor:pointer;">✖</span>
+            style="position:absolute;top:20px;right:20px;font-size:2.3rem;color:#fff;cursor:pointer;">
+            ✖
+        </span>
 
-        <!-- QUEM VIU (SOMENTE MEU) -->
         ${ehMeu ? `
             <button onclick="mostrarViews('${st.id}')"
-                style="position:absolute;bottom:15px;left:20px;
-                background:#00ffaa;border:none;padding:8px 15px;
-                border-radius:10px;font-weight:bold;">
+                style="position:absolute;bottom:20px;left:20px;background:#00ffaa;
+                color:black;border:none;padding:8px 15px;border-radius:10px;font-weight:bold;">
                 👁 Visualizações
             </button>
         ` : ""}
 
-        <!-- BOTÃO NOVO STORY NO FINAL DA LISTA -->
         ${ehMeu && storiesIndex === storiesLista.length - 1 ? `
             <button onclick="abrirCriarStory()"
-                style="position:absolute;bottom:15px;right:20px;
-                background:#00ffaa;border:none;padding:8px 15px;
-                border-radius:10px;font-weight:bold;">
+                style="position:absolute;bottom:20px;right:20px;background:#00ffaa;
+                color:black;border:none;padding:8px 15px;border-radius:10px;font-weight:bold;">
                 ➕ Novo Story
             </button>
         ` : ""}
+
+        <!-- BOTÃO PRÓXIMO STORY -->
+        <button onclick="proximoStory()"
+            style="position:absolute;top:50%;right:5%;background:rgba(0,0,0,0.4);
+            color:#fff;border:none;padding:10px 14px;border-radius:50%;font-size:1.4rem;">
+            ⏭
+        </button>
     `;
 
-    /* MÍDIA */
     const box = document.getElementById("storyMediaBox");
 
     if (st.imagem)
@@ -971,9 +976,9 @@ function abrirViewer(eMeu) {
     registrarVisualizacao(st);
 }
 
-/* ===========================
-     BARRA IGUAL INSTAGRAM
-=========================== */
+/* =====================================================
+   BARRA DE PROGRESSO — INSTAGRAM
+   =====================================================*/
 function montarBarras() {
     const pc = document.getElementById("progressContainer");
     pc.innerHTML = "";
@@ -981,7 +986,7 @@ function montarBarras() {
     storiesLista.forEach((_, i) => {
         const b = document.createElement("div");
         b.style = `
-            flex:1;height:4px;border-radius:10px;
+            flex:1;height:5px;border-radius:10px;
             background:${i < storiesIndex ? "#fff" : "rgba(255,255,255,0.3)"};
         `;
         b.id = "bar_" + i;
@@ -1003,8 +1008,7 @@ function iniciarBarra() {
         if (pausado) return;
 
         prog += 100 / (tempo / 50);
-        b.style.background =
-            `linear-gradient(to right,#fff ${prog}%,rgba(255,255,255,0.3) 0%)`;
+        b.style.background = `linear-gradient(to right,#fff ${prog}%,rgba(255,255,255,0.3) 0%)`;
 
         if (prog >= 100) {
             clearInterval(barraInterval);
@@ -1013,18 +1017,19 @@ function iniciarBarra() {
     }, 50);
 }
 
-/* ===========================
-       NAVEGAÇÃO
-=========================== */
-storyViewer.onclick = e => {
-    if (e.clientX > window.innerWidth / 2) proximoStory();
-    else voltarStory();
-};
-
+/* =====================================================
+   NAVEGAÇÃO POR TOQUE
+   =====================================================*/
 storyViewer.onmousedown = () => pausado = true;
 storyViewer.onmouseup = () => pausado = false;
 storyViewer.ontouchstart = () => pausado = true;
 storyViewer.ontouchend = () => pausado = false;
+
+storyViewer.onclick = e => {
+    if (e.target.tagName === "BUTTON") return;
+    if (e.clientX > window.innerWidth / 2) proximoStory();
+    else voltarStory();
+};
 
 function proximoStory() {
     storiesIndex++;
@@ -1043,9 +1048,9 @@ window.fecharStory = () => {
     clearInterval(barraInterval);
 };
 
-/* ===========================
-       QUEM VIU
-=========================== */
+/* =====================================================
+   QUEM VIU
+   =====================================================*/
 function registrarVisualizacao(st) {
     if (!usuario) return;
     if (st.usuario === usuario) return;
@@ -1057,17 +1062,18 @@ function registrarVisualizacao(st) {
 window.mostrarViews = id => {
     const r = ref(db, `coletivo_mural/stories/${id}/views`);
     onValue(r, snap => {
-        let t = "👁 Pessoas que viram:\n\n";
+        let t = "👁 Pessoas que viram seu Story:\n\n";
         if (!snap.exists()) t += "Ninguém viu ainda.";
 
         snap.forEach(s => t += "• " + s.key + "\n");
+
         alert(t);
     }, { onlyOnce: true });
 };
 
-/* ===========================
-       REAÇÕES
-=========================== */
+/* =====================================================
+   REAÇÕES
+   =====================================================*/
 window.reagirStory = (id, emoji) => {
     if (!usuario) return;
 
@@ -1075,12 +1081,13 @@ window.reagirStory = (id, emoji) => {
     set(r, { emoji, hora: Date.now() });
 };
 
-/* ===========================
-       EXCLUIR STORY
-=========================== */
+/* =====================================================
+   EXCLUIR STORY
+   =====================================================*/
 window.excluirStory = id => {
     onValue(ref(db, `coletivo_mural/stories/${id}`), snap => {
         if (!snap.exists()) return;
+
         if (snap.val().usuario !== usuario)
             return alert("❌ Você só pode excluir seu próprio story.");
 
@@ -1338,6 +1345,7 @@ window.excluirComentario = function (postId, cid) {
         }
 
         if (confirm("Excluir seu comentário?")) {
+
             remove(ref(db, `coletivo_mural/posts/${postId}/comentarios/${cid}`));
         }
 
