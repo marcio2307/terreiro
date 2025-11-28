@@ -434,103 +434,37 @@ button {
    
 </div>
 
-<!-- STORIES – APENAS DO USUÁRIO -->
+<!-- STORIES – ESTILO INSTAGRAM -->
 <div id="storiesBar" 
-style="display:flex; justify-content:center; padding:12px; margin-top:15px;">
+style="display:flex; gap:12px; overflow-x:auto; padding:12px; margin-top:15px; width:95%; margin-left:auto; margin-right:auto;">
 
-    <!-- CÍRCULO DO STORY DO PRÓPRIO USUÁRIO -->
-    <div style="text-align:center;">
+    <!-- SEU STORY DENTRO DA BARRA -->
+    <div id="seuStoryBox" style="text-align:center; flex-shrink:0;">
         
-        <div onclick="abrirStoryUnico()" 
+        <div onclick="abrirCriarStory()" id="meuStoryBtn"
             style="
-                width:75px;
-                height:75px;
+                width:70px;
+                height:70px;
                 border-radius:50%;
                 border:3px solid #00ffaa;
                 overflow:hidden;
                 display:flex;
                 align-items:center;
                 justify-content:center;
-                cursor:pointer;
                 background:#000;
+                cursor:pointer;
             ">
-            <img id="previewStoryPerfil" 
-                src="https://cdn-icons-png.flaticon.com/512/149/149071.png"
-                style="width:100%; height:100%; object-fit:cover;">
+            <img id="meuStoryFoto" 
+                 src="https://cdn-icons-png.flaticon.com/512/149/149071.png"
+                 style="width:100%; height:100%; object-fit:cover;">
         </div>
 
         <div style="color:#00ffaa;font-size:0.80rem;font-weight:bold;margin-top:5px;">
-            Meu Story
+            Novo Story
         </div>
     </div>
+
 </div>
-
-<!-- MODAL VER O STORY DO USUÁRIO -->
-<div id="storyViewer" style="
-display:none; position:fixed; top:0; left:0; width:100%; height:100%;
-background:rgba(0,0,0,0.95); z-index:999999; justify-content:center; align-items:center; flex-direction:column;">
-    
-    <div id="storyContent" style="max-width:92%; max-height:92%; border-radius:14px;"></div>
-
-    <span onclick="fecharStoryUnico()" 
-    style="position:absolute;top:20px;right:25px;font-size:2rem;cursor:pointer;color:#fff;">✖</span>
-</div>
-
-<script>
-/* STORY SALVO LOCALMENTE (SEM MULTIPLICAR NA BARRA) */
-let meuStory = JSON.parse(localStorage.getItem("meuStory")) || null;
-
-function abrirCriarStory() {
-    alert("⚠ Função de criar story aqui (texto, imagem ou vídeo).");
-}
-
-/* MOSTRA APENAS O STORY DO USUÁRIO NO CÍRCULO */
-function atualizarStoryPerfil() {
-    if (!meuStory) return;
-
-    if (meuStory.imagem)
-        previewStoryPerfil.src = meuStory.imagem;
-    else if (meuStory.video)
-        previewStoryPerfil.src = meuStory.video;
-    else
-        previewStoryPerfil.src = "https://cdn-icons-png.flaticon.com/512/149/149071.png";
-}
-
-/* CLICOU NO STORY → MOSTRAR */
-function abrirStoryUnico() {
-    if (!meuStory)
-        return abrirCriarStory();
-
-    let html = "";
-
-    if (meuStory.imagem)
-        html = `<img src="${meuStory.imagem}" style="width:100%;height:auto;max-height:90%;border-radius:15px;">`;
-
-    else if (meuStory.video)
-        html = `<video src="${meuStory.video}" autoplay controls style="width:100%;max-height:90%;border-radius:15px;"></video>`;
-
-    else
-        html = `<p style="color:white;font-size:1.6rem;">${meuStory.texto}</p>`;
-
-    storyContent.innerHTML = html;
-    storyViewer.style.display = "flex";
-
-    // Fechar story automaticamente após 5s (igual Instagram)
-    setTimeout(() => {
-        fecharStoryUnico();
-    }, 5000);
-}
-
-function fecharStoryUnico() {
-    storyViewer.style.display = "none";
-
-    // volta para funções normais (texto, foto, vídeo...)
-    abrirCriarStory();
-}
-
-/* CARREGAR STORY NA BOLINHA AO INICIAR */
-atualizarStoryPerfil();
-</script>
 
 
 <!-- MODAL CRIAR STORY -->
@@ -848,7 +782,7 @@ function salvarStory(texto, media, tipo) {
 onValue(storiesRef, snap => {
     const bar = document.getElementById("storiesBar");
 
-    // 🔥 REPOSICIONA SEU STORY FIXO NA FRENTE SEM DUPLICAR
+    // RECOLOCA O SEU STORY PRIMEIRO
     bar.innerHTML = `
         <div id="seuStoryBox" style="text-align:center; flex-shrink:0;">
             <div onclick="abrirCriarStory()" id="meuStoryBtn"
@@ -865,106 +799,73 @@ onValue(storiesRef, snap => {
                     cursor:pointer;
                 ">
                 <img id="meuStoryFoto" 
-                    src="${localStorage.getItem("fotoPerfil_" + usuario) || 
-                    "https://cdn-icons-png.flaticon.com/512/149/149071.png"}"
+                    src="${localStorage.getItem("fotoPerfil_" + usuario) || "https://cdn-icons-png.flaticon.com/512/149/149071.png"}"
                     style="width:100%; height:100%; object-fit:cover;">
             </div>
 
             <div style="color:#00ffaa;font-size:0.80rem;font-weight:bold;margin-top:5px;">
-                Novo Story
+                Seu Story
             </div>
         </div>
     `;
 
     const agora = Date.now();
-    let meusStories = [];
 
     snap.forEach(story => {
+
         const s = story.val();
         const id = story.key;
 
-        // Expira após 24h
         if (agora - s.timestamp > 24 * 60 * 60 * 1000) return;
 
-        // 🔥 SE FOR SEU STORY → não adicionar agora
-        if (s.usuario === usuario) {
-            meusStories.push({ id, s });
-            return;
-        }
+       // CONTAINER do círculo + nome abaixo
+const storyBox = document.createElement("div");
+storyBox.style.textAlign = "center";
+storyBox.style.flexShrink = "0";
+storyBox.style.width = "70px";
 
-        // 🔥 Stories dos outros aparecem normalmente
-        adicionarStoryNaBarra(id, s);
-    });
+// Círculo do story
+const circle = document.createElement("div");
+circle.style.width = "70px";
+circle.style.height = "70px";
+circle.style.borderRadius = "50%";
+circle.style.border = "3px solid #00ffaa";
+circle.style.overflow = "hidden";
+circle.style.cursor = "pointer";
+circle.style.display = "flex";
+circle.style.alignItems = "center";
+circle.style.justifyContent = "center";
+circle.style.background = "#000";
 
-    // 🔥 MOSTRA SOMENTE **O ÚLTIMO** STORY DO USUÁRIO (NÃO DUPLICA)
-    if (meusStories.length > 0) {
-        const ultimo = meusStories[meusStories.length - 1];
-        adicionarStoryNaBarra(ultimo.id, ultimo.s);
+circle.onclick = () => abrirStory(id, s);
 
-        // 🔥 BOTÃO “+ SUBIR ARQUIVOS” NO FINAL DOS SEUS STORIES
-        bar.insertAdjacentHTML("beforeend", `
-            <div onclick="abrirCriarStory()" 
-                style="text-align:center; flex-shrink:0; width:70px; cursor:pointer;">
-                    
-                <div style="
-                    width:70px;height:70px;border-radius:50%;
-                    border:3px dashed #00ffaa;
-                    display:flex;align-items:center;justify-content:center;
-                    background:#000;color:#00ffaa;font-size:2rem;font-weight:bold;">
-                    +
-                </div>
-
-                <div style="color:#00ffaa;font-size:0.75rem;margin-top:5px;">
-                    Adicionar
-                </div>
-            </div>
-        `);
-    }
-});
-
-/* FUNÇÃO AUXILIAR – NÃO ALTERE */
-function adicionarStoryNaBarra(id, s) {
-    const bar = document.getElementById("storiesBar");
-
-    const box = document.createElement("div");
-    box.style.textAlign = "center";
-    box.style.flexShrink = "0";
-    box.style.width = "70px";
-
-    const circle = document.createElement("div");
-    circle.style.width = "70px";
-    circle.style.height = "70px";
-    circle.style.borderRadius = "50%";
-    circle.style.border = "3px solid #00ffaa";
-    circle.style.overflow = "hidden";
-    circle.style.cursor = "pointer";
-    circle.style.display = "flex";
-    circle.style.alignItems = "center";
-    circle.style.justifyContent = "center";
-    circle.style.background = "#000";
-
-    circle.onclick = () => abrirStory(id, s);
-
-    if (s.imagem) {
-        circle.innerHTML = `<img src="${s.imagem}" style="width:100%;height:100%;object-fit:cover;">`;
-    } else if (s.video) {
-        circle.innerHTML = `<video src="${s.video}" muted style="width:100%;height:100%;object-fit:cover;"></video>`;
-    } else {
-        circle.innerHTML = `<span style='color:#00ffaa;'>TXT</span>`;
-    }
-
-    const nome = document.createElement("div");
-    nome.style.color = "#00ffaa";
-    nome.style.fontSize = "0.75rem";
-    nome.style.fontWeight = "bold";
-    nome.style.marginTop = "6px";
-    nome.textContent = s.usuario;
-
-    box.appendChild(circle);
-    box.appendChild(nome);
-
-    bar.appendChild(box);
+// Mídia dentro do círculo
+if (s.imagem) {
+    circle.innerHTML = `<img src="${s.imagem}" style="width:100%;height:100%;object-fit:cover;">`;
+} else if (s.video) {
+    circle.innerHTML = `<video src="${s.video}" muted style="width:100%;height:100%;object-fit:cover;"></video>`;
+} else {
+    circle.innerHTML = `<span style='color:#00ffaa;font-size:.8rem;'>TXT</span>`;
 }
+
+// Nome do usuário abaixo do story
+const nome = document.createElement("div");
+nome.style.color = "#00ffaa";
+nome.style.fontSize = "0.78rem";
+nome.style.fontWeight = "bold";
+nome.style.marginTop = "6px";
+nome.style.whiteSpace = "nowrap";
+nome.style.overflow = "hidden";
+nome.style.textOverflow = "ellipsis";
+nome.textContent = s.usuario;
+
+// Monta o bloco final
+storyBox.appendChild(circle);
+storyBox.appendChild(nome);
+
+bar.appendChild(storyBox);
+    });
+});
 
 /* ABRIR STORY – com visualizações + excluir */
 window.abrirStory = function (id, s) {
