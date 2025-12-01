@@ -1357,10 +1357,7 @@ function handleGoogleLogin(response) {
 
     nomeUsuarioMenu.textContent = usuario;
 
-    setTimeout(() => {
-        location.reload();
-    }, 1000);
-}
+    }
 
 function decodeJwt(token) {
     return JSON.parse(atob(token.split('.')[1]));
