@@ -1,4 +1,4 @@
-<!DOCTYPE html>  
+<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
@@ -39,83 +39,6 @@ body {
     margin-top: 12px;
 }
 
-@media (max-width: 600px) {
-    #loginBox img, #cadastroBox img {
-        height: 95px;
-    }
-    #loginBox input, #cadastroBox input {
-        max-width: 92%;
-        padding: 11px;
-        font-size: 0.95rem;
-    }
-    #loginBox button, #cadastroBox button {
-        max-width: 92%;
-        padding: 12px;
-        font-size: 1rem;
-    }
-    .topbar {
-        padding: 10px;
-        flex-direction: row;
-        justify-content: space-between;
-    }
-    .radio-btn {
-        width: 48px;
-        height: 48px;
-        font-size: 1.4rem;
-    }
-    #menuIcon {
-        font-size: 2rem;
-    }
-    #sideMenu {
-        width: 200px;
-        padding-left: 15px;
-    }
-    .main-logo img {
-        height: 85px;
-        margin-top: 10px;
-    }
-    .feed {
-        width: 96%;
-        margin: 10px auto;
-    }
-    .post-box {
-        padding: 14px;
-        flex-direction: column;
-        align-items: stretch;
-    }
-    .post-box textarea {
-        height: 60px;
-        font-size: 1rem;
-    }
-    .img-icon img {
-        height: 32px;
-        margin-top: 10px;
-    }
-    .preview img, .preview video {
-        max-height: 130px;
-    }
-    .post {
-        padding: 14px;
-    }
-    .post img, .post video {
-        max-height: 280px;
-    }
-    .actions {
-        flex-direction: column;
-        gap: 12px;
-        text-align: center;
-    }
-    .comment-entry {
-        flex-direction: column;
-        gap: 8px;
-        font-size: 0.9rem;
-    }
-    button {
-        font-size: 1rem;
-        padding: 12px;
-    }
-}
-
 #loginBox, #cadastroBox {
     position: fixed;
     top: 0;
@@ -129,26 +52,14 @@ body {
     align-items: center;
     z-index: 999999;
 }
-
-#cadastroBox { display: none; }
-
-#loginBox img, #cadastroBox img {
+#loginBox img {
     height: 120px;
     margin-bottom: 20px;
 }
 
-#loginBox input, #cadastroBox input {
-    width: 80%;
-    max-width: 260px;
-    padding: 12px;
-    border-radius: 10px;
-    border: none;
-    outline: none;
-    font-size: 1rem;
-    margin-bottom: 10px;
-}
+#cadastroBox { display:none; }
 
-#loginBox button, #cadastroBox button {
+#loginBox button {
     width: 80%;
     max-width: 260px;
     padding: 13px;
@@ -156,13 +67,6 @@ body {
     border: none;
     border-radius: 12px;
     font-size: 1.1rem;
-    cursor: pointer;
-    font-weight: bold;
-}
-
-#cadastroLink, #voltarLogin {
-    color: #00ffaa;
-    margin-top: 15px;
     cursor: pointer;
     font-weight: bold;
 }
@@ -187,11 +91,11 @@ body {
     height: 55px;
     border-radius: 50%;
     font-size: 1.7rem;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    box-shadow: 0 0 12px #00ffcc;
-    cursor: pointer;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    box-shadow:0 0 12px #00ffcc;
+    cursor:pointer;
 }
 
 #menuIcon {
@@ -199,10 +103,8 @@ body {
     color: #00ffcc;
     cursor: pointer;
     font-weight: bold;
-    margin-right: 5px;
 }
 
-/* MENU */
 #sideMenu {
     position: fixed;
     top: 0;
@@ -225,16 +127,590 @@ body {
     text-decoration: none;
     font-size: 1.3rem;
     font-weight: bold;
-    cursor: pointer;
+    cursor:pointer;
 }
 
-#sideMenu a:hover, #sideMenu div:hover {
-    color: #ffffff;
+#sideMenu a:hover {
+    color:#fff;
+}
+/* --------------------------------------------- */
+/*  NOVO SISTEMA DE STORIES ESTILO FACEBOOK      */
+/* --------------------------------------------- */
+
+#storiesBar {
+    display: flex;
+    gap: 15px;
+    overflow-x: auto;
+    padding: 15px;
+    width: 96%;
+    margin: 15px auto;
+    align-items: center;
 }
 
-.main-logo img {
-    height: 110px;
+.story-user-box {
+    text-align: center;
+    flex-shrink: 0;
 }
+
+.story-circle {
+    width: 78px;
+    height: 78px;
+    border-radius: 50%;
+    border: 3px solid #00ffaa;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background:#000;
+    cursor:pointer;
+}
+
+.story-circle img, 
+.story-circle video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* BOTÃO DE ADICIONAR STORY - ESTILO NEON */
+.add-story-btn {
+    width: 78px;
+    height: 78px;
+    border-radius: 50%;
+    border: 3px solid #00ff99;
+    color: #00ff99;
+    background: transparent;
+    font-size: 55px;
+    display: flex;
+    align-items:center;
+    justify-content:center;
+    cursor:pointer;
+    box-shadow: 0 0 12px #00ff99, inset 0 0 12px #00ff99;
+    text-shadow: 0 0 10px #00ff99;
+    animation: neonPulse 2s infinite ease-in-out;
+}
+
+@keyframes neonPulse {
+    0%,100% { box-shadow: 0 0 12px #00ff99, inset 0 0 6px #00ff99; }
+    50%     { box-shadow: 0 0 22px #00ff99, inset 0 0 12px #00ff99; }
+}
+
+.story-user-name {
+    font-size: 0.8rem;
+    margin-top: 6px;
+    font-weight: bold;
+    color: #00ffaa;
+    max-width: 78px;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+}
+
+/* -------- VIEWER STYLO FACEBOOK ---------- */
+
+#storyViewer {
+    display: none;
+    position: fixed;
+    top:0;
+    left:0;
+    width:100%;
+    height:100%;
+    background: rgba(0,0,0,0.92);
+    z-index:999999;
+    align-items: center;
+    flex-direction: column;
+    padding-top: 55px;
+}
+
+#viewerClose {
+    position:absolute;
+    top:20px;
+    right:20px;
+    font-size:2.1rem;
+    cursor:pointer;
+    color:white;
+}
+
+/* Barra superior de progresso */
+#viewerProgress {
+    position: absolute;
+    top: 15px;
+    left: 5%;
+    width: 90%;
+    height: 6px;
+    display: flex;
+    gap: 5px;
+}
+
+.progress-segment {
+    flex:1;
+    background: rgba(255,255,255,0.3);
+    border-radius: 20px;
+    overflow:hidden;
+}
+
+.progress-fill {
+    width:0%;
+    height:100%;
+    background:white;
+    transition: width linear;
+}
+
+/* Conteúdo do story */
+#viewerContent img,
+#viewerContent video {
+    max-width: 92%;
+    max-height: 80%;
+    border-radius: 12px;
+    object-fit: contain !important;
+}
+
+/* Botão de menu ⋮ */
+#storyMenuBtn {
+    position:absolute;
+    top:20px;
+    left:20px;
+    font-size: 28px;
+    color:white;
+    cursor:pointer;
+    display:none;
+}
+
+#storyMenu {
+    display:none;
+    position:absolute;
+    top:65px;
+    left:20px;
+    background:white;
+    color:black;
+    border-radius: 10px;
+    padding: 12px 18px;
+    font-weight:bold;
+    cursor:pointer;
+}
+
+#viewerAuthor {
+    color:#00ffaa;
+    font-size:1.1rem;
+    font-weight:bold;
+    margin-bottom:15px;
+}
+</style>
+</head>
+<body>
+<!-- LOGIN -->
+<div id="loginBox">
+    <img src="https://i.ibb.co/JRvgqKGM/5c081edd-21e9-48fb-9a91-834cfdd112fc-removebg-preview.png">
+
+    <div id="googleLogin" class="google-btn"></div>
+</div>
+
+<!-- TOPO -->
+<div class="topbar">
+    <div class="radio-btn" id="playBtn" onclick="toggleRadio()">▶</div>
+    <div id="menuIcon" onclick="toggleMenu()">☰</div>
+    <audio id="radioPlayer" src="https://stream.zeno.fm/l8ocj9i6ka2uv"></audio>
+</div>
+
+<!-- MENU LATERAL -->
+<div id="sideMenu">
+
+    <div style="text-align:center; margin-bottom:10px;">
+        <label for="fotoPerfilUpload">
+            <img id="perfilFoto" src="https://cdn-icons-png.flaticon.com/512/149/149071.png"
+                 style="width:95px; height:95px; border-radius:50%; border:3px solid #00ffcc; cursor:pointer; object-fit:cover;">
+        </label>
+        <input type="file" id="fotoPerfilUpload" accept="image/*" style="display:none;">
+
+        <div id="nomeUsuarioMenu" style="color:#00ffcc; font-weight:bold; margin-top:8px; font-size:1.1rem;"></div>
+    </div>
+
+    <a href="https://marcio2307.github.io/chatterreiro/chatterreiro.html" target="_blank">Bate Papo</a>
+    <a href="https://marcio2307.github.io/terreiro/origens.html" target="_blank">Nossas Origens</a>
+    <a href="https://marcio2307.github.io/terreiro/estudo.html" target="_blank">Estudo da Umbanda</a>
+    <a href="https://marcio2307.github.io/terreiro/sala.html" target="_blank">Reunião Online</a>
+
+    <a onclick="logout()" style="cursor:pointer;">Sair da Conta</a>
+</div>
+
+<!-- ------------------------------------------------------- -->
+<!--   NOVA BARRA DE STORIES ESTILO FACEBOOK                -->
+<!-- ------------------------------------------------------- -->
+<div id="storiesBar"></div>
+
+<!-- ------------------------------------------------------- -->
+<!--  MODAL PARA CRIAR STORY (TEXTO + IMAGEM/VIDEO)          -->
+<!-- ------------------------------------------------------- -->
+<div id="storyCreateModal" style="
+display:none; position:fixed; top:0; left:0; width:100%; height:100%;
+background:rgba(0,0,0,0.9); z-index:999999; justify-content:center; align-items:center;
+flex-direction:column; color:white;">
+    
+    <textarea id="storyText" placeholder="Escreva algo..."
+    style="width:80%;max-width:300px;height:80px;border-radius:10px;padding:10px;background:#222;color:white;"></textarea>
+
+    <input type="file" id="storyMedia" accept="image/*,video/*" style="margin-top:15px;">
+
+    <button onclick="postarNovoStory()" 
+    style="margin-top:20px;background:#00ffaa;padding:10px 25px;border:none;border-radius:10px;font-weight:bold;">
+        Postar Story
+    </button>
+
+    <button onclick="fecharStoryCreate()" 
+    style="margin-top:15px;background:#ff5555;padding:10px 25px;border:none;border-radius:10px;">
+        Cancelar
+    </button>
+</div>
+
+<!-- ------------------------------------------------------- -->
+<!--   VIEWER ESTILO FACEBOOK (TODOS STORIES EM SEQUÊNCIA)   -->
+<!-- ------------------------------------------------------- -->
+<div id="storyViewer">
+    
+    <div id="viewerProgress"></div>
+
+    <span id="storyMenuBtn">⋮</span>
+    <div id="storyMenu">Excluir</div>
+
+    <span id="viewerClose" onclick="fecharViewer()">✖</span>
+
+    <div id="viewerAuthor"></div>
+
+    <div id="viewerContent"></div>
+
+</div>
+<script type="module">
+import { initializeApp } 
+    from "https://www.gstatic.com/firebasejs/10.14.0/firebase-app.js";
+
+import { 
+    getDatabase, ref, push, onValue, remove, set 
+} from "https://www.gstatic.com/firebasejs/10.14.0/firebase-database.js";
+
+/* CONFIG FIREBASE */
+const firebaseConfig = {
+    apiKey: "AIzaSyAt4CeGjdbjzdtMH1qZHw6RuBFJ6SeTDKk",
+    authDomain: "coletivo-f34d4.firebaseapp.com",
+    databaseURL: "https://coletivo-f34d4-default-rtdb.firebaseio.com",
+    projectId: "coletivo-f34d4",
+    storageBucket: "coletivo-f34d4.firebasestorage.app",
+    messagingSenderId: "296376447787",
+    appId: "1:296376447787:web:1341c59c8087d6ac1e4b6e"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+
+/* REFERÊNCIA DOS STORIES */
+const storiesRef = ref(db, "coletivo_mural/stories");
+
+let usuario = localStorage.getItem("usuarioLogado") || null;
+
+/* ------ ABRIR MODAL DE CRIAR STORY ------ */
+window.abrirCriarStory = function () {
+    if (!usuario) return alert("Faça login!");
+    storyCreateModal.style.display = "flex";
+};
+
+/* ------ FECHAR MODAL ------ */
+window.fecharStoryCreate = function () {
+    storyCreateModal.style.display = "none";
+    storyText.value = "";
+    storyMedia.value = "";
+};
+
+/* ------ POSTAR STORY ------ */
+window.postarNovoStory = function () {
+    if (!usuario) return alert("Faça login!");
+
+    const texto = storyText.value.trim();
+    const file = storyMedia.files[0];
+
+    let base64 = null;
+    let tipo = null;
+
+    if (file) {
+        const reader = new FileReader();
+        reader.onload = e => {
+            base64 = e.target.result;
+            tipo = file.type.startsWith("video") ? "video" : "image";
+            salvarStory(texto, base64, tipo);
+        };
+        reader.readAsDataURL(file);
+    } else {
+        salvarStory(texto, null, null);
+    }
+};
+
+function salvarStory(texto, midia, tipo) {
+    push(storiesRef, {
+        usuario,
+        texto,
+        timestamp: Date.now(),
+        imagem: tipo === "image" ? midia : null,
+        video:  tipo === "video" ? midia : null
+    });
+
+    fecharStoryCreate();
+}
+
+/* ------------------------------------------------------- */
+/*   CARREGAR STORIES DE TODOS USUÁRIOS PARA A BARRA      */
+/* ------------------------------------------------------- */
+onValue(storiesRef, snap => {
+    const bar = document.getElementById("storiesBar");
+    bar.innerHTML = "";
+
+    /* -------- BOTÃO + NEON -------- */
+    const addBtn = document.createElement("div");
+    addBtn.className = "story-user-box";
+    addBtn.innerHTML = `
+        <div class="add-story-btn" onclick="abrirCriarStory()">+</div>
+        <div class="story-user-name">Novo</div>
+    `;
+    bar.appendChild(addBtn);
+
+    /* Agora organiza stories por usuário */
+    let storiesPorUsuario = {};
+
+    snap.forEach(st => {
+        const s = st.val();
+        const id = st.key;
+
+        if (!storiesPorUsuario[s.usuario]) storiesPorUsuario[s.usuario] = [];
+        storiesPorUsuario[s.usuario].push({ id, ...s });
+    });
+
+    /* Criar os círculos dos usuários */
+    Object.keys(storiesPorUsuario).forEach(user => {
+        const storiesUser = storiesPorUsuario[user];
+        const ultimo = storiesUser[storiesUser.length - 1];
+
+        const box = document.createElement("div");
+        box.className = "story-user-box";
+
+        let midia = "";
+        if (ultimo.imagem) {
+            midia = `<img src="${ultimo.imagem}">`;
+        } else if (ultimo.video) {
+            midia = `<video src="${ultimo.video}" muted></video>`;
+        } else {
+            midia = `<img src="https://cdn-icons-png.flaticon.com/512/149/149071.png">`;
+        }
+
+        box.innerHTML = `
+            <div class="story-circle" onclick="abrirViewer('${user}')">
+                ${midia}
+            </div>
+            <div class="story-user-name">${user}</div>
+        `;
+
+        bar.appendChild(box);
+    });
+});
+/* ------------------------------------------------------------ */
+/*                    VIEWER – FACEBOOK STYLE                  */
+/* ------------------------------------------------------------ */
+
+let todosStories = [];
+let indiceAtual = 0;
+let progressoTimers = [];
+
+window.abrirViewer = function (usuarioClicado) {
+
+    /* Carrega todos os stories do Firebase em ordem */
+    onValue(storiesRef, snap => {
+        todosStories = [];
+
+        snap.forEach(st => {
+            const s = st.val();
+            const id = st.key;
+
+            todosStories.push({
+                id,
+                ...s
+            });
+        });
+
+        /* Ordena por timestamp */
+        todosStories.sort((a,b) => a.timestamp - b.timestamp);
+
+        /* Encontra o primeiro story do usuário clicado */
+        indiceAtual = todosStories.findIndex(st => st.usuario === usuarioClicado);
+
+        if (indiceAtual < 0) indiceAtual = 0;
+
+        storyViewer.style.display = "flex";
+        mostrarStoryAtual();
+    }, { onlyOnce: true });
+};
+
+
+/* ---------------- MOSTRAR STORY NO VIEWER ---------------- */
+
+function mostrarStoryAtual() {
+    progressoTimers.forEach(t => clearTimeout(t));
+    progressoTimers = [];
+
+    const story = todosStories[indiceAtual];
+    if (!story) return fecharViewer();
+
+    /* Autor */
+    viewerAuthor.textContent = story.usuario;
+
+    /* Botão Excluir só aparece se o dono for o usuário */
+    if (story.usuario === usuario) {
+        storyMenuBtn.style.display = "block";
+    } else {
+        storyMenuBtn.style.display = "none";
+    }
+
+    /* Conteúdo */
+    viewerContent.innerHTML = "";
+
+    let el;
+
+    if (story.imagem) {
+        el = document.createElement("img");
+        el.src = story.imagem;
+        iniciarProgresso(5000);
+
+    } else if (story.video) {
+        el = document.createElement("video");
+        el.src = story.video;
+        el.autoplay = true;
+        el.onloadedmetadata = () => {
+            const dur = Math.min(el.duration * 1000, 15000);
+            iniciarProgresso(dur);
+        };
+
+    } else {
+        el = document.createElement("p");
+        el.style.color = "white";
+        el.style.fontSize = "1.4rem";
+        el.style.padding = "20px";
+        el.textContent = story.texto || "Sem conteúdo";
+        iniciarProgresso(4000);
+    }
+
+    viewerContent.appendChild(el);
+
+    montarBarraProgresso();
+}
+
+/* ---------- PROGRESS BAR ---------- */
+
+function montarBarraProgresso() {
+    viewerProgress.innerHTML = "";
+
+    for (let i = 0; i < todosStories.length; i++) {
+        const seg = document.createElement("div");
+        seg.className = "progress-segment";
+
+        const fill = document.createElement("div");
+        fill.className = "progress-fill";
+
+        if (i < indiceAtual) fill.style.width = "100%";
+
+        seg.appendChild(fill);
+        viewerProgress.appendChild(seg);
+    }
+}
+
+function iniciarProgresso(dur) {
+    const segmentos = viewerProgress.querySelectorAll(".progress-fill");
+    const atual = segmentos[indiceAtual];
+
+    atual.style.transition = "none";
+    atual.style.width = "0px";
+
+    atual.offsetWidth;
+
+    atual.style.transition = `width ${dur}ms linear`;
+    atual.style.width = "100%";
+
+    progressoTimers.push(setTimeout(() => {
+        avancarStory();
+    }, dur));
+}
+
+/* ------------- AVANÇAR STORY ------------- */
+function avancarStory() {
+    indiceAtual++;
+    if (indiceAtual >= todosStories.length) {
+        return fecharViewer();
+    }
+    mostrarStoryAtual();
+}
+
+/* Clicar na tela avança */
+storyViewer.onclick = function (e) {
+    if (e.target.id === "storyMenuBtn" || e.target.id === "storyMenu") return;
+    avancarStory();
+};
+
+/* ------------- FECHAR VIEWER ------------- */
+window.fecharViewer = function () {
+    storyViewer.style.display = "none";
+    viewerContent.innerHTML = "";
+    viewerProgress.innerHTML = "";
+
+    progressoTimers.forEach(t => clearTimeout(t));
+    progressoTimers = [];
+};
+
+/* -------- MENU ⋮ APENAS EXCLUIR -------- */
+storyMenuBtn.onclick = function (e) {
+    e.stopPropagation();
+    storyMenu.style.display = storyMenu.style.display === "block" ? "none" : "block";
+};
+
+storyMenu.onclick = function () {
+    const st = todosStories[indiceAtual];
+
+    if (st.usuario !== usuario) {
+        alert("Você não pode excluir stories de outros usuários!");
+        return;
+    }
+
+    if (!confirm("Excluir este story?")) return;
+
+    remove(ref(db, "coletivo_mural/stories/" + st.id));
+
+    storyMenu.style.display = "none";
+    avancarStory();
+};
+</script>
+<!-- FEED -->
+<div class="feed">
+
+    <div class="post-box">
+        <textarea id="texto" placeholder="No que você está pensando?"></textarea>
+
+        <label for="imgUpload" class="img-icon">
+            <img src="https://i.pinimg.com/736x/f9/c5/fa/f9c5fa9710cdf2b510d32915cd882330.jpg">
+        </label>
+
+        <input type="file" id="imgUpload" accept="image/*,video/*">
+    </div>
+
+    <div id="preview" class="preview"></div>
+
+    <button onclick="postar()">Postar</button>
+
+    <h2 style="color:#00ffcc; margin-top:25px;">Publicações</h2>
+    <div id="feed"></div>
+</div>
+
+<!-- MODAL DE IMAGEM/VIDEO -->
+<div id="imgModal">
+    <span id="closeModal" onclick="fechaModal()">✖</span>
+    <img id="modalImg">
+</div>
+<style>
+
+/* --- FEED E POST BOX --- */
+
 .feed {
     width: 95%;
     max-width: 650px;
@@ -251,6 +727,7 @@ body {
     align-items: center;
     gap: 12px;
 }
+
 .post-box textarea {
     width: 100%;
     padding: 12px 15px;
@@ -285,6 +762,8 @@ body {
     margin-top: 5px;
 }
 
+/* --- BOTÃO POSTAR --- */
+
 button {
     width: 100%;
     padding: 12px;
@@ -296,6 +775,8 @@ button {
     font-weight: bold;
     cursor: pointer;
 }
+
+/* --- POST --- */
 
 .post {
     background: rgba(0,0,0,0.65);
@@ -312,6 +793,8 @@ button {
     border-radius: 12px;
     cursor: pointer;
 }
+
+/* --- REAÇÕES / COMENTÁRIOS --- */
 
 .reaction-count, .comment-count {
     text-align: left;
@@ -335,6 +818,8 @@ button {
     font-weight: bold;
 }
 
+/* --- LISTA DE COMENTÁRIOS --- */
+
 .comment-list {
     background: rgba(255,255,255,0.10);
     border-radius: 10px;
@@ -348,9 +833,18 @@ button {
     background: rgba(0,0,0,0.35);
     border-radius: 10px;
     margin-bottom: 8px;
-    display: flex;
+    display:flex;
     justify-content: space-between;
-    color: #ddffe8;
+    color:#ddffe8;
+}
+
+.comment-entry img {
+    width: 40px;
+    height: 40px;
+    border-radius:50%;
+    object-fit:cover;
+    margin-right:10px;
+    border:2px solid #00ffaa;
 }
 
 .comment-box textarea {
@@ -362,6 +856,8 @@ button {
     background: rgba(0,0,0,0.45);
     color: white;
 }
+
+/* --- MODAL DE IMAGEM --- */
 
 #imgModal {
     position: fixed;
@@ -387,582 +883,69 @@ button {
     top: 20px;
     right: 25px;
     font-size: 2.5rem;
-    cursor: pointer;
+    cursor:pointer;
+}
+
+/* --- RESPONSIVIDADE --- */
+
+@media (max-width: 600px) {
+
+    .feed {
+        width: 96%;
+        margin: 10px auto;
+    }
+
+    .post-box {
+        padding: 14px;
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .post-box textarea {
+        height: 60px;
+        font-size: 1rem;
+    }
+
+    .preview img, .preview video {
+        max-height: 130px;
+    }
+
+    .post img, .post video {
+        max-height: 280px;
+    }
+
+    .actions {
+        flex-direction: column;
+        gap: 12px;
+        text-align:center;
+    }
+
+    .comment-entry {
+        flex-direction: column;
+        gap: 8px;
+        font-size: 0.9rem;
+    }
 }
 
 </style>
-</head>
-<body>
-
-<!-- LOGIN -->
-<div id="loginBox">
-    <img src="https://i.ibb.co/JRvgqKGM/5c081edd-21e9-48fb-9a91-834cfdd112fc-removebg-preview.png">
-
-    <!-- SOMENTE LOGIN COM GOOGLE -->
-    <div id="googleLogin" class="google-btn"></div>
-</div>
-
-<!-- TOPO -->
-<div class="topbar">
-    <div class="radio-btn" id="playBtn" onclick="toggleRadio()">▶</div>
-    <div id="menuIcon" onclick="toggleMenu()">☰</div>
-    <audio id="radioPlayer" src="https://stream.zeno.fm/l8ocj9i6ka2uv"></audio>
-</div>
-
-<!-- MENU LATERAL -->
-<div id="sideMenu">
-
-    <!-- FOTO + NOME DO USUÁRIO -->
-    <div style="text-align:center; margin-bottom:10px;">
-        <label for="fotoPerfilUpload">
-            <img id="perfilFoto" src="https://cdn-icons-png.flaticon.com/512/149/149071.png"
-                 style="width:95px; height:95px; border-radius:50%; border:3px solid #00ffcc; cursor:pointer; object-fit:cover;">
-        </label>
-        <input type="file" id="fotoPerfilUpload" accept="image/*" style="display:none;">
-
-        <div id="nomeUsuarioMenu" style="color:#00ffcc; font-weight:bold; margin-top:8px; font-size:1.1rem;"></div>
-    </div>
-
-    <a href="https://marcio2307.github.io/chatterreiro/chatterreiro.html" target="_blank">Bate Papo</a>
-    <a href="https://marcio2307.github.io/terreiro/origens.html" target="_blank">Nossas Origens</a>
-    <a href="https://marcio2307.github.io/terreiro/estudo.html" target="_blank">Estudo da Umbanda</a>
-    <a href="https://marcio2307.github.io/terreiro/sala.html" target="_blank">Reunião Online</a>
-
-    <!-- BOTÃO SAIR DA CONTA NO MESMO ESTILO -->
-    <a onclick="logout()" style="cursor:pointer;">Sair da Conta</a>
-
-   
-</div>
-
-<!-- STORIES – ESTILO INSTAGRAM -->
-<div id="storiesBar" 
-style="display:flex; gap:12px; overflow-x:auto; padding:12px; margin-top:15px; width:95%; margin-left:auto; margin-right:auto;">
-
-    <!-- SEU STORY DENTRO DA BARRA -->
-    <div id="seuStoryBox" style="text-align:center; flex-shrink:0;">
-        
-        <div onclick="abrirCriarStory()" id="meuStoryBtn"
-            style="
-                width:70px;
-                height:70px;
-                border-radius:50%;
-                border:3px solid #00ffaa;
-                overflow:hidden;
-                display:flex;
-                align-items:center;
-                justify-content:center;
-                background:#000;
-                cursor:pointer;
-            ">
-            <img id="meuStoryFoto" 
-                 src="https://cdn-icons-png.flaticon.com/512/149/149071.png"
-                 style="width:100%; height:100%; object-fit:cover;">
-        </div>
-
-        <div style="color:#00ffaa;font-size:0.80rem;font-weight:bold;margin-top:5px;">
-            Novo Story
-        </div>
-    </div>
-
-</div>
-
-
-<!-- MODAL CRIAR STORY -->
-<div id="storyModal" style="
-display:none; position:fixed; top:0; left:0; width:100%; height:100%;
-background:rgba(0,0,0,0.9); z-index:999999; justify-content:center; align-items:center;
-flex-direction:column; color:white;">
-
-    <textarea id="storyTexto" placeholder="Escreva algo..." 
-    style="width:80%;max-width:300px;height:80px;border-radius:10px;padding:10px;background:#222;color:white;"></textarea>
-
-    <input type="file" id="storyMedia" accept="image/*,video/*" style="margin-top:15px;">
-
-    <button onclick="enviarStory()" 
-    style="margin-top:20px;background:#00ffaa;padding:10px 25px;border:none;border-radius:10px;font-weight:bold;">
-        Postar Story
-    </button>
-
-    <button onclick="fecharCriarStory()" 
-    style="margin-top:15px;background:#ff5555;padding:10px 25px;border:none;border-radius:10px;">
-        Cancelar
-    </button>
-</div>
-
-
-<!-- MODAL VER STORY -->
-<div id="storyViewer" style="
-display:none; position:fixed; top:0; left:0; width:100%; height:100%;
-background:rgba(0,0,0,0.95); z-index:999999; justify-content:center; align-items:center; flex-direction:column;">
-    
-    <div id="storyContent"></div>
-
-    <span onclick="fecharStory()" 
-    style="position:absolute;top:20px;right:25px;font-size:2rem;cursor:pointer;color:#fff;">✖</span>
-</div>
-
-
-<!-- FEED -->
-<div class="feed">
-
-    <div class="post-box">
-        <textarea id="texto" placeholder="No que você está pensando?"></textarea>
-
-        <label for="imgUpload" class="img-icon">
-            <img src="https://i.pinimg.com/736x/f9/c5/fa/f9c5fa9710cdf2b510d32915cd882330.jpg">
-        </label>
-
-        <input type="file" id="imgUpload" accept="image/*,video/*">
-    </div>
-
-    <div id="preview" class="preview"></div>
-
-    <button onclick="postar()">Postar</button>
-
-    <h2 style="color:#00ffcc; margin-top:25px;">Publicações</h2>
-    <div id="feed"></div>
-</div>
-
-
-<!-- MODAL -->
-<div id="imgModal">
-    <span id="closeModal" onclick="fechaModal()">✖</span>
-    <img id="modalImg">
-</div>
-
-<script>
-let usuario = localStorage.getItem("usuarioLogado") || null;
-let visitante = false;
-
-window.addEventListener("DOMContentLoaded", () => {
-
-
-    const logado = localStorage.getItem("usuarioLogado");
-    const temPost = new URLSearchParams(window.location.search).get("post");
-
-   if (!logado) {
-
-    if (temPost) {
-        visitante = true;
-
-        loginBox.style.display = "none";
-        document.body.style.overflow = "auto";
-        usuario = null;
-
-        // desabilitar criação de posts
-        document.querySelector(".post-box").style.display = "none";
-        document.querySelector("button[onclick='postar()']").style.display = "none";
-        document.getElementById("imgUpload").disabled = true;
-
-        // esconder menus e rádio
-        document.getElementById("menuIcon").style.display = "none";
-        document.getElementById("playBtn").style.display = "none";
-        document.getElementById("radioPlayer").style.display = "none";
-        document.querySelector(".main-logo").style.display = "none";
-
-        // ❌ ESCONDER COMPLETAMENTE OS STORIES PARA VISITANTE
-        document.getElementById("storiesBar").style.display = "none";
-
-        // modificar botão de voltar (opcional)
-        setTimeout(() => {
-            let btn = document.querySelector("button[onclick=\"window.location.href='site.html'\"]");
-            if (btn) btn.innerHTML = "⬅ Entrar no site";
-        }, 600);
-
-    } else {
-        // login normal
-        loginBox.style.display = "flex";
-        document.body.style.overflow = "hidden";
-    }
-}
- else {
-
-        usuario = logado;
-        loginBox.style.display = "none";
-        document.body.style.overflow = "auto";
-
-        const fotoSalva = localStorage.getItem("fotoPerfil_" + usuario);
-        if (fotoSalva) perfilFoto.src = fotoSalva;
-
-        nomeUsuarioMenu.textContent = usuario;
-    }
-});
-</script>
-<!-- LOGIN COM GOOGLE -->
-<script>
-document.addEventListener("DOMContentLoaded", () => {
-    setTimeout(() => {
-
-        google.accounts.id.initialize({
-            client_id: "627442405379-srqriainr8okj7ldg96njd1va5bvt7oi.apps.googleusercontent.com",
-            callback: handleGoogleLogin,
-            auto_select: false,
-            cancel_on_tap_outside: false
-        });
-
-        // Necessário para Safari + Chrome Android + Firefox Mobile
-        document.getElementById("googleLogin").style.display = "block";
-
-        google.accounts.id.renderButton(
-            document.getElementById("googleLogin"),
-            { 
-                theme: "filled_black",
-                size: "large",
-                width: 270,
-                type: "standard"
-            }
-        );
-
-        // Safari iPhone só exibe se o container estiver visível
-        // NUNCA forçar loginBox a aparecer aqui
-
-
-    }, 250);
-});
-
-function handleGoogleLogin(response) {
-    const data = decodeJwt(response.credential);
-
-    const user = data.email.split("@")[0];
-    usuario = user;
-
-    localStorage.setItem("usuarioLogado", usuario);
-
-    loginBox.style.display = "none";
-    document.body.style.overflow = "auto";
-
-    if (data.picture) {
-        perfilFoto.src = data.picture;
-        localStorage.setItem("fotoPerfil_" + usuario, data.picture);
-    }
-
-    nomeUsuarioMenu.textContent = usuario;
-
-    setTimeout(() => {
-        location.reload();
-    }, 1000);
-}
-
-function decodeJwt(token) {
-    return JSON.parse(atob(token.split('.')[1]));
-}
-</script>
-
-
-<!-- FOTO DO PERFIL -->
-<script>
-document.getElementById("fotoPerfilUpload").addEventListener("change", function () {
-    const file = this.files[0];
-    if (!file) return;
-
-    const reader = new FileReader();
-    reader.onload = e => {
-        const imgBase64 = e.target.result;
-
-        if (usuario) {
-            localStorage.setItem("fotoPerfil_" + usuario, imgBase64);
-        }
-
-        perfilFoto.src = imgBase64;
-    };
-
-    reader.readAsDataURL(file);
-});
-</script>
-
-<!-- RADIO + MENU -->
-<script>
-let tocando = false;
-
-function toggleRadio() {
-    const player = document.getElementById("radioPlayer");
-    const btn = document.getElementById("playBtn");
-
-    if (!tocando) {
-        player.play();
-        btn.textContent = "⏸";
-        tocando = true;
-    } else {
-        player.pause();
-        btn.textContent = "▶";
-        tocando = false;
-    }
-}
-
-function toggleMenu() {
-    const menu = document.getElementById("sideMenu");
-    menu.style.right = (menu.style.right === "0px") ? "-260px" : "0px";
-}
-
-document.addEventListener("click", function(e) {
-    const menu = sideMenu;
-    const icon = menuIcon;
-
-    if (!menu.contains(e.target) && !icon.contains(e.target)) {
-        menu.style.right = "-260px";
-    }
-});
-</script>
-
-<!-- FIREBASE -->
 <script type="module">
-import { initializeApp } 
-    from "https://www.gstatic.com/firebasejs/10.14.0/firebase-app.js";
 import { getDatabase, ref, push, onValue, remove, update, set }
     from "https://www.gstatic.com/firebasejs/10.14.0/firebase-database.js";
 
-const urlParams = new URLSearchParams(window.location.search);
-const postID_URL = urlParams.get("post");
+import { getApp } 
+    from "https://www.gstatic.com/firebasejs/10.14.0/firebase-app.js";
 
-const firebaseConfig = {
-    apiKey: "AIzaSyAt4CeGjdbjzdtMH1qZHw6RuBFJ6SeTDKk",
-    authDomain: "coletivo-f34d4.firebaseapp.com",
-    databaseURL: "https://coletivo-f34d4-default-rtdb.firebaseio.com",
-    projectId: "coletivo-f34d4",
-    storageBucket: "coletivo-f34d4.firebasestorage.app",
-    messagingSenderId: "296376447787",
-    appId: "1:296376447787:web:1341c59c8087d6ac1e4b6e"
-};
-
-const app = initializeApp(firebaseConfig);
+/* Recuperar app já inicializado */
+const app = getApp();
 const db = getDatabase(app);
-const postsRef = ref(db, "coletivo_mural/posts");
 
-/* STORIES – BANCO */
-const storiesRef = ref(db, "coletivo_mural/stories");
-
-/* ABRIR / FECHAR MODAL */
-window.abrirCriarStory = function () {
-    if (!usuario) return alert("Faça login!");
-    storyModal.style.display = "flex";
-};
-
-window.fecharCriarStory = function () {
-    storyModal.style.display = "none";
-    storyTexto.value = "";
-    storyMedia.value = "";
-};
-
-/* ENVIAR STORY */
-window.enviarStory = function () {
-    if (!usuario) return alert("Faça login!");
-
-    const texto = storyTexto.value.trim();
-    const file = storyMedia.files[0];
-
-    let mediaBase64 = null;
-    let tipoMidia = null;
-
-    if (file) {
-        const reader = new FileReader();
-        reader.onload = e => {
-            mediaBase64 = e.target.result;
-            tipoMidia = file.type.startsWith("video") ? "video" : "imagem";
-            salvarStory(texto, mediaBase64, tipoMidia);
-        };
-        reader.readAsDataURL(file);
-    } else {
-        salvarStory(texto, null, null);
-    }
-};
-
-function salvarStory(texto, media, tipo) {
-    push(storiesRef, {
-        usuario,
-        texto,
-        timestamp: Date.now(),
-        imagem: tipo === "imagem" ? media : null,
-        video: tipo === "video" ? media : null
-    });
-
-    fecharCriarStory();
-}
-
-/* MOSTRAR STORIES */
-onValue(storiesRef, snap => {
-    const bar = document.getElementById("storiesBar");
-
-    // RECOLOCA O SEU STORY PRIMEIRO
-    bar.innerHTML = `
-        <div id="seuStoryBox" style="text-align:center; flex-shrink:0;">
-            <div onclick="abrirCriarStory()" id="meuStoryBtn"
-                style="
-                    width:70px;
-                    height:70px;
-                    border-radius:50%;
-                    border:3px solid #00ffaa;
-                    overflow:hidden;
-                    display:flex;
-                    align-items:center;
-                    justify-content:center;
-                    background:#000;
-                    cursor:pointer;
-                ">
-                <img id="meuStoryFoto" 
-                    src="${localStorage.getItem("fotoPerfil_" + usuario) || "https://cdn-icons-png.flaticon.com/512/149/149071.png"}"
-                    style="width:100%; height:100%; object-fit:cover;">
-            </div>
-
-            <div style="color:#00ffaa;font-size:0.80rem;font-weight:bold;margin-top:5px;">
-                Seu Story
-            </div>
-        </div>
-    `;
-
-    const agora = Date.now();
-
-    snap.forEach(story => {
-
-        const s = story.val();
-        const id = story.key;
-
-        if (agora - s.timestamp > 24 * 60 * 60 * 1000) return;
-
-       // CONTAINER do círculo + nome abaixo
-const storyBox = document.createElement("div");
-storyBox.style.textAlign = "center";
-storyBox.style.flexShrink = "0";
-storyBox.style.width = "70px";
-
-// Círculo do story
-const circle = document.createElement("div");
-circle.style.width = "70px";
-circle.style.height = "70px";
-circle.style.borderRadius = "50%";
-circle.style.border = "3px solid #00ffaa";
-circle.style.overflow = "hidden";
-circle.style.cursor = "pointer";
-circle.style.display = "flex";
-circle.style.alignItems = "center";
-circle.style.justifyContent = "center";
-circle.style.background = "#000";
-
-circle.onclick = () => abrirStory(id, s);
-
-// Mídia dentro do círculo
-if (s.imagem) {
-    circle.innerHTML = `<img src="${s.imagem}" style="width:100%;height:100%;object-fit:cover;">`;
-} else if (s.video) {
-    circle.innerHTML = `<video src="${s.video}" muted style="width:100%;height:100%;object-fit:cover;"></video>`;
-} else {
-    circle.innerHTML = `<span style='color:#00ffaa;font-size:.8rem;'>TXT</span>`;
-}
-
-// Nome do usuário abaixo do story
-const nome = document.createElement("div");
-nome.style.color = "#00ffaa";
-nome.style.fontSize = "0.78rem";
-nome.style.fontWeight = "bold";
-nome.style.marginTop = "6px";
-nome.style.whiteSpace = "nowrap";
-nome.style.overflow = "hidden";
-nome.style.textOverflow = "ellipsis";
-nome.textContent = s.usuario;
-
-// Monta o bloco final
-storyBox.appendChild(circle);
-storyBox.appendChild(nome);
-
-bar.appendChild(storyBox);
-    });
-});
-
-/* ABRIR STORY – com visualizações + excluir */
-window.abrirStory = function (id, s) {
-    const content = document.getElementById("storyContent");
-
-    let midiaHTML = "";
-
-    if (s.imagem) {
-        midiaHTML = `<img src="${s.imagem}" style="max-width:92%;max-height:92%;border-radius:15px;">`;
-    } else if (s.video) {
-        midiaHTML = `<video src="${s.video}" controls autoplay style="max-width:92%;max-height:92%;border-radius:15px;"></video>`;
-    } else {
-        midiaHTML = `<p style="color:white;font-size:1.4rem;padding:25px;text-align:center;">${s.texto}</p>`;
-    }
-
-    content.innerHTML = midiaHTML;
-    storyViewer.style.display = "flex";
-
-    if (usuario) {
-        const viewRef = ref(db, `coletivo_mural/stories/${id}/views/${usuario}`);
-        set(viewRef, { usuario, hora: Date.now() });
-    }
-
-    const viewsRef = ref(db, `coletivo_mural/stories/${id}/views`);
-
-    onValue(viewsRef, snap => {
-        let total = 0;
-        let listaViuHTML = "";
-
-        if (snap.exists()) {
-            snap.forEach(vSnap => {
-                total++;
-                const v = vSnap.val();
-                listaViuHTML += `
-                    <div style="padding:6px;color:#00ffaa;font-size:1rem;">
-                        👁️ ${v.usuario}
-                    </div>
-                `;
-            });
-        }
-
-        if (!listaViuHTML) listaViuHTML = `<p style="color:white;">Ninguém viu ainda</p>`;
-
-        let btnExcluir = "";
-        if (usuario && s.usuario === usuario) {
-            btnExcluir = `
-                <button onclick="excluirStory('${id}')"
-                    style="margin-top:18px;background:#ff4444;color:white;padding:10px 20px;border:none;border-radius:10px;font-weight:bold;">
-                    Excluir Story
-                </button>
-            `;
-        }
-
-        content.innerHTML = `
-            ${midiaHTML}
-
-            <div style="margin-top:20px;color:#00ffaa;font-size:1.2rem;font-weight:bold;">
-                👁️ ${total} visualizaç${total === 1 ? "ão" : "ões"}
-            </div>
-
-            <div style="margin-top:10px;background:rgba(255,255,255,0.1);padding:10px;border-radius:10px;width:90%;max-width:300px;">
-                <div style="color:#00ffaa;font-weight:bold;margin-bottom:5px;">Quem viu:</div>
-                ${listaViuHTML}
-            </div>
-
-            ${btnExcluir}
-        `;
-    }, { onlyOnce: true });
-};
-
-window.fecharStory = function () {
-    storyViewer.style.display = "none";
-};
-
-window.excluirStory = function(id) {
-    onValue(ref(db, "coletivo_mural/stories/" + id), snap => {
-        if (!snap.exists()) return;
-
-        const dono = snap.val().usuario;
-
-        if (dono !== usuario) {
-            alert("❌ Você não pode excluir stories de outras pessoas!");
-            return;
-        }
-
-        if (confirm("Excluir seu story?")) {
-            remove(ref(db, "coletivo_mural/stories/" + id));
-            fecharStory();
-        }
-
-    }, { onlyOnce: true });
-};
+/* ------------------------------ */
+/*      Upload de imagem/vídeo    */
+/* ------------------------------ */
 
 let imagemTemp = null;
 let tipoMidia = null;
 
-/* ENVIO DE MÍDIA */
 document.getElementById("imgUpload").addEventListener("change", function () {
     const file = this.files[0];
     if (!file) return;
@@ -987,9 +970,11 @@ document.getElementById("imgUpload").addEventListener("change", function () {
             `;
         }
     };
+
     reader.readAsDataURL(file);
 });
 
+/* REMOVER PREVIEW */
 window.removerPreview = function () {
     imagemTemp = null;
     tipoMidia = null;
@@ -997,9 +982,18 @@ window.removerPreview = function () {
     imgUpload.value = "";
 };
 
-/* POSTAR */
+/* ------------------------------ */
+/*         POSTAR PUBLICAÇÃO      */
+/* ------------------------------ */
+
 window.postar = function () {
-    if (!usuario) return alert("Faça login!");
+
+    if (!usuario) {
+        alert("Faça login para postar.");
+        loginBox.style.display = "flex";
+        document.body.style.overflow = "hidden";
+        return;
+    }
 
     const texto = document.getElementById("texto").value.trim();
     if (texto === "" && !imagemTemp) return;
@@ -1013,13 +1007,28 @@ window.postar = function () {
         comentarios: {}
     };
 
-    push(postsRef, postData);
+    push(ref(db, "coletivo_mural/posts"), postData);
 
     document.getElementById("texto").value = "";
     removerPreview();
 };
+<script type="module">
+import { getDatabase, ref, onValue, push, remove, set }
+    from "https://www.gstatic.com/firebasejs/10.14.0/firebase-database.js";
+import { getApp } from "https://www.gstatic.com/firebasejs/10.14.0/firebase-app.js";
 
-/* MURAL + POST INDIVIDUAL */
+const app2 = getApp();
+const db2 = getDatabase(app2);
+
+const postsRef = ref(db2, "coletivo_mural/posts");
+
+const urlParams = new URLSearchParams(window.location.search);
+const postID_URL = urlParams.get("post");
+
+/* ---------------------------- */
+/*      EXIBIR POSTS DO FEED    */
+/* ---------------------------- */
+
 onValue(postsRef, snap => {
     const feed = document.getElementById("feed");
     feed.innerHTML = "";
@@ -1037,13 +1046,14 @@ onValue(postsRef, snap => {
     }
 
     snap.forEach(postSnap => {
-        const id = postSnap.key;
-        const p = postSnap.val();
-        adicionarPostAoMural(id, p);
+        adicionarPostAoMural(postSnap.key, postSnap.val());
     });
 });
 
-/* EXIBIR POST INDIVIDUAL */
+/* ------------------------------- */
+/*        EXIBIR POST INDIVIDUAL   */
+/* ------------------------------- */
+
 window.mostrarPostIndividual = function(id, p) {
 
     const feed = document.getElementById("feed");
@@ -1086,33 +1096,20 @@ window.mostrarPostIndividual = function(id, p) {
         </div>
     `;
 
-    const lista = document.getElementById("cl_" + id);
-    lista.innerHTML = "";
-
-    if (p.comentarios) {
-        Object.entries(p.comentarios).forEach(([cid, c]) => {
-            const foto = c.fotoPerfil || "https://cdn-icons-png.flaticon.com/512/149/149071.png";
-
-            const cdiv = document.createElement("div");
-            cdiv.className = "comment-entry";
-
-            cdiv.innerHTML = `
-                <img src="${foto}"
-                    style="width:40px;height:40px;border-radius:50%;margin-right:10px;object-fit:cover;border:2px solid #00ffaa;">
-                <div style="flex:1;">
-                    <strong style="color:#00ffcc;">${c.usuario}:</strong>
-                    ${c.texto}
-                </div>
-                ${c.usuario === usuario ? `<span onclick="excluirComentario('${id}','${cid}')" style="cursor:pointer;">❌</span>` : ""}
-            `;
-
-            lista.appendChild(cdiv);
-        });
-    }
+    carregarComentarios(id, p);
 };
 
-/* TIMELINE NORMAL */
+/* ---------------------------- */
+/*     ADICIONAR POST AO FEED   */
+/* ---------------------------- */
+
 window.adicionarPostAoMural = function(id, p) {
+
+    const feed = document.getElementById("feed");
+
+    let midiaHTML = "";
+    if (p.imagem) midiaHTML = `<img src="${p.imagem}" onclick="abreModal('${p.imagem}')">`;
+    if (p.video) midiaHTML = `<video controls autoplay muted playsinline><source src="${p.video}"></video>`;
 
     const totalCurtidas = p.reacoes ? Object.keys(p.reacoes).length : 0;
     const numComentarios = p.comentarios ? Object.keys(p.comentarios).length : 0;
@@ -1120,10 +1117,6 @@ window.adicionarPostAoMural = function(id, p) {
 
     const div = document.createElement("div");
     div.className = "post";
-
-    let midiaHTML = "";
-    if (p.imagem) midiaHTML = `<img src="${p.imagem}" onclick="abreModal('${p.imagem}')">`;
-    if (p.video) midiaHTML = `<video controls autoplay muted playsinline><source src="${p.video}"></video>`;
 
     div.innerHTML = `
         <strong style="color:#00ffcc;">${p.usuario}</strong><br><br>
@@ -1151,6 +1144,14 @@ window.adicionarPostAoMural = function(id, p) {
 
     feed.prepend(div);
 
+    carregarComentarios(id, p);
+};
+
+/* ---------------------------- */
+/*       CARREGAR COMENTÁRIOS   */
+/* ---------------------------- */
+
+function carregarComentarios(id, p) {
     const lista = document.getElementById("cl_" + id);
     lista.innerHTML = "";
 
@@ -1158,35 +1159,34 @@ window.adicionarPostAoMural = function(id, p) {
         Object.entries(p.comentarios).forEach(([cid, c]) => {
             const foto = c.fotoPerfil || "https://cdn-icons-png.flaticon.com/512/149/149071.png";
 
-            const cdiv = document.createElement("div");
-            cdiv.className = "comment-entry";
+            const div = document.createElement("div");
+            div.className = "comment-entry";
 
-            cdiv.innerHTML = `
-                <img src="${foto}"
-                    style="width:40px;height:40px;border-radius:50%;margin-right:10px;object-fit:cover;border:2px solid #00ffaa;">
+            div.innerHTML = `
+                <img src="${foto}">
                 <div style="flex:1;">
-                    <strong style="color:#00ffcc;">${c.usuario}:</strong>
-                    ${c.texto}
+                    <strong style="color:#00ffcc;">${c.usuario}:</strong> ${c.texto}
                 </div>
                 ${c.usuario === usuario ? `<span onclick="excluirComentario('${id}','${cid}')" style="cursor:pointer;">❌</span>` : ""}
             `;
 
-            lista.appendChild(cdiv);
+            lista.appendChild(div);
         });
     }
-};
+}
 
-/* FUNÇÕES DE CURTIR / COMENTAR / APAGAR */
+/* ---------------------------- */
+/*     TÍTULOS: LIKE, COMMENT   */
+/* ---------------------------- */
+
 window.toggleCurtir = function (postId) {
 
     if (!usuario) {
         alert("Você precisa entrar para curtir.");
-        loginBox.style.display = "flex";
-        document.body.style.overflow = "hidden";
         return;
     }
 
-    const likeRef = ref(db, `coletivo_mural/posts/${postId}/reacoes/${usuario}`);
+    const likeRef = ref(db2, `coletivo_mural/posts/${postId}/reacoes/${usuario}`);
 
     onValue(likeRef, snap => {
         if (snap.exists()) remove(likeRef);
@@ -1194,15 +1194,16 @@ window.toggleCurtir = function (postId) {
     }, { onlyOnce: true });
 };
 
-window.mostrarCurtidas = function (postId) {
-    const caixa = document.getElementById("likes_" + postId);
-    caixa.style.display = caixa.style.display === "block" ? "none" : "block";
+window.mostrarCurtidas = function(postId) {
+    const box = document.getElementById("likes_" + postId);
 
-    onValue(ref(db, `coletivo_mural/posts/${postId}/reacoes`), snap => {
-        caixa.innerHTML = "";
+    box.style.display = box.style.display === "block" ? "none" : "block";
+
+    onValue(ref(db2, `coletivo_mural/posts/${postId}/reacoes`), snap => {
+        box.innerHTML = "";
 
         if (!snap.exists()) {
-            caixa.innerHTML = "<p>Ninguém curtiu ainda</p>";
+            box.innerHTML = "<p>Ninguém curtiu ainda</p>";
             return;
         }
 
@@ -1211,38 +1212,32 @@ window.mostrarCurtidas = function (postId) {
             const item = document.createElement("div");
             item.className = "comment-entry";
             item.innerHTML = `<strong>${pessoa}</strong> curtiu 👍`;
-            caixa.appendChild(item);
+            box.appendChild(item);
         });
     });
 };
 
-window.toggleComentarios = function (id) {
+window.toggleComentarios = function(id) {
     const lista = document.getElementById("cl_" + id);
     lista.style.display = lista.style.display === "block" ? "none" : "block";
 };
 
-window.toggleComentarioBox = function (id) {
+window.toggleComentarioBox = function(id) {
     const box = document.getElementById("cb_" + id);
     box.style.display = box.style.display === "block" ? "none" : "block";
 };
 
 window.comentar = function (postId) {
-
-    if (!usuario) {
-        alert("Você precisa entrar para comentar.");
-        loginBox.style.display = "flex";
-        document.body.style.overflow = "hidden";
-        return;
-    }
+    if (!usuario) return alert("Faça login!");
 
     const campo = document.getElementById("ct_" + postId);
     const texto = campo.value.trim();
     if (!texto) return;
 
-    const foto = localStorage.getItem("fotoPerfil_" + usuario) 
+    const foto = localStorage.getItem("fotoPerfil_" + usuario)
                  || "https://cdn-icons-png.flaticon.com/512/149/149071.png";
 
-    push(ref(db, `coletivo_mural/posts/${postId}/comentarios`), {
+    push(ref(db2, `coletivo_mural/posts/${postId}/comentarios`), {
         usuario,
         texto,
         fotoPerfil: foto,
@@ -1252,45 +1247,39 @@ window.comentar = function (postId) {
     campo.value = "";
 };
 
-window.excluirComentario = function (postId, cid) {
-
-    onValue(ref(db, `coletivo_mural/posts/${postId}/comentarios/${cid}`), snap => {
+window.excluirComentario = function(postId, cid) {
+    onValue(ref(db2, `coletivo_mural/posts/${postId}/comentarios/${cid}`), snap => {
         if (!snap.exists()) return;
 
-        const dono = snap.val().usuario;
-
-        if (dono !== usuario) {
-            alert("❌ Você não pode apagar comentários de outras pessoas!");
+        if (snap.val().usuario !== usuario) {
+            alert("Você não pode apagar comentários de outras pessoas!");
             return;
         }
 
-        if (confirm("Excluir seu comentário?")) {
-            remove(ref(db, `coletivo_mural/posts/${postId}/comentarios/${cid}`));
+        if (confirm("Excluir comentário?")) {
+            remove(ref(db2, `coletivo_mural/posts/${postId}/comentarios/${cid}`));
         }
-
     }, { onlyOnce: true });
 };
 
-window.apagarPost = function (id) {
-
-    onValue(ref(db, "coletivo_mural/posts/" + id), snap => {
+window.apagarPost = function(id) {
+    onValue(ref(db2, `coletivo_mural/posts/${id}`), snap => {
         if (!snap.exists()) return;
 
-        const dono = snap.val().usuario;
-
-        if (dono !== usuario) {
-            alert("❌ Você não pode apagar postagens de outras pessoas!");
+        if (snap.val().usuario !== usuario) {
+            alert("Você não pode apagar posts de outras pessoas!");
             return;
         }
 
-        if (confirm("Apagar seu post?")) {
-            remove(ref(db, "coletivo_mural/posts/" + id));
+        if (confirm("Excluir post?")) {
+            remove(ref(db2, `coletivo_mural/posts/${id}`));
         }
-
     }, { onlyOnce: true });
 };
 
-window.abreModal = function (src) {
+/* -------- MODAL ---------- */
+
+window.abreModal = function(src) {
     modalImg.src = src;
     imgModal.style.display = "flex";
 };
@@ -1299,9 +1288,10 @@ window.fechaModal = function () {
     imgModal.style.display = "none";
 };
 </script>
-
-<!-- COMPARTILHAR -->
 <script>
+/* -------------------------------------------------- */
+/*  COMPARTILHAR POST – COPIAR LINK E ABRIR PÁGINA   */
+/* -------------------------------------------------- */
 window.compartilhar = function(postId) {
 
     const link = `https://marcio2307.github.io/terreiro/site.html?post=${postId}`;
@@ -1319,53 +1309,139 @@ window.compartilhar = function(postId) {
     });
 };
 </script>
-
-<!-- LOGOUT -->
 <script>
-function logout() {
+/* ----------------------------- */
+/*       LOGIN COM GOOGLE        */
+/* ----------------------------- */
 
-    // remove login salvo
-    localStorage.removeItem("usuarioLogado");
+document.addEventListener("DOMContentLoaded", () => {
+    setTimeout(() => {
 
-    if (usuario) {
-        localStorage.removeItem("fotoPerfil_" + usuario);
+        google.accounts.id.initialize({
+            client_id: "627442405379-srqriainr8okj7ldg96njd1va5bvt7oi.apps.googleusercontent.com",
+            callback: handleGoogleLogin,
+            auto_select: false,
+            cancel_on_tap_outside: false
+        });
+
+        document.getElementById("googleLogin").style.display = "block";
+
+        google.accounts.id.renderButton(
+            document.getElementById("googleLogin"),
+            { 
+                theme: "filled_black",
+                size: "large",
+                width: 270,
+                type: "standard"
+            }
+        );
+
+    }, 250);
+});
+
+function handleGoogleLogin(response) {
+    const data = decodeJwt(response.credential);
+
+    const user = data.email.split("@")[0];
+    usuario = user;
+
+    localStorage.setItem("usuarioLogado", usuario);
+
+    loginBox.style.display = "none";
+    document.body.style.overflow = "auto";
+
+    if (data.picture) {
+        perfilFoto.src = data.picture;
+        localStorage.setItem("fotoPerfil_" + usuario, data.picture);
     }
 
-    // logout Google Identity
-    try {
-        google.accounts.id.disableAutoSelect();
+    nomeUsuarioMenu.textContent = usuario;
 
-        google.accounts.id.revoke(usuario, () => {
-            console.log("Google desconectado.");
-        });
-    } catch(e){}
-
-    // volta para login
     setTimeout(() => {
-        window.location.reload();
-    }, 300);
+        location.reload();
+    }, 1000);
+}
+
+function decodeJwt(token) {
+    return JSON.parse(atob(token.split('.')[1]));
 }
 </script>
-<!-- STORY DO USUÁRIO – CARREGA FOTO NO CÍRCULO -->
 <script>
-document.addEventListener("DOMContentLoaded", () => {
-    const usuarioLogado = localStorage.getItem("usuarioLogado");
+/* ------------------------------------------ */
+/*       FOTO DE PERFIL DO USUÁRIO            */
+/* ------------------------------------------ */
 
-    if (usuarioLogado) {
-        const foto = localStorage.getItem("fotoPerfil_" + usuarioLogado);
-        if (foto) {
-            document.getElementById("meuStoryFoto").src = foto;
+document.getElementById("fotoPerfilUpload").addEventListener("change", function () {
+    const file = this.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = e => {
+        const imgBase64 = e.target.result;
+
+        if (usuario) {
+            localStorage.setItem("fotoPerfil_" + usuario, imgBase64);
         }
+
+        perfilFoto.src = imgBase64;
+
+        /* Atualiza foto no story (círculo do usuário) caso exista */
+        const meuStoryFoto = document.getElementById("meuStoryFoto");
+        if (meuStoryFoto) meuStoryFoto.src = imgBase64;
+    };
+
+    reader.readAsDataURL(file);
+});
+
+/* ------------------------------------------ */
+/*                RÁDIO PLAYER                */
+/* ------------------------------------------ */
+
+let tocando = false;
+
+function toggleRadio() {
+    const player = document.getElementById("radioPlayer");
+    const btn = document.getElementById("playBtn");
+
+    if (!tocando) {
+        player.play();
+        btn.textContent = "⏸";
+        tocando = true;
+    } else {
+        player.pause();
+        btn.textContent = "▶";
+        tocando = false;
+    }
+}
+
+/* ------------------------------------------ */
+/*              MENU HAMBÚRGUER               */
+/* ------------------------------------------ */
+
+function toggleMenu() {
+    const menu = document.getElementById("sideMenu");
+    menu.style.right = (menu.style.right === "0px") ? "-260px" : "0px";
+}
+
+document.addEventListener("click", function(e) {
+    const menu = sideMenu;
+    const icon = menuIcon;
+
+    if (!menu.contains(e.target) && !icon.contains(e.target)) {
+        menu.style.right = "-260px";
     }
 });
 </script>
-
-<!-- 🔔 SOM DE NOTIFICAÇÃO 100% FUNCIONAL VIA GITHUB -->
+<!-- 🔔 SOM DE NOTIFICAÇÃO 100% FUNCIONAL -->
 <audio id="notificaChat" preload="none">
     <source src="https://marcio2307.github.io/terreiro/som.mp3" type="audio/mpeg">
 </audio>
 
 <script>
+/* -------------------------------------------------- */
+/*       LIBERAR SOM NO CELULAR (iPhone/Android)      */
+/* -------------------------------------------------- */
+
 (function(){
     const audio = document.getElementById("notificaChat");
     if (!audio) return;
@@ -1386,7 +1462,7 @@ document.addEventListener("DOMContentLoaded", () => {
 })();
 </script>
 
-<!-- 🔥 PRESENÇA + ONDISCONNECT + NOTIFICAÇÕES + INATIVIDADE -->
+<!-- 🔥 PRESENÇA + ONDISCONNECT + NOTIFICAÇÕES -->
 <script type="module">
 import { 
     getApp, initializeApp 
@@ -1415,10 +1491,14 @@ try {
 const db = getDatabase(app);
 
 usuario = localStorage.getItem("usuarioLogado");
+
 const foto = localStorage.getItem("fotoPerfil_" + usuario)
     || "https://cdn-icons-png.flaticon.com/512/149/149071.png";
 
-/* 🔥 PRESENÇA ONLINE */
+/* -------------------------------------------------- */
+/*              PRESENÇA ONLINE NO FIREBASE           */
+/* -------------------------------------------------- */
+
 function iniciarPresenca() {
 
     const userRef = ref(db, "chat/usuariosOnline/" + usuario);
@@ -1426,7 +1506,7 @@ function iniciarPresenca() {
     // Marca online
     set(userRef, { nome: usuario, foto, online: true });
 
-    // Sai do online se fechar aba, perder internet, travar app, bloquear tela etc.
+    // Sai ao fechar aba
     onDisconnect(userRef).set({
         nome: usuario,
         foto,
@@ -1447,23 +1527,29 @@ function iniciarPresenca() {
     });
 
     setInterval(() => {
+
         const tempoParado = Date.now() - ultimoToque;
 
         if (tempoParado >= 120000) {
             // offline por inatividade
             set(userRef, { nome: usuario, foto, online: false });
         } else {
-            // online novamente se mexer
+            // voltou a mexer
             set(userRef, { nome: usuario, foto, online: true });
         }
+
     }, 4000);
 }
 
-/* 🔔 NOTIFICAÇÕES DE CHAT */
+/* -------------------------------------------------- */
+/*              NOTIFICAÇÕES DO CHAT                   */
+/* -------------------------------------------------- */
+
 function iniciarNotificacoes() {
     const convRef = ref(db, "chat/conversas");
 
     onValue(convRef, snap => {
+
         if (!snap.exists()) return;
 
         snap.forEach(roomSnap => {
@@ -1472,7 +1558,6 @@ function iniciarNotificacoes() {
             if (!roomId.includes(usuario)) return;
 
             let ultima = null;
-
             roomSnap.forEach(m => ultima = m.val());
 
             if (!ultima) return;
@@ -1486,14 +1571,54 @@ function iniciarNotificacoes() {
     });
 }
 
+/* -------------------------------------------------- */
+/*                 INICIAR SISTEMAS                   */
+/* -------------------------------------------------- */
+
 if (usuario) {
     iniciarPresenca();
     iniciarNotificacoes();
 }
 </script>
 
+<!-- LOGOUT COMPLETO -->
+<script>
+function logout() {
 
+    // remove login salvo
+    localStorage.removeItem("usuarioLogado");
 
+    if (usuario) {
+        localStorage.removeItem("fotoPerfil_" + usuario);
+    }
 
+    // logout Google Identity
+    try {
+        google.accounts.id.disableAutoSelect();
 
+        google.accounts.id.revoke(usuario, () => {
+            console.log("Google desconectado.");
+        });
+    } catch(e){}
 
+    // volta para login
+    setTimeout(() => {
+        window.location.reload();
+    }, 300);
+}
+</script>
+
+<!-- STORY DO USUÁRIO – CARREGA FOTO NO CÍRCULO -->
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+    const usuarioLogado = localStorage.getItem("usuarioLogado");
+
+    if (usuarioLogado) {
+        const foto = localStorage.getItem("fotoPerfil_" + usuarioLogado);
+        if (foto) {
+            const meuStoryFoto = document.getElementById("meuStoryFoto");
+            if (meuStoryFoto) meuStoryFoto.src = foto;
+        }
+    }
+});
+</script>
