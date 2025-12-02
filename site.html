@@ -34,8 +34,8 @@
     }
 
     .card {
-        width: 120px;
-        height: 200px;
+        width: 110px;
+        height: 180px;
         background: #1a1c1e;
         border-radius: 15px;
         overflow: hidden;
@@ -52,11 +52,11 @@
     #card2 { display: none; }
 
     .plus {
-        width: 60px;
-        height: 60px;
+        width: 55px;
+        height: 55px;
         background: #00ff8c;
         border-radius: 50%;
-        font-size: 45px;
+        font-size: 38px;
         border: 4px solid #0e0f10;
         display: flex;
         align-items: center;
@@ -64,13 +64,6 @@
         color: #003b23;
         text-shadow: 0 0 10px #00ff8c;
         box-shadow: 0 0 25px #00ff8c;
-        animation: neonPulse 1.5s infinite;
-    }
-
-    @keyframes neonPulse {
-        0% { box-shadow: 0 0 8px #00ff8c; }
-        50% { box-shadow: 0 0 25px #00ff8c; }
-        100% { box-shadow: 0 0 8px #00ff8c; }
     }
 
     #thumb img,
@@ -194,7 +187,7 @@
     .input-box{
         flex:1;
         background:#111;
-        padding:12px 20px;
+        padding:10px 18px;
         border-radius:30px;
         border:1px solid #00ff9d;
         color:#fff;
@@ -203,45 +196,39 @@
         box-shadow:inset 0 0 8px #00ff9d;
     }
 
+    /* BOTÃO '+' AJUSTADO */
     .add-btn{
         background:#111;
         border:2px solid #00ff9d;
         color:#00ff9d;
-        padding:7px 15px;
-        border-radius:25px;
-        font-weight:bold;
-        cursor:pointer;
-        transition:.3s;
-        box-shadow:0 0 10px #00ff9d;
+        width:45px;
+        height:45px;
+        border-radius:50%;
         font-size:22px;
-        width:55px;
-        height:55px;
+        font-weight:bold;
         display:flex;
         align-items:center;
         justify-content:center;
+        cursor:pointer;
+        box-shadow:0 0 10px #00ff9d;
+        transition:.3s;
     }
 
-    .add-btn:hover{ background:#00ff9d;color:#000; }
-
-    /* 🔥 BOTÃO WHATSAPP DE ENVIAR 🔥 */
+    /* 🔥 BOTÃO WHATSAPP NEON */
     .whatsapp-send{
-        width:55px;
-        height:55px;
+        width:45px;
+        height:45px;
         background:#00ff9d;
         border-radius:50%;
         display:flex;
         align-items:center;
         justify-content:center;
-        font-size:28px;
+        font-size:26px;
         color:#003b23;
         cursor:pointer;
         box-shadow:0 0 15px #00ff9d;
-        border:2px solid #0d0d0d;
         transition:.3s;
-    }
-
-    .whatsapp-send:active{
-        transform:scale(.90);
+        border:2px solid #003b23;
     }
 
     #fileInput{display:none;}
@@ -288,12 +275,6 @@
         text-align:center;
     }
 
-    .btn-action:hover{
-        background:#00ff9d;
-        color:#000;
-        box-shadow:0 0 10px #00ff9d;
-    }
-
     .contador{
         margin-top:5px;
         font-size:13px;
@@ -301,16 +282,33 @@
         text-align:center;
     }
 
+    .coment-area{
+        background:#111;
+        padding:10px;
+        margin-top:10px;
+        border-radius:10px;
+        display:none;
+    }
+
     @media (max-width:480px){
         .card{
             width:95px;
             height:170px;
         }
+        .add-btn, .whatsapp-send{
+            width:42px;
+            height:42px;
+            font-size:22px;
+        }
+        .btn-action{
+            font-size:13px;
+        }
     }
 </style>
 </head>
 <body>
-<!-- ================= STORIES EM CIMA ================= -->
+
+<!-- ================= STORIES ================= -->
 <div class="stories-wrapper">
     <div class="stories-row">
         <div class="card" id="card1">
@@ -325,33 +323,27 @@
     </div>
 </div>
 
-<!-- VIEWER DOS STORIES -->
+<!-- VIEWER -->
 <div id="viewer">
     <div class="topBars" id="bars"></div>
-
     <div class="dots" id="dots">⋮</div>
     <div class="deleteBtn" id="deleteBtn">Excluir</div>
-
     <div class="tapLeft" id="tapLeft"></div>
     <div class="tapRight" id="tapRight"></div>
-
     <div id="viewerMedia"></div>
 </div>
 
 <script>
-/* ============ STORIES =========== */
+/* ---------------- STORIES SCRIPT COMPLETO ---------------- */
 let stories = [];
 let current = 0;
 
-/* UPLOAD — agora aceita QUALQUER video */
 upload.onchange = e => {
     let file = e.target.files[0];
     if (!file) return;
-
     addStory(file);
 };
 
-/* ADICIONAR STORY */
 function addStory(file) {
     let url = URL.createObjectURL(file);
 
@@ -363,7 +355,6 @@ function addStory(file) {
     setTimeout(() => card2.classList.remove("neonEffect"), 1700);
 }
 
-/* MINIATURA */
 function updateThumb() {
     if (stories.length === 0) {
         card2.style.display = "none";
@@ -380,7 +371,6 @@ function updateThumb() {
         thumb.innerHTML = `<video src="${last.url}" autoplay muted loop></video>`;
 }
 
-/* ABRIR VIEWER */
 card2.onclick = () => {
     if (stories.length === 0) return;
     openViewer(0);
@@ -392,7 +382,6 @@ function openViewer(idx) {
     showStory();
 }
 
-/* MOSTRAR STORY */
 function showStory() {
     viewerMedia.innerHTML = "";
     bars.innerHTML = "";
@@ -421,7 +410,7 @@ function showStory() {
         el.src = s.url;
         viewerMedia.appendChild(el);
 
-        runProgress(120000); // 2 min
+        runProgress(120000);
     } 
     else {
         el = document.createElement("video");
@@ -437,19 +426,15 @@ function showStory() {
 
             runProgress(dur);
 
-            setTimeout(() => {
-                nextStory();
-            }, dur);
+            setTimeout(() => nextStory(), dur);
         };
 
         viewerMedia.appendChild(el);
     }
 }
 
-/* PROGRESSO */
 function runProgress(ms) {
     let fill = document.getElementById("currentFill");
-
     if (!fill) return;
 
     fill.style.transition = "none";
@@ -461,7 +446,6 @@ function runProgress(ms) {
     }, 50);
 }
 
-/* PARAR VÍDEO */
 function stopVideo() {
     let vid = viewerMedia.querySelector("video");
     if (vid) {
@@ -471,7 +455,6 @@ function stopVideo() {
     }
 }
 
-/* PRÓXIMO */
 function nextStory() {
     stopVideo();
 
@@ -480,7 +463,6 @@ function nextStory() {
     else showStory();
 }
 
-/* VOLTAR */
 function prevStory() {
     if (current <= 0) return;
 
@@ -492,20 +474,17 @@ function prevStory() {
 tapRight.onclick = nextStory;
 tapLeft.onclick = prevStory;
 
-/* FECHAR VIEWER */
 function closeViewer() {
     stopVideo();
     viewer.style.display = "none";
     deleteBtn.style.display = "none";
 }
 
-/* MENU */
 dots.onclick = () => {
     deleteBtn.style.display =
         deleteBtn.style.display === "block" ? "none" : "block";
 };
 
-/* EXCLUIR */
 deleteBtn.onclick = () => {
     stopVideo();
     stories.splice(current, 1);
@@ -513,9 +492,8 @@ deleteBtn.onclick = () => {
     updateThumb();
 };
 </script>
-<!-- ===================== FEED / MURAL ===================== -->
 
-<!-- Criar postagem -->
+<!-- ===================== FEED / MURAL ===================== -->
 <div class="create-post">
     <input type="text" id="postText" class="input-box"
            placeholder="No que você está pensando?"
@@ -525,7 +503,6 @@ deleteBtn.onclick = () => {
     <input type="file" id="fileInput" accept="image/*,video/*">
 </div>
 
-<!-- Prévia -->
 <div class="preview" id="previewBox">
     <h3>Prévia da mídia</h3>
     <div id="previewContent"></div>
@@ -535,7 +512,7 @@ deleteBtn.onclick = () => {
 <div id="feed"></div>
 
 <script>
-/* ===================== FEED SCRIPT ===================== */
+/* ---------------- FEED SCRIPT COMPLETO ---------------- */
 
 let selectedFile = null;
 let mode = "add";
@@ -543,7 +520,7 @@ let curtidas = {};
 let longPress = {};
 let holdTimer = null;
 
-/* -------- BOTÃO POSTAR OU "+" (AGORA VIRANDO WHATSAPP) ---------- */
+/* BOTÃO WHATSAPP / + */
 function updateButton(){
     let t = postText.value.trim();
 
@@ -558,12 +535,10 @@ function updateButton(){
     }
 }
 
-/* -------- AÇÃO DO BOTÃO PRINCIPAL ---------- */
 function buttonAction(){
     mode === "add" ? fileInput.click() : postarTexto();
 }
 
-/* -------- PRÉVIA DE FOTO / VÍDEO ---------- */
 fileInput.onchange = e =>{
     selectedFile = e.target.files[0];
     if(!selectedFile) return;
@@ -571,15 +546,13 @@ fileInput.onchange = e =>{
     let url = URL.createObjectURL(selectedFile);
 
     previewContent.innerHTML =
-        selectedFile.type.startsWith("image/") ?
-        `<img src="${url}" style="width:100%;border-radius:10px;">`
-        :
-        `<video src="${url}" controls style="width:100%;border-radius:10px;"></video>`;
+        selectedFile.type.startsWith("image/")
+        ? `<img src="${url}" style="width:100%;border-radius:10px;">`
+        : `<video src="${url}" controls style="width:100%;border-radius:10px;"></video>`;
 
     previewBox.style.display = "block";
 };
 
-/* -------- POSTAR TEXTO ---------- */
 function postarTexto(){
     let t = postText.value.trim();
     if(t==="") return;
@@ -590,7 +563,6 @@ function postarTexto(){
     updateButton();
 }
 
-/* -------- POSTAR MÍDIA ---------- */
 function postar(){
     let url = URL.createObjectURL(selectedFile);
 
@@ -602,7 +574,6 @@ function postar(){
     updateButton();
 }
 
-/* ============== CRIAÇÃO DO POST NO FEED ============== */
 function criarPost(texto, url, file){
     const id = "post_" + Date.now();
 
@@ -611,9 +582,9 @@ function criarPost(texto, url, file){
 
     let midia = "";
     if(file){
-        midia = file.type.startsWith("image/") ?
-        `<img src="${url}">` :
-        `<video src="${url}" controls></video>`;
+        midia = file.type.startsWith("image/")
+        ? `<img src="${url}">`
+        : `<video src="${url}" controls></video>`;
     }
 
     feed.innerHTML =
@@ -653,6 +624,7 @@ function criarPost(texto, url, file){
 
         </div>
 
+        <!-- Comentários -->
         <div class="coment-area" id="comentarios_${id}">
             <div id="listaComentarios_${id}" style="margin-bottom:15px;"></div>
 
@@ -672,7 +644,6 @@ function criarPost(texto, url, file){
     ` + feed.innerHTML;
 }
 
-/* MENU POST */
 function toggleMenu(id){
     let m = document.getElementById("menu_"+id);
     m.style.display = m.style.display==="block" ? "none" : "block";
@@ -688,7 +659,7 @@ function pressionarCurtir(id){
     holdTimer = setTimeout(()=>{
         longPress[id] = true;
         amei(id);
-    }, 800);
+    }, 500);
 }
 
 function soltarCurtir(id){
@@ -744,29 +715,29 @@ function amei(id){
 function atualizarCurtidas(id){
     const cont = document.getElementById("contadorCurtidas_"+id);
     const t = curtidas[id].total;
-
     if(t===0) cont.innerHTML="";
     else if(t===1) cont.innerHTML="Você curtiu";
     else cont.innerHTML=`Você e mais ${t-1} curtiram`;
 }
 
-/* COMENTÁRIOS */
+/* ----------- COMENTÁRIOS (ATUALIZADO COM FECHAR FORA) ----------- */
 function abrirComentarios(id){
     const box = document.getElementById("comentarios_"+id);
     box.style.display = "block";
 
-    document.removeEventListener("click", fecharComentarios);
+    document.removeEventListener("click", fecharBox);
 
-    function fecharComentarios(e){
-        if(!box.contains(e.target) && !e.target.closest(".btn-action")){
-            box.style.display="none";
-            document.removeEventListener("click", fecharComentarios);
+    function fecharBox(e){
+        const insideBox = box.contains(e.target);
+        const clickedButton = e.target.closest(".btn-action");
+
+        if(!insideBox && !clickedButton){
+            box.style.display = "none";
+            document.removeEventListener("click", fecharBox);
         }
     }
 
-    setTimeout(()=>{
-        document.addEventListener("click", fecharComentarios);
-    },50);
+    setTimeout(()=> document.addEventListener("click", fecharBox), 50);
 }
 
 function enviarComentario(id){
@@ -776,42 +747,20 @@ function enviarComentario(id){
 
     const lista = document.getElementById("listaComentarios_"+id);
     const contador = document.getElementById("contadorComentarios_"+id);
-    const cid = "c_"+Date.now();
 
     lista.innerHTML += `
-        <div id="${cid}"
-             style="background:#000;border:1px solid #00ff9d;padding:8px;
-                    border-radius:8px;margin-bottom:5px;position:relative;">
+        <div style="background:#000;border:1px solid #00ff9d;padding:8px;
+                    border-radius:8px;margin-bottom:5px;">
             💬 ${texto}
-            <div class="coment-menu" onclick="toggleComentarioMenu('${cid}')">⋮</div>
-            <div class="coment-menu-box" id="menu_${cid}"
-                 onclick="excluirComentario('${cid}')">Excluir</div>
         </div>
     `;
 
-    atualizarContadorComentarios(lista, contador);
     input.value="";
-}
 
-function atualizarContadorComentarios(lista, contador){
     let total = lista.children.length;
-    if(total===0) contador.innerHTML="";
-    else if(total===1) contador.innerHTML="1 comentário";
-    else contador.innerHTML=`${total} comentários`;
-}
-
-function toggleComentarioMenu(id){
-    let b = document.getElementById("menu_"+id);
-    b.style.display = b.style.display==="block" ? "none" : "block";
-}
-
-function excluirComentario(id){
-    let el = document.getElementById(id);
-    let lista = el.parentElement;
-    const postId = lista.id.replace("listaComentarios_","");
-    const contador = document.getElementById("contadorComentarios_"+postId);
-
-    el.remove();
-    atualizarContadorComentarios(lista, contador);
+    contador.innerHTML = total===1 ? "1 comentário" : `${total} comentários`;
 }
 </script>
+
+</body>
+</html>
