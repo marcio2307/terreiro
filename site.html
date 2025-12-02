@@ -290,6 +290,31 @@
         display:none;
     }
 
+    /* 🔥 AJUSTE DOS 3 PONTOS À DIREITA */
+    .menu-btn {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        font-size: 28px;
+        cursor: pointer;
+        color: #00ff9d;
+        z-index: 10;
+    }
+
+    .menu-box {
+        position: absolute;
+        top: 45px;
+        right: 10px;
+        background: #00ff9d;
+        color: #000;
+        padding: 10px 15px;
+        border-radius: 8px;
+        display: none;
+        cursor: pointer;
+        font-weight: bold;
+        box-shadow: 0 0 12px #00ff9d;
+    }
+
     @media (max-width:480px){
         .card{
             width:95px;
@@ -593,7 +618,7 @@ function criarPost(texto, url, file){
         
         <div class="menu-btn" onclick="toggleMenu('${id}')">⋮</div>
         <div class="menu-box" id="menu_${id}">
-            <div onclick="excluirPost('${id}')">Excluir postagem</div>
+            <div onclick="excluirPost('${id}')">Excluir</div>
         </div>
 
         <h3>🌟 Usuário Neon</h3>
