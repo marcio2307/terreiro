@@ -213,9 +213,36 @@
         cursor:pointer;
         transition:.3s;
         box-shadow:0 0 10px #00ff9d;
+        font-size:22px;
+        width:55px;
+        height:55px;
+        display:flex;
+        align-items:center;
+        justify-content:center;
     }
 
     .add-btn:hover{ background:#00ff9d;color:#000; }
+
+    /* 🔥 BOTÃO WHATSAPP DE ENVIAR 🔥 */
+    .whatsapp-send{
+        width:55px;
+        height:55px;
+        background:#00ff9d;
+        border-radius:50%;
+        display:flex;
+        align-items:center;
+        justify-content:center;
+        font-size:28px;
+        color:#003b23;
+        cursor:pointer;
+        box-shadow:0 0 15px #00ff9d;
+        border:2px solid #0d0d0d;
+        transition:.3s;
+    }
+
+    .whatsapp-send:active{
+        transform:scale(.90);
+    }
 
     #fileInput{display:none;}
 
@@ -274,34 +301,6 @@
         text-align:center;
     }
 
-    .menu-btn{
-        position:absolute;top:15px;right:15px;font-size:24px;cursor:pointer;
-    }
-
-    .menu-box{
-        position:absolute;top:45px;right:15px;background:#111;
-        border:1px solid #00ff9d;padding:10px;border-radius:10px;
-        display:none;box-shadow:0 0 10px #00ff9d;
-    }
-
-    .coment-area{
-        background:#111;
-        padding:10px;
-        margin-top:10px;
-        border-radius:10px;
-        display:none;
-    }
-
-    .coment-menu{
-        position:absolute;right:5px;top:5px;font-size:18px;cursor:pointer;
-    }
-
-    .coment-menu-box{
-        position:absolute;right:5px;top:25px;background:#111;border:1px solid #00ff9d;
-        padding:6px 10px;border-radius:8px;display:none;
-        font-size:13px;cursor:pointer;color:#fff;
-    }
-
     @media (max-width:480px){
         .card{
             width:95px;
@@ -311,7 +310,6 @@
 </style>
 </head>
 <body>
-
 <!-- ================= STORIES EM CIMA ================= -->
 <div class="stories-wrapper">
     <div class="stories-row">
@@ -341,16 +339,16 @@
 </div>
 
 <script>
-/* ============ STORIES (EXATAMENTE O SEU CÓDIGO) =========== */
+/* ============ STORIES =========== */
 let stories = [];
 let current = 0;
 
-/* UPLOAD — aceita QUALQUER vídeo agora */
+/* UPLOAD — agora aceita QUALQUER video */
 upload.onchange = e => {
     let file = e.target.files[0];
     if (!file) return;
 
-    addStory(file); // agora sempre aceita
+    addStory(file);
 };
 
 /* ADICIONAR STORY */
@@ -423,7 +421,7 @@ function showStory() {
         el.src = s.url;
         viewerMedia.appendChild(el);
 
-        runProgress(120000); // 2 min máx
+        runProgress(120000); // 2 min
     } 
     else {
         el = document.createElement("video");
@@ -433,13 +431,12 @@ function showStory() {
 
         el.onloadedmetadata = () => {
             let realDur = el.duration * 1000;
-            let maxDur = 120000; // 2 minutos
+            let maxDur = 120000;
 
             let dur = Math.min(realDur, maxDur);
 
             runProgress(dur);
 
-            /* corta o vídeo na visualização */
             setTimeout(() => {
                 nextStory();
             }, dur);
@@ -449,7 +446,7 @@ function showStory() {
     }
 }
 
-/* BARRA DE PROGRESSO */
+/* PROGRESSO */
 function runProgress(ms) {
     let fill = document.getElementById("currentFill");
 
@@ -464,7 +461,7 @@ function runProgress(ms) {
     }, 50);
 }
 
-/* PARAR O SOM */
+/* PARAR VÍDEO */
 function stopVideo() {
     let vid = viewerMedia.querySelector("video");
     if (vid) {
@@ -516,7 +513,6 @@ deleteBtn.onclick = () => {
     updateThumb();
 };
 </script>
-
 <!-- ===================== FEED / MURAL ===================== -->
 
 <!-- Criar postagem -->
@@ -540,20 +536,29 @@ deleteBtn.onclick = () => {
 
 <script>
 /* ===================== FEED SCRIPT ===================== */
+
 let selectedFile = null;
 let mode = "add";
 let curtidas = {};
 let longPress = {};
 let holdTimer = null;
 
-/* -------- BOTÃO POSTAR OU "+" ---------- */
+/* -------- BOTÃO POSTAR OU "+" (AGORA VIRANDO WHATSAPP) ---------- */
 function updateButton(){
     let t = postText.value.trim();
-    btnMain.textContent = t.length > 0 ? "Postar" : "+";
-    btnMain.style.fontSize = t.length > 0 ? "16px" : "22px";
-    mode = t.length > 0 ? "postar" : "add";
+
+    if(t.length > 0){
+        btnMain.className = "whatsapp-send";
+        btnMain.innerHTML = "➤";
+        mode = "postar";
+    } else {
+        btnMain.className = "add-btn";
+        btnMain.innerHTML = "+";
+        mode = "add";
+    }
 }
 
+/* -------- AÇÃO DO BOTÃO PRINCIPAL ---------- */
 function buttonAction(){
     mode === "add" ? fileInput.click() : postarTexto();
 }
@@ -672,6 +677,7 @@ function toggleMenu(id){
     let m = document.getElementById("menu_"+id);
     m.style.display = m.style.display==="block" ? "none" : "block";
 }
+
 function excluirPost(id){
     document.getElementById(id).remove();
 }
@@ -684,9 +690,11 @@ function pressionarCurtir(id){
         amei(id);
     }, 800);
 }
+
 function soltarCurtir(id){
     if(holdTimer) clearTimeout(holdTimer);
 }
+
 function curtir(id){
     const dados = curtidas[id];
     const btn = document.getElementById("curtir_"+id);
@@ -711,6 +719,7 @@ function curtir(id){
     }
     atualizarCurtidas(id);
 }
+
 function amei(id){
     const dados = curtidas[id];
     const btn = document.getElementById("curtir_"+id);
@@ -728,11 +737,14 @@ function amei(id){
         btn.textContent="❤️ Você amou";
         btn.style.color="#ff008c";
     }
+
     atualizarCurtidas(id);
 }
+
 function atualizarCurtidas(id){
     const cont = document.getElementById("contadorCurtidas_"+id);
     const t = curtidas[id].total;
+
     if(t===0) cont.innerHTML="";
     else if(t===1) cont.innerHTML="Você curtiu";
     else cont.innerHTML=`Você e mais ${t-1} curtiram`;
@@ -803,6 +815,3 @@ function excluirComentario(id){
     atualizarContadorComentarios(lista, contador);
 }
 </script>
-
-</body>
-</html>
