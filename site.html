@@ -12,7 +12,7 @@
 <!-- Google Login -->
 <script src="https://accounts.google.com/gsi/client" async defer></script>
 
-<!-- ====================== PARTE 2: CSS COMPLETO ENTRA AQUI DEPOIS ====================== -->
+<!-- ====================== PARTE 2 (CSS COMPLETO) VEM NA PARTE 2 ====================== -->
 <style></style>
 
 </head>
@@ -42,10 +42,11 @@ z-index:999999;
     <img id="userPhoto" style="
         width:95px;height:95px;border-radius:50%;
         border:3px solid #00ff8c;object-fit:cover;">
-    <div id="userName" style="margin-top:8px;color:#00ff8c;font-size:1.2rem;font-weight:bold;"></div>
+    <div id="userName"
+         style="margin-top:8px;color:#00ff8c;font-size:1.2rem;font-weight:bold;"></div>
 </div>
 
-<!-- ====================== STORIES (HTML PURO – PARTE 3 COMPLETA ABAIXO) ====================== -->
+<!-- ====================== STORIES ====================== -->
 <div class="stories-wrapper">
     <div class="stories-row" id="storiesRow">
 
@@ -56,7 +57,7 @@ z-index:999999;
             <span style="margin-top:10px;">Criar Story</span>
         </div>
 
-        <!-- CARD 2: SEUS STORIES (só aparece após o primeiro) -->
+        <!-- CARD 2: SEUS STORIES (inicia oculto) -->
         <div class="card" id="card2" style="display:none;">
             <div id="thumb"></div>
         </div>
@@ -64,7 +65,7 @@ z-index:999999;
     </div>
 </div>
 
-<!-- VIEWER STORIES -->
+<!-- VIEWER DOS STORIES -->
 <div id="viewer">
     <div class="topBars" id="bars"></div>
     <div class="dots" id="dots">⋮</div>
@@ -78,8 +79,12 @@ z-index:999999;
 
 <!-- ====================== FEED ====================== -->
 <div class="create-post">
-    <input id="postText" class="input-box" placeholder="No que você está pensando?" oninput="updateButton()">
+    <input id="postText" class="input-box" 
+           placeholder="No que você está pensando?"
+           oninput="updateButton()">
+
     <div class="add-btn" id="btnMain" onclick="buttonAction()">+</div>
+
     <input type="file" id="fileInput" accept="image/*,video/*" style="display:none;">
 </div>
 
@@ -93,11 +98,7 @@ z-index:999999;
 
 <div id="feed"></div>
 
-
-<!-- ====================================================================== -->
-<!-- ====================== FIREBASE CONFIG ================================= -->
-<!-- ====================================================================== -->
-
+<!-- ====================== FIREBASE CONFIG ====================== -->
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.14.0/firebase-app.js";
 
@@ -114,30 +115,26 @@ window.firebaseConfig = {
 window.app = initializeApp(window.firebaseConfig);
 </script>
 
-
-<!-- ====================================================================== -->
-<!-- ====================== LOGIN GOOGLE SCRIPT ============================ -->
-<!-- ====================================================================== -->
-
+<!-- ====================== LOGIN GOOGLE SCRIPT ====================== -->
 <script>
 let usuario = null;
 let fotoUsuario = null;
 
-document.addEventListener("DOMContentLoaded", () => {
-    setTimeout(() => {
-        google.accounts.id.initialize({
-            client_id: "627442405379-srqriainr8okj7ldg96njd1va5bvt7oi.apps.googleusercontent.com",
-            callback: handleLoginGoogle
-        });
+/* UNIFICADO — SEM DUPLICAÇÃO */
+window.addEventListener("load", () => {
 
-        google.accounts.id.renderButton(
-            document.getElementById("googleLogin"),
-            { theme: "filled_black", size: "large", width: 260 }
-        );
+    google.accounts.id.initialize({
+        client_id: "627442405379-srqriainr8okj7ldg96njd1va5bvt7oi.apps.googleusercontent.com",
+        callback: handleLoginGoogle
+    });
 
-        const salvo = localStorage.getItem("usuarioLogado");
-        if (salvo) restaurarLogin(salvo);
-    }, 300);
+    google.accounts.id.renderButton(
+        document.getElementById("googleLogin"),
+        { theme: "filled_black", size: "large", width: 260 }
+    );
+
+    const salvo = localStorage.getItem("usuarioLogado");
+    if (salvo) restaurarLogin(salvo);
 });
 
 function handleLoginGoogle(resp) {
@@ -161,8 +158,10 @@ function restaurarLogin(nome) {
 }
 
 function atualizarInterface() {
+
     loginBox.style.display = "none";
-    userHeader.style.display = "block";
+
+    userHeader.style.display = "flex";
     userName.textContent = usuario;
     userPhoto.src = fotoUsuario;
 
@@ -250,7 +249,6 @@ html, body {
 }
 
 
-
 /* ================================================================
    ÁREA DE STORIES
 ================================================================ */
@@ -331,7 +329,6 @@ html, body {
     50% { transform: scale(1.05); box-shadow: 0 0 35px #00ff8c; }
     100% { transform: scale(1); box-shadow: 0 0 10px #00ff8c; }
 }
-
 
 
 /* ================================================================
@@ -419,7 +416,6 @@ html, body {
 
 .tapLeft { left: 0; }
 .tapRight { right: 0; }
-
 
 
 /* ================================================================
@@ -635,8 +631,6 @@ html, body {
 }
 
 </style>
-<!-- ========================== PARTE 3 — STORIES CORRIGIDOS ========================== -->
-
 <script type="module">
 
 import { getStorage, ref as sref, uploadBytes, getDownloadURL }
@@ -648,9 +642,11 @@ from "https://www.gstatic.com/firebasejs/10.14.0/firebase-database.js";
 const db = getDatabase(app);
 const storage = getStorage(app);
 
-/* VARIÁVEIS */
-let storiesUser = [];
-let storiesOthers = [];
+/* ======================================================
+   VARIÁVEIS
+====================================================== */
+let storiesUser = [];     // stories do usuário logado
+let storiesOthers = [];   // stories de outros usuários
 
 /* ======================================================
    1) UPLOAD DO STORY (+)
@@ -674,6 +670,7 @@ storyUpload.onchange = async e => {
         user: usuario
     });
 
+    // efeito neon ao postar
     card2.classList.add("neonEffect");
     setTimeout(() => card2.classList.remove("neonEffect"), 1500);
 
@@ -681,7 +678,7 @@ storyUpload.onchange = async e => {
 };
 
 /* ======================================================
-   2) CARREGAMENTO EM TEMPO REAL — LIMPO SEM DUPLICAÇÃO
+   2) CARREGAMENTO EM TEMPO REAL (SEM BUG, SEM VAZIO)
 ====================================================== */
 
 onValue(ref(db, "coletivo_mural/stories"), snap => {
@@ -703,8 +700,7 @@ onValue(ref(db, "coletivo_mural/stories"), snap => {
         userNode.forEach(st => {
             const v = st.val();
 
-            // ---- IGNORA STORIES CORROMPIDOS ----
-            if (!v || !v.url || !v.tipo) return;
+            if (!v || !v.url || !v.tipo) return; // evita story vazio
 
             lista.push({
                 id: Number(v.id),
@@ -716,7 +712,7 @@ onValue(ref(db, "coletivo_mural/stories"), snap => {
 
         if (lista.length === 0) return;
 
-        lista.sort((a, b) => a.id - b.id);
+        lista.sort((a, b) => a.id - b.id); // ordem correta
 
         if (nome === usuario) storiesUser = lista;
         else storiesOthers.push(lista);
@@ -727,7 +723,7 @@ onValue(ref(db, "coletivo_mural/stories"), snap => {
 });
 
 /* ======================================================
-   3) CARD DO USUÁRIO (card2)
+   3) SEUS STORIES — CARD DO USUÁRIO
 ====================================================== */
 
 function atualizarThumb() {
@@ -752,7 +748,7 @@ card2.onclick = () => {
 };
 
 /* ======================================================
-   4) MONTAR STORIES DE OUTROS USUÁRIOS (SEM VAZIOS)
+   4) MONTAR STORIES DE OUTROS (CORRIGIDO)
 ====================================================== */
 
 function limparStoriesOutros() {
@@ -763,9 +759,9 @@ function montarStoriesOutros() {
 
     limparStoriesOutros();
 
-    if (storiesOthers.length === 0) return;
-
     const row = document.getElementById("storiesRow");
+
+    if (storiesOthers.length === 0) return;
 
     storiesOthers.forEach(lista => {
 
@@ -773,21 +769,21 @@ function montarStoriesOutros() {
 
         const ultimo = lista[lista.length - 1];
 
-        const card = document.createElement("div");
-        card.className = "card card-outro";
+        const c = document.createElement("div");
+        c.className = "card card-outro";
 
-        card.innerHTML = ultimo.tipo === "image"
+        c.innerHTML = ultimo.tipo === "image"
             ? `<img src="${ultimo.url}" style="width:100%;height:100%;object-fit:cover;">`
             : `<video src="${ultimo.url}" autoplay muted loop style="width:100%;height:100%;object-fit:cover;"></video>`;
 
-        card.onclick = () => abrirViewer(lista);
+        c.onclick = () => abrirViewer(lista);
 
-        row.appendChild(card);
+        row.appendChild(c);
     });
 }
 
 /* ======================================================
-   5) VIEWER
+   5) VIEWER DOS STORIES
 ====================================================== */
 
 let listaAtual = [];
@@ -810,7 +806,7 @@ function fecharViewer() {
 }
 
 /* ======================================================
-   6) MOSTRAR STORY
+   6) EXIBIR STORY (IMAGEM / VÍDEO)
 ====================================================== */
 
 function mostrarStory() {
@@ -821,27 +817,25 @@ function mostrarStory() {
 
     const s = listaAtual[indexAtual];
 
-    // BARRAS LIMPA
+    /* Barras */
     listaAtual.forEach((_, i) => {
         bars.innerHTML += `
             <div class="bar">
                 <div class="barFill" id="bar_${i}"></div>
-            </div>
-        `;
+            </div>`;
     });
 
     const barra = document.getElementById("bar_" + indexAtual);
+
     setTimeout(() => {
         barra.style.transition = "width 5500ms linear";
         barra.style.width = "100%";
     }, 50);
 
-    // MÍDIA
+    /* Mídia */
     if (s.tipo === "image") {
 
-        const img = document.createElement("img");
-        img.src = s.url;
-        viewerMedia.appendChild(img);
+        viewerMedia.innerHTML = `<img src="${s.url}">`;
 
         setTimeout(nextStory, 5500);
 
@@ -853,6 +847,7 @@ function mostrarStory() {
         vid.muted = false;
 
         vid.onloadedmetadata = () => {
+
             const dur = Math.min(vid.duration * 1000, 5500);
             setTimeout(nextStory, dur);
         };
@@ -871,25 +866,32 @@ tapRight.onclick = nextStory;
 tapLeft.onclick = prevStory;
 
 function nextStory() {
+
     indexAtual++;
-    if (indexAtual >= listaAtual.length) fecharViewer();
-    else mostrarStory();
+
+    if (indexAtual >= listaAtual.length) {
+        fecharViewer();
+    } else {
+        mostrarStory();
+    }
 }
 
 function prevStory() {
+
     if (indexAtual === 0) return;
+
     indexAtual--;
     mostrarStory();
 }
 
 /* ======================================================
-   8) EXCLUIR STORY
+   8) EXCLUSÃO DO STORY
 ====================================================== */
 
 deleteBtn.onclick = async () => {
 
     const s = listaAtual[indexAtual];
-    if (s.user !== usuario) return;
+    if (!s || s.user !== usuario) return;
 
     await remove(ref(db, `coletivo_mural/stories/${usuario}/${s.id}`));
 
@@ -897,26 +899,38 @@ deleteBtn.onclick = async () => {
 };
 
 </script>
-<!-- ========================== PARTE 4 — FEED COMPLETO ========================== -->
+<!-- ========================== PARTE 4 — FEED CORRIGIDO ========================== -->
 
 <script type="module">
 
-import { 
-    getStorage, ref as sref, uploadBytes, getDownloadURL
+/* IMPORTA FIREBASE */
+import {
+    getStorage,
+    ref as sref,
+    uploadBytes,
+    getDownloadURL
 } from "https://www.gstatic.com/firebasejs/10.14.0/firebase-storage.js";
 
-import { 
-    getDatabase, ref, set, push, onValue, remove
+import {
+    getDatabase,
+    ref,
+    set,
+    push,
+    onValue,
+    remove
 } from "https://www.gstatic.com/firebasejs/10.14.0/firebase-database.js";
 
 const db = getDatabase(app);
 const storage = getStorage(app);
 
 /* =====================================================================
-                      VARIÁVEIS GLOBAIS
+                        VARIÁVEIS GLOBAIS
 ===================================================================== */
 let selectedFile = null;
 let modoTexto = false;
+let likeCache = {};
+let longPress = {};
+let pressTimer = null;
 
 /* =====================================================================
         BOTÃO + → vira botão WhatsApp (➤) quando tem texto digitado
@@ -1030,7 +1044,7 @@ async function salvarPost(texto, midia, tipo) {
 }
 
 /* =====================================================================
-            CARREGAR FEED EM TEMPO REAL
+            CARREGAR FEED EM TEMPO REAL — SEM BUGS
 ===================================================================== */
 onValue(ref(db, "coletivo_mural/posts"), snap => {
 
@@ -1040,6 +1054,7 @@ onValue(ref(db, "coletivo_mural/posts"), snap => {
 
     let posts = [];
     snap.forEach(n => posts.push(n.val()));
+
     posts.sort((a, b) => b.timestamp - a.timestamp);
 
     posts.forEach(renderPost);
@@ -1068,10 +1083,10 @@ function renderPost(p) {
         ` : ""}
 
         <h3>
-            <img src="${p.foto}" 
+            <img src="${p.foto || ''}" 
                  style="width:38px;height:38px;border-radius:50%;
                  border:2px solid #00ff8c;margin-right:8px;vertical-align:middle;">
-            ${p.user}
+            ${p.user || "Usuário"}
         </h3>
 
         <p>${p.texto || ""}</p>
@@ -1085,8 +1100,13 @@ function renderPost(p) {
             <div style="text-align:center;">
                 <div class="btn-action"
                      id="curtir_${p.id}"
-                     onmousedown="pressionarCurtir('${p.id}')"
-                     onmouseup="soltarCurtir('${p.id}')"
+                     
+                     ontouchstart="iniciarPress('${p.id}')"
+                     ontouchend="finalizarPress('${p.id}')"
+
+                     onmousedown="iniciarPress('${p.id}')"
+                     onmouseup="finalizarPress('${p.id}')"
+
                      onclick="curtir('${p.id}')">
                      👍 Curtir
                 </div>
@@ -1130,28 +1150,23 @@ function renderPost(p) {
 }
 
 /* =====================================================================
-                   LIKE / AMEI — SISTEMA COMPLETO
+                   SISTEMA COMPLETO CURTIR / AMEI
 ===================================================================== */
-let longPress = {};
-let holdTimer = null;
-let likeCache = {};
 
-window.pressionarCurtir = function (id) {
-
+window.iniciarPress = function (id) {
     longPress[id] = false;
-    holdTimer = setTimeout(() => {
+
+    pressTimer = setTimeout(() => {
         longPress[id] = true;
         amar(id);
     }, 500);
 };
 
-window.soltarCurtir = function (id) {
-
-    if (holdTimer) clearTimeout(holdTimer);
+window.finalizarPress = function (id) {
+    if (pressTimer) clearTimeout(pressTimer);
 };
 
 window.curtir = function (postId) {
-
     if (longPress[postId]) return;
     salvarCurtida(postId, "curtida");
 };
@@ -1212,14 +1227,15 @@ function carregarCurtidas(postId) {
 
         if (total === 0) cont.innerHTML = "";
         else if (total === 1 && voce) cont.innerHTML = "Você curtiu";
-        else if (voce) cont.innerHTML = `Você e mais ${total-1} curtiram`;
+        else if (voce) cont.innerHTML = `Você e mais ${total - 1} curtiram`;
         else cont.innerHTML = `${total} curtidas`;
     });
 }
 
 /* =====================================================================
-                          COMENTÁRIOS
+                          COMENTÁRIOS COMPLETOS
 ===================================================================== */
+
 window.abrirComentarios = function (postId) {
 
     const box = document.getElementById("comentarios_" + postId);
@@ -1268,30 +1284,25 @@ function carregarComentarios(postId) {
 
             lista.innerHTML += `
 
-                <div id="cmt_${c.id}" 
+                <div id="cmt_${c.id}"
                     style="background:#000;border:1px solid #00ff9d;
                            padding:8px;border-radius:8px;margin-bottom:5px;
                            position:relative;">
 
-                    <img src="${c.foto}" 
+                    <img src="${c.foto}"
                          style="width:26px;height:26px;border-radius:50%;
                          border:1px solid #00ff9d;margin-right:5px;">
                     <b>${c.user}</b>: ${c.texto}
 
-                    ${
-                        c.user === usuario
-                        ? `
+                    ${c.user === usuario ? `
                         <span class="coment-menu-btn"
-                              onclick="toggleComentMenu('${c.id}')">⋮</span>
+                              onclick="toggleComentMenu('${postId}','${c.id}')">⋮</span>
 
-                        <div class="coment-menu-box" id="menu_${c.id}"
+                        <div class="coment-menu-box" id="menu_${postId}_${c.id}"
                              onclick="excluirComentario('${postId}','${c.id}')">
                              Excluir
                         </div>
-                        `
-                        : ""
-                    }
-
+                    ` : ""}
                 </div>
 
             `;
@@ -1303,8 +1314,8 @@ function carregarComentarios(postId) {
     });
 }
 
-window.toggleComentMenu = function (id) {
-    const box = document.getElementById("menu_" + id);
+window.toggleComentMenu = function (postId, cid) {
+    const box = document.getElementById("menu_" + postId + "_" + cid);
     box.style.display = box.style.display === "block" ? "none" : "block";
 };
 
@@ -1338,7 +1349,8 @@ window.abrirImagem = function (src) {
     `;
 
     modal.innerHTML = `
-        <img src="${src}" style="max-width:90%;max-height:90%;border-radius:12px;">
+        <img src="${src}" style="max-width:90%;max-height:90%;
+                                 border-radius:12px;">
     `;
 
     modal.onclick = () => modal.remove();
@@ -1346,209 +1358,130 @@ window.abrirImagem = function (src) {
 };
 
 </script>
-<!-- ========================== PARTE 5 — PRESENÇA ONLINE, SOM, UX FINAL ========================== -->
-
-<!-- 🔔 SOM DE NOTIFICAÇÃO DO CHAT -->
-<audio id="notificaChat" preload="none">
-    <source src="https://marcio2307.github.io/terreiro/som.mp3" type="audio/mpeg">
-</audio>
-
-<script>
-/* ======================================================================
-        🔊 DESBLOQUEIO DE SOM NO CELULAR (TOQUE ÚNICO)
-====================================================================== */
-(function () {
-    const audio = document.getElementById("notificaChat");
-    if (!audio) return;
-
-    function liberarSom() {
-        audio.volume = 1;
-        audio.play().then(() => {
-            audio.pause();
-            audio.currentTime = 0;
-        }).catch(() => {});
-    }
-
-    ["click","touchstart"].forEach(ev => {
-        document.addEventListener(ev, liberarSom, { once:true });
-    });
-})();
-</script>
-
 <script type="module">
 
-/* IMPORTA FIREBASE */
-import { 
-    getDatabase, ref, set, onDisconnect, onValue 
+import {
+    getDatabase,
+    ref,
+    set,
+    onDisconnect,
+    onValue
 } from "https://www.gstatic.com/firebasejs/10.14.0/firebase-database.js";
 
 const db = getDatabase(app);
 
-/* ======================================================================
-                🟢 PRESENÇA ONLINE — SISTEMA COMPLETO
-====================================================================== */
+/* ============================================================
+      INICIAR PRESENÇA (IGUAL AO SEU SISTEMA DE CHAT)
+============================================================ */
 
 window.iniciarPresencaFinal = function () {
 
     if (!usuario) return;
 
-    const userRef = ref(db, "chat/usuariosOnline/" + usuario);
+    const caminho = `coletivo_mural/presenca/${usuario}`;
 
-    /* Marca como ONLINE */
-    set(userRef, {
-        nome: usuario,
-        foto: fotoUsuario,
-        online: true,
-        timestamp: Date.now()
+    const refUser = ref(db, caminho);
+
+    // Define presença como "online"
+    set(refUser, {
+        status: "online",
+        foto: fotoUsuario || "",
+        user: usuario,
+        atualizado: Date.now()
     });
 
-    /* ⛔ Se desconectar (fechar página / perder conexão) */
-    onDisconnect(userRef).set({
-        nome: usuario,
-        foto: fotoUsuario,
-        online: false,
-        timestamp: Date.now()
-    });
+    // Remove presença ao fechar o navegador
+    onDisconnect(refUser).remove();
 
-    /* 🔄 Detecta atividade */
-    let ultimoAtivo = Date.now();
-
-    function atividade() {
-        ultimoAtivo = Date.now();
-        set(userRef, {
-            nome: usuario,
-            foto: fotoUsuario,
-            online: true,
-            timestamp: Date.now()
-        });
-    }
-
-    ["click","mousemove","keydown","touchstart","scroll"]
-    .forEach(ev => document.addEventListener(ev, atividade));
-
-    /* 🕒 Se ficar inativo +2min → marca offline automaticamente */
+    // Atualizar atividade a cada 25 segundos
     setInterval(() => {
-        if (Date.now() - ultimoAtivo > 120000) {
-            set(userRef, {
-                nome: usuario,
-                foto: fotoUsuario,
-                online: false,
-                timestamp: Date.now()
-            });
-        }
-    }, 4000);
+
+        set(refUser, {
+            status: "online",
+            foto: fotoUsuario || "",
+            user: usuario,
+            atualizado: Date.now()
+        });
+
+    }, 25000);
+
+    monitorarOnline();
 };
 
-/* Se já existe login armazenado → inicia presença automática */
-if (usuario) iniciarPresencaFinal();
+/* ============================================================
+     MONITORAR PRESENÇA DOS USUÁRIOS CONECTADOS
+============================================================ */
 
-/* ======================================================================
-        🔔 NOTIFICAÇÃO SONORA DE NOVAS MENSAGENS (SEU SISTEMA)
-====================================================================== */
+function monitorarOnline() {
 
-const conversas = ref(db, "chat/conversas");
+    const listaOnline = ref(db, "coletivo_mural/presenca");
 
-if (localStorage.getItem("usuarioLogado")) {
-
-    const u = localStorage.getItem("usuarioLogado");
-
-    onValue(conversas, snap => {
+    onValue(listaOnline, snap => {
 
         if (!snap.exists()) return;
 
-        snap.forEach(room => {
+        let alguemOnline = [];
 
-            const roomId = room.key;
+        snap.forEach(u => {
+            const val = u.val();
+            const diff = Date.now() - val.atualizado;
 
-            /* Só toca som se a conversa pertencer ao usuário */
-            if (!roomId.includes(u)) return;
-
-            let ultimaMsg = null;
-
-            room.forEach(msg => ultimaMsg = msg.val());
-            if (!ultimaMsg) return;
-
-            /* 🔔 Só toca se a última mensagem NÃO foi enviada por ele */
-            if (ultimaMsg.de !== u) {
-                const som = document.getElementById("notificaChat");
-                som.currentTime = 0;
-                som.play().catch(()=>{});
+            // Consideramos offline após 60 segundos sem atividade
+            if (diff < 60000) {
+                alguemOnline.push(val.user);
             }
         });
+
+        exibirOnline(alguemOnline);
     });
 }
 
-</script>
+/* ============================================================
+     MOSTRAR INFORMAÇÃO NO TOPO DO PERFIL
+============================================================ */
 
-<!-- ======================================================================
-            🖼️ MODAL UNIVERSAL DE IMAGEM — USADO EM TODO O SITE
-====================================================================== -->
-<div id="imgModalFix" style="
-    display:none; position:fixed; inset:0;
-    background:rgba(0,0,0,0.92);
-    justify-content:center; align-items:center;
-    z-index:999999;
-">
-    <span onclick="document.getElementById('imgModalFix').style.display='none'"
-        style="position:absolute; top:18px; right:25px;
-            font-size:2.8rem; cursor:pointer; color:white;">
-        ✖
-    </span>
+function exibirOnline(lista) {
 
-    <img id="imgModalSrc" style="
-        max-width:90%; max-height:90%;
-        border-radius:12px; box-shadow:0 0 18px #00ff9d;
-    ">
-</div>
+    if (!usuario) return;
 
-<script>
-/* Abre imagem em tela cheia */
-window.abrirImagem = function(src){
-    imgModalSrc.src = src;
-    imgModalFix.style.display = "flex";
-};
-</script>
+    const estaOnline = lista.includes(usuario);
 
-<!-- ======================================================================
-            UX FINAL — FECHAR MENUS AO CLICAR FORA + AUTO LOGIN
-====================================================================== -->
-<script>
+    // Cria o elemento visual da bolinha se não existir
+    if (!document.getElementById("onlineDot")) {
+        const dot = document.createElement("div");
 
-/* Fecha menus de posts ao clicar fora */
-document.addEventListener("click", function(e) {
+        dot.id = "onlineDot";
+        dot.style = `
+            width:18px;
+            height:18px;
+            border-radius:50%;
+            background:#00ff8c;
+            box-shadow:0 0 12px #00ff8c, 0 0 25px #00ff8c;
+            margin:10px auto 5px auto;
+            animation:pulse 1.4s infinite;
+        `;
 
-    document.querySelectorAll(".menu-box").forEach(box => {
-        const botao = box.previousElementSibling;
-        if (botao && !botao.contains(e.target) && !box.contains(e.target)) {
-            box.style.display = "none";
-        }
-    });
+        userHeader.appendChild(dot);
 
-    /* Fecha menus de comentários */
-    document.querySelectorAll(".coment-menu-box").forEach(box => {
-        if (!box.contains(e.target)) box.style.display = "none";
-    });
-});
-
-/* Restaura login automaticamente */
-document.addEventListener("DOMContentLoaded", () => {
-
-    const u = localStorage.getItem("usuarioLogado");
-
-    if (u) {
-        usuario = u;
-        fotoUsuario = localStorage.getItem("fotoPerfil_" + u);
-
-        userHeader.style.display = "flex";
-        userName.textContent = usuario;
-        userPhoto.src = fotoUsuario;
-
-        loginBox.style.display = "none";
-
-        iniciarPresencaFinal();
+        // ANIMAÇÃO NEON
+        const style = document.createElement("style");
+        style.innerHTML = `
+            @keyframes pulse {
+                0% { transform:scale(1); box-shadow:0 0 10px #00ff8c; }
+                50% { transform:scale(1.25); box-shadow:0 0 25px #00ff8c; }
+                100% { transform:scale(1); box-shadow:0 0 10px #00ff8c; }
+            }
+        `;
+        document.head.appendChild(style);
     }
-});
+
+    const dot = document.getElementById("onlineDot");
+
+    // Atualiza visual
+    dot.style.background = estaOnline ? "#00ff8c" : "#444";
+    dot.style.boxShadow = estaOnline
+        ? "0 0 12px #00ff8c, 0 0 25px #00ff8c"
+        : "0 0 4px #555";
+}
 
 </script>
-
-<!-- ========================== FIM DA PARTE 5 ========================== -->
