@@ -2,19 +2,22 @@
 <html lang="pt-br">
 <head>
 <meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
 <title>Menu + Stories estilo Insta + Feed Completo</title>
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
 <style>
-  body{ margin:0; background:#000; font-family: Arial, sans-serif; color:#fff; }
+  /* ✅ deixa tudo responsivo e evita “estourar” largura */
+  *{ box-sizing: border-box; }
+  html, body{ width:100%; max-width:100%; overflow-x:hidden; }
+  body{ margin:0; background:#000; font-family: Arial, sans-serif; color:#fff; padding-bottom: env(safe-area-inset-bottom); }
 
   /* ======================== MENU NEON ======================== */
   .top-menu {
     width: 100%;
     background: #0d0d0d;
-    padding: 18px 0;
+    padding: 18px 10px;
     display: flex;
     justify-content: center;
     gap: 50px;
@@ -38,15 +41,16 @@
     transition: 0.3s;
     letter-spacing: 1.2px;
     text-shadow: 0 0 10px #00ff8c, 0 0 20px #00ff8c, 0 0 35px #00ff8c;
+    white-space: nowrap;
   }
-  .top-menu a:hover { transform: scale(1.12); }
+  .top-menu a:hover { transform: scale(1.06); }
   .top-menu a i {
     font-size: 24px;
     text-shadow: 0 0 10px #00ff8c, 0 0 20px #00ff8c, 0 0 40px #00ff8c;
   }
   @media(max-width:480px){
-    .top-menu { gap: 25px; padding: 15px 0; }
-    .top-menu a { font-size: 16px; }
+    .top-menu { gap: 18px; padding: 14px 10px; }
+    .top-menu a { font-size: 14px; letter-spacing:.8px; }
     .top-menu a i { font-size: 18px; }
   }
 
@@ -63,9 +67,10 @@
   .stories-row::-webkit-scrollbar{ height:6px; }
   .stories-row::-webkit-scrollbar-thumb{ background:#00ff8c; border-radius:999px; }
 
+  /* ✅ tamanho adaptável em qualquer celular */
   .storyCard{
-    width: 150px;
-    height: 260px;
+    width: clamp(120px, 42vw, 160px);
+    height: clamp(220px, 70vw, 290px);
     border-radius: 22px;
     overflow:hidden;
     position:relative;
@@ -77,9 +82,7 @@
     transition: transform .15s ease, box-shadow .15s ease;
   }
   .storyCard:hover{ transform: translateY(-2px); box-shadow: 0 14px 32px rgba(0,0,0,.55); }
-  @media(max-width:480px){
-    .storyCard{ width: 132px; height: 240px; border-radius: 20px; }
-  }
+
   .storyMedia{
     position:absolute; inset:0;
     width:100%; height:100%;
@@ -193,6 +196,7 @@
     font-size: 35px;
     cursor:pointer;
     z-index:20;
+    user-select:none;
   }
   .deleteBtn{
     position:absolute; top: 55px; right: 20px;
@@ -205,9 +209,10 @@
     font-weight:900;
     z-index:20;
     box-shadow:0 0 14px rgba(0,255,140,.6);
+    user-select:none;
   }
 
-  /* ====================== LOGIN ====================== */
+  /* ====================== LOGIN (100% responsivo) ====================== */
   .login-overlay{
     position:fixed; inset:0;
     background: rgba(0,0,0,0.94);
@@ -215,84 +220,91 @@
     align-items:center;
     justify-content:center;
     z-index: 9999999;
-    padding:18px;
+    padding: 16px;
   }
   .login-card{
-    width:min(520px, 92vw);
+    width: min(520px, 94vw);
+    max-width: 94vw;
     background:#0d0d0d;
     border:2px solid #00ff8c;
-    border-radius:18px;
-    box-shadow:0 0 25px #00ff8c;
-    padding:22px;
+    border-radius:22px;
+    box-shadow:0 0 28px rgba(0,255,140,.45);
+    padding: 18px;
     text-align:center;
   }
   .login-title{
-    font-size:22px;
-    font-weight:900;
+    font-size: clamp(18px, 6vw, 26px);
+    font-weight: 900;
     color:#00ff8c;
     text-transform:uppercase;
     letter-spacing:1.2px;
     text-shadow: 0 0 10px #00ff8c, 0 0 22px #00ff8c;
-    margin: 0 0 14px 0;
+    margin: 4px 0 14px 0;
     display:flex;
     gap:10px;
     align-items:center;
     justify-content:center;
   }
+  /* ✅ aqui corrige “passando da linha” */
   .login-input{
-    width:100%;
+    width: 100%;
+    max-width: 100%;
+    display:block;
     background:#111;
     border:1px solid #00ff9d;
-    border-radius:30px;
-    padding:14px 18px;
+    border-radius: 999px;
+    padding: 14px 18px;
     color:#fff;
     outline:none;
-    font-size:16px;
+    font-size: 16px;
+    box-shadow: inset 0 0 10px rgba(0,255,157,.22);
   }
   .login-btn{
-    width:100%;
-    margin-top:12px;
+    width: 100%;
+    margin-top: 12px;
     border:none;
-    border-radius:16px;
-    padding:14px 12px;
-    font-weight:900;
+    border-radius: 999px;
+    padding: 16px 12px;
+    font-weight: 900;
     cursor:pointer;
-    font-size:16px;
-    transition:.25s;
+    font-size: 18px;
+    transition:.18s;
     background:#00ff8c;
     color:#003b23;
-    box-shadow:0 0 18px #00ff8c;
+    box-shadow:0 0 18px rgba(0,255,140,.55);
   }
+  .login-btn:active{ transform: scale(.99); }
 
   /* ===================== FEED COMPLETO ===================== */
   .create-post{
     background:#0d0d0d;
-    margin:10px 15px 15px 15px;
-    padding:15px;
-    border-radius:20px;
+    margin:10px 12px 15px 12px;
+    padding:14px;
+    border-radius:22px;
     border:1px solid #00ff9d;
     display:flex;
     gap:10px;
     align-items:center;
-    box-shadow:0 0 10px #00ff9d;
+    box-shadow:0 0 10px rgba(0,255,157,.45);
   }
   .input-box{
     flex:1;
+    min-width: 0; /* ✅ evita quebrar o layout no mobile */
     background:#111;
-    padding:10px 18px;
-    border-radius:30px;
+    padding:12px 18px;
+    border-radius:999px;
     border:1px solid #00ff9d;
     color:#fff;
     font-size:16px;
     outline:none;
-    box-shadow:inset 0 0 8px #00ff9d;
+    box-shadow:inset 0 0 8px rgba(0,255,157,.35);
   }
   .add-btn{
     background:#111;
     border:2px solid #00ff9d;
     color:#00ff9d;
-    width:45px;
-    height:45px;
+    width:46px;
+    height:46px;
     border-radius:50%;
     font-size:22px;
     font-weight:bold;
@@ -300,11 +312,12 @@
     align-items:center;
     justify-content:center;
     cursor:pointer;
-    box-shadow:0 0 10px #00ff9d;
-    transition:.3s;
+    box-shadow:0 0 10px rgba(0,255,157,.45);
+    transition:.2s;
+    flex: 0 0 auto;
   }
   .whatsapp-send{
-    width:45px; height:45px;
+    width:46px; height:46px;
     background:#00ff9d;
     border-radius:50%;
     display:flex;
@@ -313,34 +326,35 @@
     font-size:26px;
     color:#003b23;
     cursor:pointer;
-    box-shadow:0 0 15px #00ff9d;
-    transition:.3s;
+    box-shadow:0 0 15px rgba(0,255,157,.55);
+    transition:.2s;
     border:2px solid #003b23;
+    flex: 0 0 auto;
   }
   #fileInput{display:none;}
 
   .preview{
-    margin:0 15px 15px 15px;
+    margin:0 12px 15px 12px;
     padding:15px;
     background:#0d0d0d;
     border:1px solid #00ff9d;
     border-radius:15px;
-    box-shadow:0 0 10px #00ff9d;
+    box-shadow:0 0 10px rgba(0,255,157,.45);
     display:none;
   }
 
   .post{
     background:#0d0d0d;
-    margin:15px;
+    margin:15px 12px;
     padding:15px;
-    border-radius:15px;
+    border-radius:16px;
     border:1px solid #00ff9d;
-    box-shadow:0 0 10px #00ff9d;
+    box-shadow:0 0 10px rgba(0,255,157,.45);
     position:relative;
   }
   .post img,.post video{
     width:100%;
-    border-radius:10px;
+    border-radius:12px;
     margin-top:10px;
   }
 
@@ -354,14 +368,15 @@
 
   .btn-action{
     color:#00ff9d;
-    padding:8px 12px;
-    border-radius:10px;
+    padding:10px 12px;
+    border-radius:12px;
     font-weight:bold;
     cursor:pointer;
-    transition:0.3s;
+    transition:0.2s;
     text-align:center;
     border: 1px solid rgba(0,255,157,.25);
     background: rgba(0,0,0,.15);
+    user-select:none;
   }
 
   .contador{
@@ -378,7 +393,7 @@
     background:#111;
     padding:10px;
     margin-top:10px;
-    border-radius:10px;
+    border-radius:12px;
     display:none;
   }
 
@@ -390,6 +405,7 @@
     cursor: pointer;
     color: #00ff9d;
     z-index: 10;
+    user-select:none;
   }
   .menu-box {
     position: absolute;
@@ -398,11 +414,11 @@
     background: #00ff9d;
     color: #000;
     padding: 10px 15px;
-    border-radius: 8px;
+    border-radius: 10px;
     display: none;
     cursor: pointer;
     font-weight: bold;
-    box-shadow: 0 0 12px #00ff9d;
+    box-shadow: 0 0 12px rgba(0,255,157,.55);
     z-index: 15;
   }
 
@@ -412,6 +428,7 @@
     cursor:pointer;
     color:#00ff9d;
     margin-left:8px;
+    user-select:none;
   }
   .coment-menu-box {
     position:absolute;
@@ -420,17 +437,18 @@
     background:#00ff9d;
     color:#000;
     padding:5px 10px;
-    border-radius:6px;
+    border-radius:8px;
     display:none;
     font-weight:bold;
     cursor:pointer;
-    box-shadow: 0 0 10px #00ff9d;
+    box-shadow: 0 0 10px rgba(0,255,157,.55);
     z-index:5;
   }
 
-  @media (max-width:480px){
-    .add-btn, .whatsapp-send{ width:42px; height:42px; font-size:22px; }
-    .btn-action{ font-size:13px; }
+  @media (max-width:360px){
+    .top-menu{ gap: 12px; }
+    .btn-action{ font-size:12px; padding:9px 10px; }
+    .menu-btn{ font-size:26px; }
   }
 </style>
 </head>
@@ -440,7 +458,7 @@
 <!-- LOGIN -->
 <div class="login-overlay" id="loginOverlay">
   <div class="login-card">
-    <div class="login-title"><i class="fa-solid fa-user"></i> Entrar</div>
+    <div class="login-title"><i class="fa-solid fa-user"></i> ENTRAR</div>
     <input id="loginName" class="login-input" maxlength="24" placeholder="Digite seu nome" autocomplete="off">
     <button class="login-btn" onclick="confirmarNome()">Entrar</button>
   </div>
@@ -469,7 +487,7 @@
   <div id="viewerMedia"></div>
 </div>
 
-<!-- FEED / MURAL COMPLETO -->
+<!-- FEED / MURAL (SEM COMPARTILHAR) -->
 <div class="create-post">
   <input type="text" id="postText" class="input-box" placeholder="No que você está pensando?" oninput="updateButton()">
   <div class="add-btn" id="btnMain" onclick="buttonAction()">+</div>
@@ -534,12 +552,14 @@ let USER_NAME = getNomeSalvo();
 function abrirLogin(){
   loginOverlay.style.display = "flex";
   document.body.style.overflow = "hidden";
-  setTimeout(()=>{ try{ loginName.focus(); }catch(e){} }, 30);
+  setTimeout(()=>{ try{ loginName.focus(); }catch(e){} }, 50);
 }
 function fecharLogin(){
   loginOverlay.style.display = "none";
   document.body.style.overflow = "";
 }
+
+/* ✅ MAIS RÁPIDO: ao entrar, recarrega a página automaticamente */
 function confirmarNome(){
   let nome = (loginName.value || "").trim();
   if(nome.length < 2){
@@ -551,10 +571,15 @@ function confirmarNome(){
   USER_NAME = nome;
   UID = getOrCreateUID();
   fecharLogin();
+
+  // ✅ atualiza automaticamente assim que entrar
+  setTimeout(()=>{ location.reload(); }, 80);
 }
+
 (function exigirLogin(){
   if(!USER_NAME) abrirLogin();
 })();
+
 function sairNome(){
   sessionStorage.removeItem("nome_passageiro");
   sessionStorage.removeItem("uid_passageiro");
@@ -562,6 +587,7 @@ function sairNome(){
   UID = getOrCreateUID();
   abrirLogin();
 }
+
 function precisaLogin(){
   if(!USER_NAME){
     abrirLogin();
@@ -569,6 +595,8 @@ function precisaLogin(){
   }
   return false;
 }
+
+/* Enter confirma login */
 document.addEventListener("keydown", (e)=>{
   if(loginOverlay.style.display === "flex" && e.key === "Enter"){
     confirmarNome();
@@ -678,21 +706,21 @@ function renderUserCard(group){
   return card;
 }
 
-/* ✅ PRIMEIRO CARD SEMPRE DO USUÁRIO (e depois os outros) */
+/* ✅ primeiro card sempre do usuário (e depois os outros) */
 function renderStoriesRow(){
   const row = document.getElementById("storiesRow");
   row.innerHTML = "";
 
-  // 1) Card de criar story
+  // Card de criar story
   row.appendChild(renderCreateCard());
 
-  // 2) Card do usuário logado SEMPRE primeiro (se tiver stories)
+  // Card do usuário logado primeiro (se tiver story)
   const myGroup = groupedStories.find(g => g.uid === UID);
   if(myGroup){
     row.appendChild(renderUserCard(myGroup));
   }
 
-  // 3) Outros usuários em sequência
+  // Outros usuários
   groupedStories
     .filter(g => g.uid !== UID)
     .sort((a,b)=>(b.last?.createdAt||0)-(a.last?.createdAt||0))
@@ -862,13 +890,12 @@ deleteBtn.onclick = async ()=>{
 </script>
 
 <script>
-/* ===================== FEED / MURAL COMPLETO (SEM COMPARTILHAR) ===================== */
+/* ===================== FEED / MURAL (SEM COMPARTILHAR) ===================== */
 let selectedFile = null;
 let mode = "add";
 let longPress = {};
 let holdTimer = null;
 
-/* Botão + / enviar */
 function updateButton(){
   let t = postText.value.trim();
   if(t.length > 0){
@@ -960,7 +987,6 @@ async function criarPostFirebase(texto, fileOrNull, fileTypeOrNull){
   }
 }
 
-/* ====== Curtir / Amei (press & hold) ====== */
 function pressionarCurtir(id){
   longPress[id] = false;
   holdTimer = setTimeout(()=>{
@@ -1023,7 +1049,6 @@ async function amei(id){
   }
 }
 
-/* Mostra nomes de quem curtiu */
 function atualizarCurtidasUI(postId, likesObj){
   const btn = document.getElementById("curtir_"+postId);
   const cont = document.getElementById("contadorCurtidas_"+postId);
@@ -1061,7 +1086,6 @@ function atualizarCurtidasUI(postId, likesObj){
   cont.innerHTML = `Curtidas (${total}): <b>${nomes.join(", ")}</b>`;
 }
 
-/* ====== Comentários ====== */
 function abrirComentarios(id){
   const box = document.getElementById("comentarios_"+id);
   if(!box) return;
@@ -1108,7 +1132,6 @@ function toggleComentMenu(cid){
   menu.style.display = (menu.style.display==="block" ? "none" : "block");
 }
 
-/* qualquer um pode excluir qualquer comentário */
 async function excluirComentario(cid, postId){
   try{
     await DB.ref(`comments/${postId}/${cid}`).remove();
@@ -1118,7 +1141,6 @@ async function excluirComentario(cid, postId){
   }
 }
 
-/* Excluir post: qualquer um pode */
 function toggleMenu(id){
   let m = document.getElementById("menu_"+id);
   if(!m) return;
@@ -1146,7 +1168,7 @@ async function excluirPost(id){
   }
 }
 
-/* Render post (SEM COMPARTILHAR) */
+/* Render post (SEM compartilhar) */
 function criarPost(id, postData){
   if(!postData) return;
 
@@ -1220,7 +1242,6 @@ function criarPost(id, postData){
   listenComments(id);
 }
 
-/* Listeners */
 function listenLikes(postId){
   DB.ref("likes/" + postId).on("value", snap=>{
     atualizarCurtidasUI(postId, snap.val() || {});
