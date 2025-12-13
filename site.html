@@ -8,12 +8,7 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
 <style>
-  body{
-    margin:0;
-    background:#000;
-    font-family: Arial, sans-serif;
-    color:#fff;
-  }
+  body{ margin:0; background:#000; font-family: Arial, sans-serif; color:#fff; }
 
   /* ======================== MENU NEON ======================== */
   .top-menu {
@@ -31,7 +26,6 @@
     z-index: 9999;
   }
   .top-menu.hide { display:none !important; }
-
   .top-menu a {
     color: #00ff8c;
     text-decoration: none;
@@ -58,7 +52,6 @@
 
   /* ======================== STORIES (ESTILO INSTA) ======================== */
   .stories-wrapper{ padding: 12px 10px 6px 10px; }
-
   .stories-row{
     display:flex;
     gap: 14px;
@@ -68,10 +61,7 @@
     align-items: stretch;
   }
   .stories-row::-webkit-scrollbar{ height:6px; }
-  .stories-row::-webkit-scrollbar-thumb{
-    background:#00ff8c;
-    border-radius:999px;
-  }
+  .stories-row::-webkit-scrollbar-thumb{ background:#00ff8c; border-radius:999px; }
 
   .storyCard{
     width: 150px;
@@ -90,7 +80,6 @@
   @media(max-width:480px){
     .storyCard{ width: 132px; height: 240px; border-radius: 20px; }
   }
-
   .storyMedia{
     position:absolute; inset:0;
     width:100%; height:100%;
@@ -103,7 +92,6 @@
     background: linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(0,0,0,.35) 35%, rgba(0,0,0,.78) 100%);
     pointer-events:none;
   }
-
   .segRow{
     position:absolute; top:10px; left:10px; right:10px;
     display:flex; gap:4px; z-index:5;
@@ -113,7 +101,6 @@
     background: rgba(255,255,255,.35);
     border-radius:999px; overflow:hidden;
   }
-
   .avatarCircle{
     position:absolute; top:14px; left:14px;
     width:42px; height:42px;
@@ -130,7 +117,6 @@
     font-weight:900; font-size:14px; color:#fff;
     text-shadow: 0 0 10px rgba(0,0,0,.6);
   }
-
   .storyName{
     position:absolute; left:14px; right:14px; bottom:14px;
     z-index:6;
@@ -143,7 +129,6 @@
     -webkit-box-orient: vertical;
     overflow:hidden;
   }
-
   .createCard{
     display:flex; align-items:center; justify-content:center;
     flex-direction:column; gap:10px;
@@ -406,7 +391,6 @@
     color: #00ff9d;
     z-index: 10;
   }
-
   .menu-box {
     position: absolute;
     top: 45px;
@@ -694,14 +678,25 @@ function renderUserCard(group){
   return card;
 }
 
+/* ✅ PRIMEIRO CARD SEMPRE DO USUÁRIO (e depois os outros) */
 function renderStoriesRow(){
   const row = document.getElementById("storiesRow");
   row.innerHTML = "";
+
+  // 1) Card de criar story
   row.appendChild(renderCreateCard());
+
+  // 2) Card do usuário logado SEMPRE primeiro (se tiver stories)
+  const myGroup = groupedStories.find(g => g.uid === UID);
+  if(myGroup){
+    row.appendChild(renderUserCard(myGroup));
+  }
+
+  // 3) Outros usuários em sequência
   groupedStories
-    .slice()
+    .filter(g => g.uid !== UID)
     .sort((a,b)=>(b.last?.createdAt||0)-(a.last?.createdAt||0))
-    .forEach(g=> row.appendChild(renderUserCard(g)));
+    .forEach(g => row.appendChild(renderUserCard(g)));
 }
 
 async function addStory(file){
@@ -765,7 +760,7 @@ function showStory(){
   const s = activeStories[current];
   if(!s){ closeViewer(); return; }
 
-  // ✅ agora QUALQUER UM pode excluir story
+  // qualquer um pode excluir
   deleteBtn.style.display = "none";
 
   if((s.type||"").includes("image")){
@@ -822,9 +817,7 @@ function prevStory(){
 tapRight.onclick = nextStory;
 tapLeft.onclick = prevStory;
 
-// ✅ qualquer um pode excluir story
 dots.onclick = ()=>{ deleteBtn.style.display = (deleteBtn.style.display==="block" ? "none" : "block"); };
-
 deleteBtn.onclick = async ()=>{
   const s = activeStories[current];
   if(!s) return;
@@ -869,7 +862,7 @@ deleteBtn.onclick = async ()=>{
 </script>
 
 <script>
-/* ===================== FEED / MURAL COMPLETO ===================== */
+/* ===================== FEED / MURAL COMPLETO (SEM COMPARTILHAR) ===================== */
 let selectedFile = null;
 let mode = "add";
 let longPress = {};
@@ -1030,7 +1023,7 @@ async function amei(id){
   }
 }
 
-/* ✅ Agora mostra NOMES de quem curtiu */
+/* Mostra nomes de quem curtiu */
 function atualizarCurtidasUI(postId, likesObj){
   const btn = document.getElementById("curtir_"+postId);
   const cont = document.getElementById("contadorCurtidas_"+postId);
@@ -1041,7 +1034,6 @@ function atualizarCurtidasUI(postId, likesObj){
   const total = entries.length;
   const my = likes[UID];
 
-  // botão
   if(my){
     if(my.type === "love"){
       btn.textContent = "❤️ Você amou";
@@ -1055,21 +1047,17 @@ function atualizarCurtidasUI(postId, likesObj){
     btn.style.color = "#00ff9d";
   }
 
-  // lista de nomes
   if(total === 0){
     cont.innerHTML = "";
     return;
   }
 
-  // ordena por data
   const sorted = entries.sort((a,b)=>(a.createdAt||0)-(b.createdAt||0));
-
   const nomes = sorted.map(x=>{
     if(x.uid === UID) return "Você";
     return escapeHTML(x.userName || "Usuário");
   });
 
-  // exibe todos (se quiser limitar, eu limito)
   cont.innerHTML = `Curtidas (${total}): <b>${nomes.join(", ")}</b>`;
 }
 
@@ -1120,7 +1108,7 @@ function toggleComentMenu(cid){
   menu.style.display = (menu.style.display==="block" ? "none" : "block");
 }
 
-/* ✅ Agora QUALQUER UM pode excluir QUALQUER comentário */
+/* qualquer um pode excluir qualquer comentário */
 async function excluirComentario(cid, postId){
   try{
     await DB.ref(`comments/${postId}/${cid}`).remove();
@@ -1130,7 +1118,7 @@ async function excluirComentario(cid, postId){
   }
 }
 
-/* ====== Excluir post: qualquer um pode (já como você pediu) ====== */
+/* Excluir post: qualquer um pode */
 function toggleMenu(id){
   let m = document.getElementById("menu_"+id);
   if(!m) return;
@@ -1142,14 +1130,10 @@ async function excluirPost(id){
     const snap = await DB.ref("posts/" + id).once("value");
     const data = snap.val();
 
-    // remove db
     await DB.ref("posts/" + id).remove();
-
-    // remove likes e comments
     await DB.ref("likes/" + id).remove().catch(()=>{});
     await DB.ref("comments/" + id).remove().catch(()=>{});
 
-    // remove storage
     if(data && data.storagePath){
       await ST.ref().child(data.storagePath).delete().catch(()=>{});
     }
@@ -1162,7 +1146,7 @@ async function excluirPost(id){
   }
 }
 
-/* Render post */
+/* Render post (SEM COMPARTILHAR) */
 function criarPost(id, postData){
   if(!postData) return;
 
@@ -1215,8 +1199,6 @@ function criarPost(id, postData){
         <div class="contador" id="contadorComentarios_${id}"></div>
       </div>
 
-      <div class="btn-action">↗️ Compartilhar</div>
-
     </div>
 
     <div class="coment-area" id="comentarios_${id}">
@@ -1258,8 +1240,6 @@ function listenComments(postId){
     lista.innerHTML = arr.map(c=>{
       const nome = escapeHTML(c.userName || "Usuário");
       const txt = escapeHTML(c.text || "");
-
-      // ✅ qualquer um pode excluir
       return `
         <div id="${c.cid}" style="background:#000;border:1px solid #00ff9d;padding:8px;border-radius:8px;margin-bottom:5px;position:relative;">
           <b style="color:#00ff9d;">${nome}:</b> 💬 ${txt}
