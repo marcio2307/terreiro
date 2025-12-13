@@ -582,6 +582,43 @@ firebase.initializeApp(firebaseConfig);
 const DB = firebase.database();
 const ST = firebase.storage();
 
+/* ====================== ✅ SOM (MP3 DO GITHUB) ======================
+   Troque a URL abaixo pela URL RAW do seu mp3 no GitHub (raw.githubusercontent.com)
+*/
+const ACTION_SOUND_URL = "COLE_AQUI_O_LINK_RAW_DO_SEU_MP3_NO_GITHUB";
+
+/* player único */
+const actionSfx = new Audio(ACTION_SOUND_URL);
+actionSfx.preload = "auto";
+actionSfx.volume = 1.0;
+
+/* destrava áudio no primeiro toque (celular) */
+let audioUnlocked = false;
+function unlockAudioOnce(){
+  if(audioUnlocked) return;
+  audioUnlocked = true;
+  try{
+    actionSfx.muted = false;
+    const p = actionSfx.play();
+    if(p && p.then){
+      p.then(()=>{ actionSfx.pause(); actionSfx.currentTime = 0; }).catch(()=>{});
+    }else{
+      actionSfx.pause(); actionSfx.currentTime = 0;
+    }
+  }catch(e){}
+}
+document.addEventListener("touchstart", unlockAudioOnce, { once:true, passive:true });
+document.addEventListener("click", unlockAudioOnce, { once:true });
+
+function playActionSound(){
+  if(!ACTION_SOUND_URL || ACTION_SOUND_URL.includes("COLE_AQUI")) return;
+  try{
+    actionSfx.pause();
+    actionSfx.currentTime = 0;
+    actionSfx.play().catch(()=>{});
+  }catch(e){}
+}
+
 /* ====================== LOGIN + UID por aba ====================== */
 function getOrCreateUID(){
   let uid = sessionStorage.getItem("uid_passageiro");
@@ -657,9 +694,9 @@ function fmtDate(ts){
   try{ return new Date(ts).toLocaleString("pt-BR"); }catch(e){ return ""; }
 }
 
-/* ✅ limites para não travar */
+/* limites */
 const MAX_IMG_MB = 15;
-const MAX_VID_MB = 120; /* aumentei pra aceitar melhor vídeos do celular */
+const MAX_VID_MB = 120;
 function checkSize(file){
   const mb = file.size/(1024*1024);
   if(file.type.startsWith("image/") && mb>MAX_IMG_MB){
@@ -730,7 +767,7 @@ function buildSegRow(count){
   `;
 }
 
-/* ✅ CORRIGIDO: preview de vídeo aparece e roda (autoplay muted loop playsinline) */
+/* preview do card continua muted (como estava) */
 function renderUserCard(group){
   const card = document.createElement("div");
   card.className = "storyCard";
@@ -810,6 +847,8 @@ async function addStory(file){
     };
 
     await DB.ref("stories/" + storyId).set(data);
+
+    playActionSound(); /* postou story */
   }catch(err){
     console.log(err);
     alert("Erro ao enviar story.");
@@ -866,11 +905,13 @@ function showStory(){
   }else{
     const el = document.createElement("video");
     el.src = s.url;
-    el.autoplay = true;
 
-    /* ✅ CORRIGIDO: autoplay no celular só funciona MUITO melhor com muted */
-    el.muted = true;
-    el.controls = true;     /* usuário pode dar play/ativar som */
+    /* ✅ AQUI ESTÁ A CORREÇÃO: ABRE E TOCA COM SOM */
+    el.autoplay = true;
+    el.muted = false;
+    el.volume = 1;
+
+    el.controls = true;
     el.playsInline = true;
     el.preload = "metadata";
 
@@ -880,8 +921,13 @@ function showStory(){
       runProgress(dur);
       viewerTimer = setTimeout(()=>nextStory(), dur);
     };
+
     viewerMedia.appendChild(el);
-    el.play().catch(()=>{}); /* tenta iniciar */
+
+    /* tenta tocar com som (como o clique abriu o viewer, costuma funcionar) */
+    el.play().catch(()=>{
+      /* se algum celular bloquear, ao menos fica pronto pro usuário apertar play */
+    });
   }
 }
 function runProgress(ms){
@@ -927,6 +973,9 @@ deleteBtn.onclick = async ()=>{
     if(s.storagePath){
       await ST.ref().child(s.storagePath).delete().catch(()=>{});
     }
+
+    playActionSound(); /* excluiu story */
+
     if(current>0) current--;
     closeViewer();
   }catch(err){
@@ -1017,6 +1066,7 @@ async function postarTexto(){
   showLoading("Postando...", "Publicando no mural");
   try{
     await criarPostFirebase(t, null, null, null);
+    playActionSound(); /* postou publicação */
     postText.value = "";
     updateButton();
   }finally{
@@ -1034,7 +1084,6 @@ async function postar(){
   const texto = postText.value || "";
   const file = selectedFile;
 
-  /* ✅ CORRIGIDO: aparece NA HORA (optimistic UI) */
   const postId = "post_" + Date.now() + "_" + Math.random().toString(36).slice(2);
   const localUrl = URL.createObjectURL(file);
 
@@ -1052,10 +1101,10 @@ async function postar(){
 
   try{
     await criarPostFirebase(texto, file, file.type, postId);
+    playActionSound(); /* postou publicação */
   }catch(err){
     console.log(err);
     alert("Erro ao postar.");
-    // remove do feed se falhar
     const el = document.getElementById(postId);
     if(el) el.remove();
     postsCache.delete(postId);
@@ -1068,7 +1117,6 @@ async function postar(){
     previewContent.innerHTML = "";
     if(previewUrlToRevoke){ URL.revokeObjectURL(previewUrlToRevoke); previewUrlToRevoke=null; }
     updateButton();
-    // não revoga localUrl aqui pra não quebrar o preview do post; depois o server atualiza e troca a URL.
   }
 }
 
@@ -1079,7 +1127,6 @@ function removerPreview(){
   if(previewUrlToRevoke){ URL.revokeObjectURL(previewUrlToRevoke); previewUrlToRevoke=null; }
 }
 
-/* ✅ aceita postId pronto (para o post aparecer instantâneo) */
 async function criarPostFirebase(texto, fileOrNull, fileTypeOrNull, forcedPostId){
   const postId = forcedPostId || ("post_" + Date.now() + "_" + Math.random().toString(36).slice(2));
   try{
@@ -1132,6 +1179,8 @@ async function curtir(id){
     const cur = snap.val();
     if(cur) await likeRef.remove();
     else await likeRef.set({ type:"like", uid:UID, userName:USER_NAME, createdAt: firebase.database.ServerValue.TIMESTAMP });
+
+    playActionSound(); /* curtir */
   }catch(err){
     console.log(err);
     alert("Erro ao curtir.");
@@ -1145,6 +1194,8 @@ async function amei(id){
     const cur = snap.val();
     if(cur && cur.type === "love") await likeRef.remove();
     else await likeRef.set({ type:"love", uid:UID, userName:USER_NAME, createdAt: firebase.database.ServerValue.TIMESTAMP });
+
+    playActionSound(); /* amei */
   }catch(err){
     console.log(err);
     alert("Erro ao amar.");
@@ -1214,6 +1265,8 @@ async function enviarComentario(id){
       createdAt: firebase.database.ServerValue.TIMESTAMP
     });
     input.value = "";
+
+    playActionSound(); /* comentou */
   }catch(err){
     console.log(err);
     alert("Erro ao comentar.");
@@ -1227,7 +1280,10 @@ function toggleComentMenu(cid){
 }
 
 async function excluirComentario(cid, postId){
-  try{ await DB.ref(`comments/${postId}/${cid}`).remove(); }
+  try{
+    await DB.ref(`comments/${postId}/${cid}`).remove();
+    playActionSound(); /* excluiu comentário */
+  }
   catch(err){ console.log(err); alert("Erro ao excluir comentário."); }
 }
 
@@ -1253,13 +1309,15 @@ async function excluirPost(id){
     const el = document.getElementById(id);
     if(el) el.remove();
     postsCache.delete(id);
+
+    playActionSound(); /* excluiu post */
   }catch(err){
     console.log(err);
     alert("Erro ao excluir post.");
   }
 }
 
-/* ✅ gera HTML de post (video corrigido) */
+/* post HTML */
 function postHTML(id, postData){
   let midia = "";
   if(postData.mediaUrl){
@@ -1328,7 +1386,7 @@ function postHTML(id, postData){
   `;
 }
 
-/* ✅ post instantâneo */
+/* post instantâneo */
 function criarPostOptimista(id, postData){
   if(postsCache.has(id)) return;
   postsCache.add(id);
@@ -1343,29 +1401,24 @@ function criarPostOptimista(id, postData){
   listenComments(id);
 }
 
-/* ✅ quando chegar do Firebase, troca a URL local pela URL real e tira “ENVIANDO…” */
 function atualizarPostDoServidor(id, data){
   const el = document.getElementById(id);
   if(!el) return;
 
-  // atualiza título + badge
   const h3 = el.querySelector("h3");
   if(h3){
     const nome = escapeHTML(data.userName || "Usuário");
     h3.innerHTML = `🌟 ${nome}`;
   }
 
-  // atualiza data
   const whenDiv = el.querySelector("div[style*='font-size:12px']");
   if(whenDiv && data.createdAt){
     whenDiv.textContent = fmtDate(data.createdAt);
   }
 
-  // atualiza texto
   const p = el.querySelector("p");
   if(p) p.textContent = (data.text || "");
 
-  // atualiza mídia
   const wrap = document.getElementById("mediaWrap_"+id);
   if(wrap){
     if(data.mediaUrl){
@@ -1419,7 +1472,7 @@ function listenComments(postId){
   });
 }
 
-/* listener incremental */
+/* listener posts */
 (function listenPostsFast(){
   const ref = DB.ref("posts").orderByChild("createdAt").limitToLast(200);
 
@@ -1427,7 +1480,6 @@ function listenComments(postId){
     const id = snap.key;
     const data = snap.val() || {};
 
-    // se já existe (optimistic), só atualiza
     const el = document.getElementById(id);
     if(el){
       atualizarPostDoServidor(id, data);
