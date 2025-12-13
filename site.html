@@ -41,16 +41,30 @@
     letter-spacing: 1.2px;
     text-shadow: 0 0 10px #00ff8c, 0 0 20px #00ff8c, 0 0 35px #00ff8c;
     white-space: nowrap;
+
+    /* ✅ melhora toque no celular (sem mudar o resto) */
+    padding: 10px 12px;
+    border-radius: 16px;
   }
   .top-menu a:hover { transform: scale(1.06); }
   .top-menu a i {
-    font-size: 24px;
+    font-size: 26px;
     text-shadow: 0 0 10px #00ff8c, 0 0 20px #00ff8c, 0 0 40px #00ff8c;
   }
+
+  /* ✅ celular: mais espaçados e maiores */
   @media(max-width:480px){
-    .top-menu { gap: 18px; padding: 14px 10px; }
-    .top-menu a { font-size: 14px; letter-spacing:.8px; }
-    .top-menu a i { font-size: 18px; }
+    .top-menu { gap: 26px; padding: 14px 10px; }
+    .top-menu a { font-size: 14px; letter-spacing:.8px; padding: 12px 14px; }
+    .top-menu a i { font-size: 24px; }
+  }
+
+  /* ✅ telas bem pequenas: ainda confortável */
+  @media (max-width:360px){
+    .top-menu{ gap: 20px; }
+    .btn-action{ font-size:12px; padding:9px 10px; }
+    .menu-btn{ font-size:26px; }
+    .top-menu a i{ font-size: 22px; }
   }
 
   /* ======================== STORIES (ESTILO INSTA) ======================== */
@@ -485,12 +499,6 @@
     font-size:12px;
     font-weight:900;
   }
-
-  @media (max-width:360px){
-    .top-menu{ gap: 12px; }
-    .btn-action{ font-size:12px; padding:9px 10px; }
-    .menu-btn{ font-size:26px; }
-  }
 </style>
 </head>
 
@@ -588,9 +596,7 @@ firebase.initializeApp(firebaseConfig);
 const DB = firebase.database();
 const ST = firebase.storage();
 
-/* ====================== ✅ SOM (MP3 DO GITHUB) ======================
-   Troque a URL abaixo pela URL RAW do seu mp3 no GitHub (raw.githubusercontent.com)
-*/
+/* ====================== ✅ SOM (MP3 DO GITHUB) ====================== */
 const ACTION_SOUND_URL = "som.mp3";
 
 /* player único */
@@ -652,7 +658,6 @@ function setRadioUI(isPlaying){
 
 function toggleRadio(){
   ensureRadio();
-  // garante que o áudio esteja liberado pelo clique do usuário
   unlockAudioOnce();
 
   if(!radioPlaying){
@@ -665,13 +670,11 @@ function toggleRadio(){
 
 /* ====================== LOGIN + UID persistente ====================== */
 function getOrCreateUID(){
-  // ✅ UID persistente (não muda ao fechar/abrir)
   let uid = localStorage.getItem("uid_passageiro");
   if(!uid){
     uid = "u_" + Math.random().toString(36).slice(2) + "_" + Date.now();
     localStorage.setItem("uid_passageiro", uid);
   }
-  // mantém também na sessão (se alguma parte usar)
   sessionStorage.setItem("uid_passageiro", uid);
   return uid;
 }
@@ -707,14 +710,12 @@ function confirmarNome(){
 (function exigirLogin(){ if(!USER_NAME) abrirLogin(); })();
 
 function sairNome(){
-  // ✅ ao sair: apaga nome + UID (para virar usuário novo ao entrar novamente)
   localStorage.removeItem("nome_passageiro");
   localStorage.removeItem("uid_passageiro");
 
   sessionStorage.removeItem("nome_passageiro");
   sessionStorage.removeItem("uid_passageiro");
 
-  // pausa a rádio se estiver tocando
   try{ if(radio) radio.pause(); }catch(e){}
   setRadioUI(false);
 
@@ -962,7 +963,6 @@ function showStory(){
     const el = document.createElement("video");
     el.src = s.url;
 
-    /* ✅ ABRE E TOCA COM SOM */
     el.autoplay = true;
     el.muted = false;
     el.volume = 1;
@@ -979,7 +979,6 @@ function showStory(){
     };
 
     viewerMedia.appendChild(el);
-
     el.play().catch(()=>{});
   }
 }
