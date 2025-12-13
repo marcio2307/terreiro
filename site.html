@@ -514,11 +514,17 @@
   </div>
 </div>
 
-<!-- MENU (BATE PAPO removido) -->
+<!-- MENU (somente ícones + player) -->
 <nav class="top-menu">
-  <a href="https://marcio2307.github.io/terreiro/estudo.html"><i class="fa-solid fa-book"></i> ESTUDO</a>
-  <a href="https://marcio2307.github.io/terreiro/sala.html"><i class="fa-solid fa-video"></i> REUNIÃO ONLINE</a>
-  <a href="#" onclick="sairNome()"><i class="fa-solid fa-right-from-bracket"></i> SAIR</a>
+  <a href="https://marcio2307.github.io/terreiro/estudo.html" title="Estudo" aria-label="Estudo"><i class="fa-solid fa-book"></i></a>
+
+  <a href="https://marcio2307.github.io/terreiro/sala.html" title="Reunião Online" aria-label="Reunião Online"><i class="fa-solid fa-video"></i></a>
+
+  <a href="#" id="radioBtn" onclick="toggleRadio(); return false;" title="Rádio" aria-label="Rádio">
+    <i class="fa-solid fa-play" id="radioIcon"></i>
+  </a>
+
+  <a href="#" onclick="sairNome(); return false;" title="Sair" aria-label="Sair"><i class="fa-solid fa-right-from-bracket"></i></a>
 </nav>
 
 <!-- STORIES -->
@@ -619,6 +625,44 @@ function playActionSound(){
   }catch(e){}
 }
 
+/* ====================== RADIO PLAYER (MENU) ====================== */
+const RADIO_URL = "https://stream.zeno.fm/l8ocj9i6ka2uv";
+let radio = null;
+let radioPlaying = false;
+
+function ensureRadio(){
+  if(radio) return;
+  radio = new Audio(RADIO_URL);
+  radio.preload = "none";
+  radio.crossOrigin = "anonymous";
+  radio.volume = 1.0;
+
+  radio.addEventListener("playing", ()=>{ setRadioUI(true); });
+  radio.addEventListener("pause", ()=>{ setRadioUI(false); });
+  radio.addEventListener("ended", ()=>{ setRadioUI(false); });
+  radio.addEventListener("error", ()=>{ setRadioUI(false); });
+}
+
+function setRadioUI(isPlaying){
+  radioPlaying = !!isPlaying;
+  const icon = document.getElementById("radioIcon");
+  if(!icon) return;
+  icon.className = radioPlaying ? "fa-solid fa-pause" : "fa-solid fa-play";
+}
+
+function toggleRadio(){
+  ensureRadio();
+  // garante que o áudio esteja liberado pelo clique do usuário
+  unlockAudioOnce();
+
+  if(!radioPlaying){
+    radio.play().then(()=>setRadioUI(true)).catch(()=>setRadioUI(false));
+  }else{
+    try{ radio.pause(); }catch(e){}
+    setRadioUI(false);
+  }
+}
+
 /* ====================== LOGIN + UID persistente ====================== */
 function getOrCreateUID(){
   // ✅ UID persistente (não muda ao fechar/abrir)
@@ -669,6 +713,10 @@ function sairNome(){
 
   sessionStorage.removeItem("nome_passageiro");
   sessionStorage.removeItem("uid_passageiro");
+
+  // pausa a rádio se estiver tocando
+  try{ if(radio) radio.pause(); }catch(e){}
+  setRadioUI(false);
 
   USER_NAME = "";
   UID = getOrCreateUID();
@@ -914,7 +962,7 @@ function showStory(){
     const el = document.createElement("video");
     el.src = s.url;
 
-    /* ✅ AQUI ESTÁ A CORREÇÃO: ABRE E TOCA COM SOM */
+    /* ✅ ABRE E TOCA COM SOM */
     el.autoplay = true;
     el.muted = false;
     el.volume = 1;
@@ -932,10 +980,7 @@ function showStory(){
 
     viewerMedia.appendChild(el);
 
-    /* tenta tocar com som (como o clique abriu o viewer, costuma funcionar) */
-    el.play().catch(()=>{
-      /* se algum celular bloquear, ao menos fica pronto pro usuário apertar play */
-    });
+    el.play().catch(()=>{});
   }
 }
 function runProgress(ms){
