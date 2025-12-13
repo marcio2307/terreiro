@@ -631,7 +631,7 @@ function getOrCreateUID(){
 let UID = getOrCreateUID();
 
 function getNomeSalvo(){
-  return (sessionStorage.getItem("nome_passageiro") || "").trim();
+  return (localStorage.getItem("nome_passageiro") || "").trim();
 }
 let USER_NAME = getNomeSalvo();
 
@@ -651,7 +651,7 @@ function confirmarNome(){
     try{ loginName.focus(); }catch(e){}
     return;
   }
-  sessionStorage.setItem("nome_passageiro", nome);
+  localStorage.setItem("nome_passageiro", nome);
   USER_NAME = nome;
   UID = getOrCreateUID();
   fecharLogin();
@@ -660,6 +660,7 @@ function confirmarNome(){
 (function exigirLogin(){ if(!USER_NAME) abrirLogin(); })();
 
 function sairNome(){
+  localStorage.removeItem("nome_passageiro");
   sessionStorage.removeItem("nome_passageiro");
   sessionStorage.removeItem("uid_passageiro");
   USER_NAME = "";
@@ -1532,4 +1533,3 @@ updateButton();
 
 </body>
 </html>
-
