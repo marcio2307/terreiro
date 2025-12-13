@@ -8,7 +8,6 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
 <style>
-  /* ✅ deixa tudo responsivo e evita “estourar” largura */
   *{ box-sizing: border-box; }
   html, body{ width:100%; max-width:100%; overflow-x:hidden; }
   body{ margin:0; background:#000; font-family: Arial, sans-serif; color:#fff; padding-bottom: env(safe-area-inset-bottom); }
@@ -67,7 +66,6 @@
   .stories-row::-webkit-scrollbar{ height:6px; }
   .stories-row::-webkit-scrollbar-thumb{ background:#00ff8c; border-radius:999px; }
 
-  /* ✅ tamanho adaptável em qualquer celular */
   .storyCard{
     width: clamp(120px, 42vw, 160px);
     height: clamp(220px, 70vw, 290px);
@@ -245,7 +243,6 @@
     align-items:center;
     justify-content:center;
   }
-  /* ✅ aqui corrige “passando da linha” */
   .login-input{
     width: 100%;
     max-width: 100%;
@@ -289,7 +286,7 @@
   }
   .input-box{
     flex:1;
-    min-width: 0; /* ✅ evita quebrar o layout no mobile */
+    min-width: 0;
     background:#111;
     padding:12px 18px;
     border-radius:999px;
@@ -464,9 +461,8 @@
   </div>
 </div>
 
-<!-- MENU -->
+<!-- MENU (✅ REMOVIDO BATE PAPO) -->
 <nav class="top-menu">
-  <a href="https://marcio2307.github.io/chatterreiro/chatterreiro.html"><i class="fa-solid fa-comments"></i> BATE PAPO</a>
   <a href="https://marcio2307.github.io/terreiro/estudo.html"><i class="fa-solid fa-book"></i> ESTUDO</a>
   <a href="https://marcio2307.github.io/terreiro/sala.html"><i class="fa-solid fa-video"></i> REUNIÃO ONLINE</a>
   <a href="#" onclick="sairNome()"><i class="fa-solid fa-right-from-bracket"></i> SAIR</a>
@@ -559,7 +555,6 @@ function fecharLogin(){
   document.body.style.overflow = "";
 }
 
-/* ✅ MAIS RÁPIDO: ao entrar, recarrega a página automaticamente */
 function confirmarNome(){
   let nome = (loginName.value || "").trim();
   if(nome.length < 2){
@@ -571,8 +566,6 @@ function confirmarNome(){
   USER_NAME = nome;
   UID = getOrCreateUID();
   fecharLogin();
-
-  // ✅ atualiza automaticamente assim que entrar
   setTimeout(()=>{ location.reload(); }, 80);
 }
 
@@ -622,6 +615,22 @@ function initials(name){
 function fmtDate(ts){
   try{ return new Date(ts).toLocaleString("pt-BR"); }catch(e){ return ""; }
 }
+
+/* ✅ LEVE NO CELULAR: limita tamanhos pra não travar */
+const MAX_IMG_MB = 15;
+const MAX_VID_MB = 60;
+function checkSize(file){
+  const mb = file.size/(1024*1024);
+  if(file.type.startsWith("image/") && mb>MAX_IMG_MB){
+    alert(`Imagem muito grande (${mb.toFixed(1)}MB). Envie até ${MAX_IMG_MB}MB.`);
+    return false;
+  }
+  if(file.type.startsWith("video/") && mb>MAX_VID_MB){
+    alert(`Vídeo muito grande (${mb.toFixed(1)}MB). Envie até ${MAX_VID_MB}MB.`);
+    return false;
+  }
+  return true;
+}
 </script>
 
 <script>
@@ -653,6 +662,7 @@ function renderCreateCard(){
       if(precisaLogin()) return;
       const file = e.target.files[0];
       if(!file) return;
+      if(!checkSize(file)) { upload.value=""; return; }
       addStory(file);
       upload.value = "";
     };
@@ -669,6 +679,7 @@ function buildSegRow(count){
   `;
 }
 
+/* ✅ evita travar: não deixa mini vídeo tocando no card */
 function renderUserCard(group){
   const card = document.createElement("div");
   card.className = "storyCard";
@@ -680,13 +691,16 @@ function renderUserCard(group){
 
   let mediaHTML = "";
   if((cover.type||"").includes("image")){
-    mediaHTML = `<img class="storyMedia" src="${cover.url}" alt="story">`;
+    mediaHTML = `<img class="storyMedia" src="${cover.url}" alt="story" loading="lazy">`;
   }else{
-    mediaHTML = `<video class="storyMedia" src="${cover.url}" autoplay muted loop playsinline></video>`;
+    mediaHTML = `
+      <div class="storyMedia" style="background:#000;display:flex;align-items:center;justify-content:center;">
+        <i class="fa-solid fa-play" style="font-size:38px;color:#00ff8c;opacity:.85;text-shadow:0 0 16px #00ff8c;"></i>
+      </div>`;
   }
 
   const avatarHTML = ((cover.type||"").includes("image"))
-    ? `<div class="avatarCircle"><img src="${cover.url}" alt="avatar"></div>`
+    ? `<div class="avatarCircle"><img src="${cover.url}" alt="avatar" loading="lazy"></div>`
     : `<div class="avatarCircle"><div class="avatarInitials">${escapeHTML(initials(uname))}</div></div>`;
 
   card.innerHTML = `
@@ -706,21 +720,15 @@ function renderUserCard(group){
   return card;
 }
 
-/* ✅ primeiro card sempre do usuário (e depois os outros) */
 function renderStoriesRow(){
   const row = document.getElementById("storiesRow");
   row.innerHTML = "";
 
-  // Card de criar story
   row.appendChild(renderCreateCard());
 
-  // Card do usuário logado primeiro (se tiver story)
   const myGroup = groupedStories.find(g => g.uid === UID);
-  if(myGroup){
-    row.appendChild(renderUserCard(myGroup));
-  }
+  if(myGroup) row.appendChild(renderUserCard(myGroup));
 
-  // Outros usuários
   groupedStories
     .filter(g => g.uid !== UID)
     .sort((a,b)=>(b.last?.createdAt||0)-(a.last?.createdAt||0))
@@ -733,7 +741,8 @@ async function addStory(file){
     const storyId = "story_" + Date.now() + "_" + Math.random().toString(36).slice(2);
     const path = `stories/${UID}/${storyId}`;
     const ref = ST.ref().child(path);
-    await ref.put(file);
+
+    await ref.put(file, { contentType: file.type });
     const url = await ref.getDownloadURL();
 
     const data = {
@@ -744,6 +753,7 @@ async function addStory(file){
       createdAt: firebase.database.ServerValue.TIMESTAMP,
       storagePath: path
     };
+
     await DB.ref("stories/" + storyId).set(data);
   }catch(err){
     console.log(err);
@@ -788,7 +798,6 @@ function showStory(){
   const s = activeStories[current];
   if(!s){ closeViewer(); return; }
 
-  // qualquer um pode excluir
   deleteBtn.style.display = "none";
 
   if((s.type||"").includes("image")){
@@ -803,6 +812,7 @@ function showStory(){
     el.autoplay = true;
     el.muted = false;
     el.playsInline = true;
+    el.preload = "metadata";
     el.onloadedmetadata = ()=>{
       const realDur = (el.duration||0)*1000;
       const dur = Math.min(realDur||6000, 120000);
@@ -863,7 +873,7 @@ deleteBtn.onclick = async ()=>{
   }
 };
 
-/* Listener stories */
+/* Listener stories (mantido) */
 (function listenStories(){
   const ref = DB.ref("stories").orderByChild("createdAt").limitToLast(500);
   ref.on("value", snap=>{
@@ -890,11 +900,16 @@ deleteBtn.onclick = async ()=>{
 </script>
 
 <script>
-/* ===================== FEED / MURAL (SEM COMPARTILHAR) ===================== */
+/* ===================== FEED / MURAL (✅ MAIS RÁPIDO E LEVE) ===================== */
 let selectedFile = null;
 let mode = "add";
 let longPress = {};
 let holdTimer = null;
+
+/* ✅ melhora velocidade: cache local e atualização incremental */
+const postsCache = new Set();   // ids já renderizados
+const MAX_RENDER_PER_FRAME = 8; // evita travar render
+let renderQueue = [];
 
 function updateButton(){
   let t = postText.value.trim();
@@ -913,16 +928,23 @@ function buttonAction(){
   mode === "add" ? fileInput.click() : postarTexto();
 }
 
+/* ✅ preview sem vazamento de memória */
+let previewUrlToRevoke = null;
+
 fileInput.onchange = e=>{
   if(precisaLogin()) return;
   selectedFile = e.target.files[0];
   if(!selectedFile) return;
+  if(!checkSize(selectedFile)){ selectedFile=null; fileInput.value=""; return; }
 
+  if(previewUrlToRevoke){ URL.revokeObjectURL(previewUrlToRevoke); previewUrlToRevoke=null; }
   let url = URL.createObjectURL(selectedFile);
+  previewUrlToRevoke = url;
+
   previewContent.innerHTML =
     selectedFile.type.startsWith("image/")
-      ? `<img src="${url}" style="width:100%;border-radius:10px;">`
-      : `<video src="${url}" controls style="width:100%;border-radius:10px;"></video>`;
+      ? `<img src="${url}" style="width:100%;border-radius:10px;" loading="lazy">`
+      : `<video src="${url}" controls preload="metadata" playsinline style="width:100%;border-radius:10px;"></video>`;
   previewBox.style.display = "block";
 };
 
@@ -946,6 +968,8 @@ async function postar(){
   selectedFile = null;
   postText.value = "";
   previewBox.style.display = "none";
+  previewContent.innerHTML = "";
+  if(previewUrlToRevoke){ URL.revokeObjectURL(previewUrlToRevoke); previewUrlToRevoke=null; }
   updateButton();
 }
 
@@ -953,6 +977,7 @@ function removerPreview(){
   selectedFile = null;
   previewBox.style.display = "none";
   previewContent.innerHTML = "";
+  if(previewUrlToRevoke){ URL.revokeObjectURL(previewUrlToRevoke); previewUrlToRevoke=null; }
 }
 
 async function criarPostFirebase(texto, fileOrNull, fileTypeOrNull){
@@ -966,7 +991,7 @@ async function criarPostFirebase(texto, fileOrNull, fileTypeOrNull){
       mediaType = fileTypeOrNull || fileOrNull.type || "";
       storagePath = `posts/${UID}/${postId}`;
       const ref = ST.ref().child(storagePath);
-      await ref.put(fileOrNull);
+      await ref.put(fileOrNull, { contentType: mediaType });
       mediaUrl = await ref.getDownloadURL();
     }
 
@@ -1004,22 +1029,12 @@ async function curtir(id){
     longPress[id] = false;
     return;
   }
-
   try{
     const likeRef = DB.ref(`likes/${id}/${UID}`);
     const snap = await likeRef.once("value");
     const cur = snap.val();
-
-    if(cur){
-      await likeRef.remove();
-    }else{
-      await likeRef.set({
-        type:"like",
-        uid: UID,
-        userName: USER_NAME,
-        createdAt: firebase.database.ServerValue.TIMESTAMP
-      });
-    }
+    if(cur) await likeRef.remove();
+    else await likeRef.set({ type:"like", uid:UID, userName:USER_NAME, createdAt: firebase.database.ServerValue.TIMESTAMP });
   }catch(err){
     console.log(err);
     alert("Erro ao curtir.");
@@ -1032,17 +1047,8 @@ async function amei(id){
     const likeRef = DB.ref(`likes/${id}/${UID}`);
     const snap = await likeRef.once("value");
     const cur = snap.val();
-
-    if(cur && cur.type === "love"){
-      await likeRef.remove();
-    }else{
-      await likeRef.set({
-        type:"love",
-        uid: UID,
-        userName: USER_NAME,
-        createdAt: firebase.database.ServerValue.TIMESTAMP
-      });
-    }
+    if(cur && cur.type === "love") await likeRef.remove();
+    else await likeRef.set({ type:"love", uid:UID, userName:USER_NAME, createdAt: firebase.database.ServerValue.TIMESTAMP });
   }catch(err){
     console.log(err);
     alert("Erro ao amar.");
@@ -1078,11 +1084,7 @@ function atualizarCurtidasUI(postId, likesObj){
   }
 
   const sorted = entries.sort((a,b)=>(a.createdAt||0)-(b.createdAt||0));
-  const nomes = sorted.map(x=>{
-    if(x.uid === UID) return "Você";
-    return escapeHTML(x.userName || "Usuário");
-  });
-
+  const nomes = sorted.map(x => (x.uid === UID ? "Você" : escapeHTML(x.userName || "Usuário")));
   cont.innerHTML = `Curtidas (${total}): <b>${nomes.join(", ")}</b>`;
 }
 
@@ -1112,13 +1114,12 @@ async function enviarComentario(id){
 
   try{
     const commentId = "cmt_" + Date.now() + "_" + Math.random().toString(36).slice(2);
-    const data = {
+    await DB.ref(`comments/${id}/${commentId}`).set({
       uid: UID,
       userName: USER_NAME,
       text: texto,
       createdAt: firebase.database.ServerValue.TIMESTAMP
-    };
-    await DB.ref(`comments/${id}/${commentId}`).set(data);
+    });
     input.value = "";
   }catch(err){
     console.log(err);
@@ -1171,13 +1172,17 @@ async function excluirPost(id){
 /* Render post (SEM compartilhar) */
 function criarPost(id, postData){
   if(!postData) return;
+  if(postsCache.has(id)) return; // ✅ não renderiza duas vezes
+  postsCache.add(id);
 
   longPress[id] = false;
 
   let midia = "";
   if(postData.mediaUrl){
     const isImg = (postData.mediaType || "").startsWith("image/");
-    midia = isImg ? `<img src="${postData.mediaUrl}">` : `<video src="${postData.mediaUrl}" controls></video>`;
+    midia = isImg
+      ? `<img src="${postData.mediaUrl}" loading="lazy">`
+      : `<video src="${postData.mediaUrl}" controls preload="metadata" playsinline></video>`;
   }
 
   const nome = escapeHTML(postData.userName || "Usuário");
@@ -1186,8 +1191,7 @@ function criarPost(id, postData){
     ? `<div style="font-size:12px;color:#00ff9d;opacity:.85;margin-top:-6px;">${fmtDate(postData.createdAt)}</div>`
     : "";
 
-  feed.innerHTML =
-  `
+  const html = `
   <div class="post" id="${id}">
     <div class="menu-btn" onclick="toggleMenu('${id}')">⋮</div>
     <div class="menu-box" id="menu_${id}">
@@ -1200,7 +1204,6 @@ function criarPost(id, postData){
     ${midia}
 
     <div class="post-actions">
-
       <div style="text-align:center; min-width:160px;">
         <div class="btn-action"
           id="curtir_${id}"
@@ -1215,12 +1218,9 @@ function criarPost(id, postData){
       </div>
 
       <div style="text-align:center; min-width:160px;">
-        <div class="btn-action" onclick="abrirComentarios('${id}')">
-          💬 Comentar
-        </div>
+        <div class="btn-action" onclick="abrirComentarios('${id}')">💬 Comentar</div>
         <div class="contador" id="contadorComentarios_${id}"></div>
       </div>
-
     </div>
 
     <div class="coment-area" id="comentarios_${id}">
@@ -1236,7 +1236,13 @@ function criarPost(id, postData){
       </button>
     </div>
   </div>
-  ` + feed.innerHTML;
+  `;
+
+  // ✅ insere sem reconstruir tudo (muito mais rápido)
+  const feed = document.getElementById("feed");
+  const temp = document.createElement("div");
+  temp.innerHTML = html.trim();
+  feed.prepend(temp.firstChild);
 
   listenLikes(id);
   listenComments(id);
@@ -1280,17 +1286,45 @@ function listenComments(postId){
   });
 }
 
-(function listenPosts(){
-  const ref = DB.ref("posts").orderByChild("createdAt").limitToLast(80);
-  ref.on("value", snap=>{
-    const obj = snap.val() || {};
-    const arr = Object.keys(obj).map(id => ({ id, ...obj[id] }))
-      .sort((a,b)=>(a.createdAt||0)-(b.createdAt||0));
+/* ✅ MAIS RÁPIDO: listener incremental (sem refazer feed inteiro) */
+(function listenPostsFast(){
+  const ref = DB.ref("posts").orderByChild("createdAt").limitToLast(120);
 
-    feed.innerHTML = "";
-    arr.forEach(p => criarPost(p.id, p));
+  ref.on("child_added", snap=>{
+    const id = snap.key;
+    if(postsCache.has(id)) return;
+    renderQueue.push({ id, data: snap.val() || {} });
+    pumpRenderQueue();
+  });
+
+  ref.on("child_removed", snap=>{
+    const id = snap.key;
+    postsCache.delete(id);
+    const el = document.getElementById(id);
+    if(el) el.remove();
   });
 })();
+
+let pumping = false;
+function pumpRenderQueue(){
+  if(pumping) return;
+  pumping = true;
+
+  const step = ()=>{
+    let n = 0;
+    while(renderQueue.length && n < MAX_RENDER_PER_FRAME){
+      const it = renderQueue.shift();
+      criarPost(it.id, it.data);
+      n++;
+    }
+    if(renderQueue.length){
+      requestAnimationFrame(step);
+    }else{
+      pumping = false;
+    }
+  };
+  requestAnimationFrame(step);
+}
 
 updateButton();
 </script>
