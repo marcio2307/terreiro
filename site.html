@@ -619,13 +619,16 @@ function playActionSound(){
   }catch(e){}
 }
 
-/* ====================== LOGIN + UID por aba ====================== */
+/* ====================== LOGIN + UID persistente ====================== */
 function getOrCreateUID(){
-  let uid = sessionStorage.getItem("uid_passageiro");
+  // ✅ UID persistente (não muda ao fechar/abrir)
+  let uid = localStorage.getItem("uid_passageiro");
   if(!uid){
     uid = "u_" + Math.random().toString(36).slice(2) + "_" + Date.now();
-    sessionStorage.setItem("uid_passageiro", uid);
+    localStorage.setItem("uid_passageiro", uid);
   }
+  // mantém também na sessão (se alguma parte usar)
+  sessionStorage.setItem("uid_passageiro", uid);
   return uid;
 }
 let UID = getOrCreateUID();
@@ -660,9 +663,13 @@ function confirmarNome(){
 (function exigirLogin(){ if(!USER_NAME) abrirLogin(); })();
 
 function sairNome(){
+  // ✅ ao sair: apaga nome + UID (para virar usuário novo ao entrar novamente)
   localStorage.removeItem("nome_passageiro");
+  localStorage.removeItem("uid_passageiro");
+
   sessionStorage.removeItem("nome_passageiro");
   sessionStorage.removeItem("uid_passageiro");
+
   USER_NAME = "";
   UID = getOrCreateUID();
   abrirLogin();
