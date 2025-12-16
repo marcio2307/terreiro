@@ -45,6 +45,8 @@
     /* ✅ melhora toque no celular (sem mudar o resto) */
     padding: 10px 12px;
     border-radius: 16px;
+
+    position: relative; /* ✅ p/ bolinha no ícone */
   }
   .top-menu a:hover { transform: scale(1.06); }
   .top-menu a i {
@@ -52,11 +54,29 @@
     text-shadow: 0 0 10px #00ff8c, 0 0 20px #00ff8c, 0 0 40px #00ff8c;
   }
 
+  /* ✅ bolinha verde piscando do menu (online list) */
+  .menu-online-dot{
+    position:absolute;
+    top: 6px;
+    right: 6px;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: #00ff4c;
+    box-shadow: 0 0 14px rgba(0,255,76,.9);
+    animation: blinkDot 0.9s infinite;
+  }
+  @keyframes blinkDot{
+    0%, 100%{ transform: scale(1); opacity: 1; }
+    50%{ transform: scale(1.35); opacity: .25; }
+  }
+
   /* ✅ celular: mais espaçados e maiores */
   @media(max-width:480px){
     .top-menu { gap: 26px; padding: 14px 10px; }
     .top-menu a { font-size: 14px; letter-spacing:.8px; padding: 12px 14px; }
     .top-menu a i { font-size: 24px; }
+    .menu-online-dot{ top: 7px; right: 7px; }
   }
 
   /* ✅ telas bem pequenas: ainda confortável */
@@ -178,16 +198,15 @@
     display:flex;
     align-items:center;
     justify-content:center;
-    padding-top: 56px; /* não encostar na barra de progresso */
-    padding-bottom: calc(96px + env(safe-area-inset-bottom)); /* reserva espaço pro "quem viu" */
+    padding-top: 56px;
+    padding-bottom: calc(96px + env(safe-area-inset-bottom));
   }
 
-  /* ✅ mídia proporcional à tela (sem tapar barras) */
   #viewerMedia img, #viewerMedia video{
     width: min(100vw, 980px);
     max-width: 100vw;
     max-height: calc(100vh - 56px - 96px - env(safe-area-inset-bottom));
-    object-fit: contain; /* proporcional */
+    object-fit: contain;
     border-radius: 16px;
     background:#000;
   }
@@ -242,13 +261,13 @@
     user-select:none;
   }
 
-  /* ✅ QUEM VIU (estilo Facebook) */
+  /* ✅ QUEM VIU */
   .viewerFooter{
     position:absolute;
     left:0; right:0; bottom:0;
     padding: 10px 12px calc(12px + env(safe-area-inset-bottom)) 12px;
     z-index: 30;
-    pointer-events:none; /* só o botão interno clicável */
+    pointer-events:none;
   }
   .viewerFooterInner{
     pointer-events:auto;
@@ -341,7 +360,7 @@
     white-space:nowrap;
   }
 
-  /* ====================== LOGIN (100% responsivo) ====================== */
+  /* ====================== LOGIN ====================== */
   .login-overlay{
     position:fixed; inset:0;
     background: rgba(0,0,0,0.94);
@@ -403,7 +422,7 @@
   }
   .login-btn:active{ transform: scale(.99); }
 
-  /* ===================== FEED COMPLETO ===================== */
+  /* ===================== FEED ===================== */
   .create-post{
     background:#0d0d0d;
     margin:10px 12px 15px 12px;
@@ -574,7 +593,7 @@
     z-index:5;
   }
 
-  /* ===================== LOADING OVERLAY (post/story) ===================== */
+  /* ===================== LOADING ===================== */
   .loadingOverlay{
     position:fixed; inset:0;
     background: rgba(0,0,0,.78);
@@ -640,7 +659,15 @@
 
 <!-- MENU (somente ícones + player) -->
 <nav class="top-menu">
-  <a href="https://marcio2307.github.io/terreiro/estudo.html" title="Estudo" aria-label="Estudo"><i class="fa-solid fa-book"></i></a>
+  <a href="https://marcio2307.github.io/terreiro/estudo.html" title="Estudo" aria-label="Estudo">
+    <i class="fa-solid fa-book"></i>
+  </a>
+
+  <!-- ✅ NOVO: link para lista online (chat.html) com bolinha verde piscando -->
+  <a href="https://marcio2307.github.io/terreiro/chat.html" title="Usuários Online" aria-label="Usuários Online">
+    <i class="fa-solid fa-users"></i>
+    <span class="menu-online-dot" aria-hidden="true"></span>
+  </a>
 
   <a href="https://marcio2307.github.io/terreiro/sala.html" title="Reunião Online" aria-label="Reunião Online"><i class="fa-solid fa-video"></i></a>
 
@@ -680,7 +707,7 @@
   </div>
 </div>
 
-<!-- FEED / MURAL (SEM COMPARTILHAR) -->
+<!-- FEED / MURAL -->
 <div class="create-post">
   <input type="text" id="postText" class="input-box" placeholder="No que você está pensando?" oninput="updateButton()">
   <div class="add-btn" id="btnMain" onclick="buttonAction()">+</div>
@@ -729,12 +756,10 @@ const ST = firebase.storage();
 /* ====================== ✅ SOM (MP3 DO GITHUB) ====================== */
 const ACTION_SOUND_URL = "som.mp3";
 
-/* player único */
 const actionSfx = new Audio(ACTION_SOUND_URL);
 actionSfx.preload = "auto";
 actionSfx.volume = 1.0;
 
-/* destrava áudio no primeiro toque (celular) */
 let audioUnlocked = false;
 function unlockAudioOnce(){
   if(audioUnlocked) return;
@@ -835,11 +860,20 @@ function confirmarNome(){
   USER_NAME = nome;
   UID = getOrCreateUID();
   fecharLogin();
+
+  // ✅ inicia presença assim que logar
+  startPresence();
+
   setTimeout(()=>{ location.reload(); }, 80);
 }
-(function exigirLogin(){ if(!USER_NAME) abrirLogin(); })();
+(function exigirLogin(){
+  if(!USER_NAME) abrirLogin();
+})();
 
 function sairNome(){
+  // ✅ remove presença ao sair
+  stopPresence();
+
   localStorage.removeItem("nome_passageiro");
   localStorage.removeItem("uid_passageiro");
 
@@ -853,6 +887,7 @@ function sairNome(){
   UID = getOrCreateUID();
   abrirLogin();
 }
+
 function precisaLogin(){
   if(!USER_NAME){ abrirLogin(); return true; }
   return false;
@@ -906,6 +941,77 @@ function showLoading(title, sub){
 function hideLoading(){
   loadingOverlay.style.display = "none";
 }
+
+/* ====================== ✅ PRESENÇA ONLINE (INVISÍVEL) ======================
+   - Não aparece no site
+   - Atualiza /presence/{UID}
+   - chat.html vai ler e mostrar a lista
+*/
+let presenceRef = null;
+let presenceTimer = null;
+
+function startPresence(){
+  try{
+    if(!USER_NAME || !UID) return;
+
+    // evita duplicar
+    if(presenceTimer) return;
+
+    presenceRef = DB.ref("presence/" + UID);
+
+    // marca online e mantém heartbeat
+    const connectedRef = DB.ref(".info/connected");
+    connectedRef.on("value", (snap)=>{
+      if(snap.val() === true){
+        // quando desconectar, remove
+        presenceRef.onDisconnect().remove().catch(()=>{});
+
+        // seta online
+        presenceRef.set({
+          uid: UID,
+          userName: USER_NAME,
+          online: true,
+          onlineAt: firebase.database.ServerValue.TIMESTAMP,
+          lastActive: firebase.database.ServerValue.TIMESTAMP
+        }).catch(()=>{});
+      }
+    });
+
+    // heartbeat p/ não ficar “preso” online
+    presenceTimer = setInterval(()=>{
+      if(!presenceRef) return;
+      presenceRef.update({
+        online: true,
+        lastActive: firebase.database.ServerValue.TIMESTAMP
+      }).catch(()=>{});
+    }, 25000);
+
+    // antes de sair da aba, remove
+    window.addEventListener("beforeunload", ()=>{
+      try{ stopPresence(true); }catch(e){}
+    });
+  }catch(e){}
+}
+
+function stopPresence(silent){
+  try{
+    if(presenceTimer){
+      clearInterval(presenceTimer);
+      presenceTimer = null;
+    }
+    if(presenceRef){
+      // remove presença
+      presenceRef.remove().catch(()=>{});
+      presenceRef = null;
+    }
+  }catch(e){}
+  if(!silent){}
+}
+
+// ✅ se já está logado quando abre o site, inicia presença
+if(USER_NAME && UID){
+  startPresence();
+}
 </script>
 
 <script>
@@ -921,7 +1027,6 @@ let viewerTimer = null;
 /* ✅ quem viu (variáveis) */
 let viewersPanelOpen = false;
 let viewersRef = null;
-
 /* ✅ só o DONO do story pode ver "quem viu" */
 let CAN_SEE_VIEWERS = false;
 
@@ -961,7 +1066,6 @@ function buildSegRow(count){
   `;
 }
 
-/* preview do card continua muted (como estava) */
 function renderUserCard(group){
   const card = document.createElement("div");
   card.className = "storyCard";
@@ -1042,7 +1146,7 @@ async function addStory(file){
 
     await DB.ref("stories/" + storyId).set(data);
 
-    playActionSound(); /* postou story */
+    playActionSound();
   }catch(err){
     console.log(err);
     alert("Erro ao enviar story.");
@@ -1051,7 +1155,7 @@ async function addStory(file){
   }
 }
 
-/* ===================== ✅ QUEM VIU (funções) ===================== */
+/* ===================== ✅ QUEM VIU ===================== */
 function closeViewersPanel(){
   viewersPanelOpen = false;
   viewersPanel.style.display = "none";
@@ -1059,15 +1163,12 @@ function closeViewersPanel(){
   if(ch) ch.className = "fa-solid fa-chevron-up";
 }
 function toggleViewersPanel(){
-  /* ✅ se não é dono, não abre */
   if(!CAN_SEE_VIEWERS) return;
-
   viewersPanelOpen = !viewersPanelOpen;
   viewersPanel.style.display = viewersPanelOpen ? "block" : "none";
   const ch = document.getElementById("seenChevron");
   if(ch) ch.className = viewersPanelOpen ? "fa-solid fa-chevron-down" : "fa-solid fa-chevron-up";
 }
-
 function detachViewersListener(){
   try{
     if(viewersRef){
@@ -1076,13 +1177,10 @@ function detachViewersListener(){
     }
   }catch(e){}
 }
-
 function updateViewersUI(viewsObj){
   const obj = viewsObj || {};
   const arr = Object.keys(obj).map(uid=>obj[uid]).filter(Boolean);
-
   arr.sort((a,b)=>(a.viewedAt||0)-(b.viewedAt||0));
-
   const total = arr.length;
 
   if(total === 0){
@@ -1092,11 +1190,8 @@ function updateViewersUI(viewsObj){
   }
 
   const first = arr[0]?.userName || "Alguém";
-  if(total === 1){
-    seenText.textContent = `${first} viu este story`;
-  }else{
-    seenText.textContent = `${first} e mais ${total-1} viram este story`;
-  }
+  if(total === 1) seenText.textContent = `${first} viu este story`;
+  else seenText.textContent = `${first} e mais ${total-1} viram este story`;
 
   viewersPanel.innerHTML = arr.map(v=>{
     const nome = escapeHTML(v.userName || "Usuário");
@@ -1109,15 +1204,11 @@ function updateViewersUI(viewsObj){
     `;
   }).join("");
 }
-
 async function markStoryView(story){
   try{
     if(!story || !story.id) return;
     if(precisaLogin()) return;
-
-    /* dono não conta como visualização */
-    if(story.uid === UID) return;
-
+    if(story.uid === UID) return; // dono não conta
     await DB.ref(`storyViews/${story.id}/${UID}`).set({
       uid: UID,
       userName: USER_NAME,
@@ -1125,13 +1216,11 @@ async function markStoryView(story){
     });
   }catch(e){}
 }
-
 function attachViewersListener(story){
   detachViewersListener();
   closeViewersPanel();
   viewersPanel.innerHTML = "";
   seenText.textContent = "Carregando visualizações...";
-
   if(!story || !story.id) return;
 
   viewersRef = DB.ref(`storyViews/${story.id}`);
@@ -1155,11 +1244,9 @@ function closeViewer(){
   clearTimeout(viewerTimer);
   viewerTimer = null;
 
-  /* ✅ limpa listeners do "quem viu" */
   detachViewersListener();
   closeViewersPanel();
 }
-
 function showStory(){
   clearTimeout(viewerTimer);
   viewerTimer = null;
@@ -1184,9 +1271,7 @@ function showStory(){
 
   deleteBtn.style.display = "none";
 
-  /* ✅ REGRA: só o dono do story pode ver "quem viu" */
   CAN_SEE_VIEWERS = (s.uid === UID);
-
   if(CAN_SEE_VIEWERS){
     viewerFooter.style.display = "block";
     attachViewersListener(s);
@@ -1196,7 +1281,6 @@ function showStory(){
     closeViewersPanel();
   }
 
-  /* ✅ marca visualização (só se não for dono) */
   markStoryView(s);
 
   if((s.type||"").includes("image")){
@@ -1208,11 +1292,9 @@ function showStory(){
   }else{
     const el = document.createElement("video");
     el.src = s.url;
-
     el.autoplay = true;
     el.muted = false;
     el.volume = 1;
-
     el.controls = true;
     el.playsInline = true;
     el.preload = "metadata";
@@ -1268,16 +1350,11 @@ deleteBtn.onclick = async ()=>{
   try{
     stopVideo();
     await DB.ref("stories/" + s.id).remove();
-
-    /* ✅ remove também as visualizações desse story */
     await DB.ref("storyViews/" + s.id).remove().catch(()=>{});
-
     if(s.storagePath){
       await ST.ref().child(s.storagePath).delete().catch(()=>{});
     }
-
-    playActionSound(); /* excluiu story */
-
+    playActionSound();
     if(current>0) current--;
     closeViewer();
   }catch(err){
@@ -1286,7 +1363,6 @@ deleteBtn.onclick = async ()=>{
   }
 };
 
-/* Listener stories */
 (function listenStories(){
   const ref = DB.ref("stories").orderByChild("createdAt").limitToLast(500);
   ref.on("value", snap=>{
@@ -1341,7 +1417,6 @@ function buttonAction(){
   mode === "add" ? fileInput.click() : postarTexto();
 }
 
-/* preview sem vazamento */
 let previewUrlToRevoke = null;
 
 fileInput.onchange = e=>{
@@ -1368,7 +1443,7 @@ async function postarTexto(){
   showLoading("Postando...", "Publicando no mural");
   try{
     await criarPostFirebase(t, null, null, null);
-    playActionSound(); /* postou publicação */
+    playActionSound();
     postText.value = "";
     updateButton();
   }finally{
@@ -1403,7 +1478,7 @@ async function postar(){
 
   try{
     await criarPostFirebase(texto, file, file.type, postId);
-    playActionSound(); /* postou publicação */
+    playActionSound();
   }catch(err){
     console.log(err);
     alert("Erro ao postar.");
@@ -1431,34 +1506,30 @@ function removerPreview(){
 
 async function criarPostFirebase(texto, fileOrNull, fileTypeOrNull, forcedPostId){
   const postId = forcedPostId || ("post_" + Date.now() + "_" + Math.random().toString(36).slice(2));
-  try{
-    let mediaUrl = null;
-    let mediaType = null;
-    let storagePath = null;
+  let mediaUrl = null;
+  let mediaType = null;
+  let storagePath = null;
 
-    if(fileOrNull){
-      mediaType = fileTypeOrNull || fileOrNull.type || "";
-      storagePath = `posts/${UID}/${postId}`;
-      const ref = ST.ref().child(storagePath);
-      await ref.put(fileOrNull, { contentType: mediaType });
-      mediaUrl = await ref.getDownloadURL();
-    }
-
-    const data = {
-      text: (texto || "").toString(),
-      mediaUrl,
-      mediaType,
-      uid: UID,
-      userName: USER_NAME,
-      createdAt: firebase.database.ServerValue.TIMESTAMP,
-      storagePath
-    };
-
-    await DB.ref("posts/" + postId).set(data);
-    return postId;
-  }catch(err){
-    throw err;
+  if(fileOrNull){
+    mediaType = fileTypeOrNull || fileOrNull.type || "";
+    storagePath = `posts/${UID}/${postId}`;
+    const ref = ST.ref().child(storagePath);
+    await ref.put(fileOrNull, { contentType: mediaType });
+    mediaUrl = await ref.getDownloadURL();
   }
+
+  const data = {
+    text: (texto || "").toString(),
+    mediaUrl,
+    mediaType,
+    uid: UID,
+    userName: USER_NAME,
+    createdAt: firebase.database.ServerValue.TIMESTAMP,
+    storagePath
+  };
+
+  await DB.ref("posts/" + postId).set(data);
+  return postId;
 }
 
 function pressionarCurtir(id){
@@ -1475,33 +1546,21 @@ function soltarCurtir(){
 async function curtir(id){
   if(precisaLogin()) return;
   if(longPress[id]){ longPress[id] = false; return; }
-  try{
-    const likeRef = DB.ref(`likes/${id}/${UID}`);
-    const snap = await likeRef.once("value");
-    const cur = snap.val();
-    if(cur) await likeRef.remove();
-    else await likeRef.set({ type:"like", uid:UID, userName:USER_NAME, createdAt: firebase.database.ServerValue.TIMESTAMP });
-
-    playActionSound(); /* curtir */
-  }catch(err){
-    console.log(err);
-    alert("Erro ao curtir.");
-  }
+  const likeRef = DB.ref(`likes/${id}/${UID}`);
+  const snap = await likeRef.once("value");
+  const cur = snap.val();
+  if(cur) await likeRef.remove();
+  else await likeRef.set({ type:"like", uid:UID, userName:USER_NAME, createdAt: firebase.database.ServerValue.TIMESTAMP });
+  playActionSound();
 }
 async function amei(id){
   if(precisaLogin()) return;
-  try{
-    const likeRef = DB.ref(`likes/${id}/${UID}`);
-    const snap = await likeRef.once("value");
-    const cur = snap.val();
-    if(cur && cur.type === "love") await likeRef.remove();
-    else await likeRef.set({ type:"love", uid:UID, userName:USER_NAME, createdAt: firebase.database.ServerValue.TIMESTAMP });
-
-    playActionSound(); /* amei */
-  }catch(err){
-    console.log(err);
-    alert("Erro ao amar.");
-  }
+  const likeRef = DB.ref(`likes/${id}/${UID}`);
+  const snap = await likeRef.once("value");
+  const cur = snap.val();
+  if(cur && cur.type === "love") await likeRef.remove();
+  else await likeRef.set({ type:"love", uid:UID, userName:USER_NAME, createdAt: firebase.database.ServerValue.TIMESTAMP });
+  playActionSound();
 }
 
 function atualizarCurtidasUI(postId, likesObj){
@@ -1558,21 +1617,15 @@ async function enviarComentario(id){
   const texto = input.value.trim();
   if(!texto) return;
 
-  try{
-    const commentId = "cmt_" + Date.now() + "_" + Math.random().toString(36).slice(2);
-    await DB.ref(`comments/${id}/${commentId}`).set({
-      uid: UID,
-      userName: USER_NAME,
-      text: texto,
-      createdAt: firebase.database.ServerValue.TIMESTAMP
-    });
-    input.value = "";
-
-    playActionSound(); /* comentou */
-  }catch(err){
-    console.log(err);
-    alert("Erro ao comentar.");
-  }
+  const commentId = "cmt_" + Date.now() + "_" + Math.random().toString(36).slice(2);
+  await DB.ref(`comments/${id}/${commentId}`).set({
+    uid: UID,
+    userName: USER_NAME,
+    text: texto,
+    createdAt: firebase.database.ServerValue.TIMESTAMP
+  });
+  input.value = "";
+  playActionSound();
 }
 
 function toggleComentMenu(cid){
@@ -1582,11 +1635,8 @@ function toggleComentMenu(cid){
 }
 
 async function excluirComentario(cid, postId){
-  try{
-    await DB.ref(`comments/${postId}/${cid}`).remove();
-    playActionSound(); /* excluiu comentário */
-  }
-  catch(err){ console.log(err); alert("Erro ao excluir comentário."); }
+  await DB.ref(`comments/${postId}/${cid}`).remove();
+  playActionSound();
 }
 
 function toggleMenu(id){
@@ -1596,30 +1646,23 @@ function toggleMenu(id){
 }
 
 async function excluirPost(id){
-  try{
-    const snap = await DB.ref("posts/" + id).once("value");
-    const data = snap.val();
+  const snap = await DB.ref("posts/" + id).once("value");
+  const data = snap.val();
 
-    await DB.ref("posts/" + id).remove();
-    await DB.ref("likes/" + id).remove().catch(()=>{});
-    await DB.ref("comments/" + id).remove().catch(()=>{});
+  await DB.ref("posts/" + id).remove();
+  await DB.ref("likes/" + id).remove().catch(()=>{});
+  await DB.ref("comments/" + id).remove().catch(()=>{});
 
-    if(data && data.storagePath){
-      await ST.ref().child(data.storagePath).delete().catch(()=>{});
-    }
-
-    const el = document.getElementById(id);
-    if(el) el.remove();
-    postsCache.delete(id);
-
-    playActionSound(); /* excluiu post */
-  }catch(err){
-    console.log(err);
-    alert("Erro ao excluir post.");
+  if(data && data.storagePath){
+    await ST.ref().child(data.storagePath).delete().catch(()=>{});
   }
+
+  const el = document.getElementById(id);
+  if(el) el.remove();
+  postsCache.delete(id);
+  playActionSound();
 }
 
-/* post HTML */
 function postHTML(id, postData){
   let midia = "";
   if(postData.mediaUrl){
@@ -1688,7 +1731,6 @@ function postHTML(id, postData){
   `;
 }
 
-/* post instantâneo */
 function criarPostOptimista(id, postData){
   if(postsCache.has(id)) return;
   postsCache.add(id);
@@ -1774,7 +1816,6 @@ function listenComments(postId){
   });
 }
 
-/* listener posts */
 (function listenPostsFast(){
   const ref = DB.ref("posts").orderByChild("createdAt").limitToLast(200);
 
@@ -1807,7 +1848,7 @@ function pumpRenderQueue(){
 
   const step = ()=>{
     let n = 0;
-    while(renderQueue.length && n < MAX_RENDER_PER_FRAME){
+    while(renderQueue.length && n < 8){
       const it = renderQueue.shift();
       if(!postsCache.has(it.id)){
         postsCache.add(it.id);
