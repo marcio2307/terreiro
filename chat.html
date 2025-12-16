@@ -5,562 +5,285 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Chat</title>
 
-<!-- 🔊 SOM – use o arquivo som.mp3 na mesma pasta do HTML -->
-<audio id="somEnviar" src="https://marcio2307.github.io/terreiro/som.mp3"></audio>
-<audio id="somReceber" src="https://marcio2307.github.io/terreiro/som.mp3"></audio>
+<!-- 🔊 SONS -->
+<audio id="somEnviar" src="som.mp3"></audio>
+<audio id="somReceber" src="som.mp3"></audio>
 
 <style>
-/* BLOQUEIA QUALQUER MOVIMENTO DE TELA */
-html, body {
-    margin: 0;
-    padding: 0;
-    overflow: hidden !important;
-    width: 100%;
-    height: 100%;
-    touch-action: none;
+html,body{
+  margin:0; padding:0;
+  width:100%; height:100%;
+  background:#000; color:#0f0;
+  font-family:Segoe UI, sans-serif;
+  overflow:hidden;
 }
 
-body {
-    background: #000;
-    font-family: 'Segoe UI', sans-serif;
-    color: #0f0;
-    position: fixed;
-    inset: 0;
+/* LISTA */
+#listaUsuarios{
+  position:absolute; inset:0;
+  background:#050505;
+  overflow-y:auto;
+  transition:.3s;
+  z-index:10;
+}
+#listaUsuarios.hidden{ left:-100%; position:absolute; }
+
+.voltarSiteBtn{
+  margin:15px;
+  padding:8px 14px;
+  border:2px solid #0f0;
+  border-radius:30px;
+  cursor:pointer;
+  display:inline-flex;
+  align-items:center;
+  gap:8px;
 }
 
-/* LISTA DE USUÁRIOS */
-#listaUsuarios {
-    width: 100%;
-    height: 100%;
-    position: absolute;
-    left: 0;
-    top: 0;
-    background: #050505;
-    border-right: 2px solid #0f0;
-    overflow-y: auto;
-    z-index: 10;
-    transition: 0.3s;
+#listaUsuarios h2{
+  text-align:center;
+  border-bottom:2px solid #0f0;
+  padding:10px;
 }
 
-#listaUsuarios.hidden { left: -100%; }
+.userBox{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  padding:14px;
+  cursor:pointer;
+}
+.userBox:hover{ background:rgba(0,255,0,.15); }
 
-/* 🔙 BOTÃO VOLTAR BONITO */
-.voltarSiteBtn {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    width: fit-content;
-    margin: 15px;
-    padding: 8px 14px;
-    background: rgba(0,255,0,0.12);
-    border: 2px solid #0f0;
-    border-radius: 30px;
-    cursor: pointer;
-    font-size: 18px;
-    color: #0f0;
-    font-weight: bold;
-    transition: 0.2s;
+.userBox img{
+  width:48px;height:48px;
+  border-radius:50%;
+  border:2px solid #0f0;
 }
 
-.voltarSiteBtn:hover {
-    background: rgba(0,255,0,0.25);
-    transform: scale(1.08);
-    box-shadow: 0 0 12px #0f0;
+.onlineDot{
+  width:10px;height:10px;
+  background:#0f0;
+  border-radius:50%;
+  animation:blink 1s infinite;
 }
-
-.voltarSeta {
-    font-size: 24px;
-    font-weight: bold;
-}
-
-/* TÍTULO */
-#listaUsuarios h2 {
-    text-align: center;
-    padding: 12px;
-    border-bottom: 2px solid #0f0;
-    font-size: 20px;
-}
-
-/* Usuário */
-.userBox {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    padding: 14px;
-    cursor: pointer;
-}
-
-.userBox:hover { background: rgba(0,255,0,0.15); }
-
-.userBox img {
-    width: 48px;
-    height: 48px;
-    border-radius: 50%;
-    border: 2px solid #0f0;
-    object-fit: cover;
-}
-
-.onlineDot {
-    width: 12px;
-    height: 12px;
-    background: #00ff00;
-    border-radius: 50%;
-    animation: blink 1s infinite;
-}
-@keyframes blink { 50% { opacity: 0.3; } }
+@keyframes blink{50%{opacity:.3;}}
 
 /* CHAT */
-#chatArea {
-    width: 100%;
-    height: 100%;
-    position: absolute;
-    top: 0;
-    left: 0;
-    background: #000;
-    display: flex;
-    flex-direction: column;
+#chatArea{
+  position:absolute; inset:0;
+  display:flex;
+  flex-direction:column;
 }
 
-/* HEADER */
-#chatHeader {
-    padding: 12px;
-    background: #0a0a0a;
-    border-bottom: 2px solid #0f0;
-    font-size: 18px;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    font-weight: bold;
+#chatHeader{
+  padding:12px;
+  background:#0a0a0a;
+  border-bottom:2px solid #0f0;
+  display:flex;
+  align-items:center;
+  gap:12px;
 }
 
-.botaoVoltar {
-    font-size: 26px;
-    font-weight: bold;
-    color: #0f0;
-    cursor: pointer;
-    display: none;
+.botaoVoltar{ font-size:24px; cursor:pointer; display:none; }
+#headerFoto{ width:42px;height:42px;border-radius:50%;border:2px solid #0f0; display:none; }
+
+#mensagens{
+  flex:1;
+  padding:10px;
+  overflow-y:auto;
+  display:flex;
+  flex-direction:column;
+  gap:20px;
+  padding-bottom:120px;
 }
 
-#headerFoto {
-    width: 42px;
-    height: 42px;
-    border-radius: 50%;
-    border: 2px solid #0f0;
-    display: none;
+.msg{
+  max-width:75%;
+  padding:10px 14px;
+  background:#013801;
+  border:1px solid #0f0;
+  border-radius:18px;
+  border-bottom-left-radius:0;
+}
+.msg.me{
+  margin-left:auto;
+  background:#065f06;
+  color:#fff;
+  border-bottom-right-radius:0;
 }
 
-/* MENSAGENS */
-#mensagens {
-    flex: 1;
-    padding: 10px;
-    overflow-y: auto;
-    display: flex;
-    flex-direction: column;
-    gap: 25px;
-    padding-bottom: 120px !important;
+.msgHora{
+  font-size:11px;
+  opacity:.6;
+  margin-top:4px;
+  text-align:right;
 }
 
-/* BALÃO RECEBIDO */
-.msg {
-    display: inline-block;
-    max-width: 75%;
-    padding: 10px 14px;
-    background: #013801;
-    border: 1px solid #0f0;
-    border-radius: 18px;
-    border-bottom-left-radius: 0px;
-    font-size: 15px;
-    color: #0f0;
-    margin-right: auto;
-    margin-left: 0;
-    position: relative;
-    word-break: break-word;
+#inputArea{
+  position:absolute;
+  bottom:0; width:100%;
+  padding:8px;
+  border-top:2px solid #0f0;
+  display:flex;
+  gap:8px;
 }
 
-.msg::after {
-    content: "";
-    position: absolute;
-    left: -8px;
-    bottom: 0;
-    border-top: 10px solid #013801;
-    border-right: 10px solid transparent;
+#msgInput{
+  flex:1;
+  padding:8px;
+  border-radius:25px;
+  border:2px solid #0f0;
+  background:#000;
+  color:#0f0;
 }
-
-/* BALÃO ENVIADO */
-.msg.me {
-    background: #065f06;
-    border: 1px solid #0f0;
-    color: #fff;
-    margin-left: auto;
-    margin-right: 40px;
-    border-radius: 18px;
-    border-bottom-right-radius: 0;
-}
-
-.msg.me::after {
-    content: "";
-    position: absolute;
-    right: -8px;
-    bottom: 0;
-    border-top: 10px solid #065f06;
-    border-left: 10px solid transparent;
-}
-
-/* HORA */
-.msgHora {
-    font-size: 11px;
-    opacity: 0.6;
-    margin-top: 4px;
-    text-align: right;
-}
-
-/* LIXEIRA */
-.lixeiraBtn {
-    width: 18px;
-    height: 18px;
-    cursor: pointer;
-    right: -28px;
-    bottom: 5px;
-    position: absolute;
-    opacity: 0.9;
-}
-
-/* ÁREA DE DIGITAR */
-#inputArea {
-    position: absolute;
-    bottom: 0;
-    width: 100%;
-    background: #000;
-    border-top: 2px solid #0f0;
-    padding: 8px;
-    display: flex;
-    gap: 8px;
-    align-items: center;
-}
-
-/* CAMPO */
-#msgInput {
-    flex: 1;
-    padding: 8px;
-    border-radius: 25px;
-    border: 2px solid #0f0;
-    background: #000;
-    color: #0f0;
-    font-size: 15px;
-}
-
-/* BOTÃO ENVIAR */
-#sendBtn {
-    width: 44px;
-    height: 44px;
-    background: #0f0;
-    border-radius: 50%;
-    border: none;
-    color: #000;
-    font-size: 20px;
-    font-weight: bold;
-    cursor: pointer;
-    margin-right: 14px;
+#sendBtn{
+  width:44px;height:44px;
+  border-radius:50%;
+  background:#0f0;
+  color:#000;
+  font-size:20px;
+  cursor:pointer;
 }
 </style>
-
-<!-- 🔓 DESBLOQUEIO DE ÁUDIO -->
-<script>
-document.addEventListener("click", () => {
-    const a1 = document.getElementById("somEnviar");
-    const a2 = document.getElementById("somReceber");
-
-    if (a1) { a1.play().catch(()=>{}); a1.pause(); a1.currentTime = 0; }
-    if (a2) { a2.play().catch(()=>{}); a2.pause(); a2.currentTime = 0; }
-}, { once: true });
-</script>
-
 </head>
 
 <body>
 
-<!-- LISTA DE USUÁRIOS -->
+<!-- LISTA -->
 <div id="listaUsuarios">
-
-    <!-- 🔙 BOTÃO VOLTAR BONITO -->
-  <div class="voltarSiteBtn" onclick="window.open('', '_self').close()">
-    Voltar
-</div>
-
-    <h2>Online Agora</h2>
+  <div class="voltarSiteBtn" onclick="location.href='site.html'">← Voltar</div>
+  <h2>Online Agora</h2>
 </div>
 
 <!-- CHAT -->
 <div id="chatArea">
-    <div id="chatHeader">
-        <span class="botaoVoltar" onclick="window.voltarLista()">←</span>
-        <img id="headerFoto">
-        <span id="headerNome">Selecione um usuário</span>
-    </div>
+  <div id="chatHeader">
+    <span class="botaoVoltar" onclick="voltarLista()">←</span>
+    <img id="headerFoto">
+    <span id="headerNome">Selecione um usuário</span>
+  </div>
 
-    <div id="mensagens"></div>
+  <div id="mensagens"></div>
 
-    <div id="inputArea">
-        <input id="msgInput" placeholder="Digite..." disabled>
-        <button id="sendBtn" disabled>➤</button>
-    </div>
+  <div id="inputArea">
+    <input id="msgInput" placeholder="Digite..." disabled>
+    <button id="sendBtn" disabled>➤</button>
+  </div>
 </div>
 
 <!-- FIREBASE -->
 <script type="module">
-import { 
-    initializeApp, 
-    getApp 
-} from "https://www.gstatic.com/firebasejs/10.14.0/firebase-app.js";
+import { initializeApp, getApp } from "https://www.gstatic.com/firebasejs/10.14.0/firebase-app.js";
+import { getDatabase, ref, set, onValue, push, remove, onDisconnect } from "https://www.gstatic.com/firebasejs/10.14.0/firebase-database.js";
 
-import { 
-    getDatabase, 
-    ref, 
-    set, 
-    onValue, 
-    push, 
-    remove, 
-    onDisconnect
-} from "https://www.gstatic.com/firebasejs/10.14.0/firebase-database.js";
+/* 🔐 IDENTIDADE (vem do site.html) */
+const nome = (localStorage.getItem("nome_passageiro")||"").trim();
+const uid  = (localStorage.getItem("uid_passageiro")||"").trim();
+const foto = localStorage.getItem("foto_passageiro") ||
+  "https://cdn-icons-png.flaticon.com/512/149/149071.png";
 
-/* 🔥 PEGA O USUÁRIO */
-const usuario = localStorage.getItem("usuarioLogado");
-const fotoPerfil = localStorage.getItem("fotoPerfil_" + usuario)
- || "https://cdn-icons-png.flaticon.com/512/149/149071.png";
-
-if (!usuario) alert("Faça login primeiro.");
-
-/* 🔥 CONFIGURAÇÃO */
-const firebaseConfig = {
-    apiKey: "AIzaSyAt4CeGjdbjzdtMH1qZHw6RuBFJ6SeTDKk",
-    authDomain: "coletivo-f34d4.firebaseapp.com",
-    databaseURL: "https://coletivo-f34d4-default-rtdb.firebaseio.com",
-    projectId: "coletivo-f34d4",
-    storageBucket: "coletivo-f34d4.firebasestorage.app",
-    messagingSenderId: "296376447787",
-    appId: "1:296376447787:web:1341c59c8087d6ac1e4b6e"
-};
-
-/* 🔥 EVITA INICIALIZAÇÃO DUPLICADA */
-let app;
-try {
-    app = getApp();
-} catch {
-    app = initializeApp(firebaseConfig);
+if(!nome || !uid){
+  alert("Entre no site primeiro.");
+  location.href="site.html";
 }
 
-/* 🔥 BANCO */
+/* FIREBASE */
+const firebaseConfig = {
+  apiKey: "AIzaSyAt4CeGjdbjzdtMH1qZHw6RuBFJ6SeTDKk",
+  authDomain: "coletivo-f34d4.firebaseapp.com",
+  databaseURL: "https://coletivo-f34d4-default-rtdb.firebaseio.com",
+  projectId: "coletivo-f34d4",
+  storageBucket: "coletivo-f34d4.firebasestorage.app",
+  messagingSenderId: "296376447787",
+  appId: "1:296376447787:web:1341c59c8087d6ac1e4b6e"
+};
+
+let app;
+try{ app=getApp(); }catch{ app=initializeApp(firebaseConfig); }
 const db = getDatabase(app);
 
-/* 🔥 REFERÊNCIA DO USUÁRIO ONLINE */
-const meRef = ref(db, "chat/usuariosOnline/" + usuario);
+/* PRESENÇA */
+const meRef = ref(db,"chat/usuariosOnline/"+uid);
 
-/* 🔥 FUNÇÕES DE STATUS */
-function marcarOnline() {
-    set(meRef, { 
-        nome: usuario, 
-        foto: fotoPerfil, 
-        online: true 
-    });
+function online(){
+  set(meRef,{ uid,nome,foto,online:true,last:Date.now() });
 }
-
-function marcarOffline() {
-    set(meRef, { 
-        nome: usuario, 
-        foto: fotoPerfil, 
-        online: false 
-    });
+function offline(){
+  set(meRef,{ uid,nome,foto,online:false,last:Date.now() });
 }
+onDisconnect(meRef).set({ uid,nome,foto,online:false,last:Date.now() });
 
-/* 🔥 DESCONEXÃO AUTOMÁTICA REAL */
-onDisconnect(meRef).set({
-    nome: usuario,
-    foto: fotoPerfil,
-    online: false
+let lastTouch=Date.now();
+["click","touchstart","keydown","mousemove"].forEach(e=>{
+  document.addEventListener(e,()=>{ lastTouch=Date.now(); online(); },{passive:true});
 });
-
-let ultimoToque = Date.now();
-
-function registrarInteracao() {
-    ultimoToque = Date.now();
-    marcarOnline();
-}
-
-[
-    "click","touchstart","keydown","mousemove",
-    "wheel","pointerdown","pointerup"
-].forEach(ev => {
-    document.addEventListener(ev, registrarInteracao, { passive: true });
-});
-
-document.addEventListener("visibilitychange", () => {
-    if (document.hidden) marcarOffline();
-    else registrarInteracao();
-});
-
-/* 🔥 OFFLINE após 2 MINUTOS de inatividade */
-setInterval(() => {
-    const parado = Date.now() - ultimoToque;
-
-    if (parado >= 120000) { 
-        marcarOffline(); // ⛔ 2 MINUTOS parado
-    } else {
-        marcarOnline(); // 👌 ativo
-    }
-
-}, 10000); // verifica a cada 10s
-
-registrarInteracao();
-
-window.addEventListener("pagehide", marcarOffline);
-window.addEventListener("beforeunload", marcarOffline);
+setInterval(()=> Date.now()-lastTouch>120000 ? offline():online(),10000);
+online();
 
 /* LISTA ONLINE */
-onValue(ref(db, "chat/usuariosOnline"), snap => {
-    const lista = document.getElementById("listaUsuarios");
-
-    lista.innerHTML = `
-        <div class='voltarSiteBtn' onclick="window.location.href='https://marcio2307.github.io/terreiro/site.html'">
-            <span class='voltarSeta'>←</span> Voltar
-        </div>
-        <h2>Online Agora</h2>
-    `;
-
-    snap.forEach(s => {
-        const u = s.val();
-        if (!u.online || u.nome === usuario) return;
-
-        const div = document.createElement("div");
-        div.className = "userBox";
-        div.innerHTML = `
-            <img src="${u.foto}">
-            <div class="onlineDot"></div>
-            ${u.nome}
-        `;
-
-        div.onclick = () => window.abrirChat(u.nome, u.foto);
-        lista.appendChild(div);
-    });
+onValue(ref(db,"chat/usuariosOnline"),snap=>{
+  const lista=document.getElementById("listaUsuarios");
+  lista.innerHTML=`<div class="voltarSiteBtn" onclick="location.href='site.html'">← Voltar</div><h2>Online Agora</h2>`;
+  snap.forEach(s=>{
+    const u=s.val();
+    if(!u.online||u.uid===uid) return;
+    const d=document.createElement("div");
+    d.className="userBox";
+    d.innerHTML=`<img src="${u.foto}"><div class="onlineDot"></div>${u.nome}`;
+    d.onclick=()=>abrirChat(u);
+    lista.appendChild(d);
+  });
 });
 
-/* ABRIR CHAT */
-let conversandoCom = null;
-
-window.abrirChat = function(nome, foto) {
-    conversandoCom = nome;
-
-    document.querySelector(".botaoVoltar").style.display = "block";
-    const headerFoto = document.getElementById("headerFoto");
-    headerFoto.style.display = "block";
-    headerFoto.src = foto;
-
-    document.getElementById("headerNome").textContent = nome;
-    document.getElementById("listaUsuarios").classList.add("hidden");
-    document.getElementById("msgInput").disabled = false;
-    document.getElementById("sendBtn").disabled = false;
-
-    carregarMensagens();
-};
-
-/* VOLTAR */
-window.voltarLista = function() {
-    conversandoCom = null;
-    document.getElementById("listaUsuarios").classList.remove("hidden");
-    document.querySelector(".botaoVoltar").style.display = "none";
-    document.getElementById("headerFoto").style.display = "none";
-    document.getElementById("headerNome").textContent = "Selecione um usuário";
-    document.getElementById("msgInput").disabled = true;
-    document.getElementById("sendBtn").disabled = true;
-    document.getElementById("mensagens").innerHTML = "";
-};
-
-/* SALA PRIVADA */
+/* CHAT */
+let alvo=null;
 function sala(a,b){ return [a,b].sort().join("_"); }
 
-/* CARREGAR MENSAGENS */
-function carregarMensagens() {
-    const caminho = "chat/conversas/" + sala(usuario, conversandoCom);
-
-    onValue(ref(db, caminho), snap => {
-        const box = document.getElementById("mensagens");
-        box.innerHTML = "";
-
-        snap.forEach(m => {
-            const id = m.key;
-            const d = m.val();
-
-            const div = document.createElement("div");
-            div.className = "msg" + (d.de === usuario ? " me" : "");
-
-           div.innerHTML = `
-    <div style="display:flex; align-items:flex-start; gap:10px; justify-content:space-between;">
-
-        <div style="flex:1;">
-            <span>${d.texto}</span>
-            <div class="msgHora">
-                ${new Date(d.hora).toLocaleTimeString("pt-BR",{
-                    hour:"2-digit", minute:"2-digit"
-                })}
-            </div>
-        </div>
-
-        ${
-            d.de === usuario
-            ? `<img src="https://cdn-icons-png.flaticon.com/512/484/484662.png"
-                   style="
-                       width:22px;
-                       height:22px;
-                       cursor:pointer;
-                       flex-shrink:0;
-                       margin-left:8px;
-                       filter: brightness(0) saturate(100%) invert(90%) sepia(90%) saturate(5000%) hue-rotate(90deg);
-                   "
-                   onclick="apagarMsg('${caminho}','${id}')">`
-            : ""
-        }
-
-    </div>
-`;
-
-            box.appendChild(div);
-
-            /* 🔊 SOM AO RECEBER */
-            if (d.de !== usuario) {
-                setTimeout(() => {
-                    document.getElementById("somReceber").play().catch(()=>{});
-                }, 50);
-            }
-        });
-
-        box.scrollTop = box.scrollHeight;
-    });
-}
-
-/* APAGAR */
-window.apagarMsg = function(caminho, id) {
-    remove(ref(db, caminho + "/" + id));
+window.abrirChat=u=>{
+  alvo=u;
+  document.querySelector(".botaoVoltar").style.display="block";
+  headerFoto.style.display="block"; headerFoto.src=u.foto;
+  headerNome.textContent=u.nome;
+  listaUsuarios.classList.add("hidden");
+  msgInput.disabled=false; sendBtn.disabled=false;
+  carregar();
 };
 
-/* ENVIAR */
-document.getElementById("sendBtn").onclick = enviar;
+window.voltarLista=()=>{
+  alvo=null;
+  listaUsuarios.classList.remove("hidden");
+  headerFoto.style.display="none";
+  document.querySelector(".botaoVoltar").style.display="none";
+  headerNome.textContent="Selecione um usuário";
+  msgInput.disabled=true; sendBtn.disabled=true;
+  mensagens.innerHTML="";
+};
 
-function enviar() {
-    const input = document.getElementById("msgInput");
-    if (!input.value) return;
-
-    push(ref(db, "chat/conversas/" + sala(usuario, conversandoCom)), {
-        de: usuario,
-        texto: input.value,
-        hora: Date.now()
+function carregar(){
+  const path="chat/conversas/"+sala(uid,alvo.uid);
+  onValue(ref(db,path),snap=>{
+    mensagens.innerHTML="";
+    snap.forEach(m=>{
+      const d=m.val();
+      const div=document.createElement("div");
+      div.className="msg"+(d.de===uid?" me":"");
+      div.innerHTML=`${d.texto}<div class="msgHora">${new Date(d.hora).toLocaleTimeString("pt-BR",{hour:"2-digit",minute:"2-digit"})}</div>`;
+      mensagens.appendChild(div);
+      if(d.de!==uid) somReceber.play().catch(()=>{});
     });
-
-    document.getElementById("somEnviar").play().catch(()=>{});
-
-    input.value = "";
+    mensagens.scrollTop=mensagens.scrollHeight;
+  });
 }
 
+sendBtn.onclick=()=>{
+  if(!msgInput.value) return;
+  push(ref(db,"chat/conversas/"+sala(uid,alvo.uid)),{
+    de:uid, nome, texto:msgInput.value, hora:Date.now()
+  });
+  somEnviar.play().catch(()=>{});
+  msgInput.value="";
+};
 </script>
 
 </body>
 </html>
-
