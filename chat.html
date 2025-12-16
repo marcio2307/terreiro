@@ -1,193 +1,175 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt-br">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Chat</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<title>Usuários Online</title>
 
-<!-- 🔊 SONS -->
-<audio id="somEnviar" src="som.mp3"></audio>
-<audio id="somReceber" src="som.mp3"></audio>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
 <style>
-html,body{
-  margin:0; padding:0;
-  width:100%; height:100%;
-  background:#000; color:#0f0;
-  font-family:Segoe UI, sans-serif;
-  overflow:hidden;
-}
+  *{ box-sizing:border-box; }
+  html,body{ width:100%; max-width:100%; overflow-x:hidden; }
+  body{
+    margin:0;
+    background:#000;
+    font-family: Arial, sans-serif;
+    color:#fff;
+    padding-bottom: env(safe-area-inset-bottom);
+  }
 
-/* LISTA */
-#listaUsuarios{
-  position:absolute; inset:0;
-  background:#050505;
-  overflow-y:auto;
-  transition:.3s;
-  z-index:10;
-}
-#listaUsuarios.hidden{ left:-100%; position:absolute; }
+  /* topo no estilo do site */
+  .topbar{
+    position: sticky;
+    top:0;
+    z-index: 9999;
+    background:#0d0d0d;
+    border-bottom: 2px solid #00ff8c;
+    box-shadow: 0 0 15px #00ff8c;
+    padding: 14px 12px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap: 12px;
+  }
+  .title{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    font-weight: 900;
+    color:#00ff8c;
+    text-transform: uppercase;
+    letter-spacing:1.1px;
+    text-shadow: 0 0 10px #00ff8c, 0 0 20px #00ff8c;
+    font-size: 16px;
+  }
+  .backBtn{
+    color:#00ff8c;
+    text-decoration:none;
+    display:flex;
+    align-items:center;
+    gap:8px;
+    padding:10px 12px;
+    border-radius:16px;
+    border: 1px solid rgba(0,255,140,.25);
+    background: rgba(0,0,0,.2);
+    box-shadow: 0 0 14px rgba(0,255,140,.08);
+    user-select:none;
+  }
 
-.voltarSiteBtn{
-  margin:15px;
-  padding:8px 14px;
-  border:2px solid #0f0;
-  border-radius:30px;
-  cursor:pointer;
-  display:inline-flex;
-  align-items:center;
-  gap:8px;
-}
+  .wrap{
+    padding: 14px 12px;
+    max-width: 760px;
+    margin: 0 auto;
+  }
 
-#listaUsuarios h2{
-  text-align:center;
-  border-bottom:2px solid #0f0;
-  padding:10px;
-}
+  .card{
+    background:#0d0d0d;
+    border:1px solid rgba(0,255,157,.45);
+    box-shadow:0 0 14px rgba(0,255,157,.25);
+    border-radius:18px;
+    padding: 14px;
+  }
 
-.userBox{
-  display:flex;
-  align-items:center;
-  gap:12px;
-  padding:14px;
-  cursor:pointer;
-}
-.userBox:hover{ background:rgba(0,255,0,.15); }
+  .sub{
+    opacity:.9;
+    font-size: 13px;
+    margin-top: 6px;
+    color:#c8ffe6;
+  }
 
-.userBox img{
-  width:48px;height:48px;
-  border-radius:50%;
-  border:2px solid #0f0;
-}
+  .list{
+    margin-top: 14px;
+    display:flex;
+    flex-direction:column;
+    gap: 10px;
+  }
 
-.onlineDot{
-  width:10px;height:10px;
-  background:#0f0;
-  border-radius:50%;
-  animation:blink 1s infinite;
-}
-@keyframes blink{50%{opacity:.3;}}
+  .row{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap: 10px;
+    padding: 12px 12px;
+    border-radius: 14px;
+    border: 1px solid rgba(255,255,255,.06);
+    background: rgba(255,255,255,.03);
+  }
 
-/* CHAT */
-#chatArea{
-  position:absolute; inset:0;
-  display:flex;
-  flex-direction:column;
-}
+  .left{
+    display:flex;
+    align-items:center;
+    gap: 10px;
+    min-width:0;
+  }
 
-#chatHeader{
-  padding:12px;
-  background:#0a0a0a;
-  border-bottom:2px solid #0f0;
-  display:flex;
-  align-items:center;
-  gap:12px;
-}
+  .dot{
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: #00ff4c;
+    box-shadow: 0 0 16px rgba(0,255,76,.9);
+    animation: blinkDot 0.9s infinite;
+    flex: 0 0 auto;
+  }
+  @keyframes blinkDot{
+    0%,100%{ transform: scale(1); opacity: 1; }
+    50%{ transform: scale(1.35); opacity: .25; }
+  }
 
-.botaoVoltar{ font-size:24px; cursor:pointer; display:none; }
-#headerFoto{ width:42px;height:42px;border-radius:50%;border:2px solid #0f0; display:none; }
+  .name{
+    font-weight: 900;
+    color:#00ff8c;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    white-space:nowrap;
+  }
 
-#mensagens{
-  flex:1;
-  padding:10px;
-  overflow-y:auto;
-  display:flex;
-  flex-direction:column;
-  gap:20px;
-  padding-bottom:120px;
-}
+  .time{
+    font-size: 12px;
+    opacity:.85;
+    white-space:nowrap;
+    color:#d7fff2;
+  }
 
-.msg{
-  max-width:75%;
-  padding:10px 14px;
-  background:#013801;
-  border:1px solid #0f0;
-  border-radius:18px;
-  border-bottom-left-radius:0;
-}
-.msg.me{
-  margin-left:auto;
-  background:#065f06;
-  color:#fff;
-  border-bottom-right-radius:0;
-}
-
-.msgHora{
-  font-size:11px;
-  opacity:.6;
-  margin-top:4px;
-  text-align:right;
-}
-
-#inputArea{
-  position:absolute;
-  bottom:0; width:100%;
-  padding:8px;
-  border-top:2px solid #0f0;
-  display:flex;
-  gap:8px;
-}
-
-#msgInput{
-  flex:1;
-  padding:8px;
-  border-radius:25px;
-  border:2px solid #0f0;
-  background:#000;
-  color:#0f0;
-}
-#sendBtn{
-  width:44px;height:44px;
-  border-radius:50%;
-  background:#0f0;
-  color:#000;
-  font-size:20px;
-  cursor:pointer;
-}
+  .empty{
+    padding: 14px;
+    border-radius: 14px;
+    border: 1px dashed rgba(0,255,157,.25);
+    background: rgba(0,255,157,.06);
+    color:#d7fff2;
+    text-align:center;
+    font-weight: 900;
+  }
 </style>
 </head>
 
 <body>
 
-<!-- LISTA -->
-<div id="listaUsuarios">
-  <div class="voltarSiteBtn" onclick="location.href='site.html'">← Voltar</div>
-  <h2>Online Agora</h2>
+<div class="topbar">
+  <div class="title"><i class="fa-solid fa-users"></i> Usuários Online</div>
+  <a class="backBtn" href="javascript:history.back()">
+    <i class="fa-solid fa-arrow-left"></i> Voltar
+  </a>
 </div>
 
-<!-- CHAT -->
-<div id="chatArea">
-  <div id="chatHeader">
-    <span class="botaoVoltar" onclick="voltarLista()">←</span>
-    <img id="headerFoto">
-    <span id="headerNome">Selecione um usuário</span>
-  </div>
+<div class="wrap">
+  <div class="card">
+    <div style="display:flex;align-items:center;gap:10px;font-weight:900;">
+      <i class="fa-solid fa-circle" style="color:#00ff4c;text-shadow:0 0 16px rgba(0,255,76,.8)"></i>
+      <div>Lista em tempo real</div>
+    </div>
+    <div class="sub">Mostra quem está online agora (atualiza automaticamente).</div>
 
-  <div id="mensagens"></div>
-
-  <div id="inputArea">
-    <input id="msgInput" placeholder="Digite..." disabled>
-    <button id="sendBtn" disabled>➤</button>
+    <div class="list" id="list"></div>
   </div>
 </div>
 
-<!-- FIREBASE -->
-<script type="module">
-import { initializeApp, getApp } from "https://www.gstatic.com/firebasejs/10.14.0/firebase-app.js";
-import { getDatabase, ref, set, onValue, push, remove, onDisconnect } from "https://www.gstatic.com/firebasejs/10.14.0/firebase-database.js";
+<!-- Firebase (mesmo projeto) -->
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
 
-/* 🔐 IDENTIDADE (vem do site.html) */
-const nome = (localStorage.getItem("nome_passageiro")||"").trim();
-const uid  = (localStorage.getItem("uid_passageiro")||"").trim();
-const foto = localStorage.getItem("foto_passageiro") ||
-  "https://cdn-icons-png.flaticon.com/512/149/149071.png";
-
-if(!nome || !uid){
-  alert("Entre no site primeiro.");
-  location.href="site.html";
-}
-
-/* FIREBASE */
+<script>
 const firebaseConfig = {
   apiKey: "AIzaSyAt4CeGjdbjzdtMH1qZHw6RuBFJ6SeTDKk",
   authDomain: "coletivo-f34d4.firebaseapp.com",
@@ -197,92 +179,61 @@ const firebaseConfig = {
   messagingSenderId: "296376447787",
   appId: "1:296376447787:web:1341c59c8087d6ac1e4b6e"
 };
+firebase.initializeApp(firebaseConfig);
+const DB = firebase.database();
 
-let app;
-try{ app=getApp(); }catch{ app=initializeApp(firebaseConfig); }
-const db = getDatabase(app);
-
-/* PRESENÇA */
-const meRef = ref(db,"chat/usuariosOnline/"+uid);
-
-function online(){
-  set(meRef,{ uid,nome,foto,online:true,last:Date.now() });
+function fmt(ts){
+  try{ return new Date(ts).toLocaleString("pt-BR"); }catch(e){ return ""; }
 }
-function offline(){
-  set(meRef,{ uid,nome,foto,online:false,last:Date.now() });
-}
-onDisconnect(meRef).set({ uid,nome,foto,online:false,last:Date.now() });
 
-let lastTouch=Date.now();
-["click","touchstart","keydown","mousemove"].forEach(e=>{
-  document.addEventListener(e,()=>{ lastTouch=Date.now(); online(); },{passive:true});
+function escapeHTML(str){
+  return (str || "")
+    .replaceAll("&","&amp;")
+    .replaceAll("<","&lt;")
+    .replaceAll(">","&gt;")
+    .replaceAll('"',"&quot;")
+    .replaceAll("'","&#039;");
+}
+
+const listEl = document.getElementById("list");
+
+// ✅ considera online se lastActive foi nos últimos 70s
+const ONLINE_WINDOW_MS = 70000;
+
+DB.ref("presence").on("value", (snap)=>{
+  const obj = snap.val() || {};
+  const now = Date.now();
+
+  let arr = Object.keys(obj).map(k => obj[k]).filter(Boolean);
+
+  // filtra só quem realmente está ativo agora
+  arr = arr.filter(u=>{
+    const la = u.lastActive || 0;
+    return u.online === true && (now - la) <= ONLINE_WINDOW_MS;
+  });
+
+  // ordena por nome
+  arr.sort((a,b)=> (a.userName||"").localeCompare((b.userName||""), "pt-BR"));
+
+  if(arr.length === 0){
+    listEl.innerHTML = `<div class="empty">Ninguém online agora</div>`;
+    return;
+  }
+
+  listEl.innerHTML = arr.map(u=>{
+    const nome = escapeHTML(u.userName || "Usuário");
+    const la = u.lastActive ? fmt(u.lastActive) : "";
+    return `
+      <div class="row">
+        <div class="left">
+          <span class="dot"></span>
+          <div class="name">${nome}</div>
+        </div>
+        <div class="time">${escapeHTML(la)}</div>
+      </div>
+    `;
+  }).join("");
 });
-setInterval(()=> Date.now()-lastTouch>120000 ? offline():online(),10000);
-online();
-
-/* LISTA ONLINE */
-onValue(ref(db,"chat/usuariosOnline"),snap=>{
-  const lista=document.getElementById("listaUsuarios");
-  lista.innerHTML=`<div class="voltarSiteBtn" onclick="location.href='site.html'">← Voltar</div><h2>Online Agora</h2>`;
-  snap.forEach(s=>{
-    const u=s.val();
-    if(!u.online||u.uid===uid) return;
-    const d=document.createElement("div");
-    d.className="userBox";
-    d.innerHTML=`<img src="${u.foto}"><div class="onlineDot"></div>${u.nome}`;
-    d.onclick=()=>abrirChat(u);
-    lista.appendChild(d);
-  });
-});
-
-/* CHAT */
-let alvo=null;
-function sala(a,b){ return [a,b].sort().join("_"); }
-
-window.abrirChat=u=>{
-  alvo=u;
-  document.querySelector(".botaoVoltar").style.display="block";
-  headerFoto.style.display="block"; headerFoto.src=u.foto;
-  headerNome.textContent=u.nome;
-  listaUsuarios.classList.add("hidden");
-  msgInput.disabled=false; sendBtn.disabled=false;
-  carregar();
-};
-
-window.voltarLista=()=>{
-  alvo=null;
-  listaUsuarios.classList.remove("hidden");
-  headerFoto.style.display="none";
-  document.querySelector(".botaoVoltar").style.display="none";
-  headerNome.textContent="Selecione um usuário";
-  msgInput.disabled=true; sendBtn.disabled=true;
-  mensagens.innerHTML="";
-};
-
-function carregar(){
-  const path="chat/conversas/"+sala(uid,alvo.uid);
-  onValue(ref(db,path),snap=>{
-    mensagens.innerHTML="";
-    snap.forEach(m=>{
-      const d=m.val();
-      const div=document.createElement("div");
-      div.className="msg"+(d.de===uid?" me":"");
-      div.innerHTML=`${d.texto}<div class="msgHora">${new Date(d.hora).toLocaleTimeString("pt-BR",{hour:"2-digit",minute:"2-digit"})}</div>`;
-      mensagens.appendChild(div);
-      if(d.de!==uid) somReceber.play().catch(()=>{});
-    });
-    mensagens.scrollTop=mensagens.scrollHeight;
-  });
-}
-
-sendBtn.onclick=()=>{
-  if(!msgInput.value) return;
-  push(ref(db,"chat/conversas/"+sala(uid,alvo.uid)),{
-    de:uid, nome, texto:msgInput.value, hora:Date.now()
-  });
-  somEnviar.play().catch(()=>{});
-  msgInput.value="";
-};
 </script>
 
 </body>
