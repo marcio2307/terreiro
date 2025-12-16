@@ -922,6 +922,9 @@ let viewerTimer = null;
 let viewersPanelOpen = false;
 let viewersRef = null;
 
+/* ✅ só o DONO do story pode ver "quem viu" */
+let CAN_SEE_VIEWERS = false;
+
 function renderCreateCard(){
   const card = document.createElement("div");
   card.className = "storyCard createCard";
@@ -1056,6 +1059,9 @@ function closeViewersPanel(){
   if(ch) ch.className = "fa-solid fa-chevron-up";
 }
 function toggleViewersPanel(){
+  /* ✅ se não é dono, não abre */
+  if(!CAN_SEE_VIEWERS) return;
+
   viewersPanelOpen = !viewersPanelOpen;
   viewersPanel.style.display = viewersPanelOpen ? "block" : "none";
   const ch = document.getElementById("seenChevron");
@@ -1178,9 +1184,20 @@ function showStory(){
 
   deleteBtn.style.display = "none";
 
-  /* ✅ marca visualização + atualiza UI */
+  /* ✅ REGRA: só o dono do story pode ver "quem viu" */
+  CAN_SEE_VIEWERS = (s.uid === UID);
+
+  if(CAN_SEE_VIEWERS){
+    viewerFooter.style.display = "block";
+    attachViewersListener(s);
+  }else{
+    viewerFooter.style.display = "none";
+    detachViewersListener();
+    closeViewersPanel();
+  }
+
+  /* ✅ marca visualização (só se não for dono) */
   markStoryView(s);
-  attachViewersListener(s);
 
   if((s.type||"").includes("image")){
     const el = document.createElement("img");
