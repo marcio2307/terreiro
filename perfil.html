@@ -18,7 +18,6 @@
     padding-bottom: env(safe-area-inset-bottom);
   }
 
-  /* ✅ TOPBAR (Voltar na esquerda / PERFIL central / Sair na direita) */
   .topbar{
     position: sticky; top:0; z-index:9999;
     background:#0d0d0d;
@@ -46,9 +45,7 @@
     text-shadow:0 0 10px #00ff8c, 0 0 20px #00ff8c;
     white-space:nowrap;
   }
-  /* ✅ remove @usuario de cima */
   .meName{ display:none !important; }
-
   .topbar .actions{ display:flex; align-items:center; gap:10px; }
 
   .btn{
@@ -153,7 +150,6 @@
 
   .profileWrap{ width:min(980px, 100%); margin: 0 auto; }
 
-  /* ✅ CAPA */
   .cover{
     position:relative;
     width:100%;
@@ -246,7 +242,6 @@
     50%{ transform:scale(1.35); opacity:.25; }
   }
 
-  /* ✅ TABS */
   .tabs{
     display:flex;
     gap:10px;
@@ -274,7 +269,6 @@
     border-color: rgba(0,255,140,.55);
   }
 
-  /* ✅ no CELULAR: amigos online abaixo de "Sobre", centralizado */
   @media (max-width: 520px){
     .tabs{
       display:grid;
@@ -356,7 +350,6 @@
     display:block;
   }
 
-  /* Cabeçalho do post com foto */
   .postHead{
     display:flex;
     align-items:center;
@@ -383,10 +376,7 @@
     object-position:center;
     display:block;
   }
-  .postAvatar .init{
-    font-weight:900;
-    color:#00ff9d;
-  }
+  .postAvatar .init{ font-weight:900; color:#00ff9d; }
   .postHeadText{ min-width:0; }
   .postName{
     font-weight:900;
@@ -468,7 +458,7 @@
     border:1px solid rgba(0,255,140,.25);
   }
 
-  /* Comentários (3 pontinhos alinhados) */
+  /* Comentários */
   .cRow{
     position:relative;
     background:#000;
@@ -599,7 +589,7 @@
   </div>
 </div>
 
-<!-- ✅ TOPBAR NOVA -->
+<!-- TOPBAR -->
 <div class="topbar">
   <div class="left">
     <button class="btn ghost icon" title="Voltar" aria-label="Voltar" onclick="voltarSite()">
@@ -698,13 +688,7 @@
         </div>
       </div>
 
-      <div class="infoRow">
-        <i class="fa-solid fa-link"></i>
-        <div>
-          <div class="infoTitle">Link</div>
-          <div class="infoText" id="aboutShowLink">—</div>
-        </div>
-      </div>
+      <!-- ✅ LINK REMOVIDO -->
     </div>
   </div>
 
@@ -738,10 +722,7 @@
           <textarea class="textarea" id="aboutBio" maxlength="220" placeholder="Escreva algo sobre você..."></textarea>
         </div>
 
-        <div class="field">
-          <div class="label">Link (opcional)</div>
-          <input class="input" id="aboutLink" maxlength="120" placeholder="https://...">
-        </div>
+        <!-- ✅ OPÇÃO DE LINK REMOVIDA -->
 
         <div class="rowBtns">
           <button class="btn" onclick="saveProfile()"><i class="fa-solid fa-floppy-disk"></i> Salvar</button>
@@ -877,10 +858,67 @@ function initials(name){
 function fmtDate(ts){
   try{ return new Date(ts).toLocaleString("pt-BR"); }catch(e){ return ""; }
 }
+function safeId(s){
+  return (s||"").toString().replace(/[^a-zA-Z0-9_-]/g, "_");
+}
+
+/* ====================== PERFIL (profiles/{uid}) ====================== */
+const PROFILE_REF = (uid)=> DB.ref("profiles/" + uid);
+const MY_PROFILE_REF = ()=> DB.ref("profiles/" + UID);
+
+/* Cache perfis (usado no feed e agora também em "Amigos online") */
+const profileCache = new Map();
+async function getProfileForUID(uid, fallbackName){
+  if(!uid) return { url:"", name: fallbackName || "Usuário" };
+  if(profileCache.has(uid)) return profileCache.get(uid);
+
+  try{
+    const snap = await PROFILE_REF(uid).once("value");
+    const p = snap.val() || {};
+    const name = p.name || fallbackName || "Usuário";
+    const url = p.avatarDataUrl || p.avatarUrl || "";
+    const obj = { url, name };
+    profileCache.set(uid, obj);
+
+    PROFILE_REF(uid).on("value", s=>{
+      const px = s.val() || {};
+      const nn = px.name || name;
+      const uu = px.avatarDataUrl || px.avatarUrl || "";
+      profileCache.set(uid, { url: uu, name: nn });
+      updatePostAvatarsInDOM(uid, uu, nn);
+      updateOnlineAvatarsInDOM(uid, uu, nn); /* ✅ atualiza também na lista online */
+    });
+
+    return obj;
+  }catch(e){
+    const obj = { url:"", name: fallbackName || "Usuário" };
+    profileCache.set(uid, obj);
+    return obj;
+  }
+}
 
 /* ====================== PRESENÇA ONLINE ====================== */
 let presenceRef = null;
 let presenceTimer = null;
+
+async function getMyAvatarFromProfiles(){
+  try{
+    const snap = await MY_PROFILE_REF().once("value");
+    const p = snap.val() || {};
+    return (p.avatarDataUrl || p.avatarUrl || "").toString();
+  }catch(e){
+    return "";
+  }
+}
+async function getMyNameFromProfiles(){
+  try{
+    const snap = await MY_PROFILE_REF().once("value");
+    const p = snap.val() || {};
+    return (p.name || USER_NAME || "Usuário").toString();
+  }catch(e){
+    return (USER_NAME || "Usuário").toString();
+  }
+}
 
 function startPresence(){
   try{
@@ -890,24 +928,34 @@ function startPresence(){
     presenceRef = DB.ref("presence/" + UID);
     const connectedRef = DB.ref(".info/connected");
 
-    connectedRef.on("value", (snap)=>{
+    connectedRef.on("value", async (snap)=>{
       if(snap.val() === true){
+        const avatar = await getMyAvatarFromProfiles();
+        const nameNow = await getMyNameFromProfiles();
+
         presenceRef.onDisconnect().remove().catch(()=>{});
         presenceRef.set({
           uid: UID,
-          userName: USER_NAME,
+          userName: nameNow,
           online: true,
           onlineAt: firebase.database.ServerValue.TIMESTAMP,
-          lastActive: firebase.database.ServerValue.TIMESTAMP
+          lastActive: firebase.database.ServerValue.TIMESTAMP,
+          avatarDataUrl: avatar || ""   /* ✅ garante foto no "Amigos online" */
         }).catch(()=>{});
       }
     });
 
-    presenceTimer = setInterval(()=>{
+    presenceTimer = setInterval(async ()=>{
       if(!presenceRef) return;
+
+      const avatar = await getMyAvatarFromProfiles();
+      const nameNow = await getMyNameFromProfiles();
+
       presenceRef.update({
         online: true,
-        lastActive: firebase.database.ServerValue.TIMESTAMP
+        lastActive: firebase.database.ServerValue.TIMESTAMP,
+        userName: nameNow,
+        avatarDataUrl: avatar || ""   /* ✅ mantém atualizado */
       }).catch(()=>{});
     }, 25000);
 
@@ -924,9 +972,7 @@ function stopPresence(){
 }
 if(USER_NAME && UID){ startPresence(); }
 
-/* ====================== PERFIL (profiles/{uid}) ====================== */
-const PROFILE_REF = () => DB.ref("profiles/" + UID);
-
+/* ====================== UI PERFIL ====================== */
 function attachingAvatar(url, nameForInitial){
   if(url){
     avatarImg.src = url;
@@ -951,9 +997,7 @@ function setAboutReadOnly(prof){
   aboutShowName.textContent = prof.name || USER_NAME || "—";
   aboutShowCity.textContent = prof.city ? prof.city : "—";
   aboutShowBio.textContent  = prof.bio ? prof.bio : "—";
-  aboutShowLink.innerHTML = prof.link
-    ? `<span class="infoText"><a href="${escapeHTML(prof.link)}" target="_blank" style="color:#00ff8c;font-weight:900;text-decoration:none;">${escapeHTML(prof.link)}</a></span>`
-    : "—";
+  /* ✅ link removido */
 }
 
 function applyProfileUI(p){
@@ -964,13 +1008,11 @@ function applyProfileUI(p){
   aboutName.value = prof.name || USER_NAME || "";
   aboutCity.value = prof.city || "";
   aboutBio.value = prof.bio || "";
-  aboutLink.value = prof.link || "";
 
   setAboutReadOnly({
     name: prof.name || USER_NAME || "",
     city: prof.city || "",
-    bio: prof.bio || "",
-    link: prof.link || ""
+    bio: prof.bio || ""
   });
 
   attachingCover(prof.coverDataUrl || prof.coverUrl || "");
@@ -980,21 +1022,25 @@ function applyProfileUI(p){
 async function loadProfile(){
   if(!USER_NAME) return;
   try{
-    const snap = await PROFILE_REF().once("value");
+    const snap = await MY_PROFILE_REF().once("value");
     if(!snap.exists()){
-      await PROFILE_REF().set({
+      await MY_PROFILE_REF().set({
         uid: UID,
         name: USER_NAME,
         city: "",
         bio: "",
-        link: "",
         createdAt: firebase.database.ServerValue.TIMESTAMP,
         updatedAt: firebase.database.ServerValue.TIMESTAMP
       });
       applyProfileUI({ name: USER_NAME });
       return;
     }
-    applyProfileUI(snap.val() || {});
+    const val = snap.val() || {};
+    // ✅ limpeza de link antigo (se existir)
+    if(typeof val.link !== "undefined"){
+      MY_PROFILE_REF().child("link").remove().catch(()=>{});
+    }
+    applyProfileUI(val);
   }catch(e){ console.log(e); }
 }
 
@@ -1004,7 +1050,6 @@ async function saveProfile(){
   const name = (aboutName.value || "").trim().slice(0,24);
   const city = (aboutCity.value || "").trim().slice(0,40);
   const bio  = (aboutBio.value || "").trim().slice(0,220);
-  const link = (aboutLink.value || "").trim().slice(0,120);
 
   if(name.length < 2){
     alert("O nome precisa ter pelo menos 2 letras.");
@@ -1016,13 +1061,20 @@ async function saveProfile(){
     sessionStorage.setItem("nome_passageiro", name);
     USER_NAME = name;
 
-    await PROFILE_REF().update({
+    await MY_PROFILE_REF().update({
       uid: UID,
-      name, city, bio, link,
+      name, city, bio,
       updatedAt: firebase.database.ServerValue.TIMESTAMP
     });
 
-    DB.ref("presence/" + UID).update({ userName: name }).catch(()=>{});
+    // ✅ remove qualquer "link" antigo
+    MY_PROFILE_REF().child("link").remove().catch(()=>{});
+
+    // ✅ atualiza presença com nome e avatar (mesmo se estiver em outros sites)
+    const pSnap = await MY_PROFILE_REF().once("value");
+    const p = pSnap.val() || {};
+    const avatar = (p.avatarDataUrl || p.avatarUrl || "").toString();
+    DB.ref("presence/" + UID).update({ userName: name, avatarDataUrl: avatar || "" }).catch(()=>{});
 
     saveInfo.style.display = "block";
     setTimeout(()=> saveInfo.style.display="none", 1600);
@@ -1030,7 +1082,7 @@ async function saveProfile(){
     profileName.textContent = name;
     cityText.textContent = city || "Sem cidade";
     avatarInitial.textContent = initials(name);
-    setAboutReadOnly({ name, city, bio, link });
+    setAboutReadOnly({ name, city, bio });
   }catch(e){
     console.log(e);
     alert("Erro ao salvar.");
@@ -1128,7 +1180,7 @@ coverInput.addEventListener("change", async (e)=>{
 
     attachingCover(dataUrl);
 
-    await PROFILE_REF().update({
+    await MY_PROFILE_REF().update({
       coverDataUrl: dataUrl,
       updatedAt: firebase.database.ServerValue.TIMESTAMP
     });
@@ -1158,12 +1210,14 @@ avatarInput.addEventListener("change", async (e)=>{
 
     attachingAvatar(dataUrl, USER_NAME);
 
-    await PROFILE_REF().update({
+    await MY_PROFILE_REF().update({
       avatarDataUrl: dataUrl,
       updatedAt: firebase.database.ServerValue.TIMESTAMP
     });
 
+    // ✅ isso faz a foto aparecer no "Amigos online" mesmo se a pessoa estiver online no site.html
     DB.ref("presence/" + UID).update({
+      userName: USER_NAME,
       avatarDataUrl: dataUrl
     }).catch(()=>{});
 
@@ -1175,7 +1229,7 @@ avatarInput.addEventListener("change", async (e)=>{
   }
 });
 
-/* ✅ TABS COM TOGGLE (clicou no mesmo: fecha / clicou em outro: abre) */
+/* ✅ TABS COM TOGGLE */
 let CURRENT_TAB = "posts";
 
 function setTabActive(which){
@@ -1187,7 +1241,6 @@ function setTabActive(which){
   document.getElementById("panel_"+which).classList.add("active");
   CURRENT_TAB = which;
 }
-
 function closeAllTabs(){
   ["posts","about","profile","friends"].forEach(k=>{
     document.getElementById("tab_"+k).classList.remove("active");
@@ -1195,44 +1248,12 @@ function closeAllTabs(){
   });
   CURRENT_TAB = "";
 }
-
 function toggleTab(which){
-  if(CURRENT_TAB === which){
-    closeAllTabs();
-  }else{
-    setTabActive(which);
-  }
+  if(CURRENT_TAB === which) closeAllTabs();
+  else setTabActive(which);
 }
 
-/* ====================== PERFIL CACHE PARA AVATAR NO FEED ====================== */
-const profileCache = new Map();
-async function getProfileForUID(uid, fallbackName){
-  if(!uid) return { url:"", name: fallbackName || "Usuário" };
-  if(profileCache.has(uid)) return profileCache.get(uid);
-
-  try{
-    const snap = await DB.ref("profiles/" + uid).once("value");
-    const p = snap.val() || {};
-    const name = p.name || fallbackName || "Usuário";
-    const url = p.avatarDataUrl || p.avatarUrl || "";
-    const obj = { url, name };
-    profileCache.set(uid, obj);
-
-    DB.ref("profiles/" + uid).on("value", s=>{
-      const px = s.val() || {};
-      const nn = px.name || name;
-      const uu = px.avatarDataUrl || px.avatarUrl || "";
-      profileCache.set(uid, { url: uu, name: nn });
-      updatePostAvatarsInDOM(uid, uu, nn);
-    });
-
-    return obj;
-  }catch(e){
-    const obj = { url:"", name: fallbackName || "Usuário" };
-    profileCache.set(uid, obj);
-    return obj;
-  }
-}
+/* ====================== FEED: AVATAR + NOME (postagens do usuário) ====================== */
 function updatePostAvatarsInDOM(uid, url, name){
   document.querySelectorAll(`[data-post-avatar-uid="${uid}"]`).forEach(el=>{
     el.innerHTML = url
@@ -1547,16 +1568,48 @@ function listenMyPosts(){
   });
 }
 
-/* ====================== AMIGOS ONLINE (CENTRALIZADO) ====================== */
+/* ====================== AMIGOS ONLINE (MOSTRA FOTO MESMO SE A PESSOA ESTIVER ONLINE NO site.html) ====================== */
 function friendAvatarHTML(u){
   const name = u.userName || "Usuário";
   const init = initials(name);
-  const imgUrl = u.avatarDataUrl || u.avatarUrl || "";
+
+  // tenta pegar do presence (se o site.html já gravar)
+  const imgUrl = (u.avatarDataUrl || u.avatarUrl || "").trim();
 
   if(imgUrl){
     return `<img src="${imgUrl}" alt="avatar">`;
   }
+
+  // placeholder (depois hidratamos via profiles/{uid})
   return `<div class="friendInit">${escapeHTML(init)}</div>`;
+}
+
+function updateOnlineAvatarsInDOM(uid, url, name){
+  const sid = safeId(uid);
+  const box = document.getElementById("onlineAva_" + sid);
+  const nameEl = document.getElementById("onlineName_" + sid);
+  if(box){
+    box.innerHTML = url
+      ? `<img src="${url}" alt="avatar">`
+      : `<div class="friendInit">${escapeHTML(initials(name||"U"))}</div>`;
+  }
+  if(nameEl && name){
+    // não troca "(você)" aqui
+    const hasYou = nameEl.dataset.you === "1";
+    nameEl.innerHTML = `${escapeHTML(name)} ${hasYou ? `<span style="opacity:.85;">(você)</span>` : ""}`;
+  }
+}
+
+async function hydrateOnlineFromProfiles(aliveArr){
+  for(const u of (aliveArr||[])){
+    if(!u || !u.uid) continue;
+    const hasPresenceAvatar = (u.avatarDataUrl || u.avatarUrl || "").trim();
+    if(hasPresenceAvatar) continue; // já tem
+    const prof = await getProfileForUID(u.uid, u.userName || "Usuário");
+    if(prof && (prof.url || prof.name)){
+      updateOnlineAvatarsInDOM(u.uid, prof.url || "", prof.name || (u.userName||"Usuário"));
+    }
+  }
 }
 
 function listenOnline(){
@@ -1582,15 +1635,19 @@ function listenOnline(){
     const rows = alive.slice(0, 80).map(u=>{
       const name = u.userName || "Usuário";
       const last = u.lastActive ? fmtDate(u.lastActive) : "";
+      const sid = safeId(u.uid);
+      const isMe = (u.uid === UID);
 
       return `
         <div class="friendRow centered">
           <div class="friendLeft">
-            <div class="friendAvatar">
+            <div class="friendAvatar" id="onlineAva_${sid}">
               ${friendAvatarHTML(u)}
             </div>
             <div style="min-width:0;">
-              <div class="friendName">${escapeHTML(name)} ${u.uid===UID ? `<span style="opacity:.85;">(você)</span>` : ""}</div>
+              <div class="friendName" id="onlineName_${sid}" data-you="${isMe ? "1":"0"}">
+                ${escapeHTML(name)} ${isMe ? `<span style="opacity:.85;">(você)</span>` : ""}
+              </div>
             </div>
           </div>
           <div class="friendRight">
@@ -1602,6 +1659,10 @@ function listenOnline(){
     });
 
     onlineList.innerHTML = rows.join("");
+
+    // ✅ Se a pessoa estiver online no site.html e lá não mandar avatar no presence,
+    // aqui a gente busca em profiles/{uid} e coloca a foto mesmo assim.
+    hydrateOnlineFromProfiles(alive.slice(0, 80));
   });
 }
 
@@ -1612,18 +1673,18 @@ function listenOnline(){
 
   await loadProfile();
 
+  // ✅ garante presença com avatar assim que abrir o perfil também
   try{
-    const pSnap = await PROFILE_REF().once("value");
+    const pSnap = await MY_PROFILE_REF().once("value");
     const p = pSnap.val() || {};
-    if(p.avatarDataUrl){
-      DB.ref("presence/" + UID).update({ avatarDataUrl: p.avatarDataUrl }).catch(()=>{});
+    const avatar = (p.avatarDataUrl || p.avatarUrl || "").toString();
+    if(avatar){
+      DB.ref("presence/" + UID).update({ avatarDataUrl: avatar, userName: (p.name||USER_NAME||"Usuário") }).catch(()=>{});
     }
   }catch(e){}
 
   listenMyPosts();
   listenOnline();
-
-  // ✅ garante que inicia na aba Postagens como antes
   setTabActive("posts");
 })();
 </script>
