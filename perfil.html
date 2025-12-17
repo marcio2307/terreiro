@@ -18,7 +18,7 @@
     padding-bottom: env(safe-area-inset-bottom);
   }
 
-  /* Topbar */
+  /* ✅ TOPBAR (Voltar na esquerda / PERFIL central / Sair na direita) */
   .topbar{
     position: sticky; top:0; z-index:9999;
     background:#0d0d0d;
@@ -30,7 +30,15 @@
     justify-content:space-between;
     gap:12px;
   }
-  .topbar .left{ display:flex; align-items:center; gap:10px; min-width:0; }
+  .topbar .left{
+    display:flex; align-items:center; gap:10px; min-width:0;
+  }
+  .topbar .center{
+    flex:1;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+  }
   .brand{
     font-weight:900;
     color:#00ff8c;
@@ -38,7 +46,7 @@
     text-shadow:0 0 10px #00ff8c, 0 0 20px #00ff8c;
     white-space:nowrap;
   }
-  /* ✅ removido @usuario de cima (meName some) */
+  /* ✅ remove @usuario de cima */
   .meName{ display:none !important; }
 
   .topbar .actions{ display:flex; align-items:center; gap:10px; }
@@ -67,6 +75,13 @@
     box-shadow:0 0 12px rgba(0,255,140,.18);
   }
   .btn.icon{ width:44px; height:44px; padding:0; }
+
+  .backLabel{
+    font-weight:900;
+    color:#00ff8c;
+    text-shadow:0 0 10px rgba(0,255,140,.35);
+    white-space:nowrap;
+  }
 
   /* Login overlay */
   .login-overlay{
@@ -197,7 +212,6 @@
     font-size: clamp(22px, 6vw, 34px);
     font-weight: 900;
     letter-spacing:.2px;
-    /* ✅ nome do perfil na cor que já está */
     color:#00ff8c;
     text-shadow:0 0 10px rgba(0,255,140,.35);
   }
@@ -232,7 +246,7 @@
     50%{ transform:scale(1.35); opacity:.25; }
   }
 
-  /* Tabs */
+  /* ✅ TABS */
   .tabs{
     display:flex;
     gap:10px;
@@ -248,12 +262,30 @@
     color:#00ff8c;
     font-weight:900;
     user-select:none;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:8px;
   }
   .tab.active{
     background:#00ff8c;
     color:#003b23;
     box-shadow:0 0 14px rgba(0,255,140,.55);
     border-color: rgba(0,255,140,.55);
+  }
+
+  /* ✅ no CELULAR: amigos online abaixo de "Sobre", centralizado */
+  @media (max-width: 520px){
+    .tabs{
+      display:grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap:10px;
+    }
+    #tab_friends{
+      grid-column: 1 / -1;
+      width: 72%;
+      justify-self:center;
+    }
   }
 
   .panel{ padding: 12px; display:none; }
@@ -305,7 +337,7 @@
   .textarea{ min-height: 90px; resize: vertical; }
   .rowBtns{ display:flex; gap:10px; flex-wrap:wrap; }
 
-  /* Feed Post (só do usuário) */
+  /* Feed Post */
   .post{
     background:#0d0d0d;
     margin: 12px 0;
@@ -315,8 +347,6 @@
     box-shadow:0 0 10px rgba(0,255,157,.25);
     position:relative;
   }
-
-  /* ✅ NÃO deixar avatar ser afetado: só mídia do post */
   .post .mediaWrap img,
   .post .mediaWrap video{
     width:100%;
@@ -326,7 +356,7 @@
     display:block;
   }
 
-  /* ✅ Cabeçalho do post com foto do usuário no lugar da estrela */
+  /* Cabeçalho do post com foto */
   .postHead{
     display:flex;
     align-items:center;
@@ -358,12 +388,6 @@
     color:#00ff9d;
   }
   .postHeadText{ min-width:0; }
-  .postNameLine{
-    display:flex;
-    align-items:center;
-    gap:8px;
-    flex-wrap:wrap;
-  }
   .postName{
     font-weight:900;
     font-size:22px;
@@ -374,7 +398,6 @@
     white-space:nowrap;
     max-width: 62vw;
   }
-
   .when{
     font-size:12px;
     color:#00ff9d;
@@ -445,7 +468,7 @@
     border:1px solid rgba(0,255,140,.25);
   }
 
-  /* ✅ Comentários (alinhados, sem float) */
+  /* Comentários (3 pontinhos alinhados) */
   .cRow{
     position:relative;
     background:#000;
@@ -502,7 +525,7 @@
     line-height:1;
   }
 
-  /* Friends */
+  /* Friends (lista) */
   .friendRow{
     display:flex;
     align-items:center;
@@ -514,7 +537,6 @@
     background: rgba(255,255,255,.03);
     margin-bottom:8px;
   }
-  /* ✅ centralizar (amigos online) */
   .friendRow.centered{
     justify-content:center;
     text-align:center;
@@ -558,7 +580,6 @@
     opacity:.9;
     white-space:nowrap;
   }
-  /* ✅ no modo centralizado, joga status pra baixo */
   .friendRow.centered .friendRight{
     justify-content:center;
     width:100%;
@@ -578,14 +599,19 @@
   </div>
 </div>
 
+<!-- ✅ TOPBAR NOVA -->
 <div class="topbar">
   <div class="left">
     <button class="btn ghost icon" title="Voltar" aria-label="Voltar" onclick="voltarSite()">
       <i class="fa-solid fa-arrow-left"></i>
     </button>
-    <div class="brand">PERFIL</div>
-    <div class="meName" id="meName">—</div>
+    <div class="backLabel">Voltar</div>
   </div>
+
+  <div class="center">
+    <div class="brand">PERFIL</div>
+  </div>
+
   <div class="actions">
     <button class="btn ghost" onclick="sairNome()">
       <i class="fa-solid fa-right-from-bracket"></i> Sair
@@ -932,11 +958,6 @@ function setAboutReadOnly(prof){
 
 function applyProfileUI(p){
   const prof = p || {};
-
-  /* ✅ tirar @usuario de cima */
-  meName.textContent = "";
-
-  /* ✅ nome do perfil (h1) na cor já está */
   profileName.textContent = prof.name || USER_NAME || "Usuário";
   cityText.textContent = prof.city || "Sem cidade";
 
@@ -1142,7 +1163,6 @@ avatarInput.addEventListener("change", async (e)=>{
       updatedAt: firebase.database.ServerValue.TIMESTAMP
     });
 
-    // ✅ salva também no presence para a lista de online pegar rápido
     DB.ref("presence/" + UID).update({
       avatarDataUrl: dataUrl
     }).catch(()=>{});
@@ -1179,7 +1199,6 @@ async function getProfileForUID(uid, fallbackName){
     const obj = { url, name };
     profileCache.set(uid, obj);
 
-    // live update
     DB.ref("profiles/" + uid).on("value", s=>{
       const px = s.val() || {};
       const nn = px.name || name;
@@ -1197,11 +1216,9 @@ async function getProfileForUID(uid, fallbackName){
 }
 function updatePostAvatarsInDOM(uid, url, name){
   document.querySelectorAll(`[data-post-avatar-uid="${uid}"]`).forEach(el=>{
-    if(url){
-      el.innerHTML = `<img src="${url}" alt="avatar">`;
-    }else{
-      el.innerHTML = `<div class="init">${escapeHTML(initials(name||"U"))}</div>`;
-    }
+    el.innerHTML = url
+      ? `<img src="${url}" alt="avatar">`
+      : `<div class="init">${escapeHTML(initials(name||"U"))}</div>`;
   });
   document.querySelectorAll(`[data-post-name-uid="${uid}"]`).forEach(el=>{
     el.textContent = name || "Usuário";
@@ -1341,7 +1358,6 @@ async function excluirPost(postId){
   postsCount.textContent = `${postsCountNum} postagens`;
 }
 
-/* ✅ Post com avatar do usuário no lugar da estrela */
 async function postHTML(id, postData){
   let midia = "";
   if(postData.mediaUrl){
@@ -1375,9 +1391,7 @@ async function postHTML(id, postData){
         ${avatarHTML}
       </div>
       <div class="postHeadText">
-        <div class="postNameLine">
-          <div class="postName" data-post-name-uid="${escapeHTML(uid)}">${nome}</div>
-        </div>
+        <div class="postName" data-post-name-uid="${escapeHTML(uid)}">${nome}</div>
         <div class="when">${escapeHTML(quando)}</div>
       </div>
     </div>
@@ -1443,11 +1457,9 @@ function listenComments(postId){
       return;
     }
 
-    const htmls = await Promise.all(arr.map(async c=>{
+    lista.innerHTML = arr.map(c=>{
       const nome = escapeHTML(c.userName || "Usuário");
       const txt = escapeHTML(c.text || "");
-      // (comentários aqui continuam simples, como seu original)
-
       return `
         <div id="${c.cid}" class="cRow">
           <div class="cHead">
@@ -1462,9 +1474,7 @@ function listenComments(postId){
           </div>
         </div>
       `;
-    }));
-
-    lista.innerHTML = htmls.join("");
+    }).join("");
 
     const total = arr.length;
     if(total === 1) contador.innerHTML = "1 comentário";
@@ -1518,7 +1528,7 @@ function listenMyPosts(){
   });
 }
 
-/* ====================== AMIGOS ONLINE (com FOTO + CENTRALIZADO) ====================== */
+/* ====================== AMIGOS ONLINE (CENTRALIZADO) ====================== */
 function friendAvatarHTML(u){
   const name = u.userName || "Usuário";
   const init = initials(name);
@@ -1583,7 +1593,6 @@ function listenOnline(){
 
   await loadProfile();
 
-  // ✅ se já tiver avatar no perfil, coloca no presence também (pra online ter foto)
   try{
     const pSnap = await PROFILE_REF().once("value");
     const p = pSnap.val() || {};
