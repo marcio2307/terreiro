@@ -540,6 +540,7 @@
     text-overflow:ellipsis;
     white-space:nowrap;
     max-width: 62vw;
+    cursor:pointer; /* ✅ clicável */
   }
   .postWhen{
     font-size:12px;
@@ -647,6 +648,7 @@
     border:1px solid rgba(0,255,157,.45);
     flex:0 0 auto;
     display:flex; align-items:center; justify-content:center;
+    cursor:pointer; /* ✅ clicável */
   }
   .cAvatar img{
     width:100%; height:100%;
@@ -660,6 +662,7 @@
     text-overflow:ellipsis;
     white-space:nowrap;
     max-width: 62vw;
+    cursor:pointer; /* ✅ clicável */
   }
   .cText{ opacity:.95; }
 
@@ -990,6 +993,14 @@ function fmtDate(ts){
   try{ return new Date(ts).toLocaleString("pt-BR"); }catch(e){ return ""; }
 }
 
+/* ====================== ✅ ABRIR PRÉVIA DO PERFIL ====================== */
+const PREVIEW_URL = "https://marcio2307.github.io/terreiro/previa.html";
+function abrirPrevia(uid){
+  if(!uid) return;
+  const back = encodeURIComponent(window.location.href);
+  window.location.href = `${PREVIEW_URL}?uid=${encodeURIComponent(uid)}&back=${back}`;
+}
+
 /* limites */
 const MAX_IMG_MB = 15;
 const MAX_VID_MB = 120;
@@ -1113,20 +1124,20 @@ function updateAvatarsInDOM(uid, url, name){
 }
 
 function updateStoryAvatarsInDOM(uid, url, name){
-  document.querySelectorAll(`[data-story-avatar-uid="${uid}"]`).forEach(el=>{
+  document.querySelectorAll(`[data-story-avatar-uid="${escapeHTML(uid)}"]`).forEach(el=>{
     if(url){
       el.innerHTML = `<img src="${url}" alt="avatar">`;
     }else{
       el.innerHTML = `<div class="avatarInitials">${escapeHTML(initials(name||"U"))}</div>`;
     }
   });
-  document.querySelectorAll(`[data-story-name-uid="${uid}"]`).forEach(el=>{
+  document.querySelectorAll(`[data-story-name-uid="${escapeHTML(uid)}"]`).forEach(el=>{
     el.textContent = name || "Usuário";
   });
 }
 
 function updateViewerAvatarsInDOM(uid, url, name){
-  document.querySelectorAll(`[data-viewer-avatar-uid="${uid}"]`).forEach(el=>{
+  document.querySelectorAll(`[data-viewer-avatar-uid="${escapeHTML(uid)}"]`).forEach(el=>{
     if(url){
       el.innerHTML = `<img src="${url}" alt="avatar">`;
     }else{
@@ -1207,7 +1218,9 @@ function renderUserCard(group){
   }
 
   const avatarHTML = `
-    <div class="avatarCircle" data-story-avatar-uid="${escapeHTML(group.uid)}">
+    <div class="avatarCircle"
+         data-story-avatar-uid="${escapeHTML(group.uid)}"
+         onclick="event.stopPropagation(); abrirPrevia('${escapeHTML(group.uid)}')">
       <div class="avatarInitials">${escapeHTML(initials(uname))}</div>
     </div>
   `;
@@ -1321,10 +1334,12 @@ async function updateViewersUI(viewsObj){
     const quando = v.viewedAt ? fmtDate(v.viewedAt) : "";
     const prof = await getAvatarForUID(v.uid, nome);
     const ava = prof.url
-      ? `<div style="width:34px;height:34px;border-radius:50%;overflow:hidden;border:1px solid rgba(0,255,140,.25);flex:0 0 auto;">
+      ? `<div style="width:34px;height:34px;border-radius:50%;overflow:hidden;border:1px solid rgba(0,255,140,.25);flex:0 0 auto;cursor:pointer;"
+              onclick="abrirPrevia('${escapeHTML(v.uid)}')">
            <img src="${prof.url}" style="width:100%;height:100%;object-fit:cover;display:block;" alt="avatar">
          </div>`
-      : `<div style="width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;border:1px solid rgba(0,255,140,.25);color:#00ff8c;font-weight:900;flex:0 0 auto;">
+      : `<div style="width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;border:1px solid rgba(0,255,140,.25);color:#00ff8c;font-weight:900;flex:0 0 auto;cursor:pointer;"
+              onclick="abrirPrevia('${escapeHTML(v.uid)}')">
            ${escapeHTML(initials(nome))}
          </div>`;
 
@@ -1799,7 +1814,7 @@ async function excluirPost(id){
   playActionSound();
 }
 
-/* ✅ post HTML com avatar preenchido (sem ser afetado por .post .mediaWrap) */
+/* ✅ post HTML: avatar e nome abrem a PRÉVIA DO DONO DO POST */
 function postHTML(id, postData, avatarUrl){
   let midia = "";
   if(postData.mediaUrl){
@@ -1817,7 +1832,7 @@ function postHTML(id, postData, avatarUrl){
   const uname = postData.userName || "Usuário";
 
   const avatarHTML = `
-    <div class="postAvatar" data-avatar-uid="${escapeHTML(uid)}">
+    <div class="postAvatar" data-avatar-uid="${escapeHTML(uid)}" onclick="abrirPrevia('${escapeHTML(uid)}')">
       ${avatarUrl
         ? `<img src="${avatarUrl}" alt="avatar">`
         : `<div class="init">${escapeHTML(initials(uname))}</div>`}
@@ -1835,7 +1850,7 @@ function postHTML(id, postData, avatarUrl){
       ${avatarHTML}
       <div class="postHeadText">
         <div class="postNameLine">
-          <div class="postName" data-name-uid="${escapeHTML(uid)}">${escapeHTML(uname)}</div>
+          <div class="postName" data-name-uid="${escapeHTML(uid)}" onclick="abrirPrevia('${escapeHTML(uid)}')">${escapeHTML(uname)}</div>
           ${pending}
         </div>
         <div class="postWhen">${escapeHTML(when)}</div>
@@ -1950,15 +1965,16 @@ function listenComments(postId){
       const nome = (c.userName || "Usuário");
       const txt = escapeHTML(c.text || "");
       const prof = await getAvatarForUID(c.uid, nome);
+
       const ava = prof.url
-        ? `<div class="cAvatar" data-avatar-uid="${escapeHTML(c.uid)}"><img src="${prof.url}" alt="avatar"></div>`
-        : `<div class="cAvatar" data-avatar-uid="${escapeHTML(c.uid)}"><div class="init">${escapeHTML(initials(nome))}</div></div>`;
+        ? `<div class="cAvatar" data-avatar-uid="${escapeHTML(c.uid)}" onclick="abrirPrevia('${escapeHTML(c.uid)}')"><img src="${prof.url}" alt="avatar"></div>`
+        : `<div class="cAvatar" data-avatar-uid="${escapeHTML(c.uid)}" onclick="abrirPrevia('${escapeHTML(c.uid)}')"><div class="init">${escapeHTML(initials(nome))}</div></div>`;
 
       return `
         <div id="${c.cid}" class="cRow">
           <div class="cHead">
             ${ava}
-            <div class="cName" data-name-uid="${escapeHTML(c.uid)}">${escapeHTML(nome)}</div>
+            <div class="cName" data-name-uid="${escapeHTML(c.uid)}" onclick="abrirPrevia('${escapeHTML(c.uid)}')">${escapeHTML(nome)}</div>
           </div>
           <div class="cText">💬 ${txt}</div>
 
