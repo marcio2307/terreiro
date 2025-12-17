@@ -38,14 +38,9 @@
     text-shadow:0 0 10px #00ff8c, 0 0 20px #00ff8c;
     white-space:nowrap;
   }
-  .meName{
-    opacity:.95;
-    font-weight:800;
-    white-space:nowrap;
-    overflow:hidden;
-    text-overflow:ellipsis;
-    max-width: 48vw;
-  }
+  /* ✅ removido @usuario de cima (meName some) */
+  .meName{ display:none !important; }
+
   .topbar .actions{ display:flex; align-items:center; gap:10px; }
 
   .btn{
@@ -202,6 +197,9 @@
     font-size: clamp(22px, 6vw, 34px);
     font-weight: 900;
     letter-spacing:.2px;
+    /* ✅ nome do perfil na cor que já está */
+    color:#00ff8c;
+    text-shadow:0 0 10px rgba(0,255,140,.35);
   }
   .identity .sub{
     margin-top:6px;
@@ -317,19 +315,71 @@
     box-shadow:0 0 10px rgba(0,255,157,.25);
     position:relative;
   }
-  .post img,.post video{
+
+  /* ✅ NÃO deixar avatar ser afetado: só mídia do post */
+  .post .mediaWrap img,
+  .post .mediaWrap video{
     width:100%;
     border-radius:12px;
     margin-top:10px;
     background:#000;
+    display:block;
   }
-  .post h3{ margin: 0 0 8px 0; }
+
+  /* ✅ Cabeçalho do post com foto do usuário no lugar da estrela */
+  .postHead{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    padding-right:44px;
+  }
+  .postAvatar{
+    width:52px;
+    height:52px;
+    border-radius:50%;
+    overflow:hidden;
+    background:#000;
+    border:2px solid rgba(0,255,157,.55);
+    box-shadow:0 0 14px rgba(0,255,157,.22);
+    flex:0 0 auto;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+  }
+  .postAvatar img{
+    width:100%;
+    height:100%;
+    object-fit:cover;
+    object-position:center;
+    display:block;
+  }
+  .postAvatar .init{
+    font-weight:900;
+    color:#00ff9d;
+  }
+  .postHeadText{ min-width:0; }
+  .postNameLine{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    flex-wrap:wrap;
+  }
+  .postName{
+    font-weight:900;
+    font-size:22px;
+    color:#7bffb5;
+    text-shadow: 0 0 10px rgba(0,255,157,.25);
+    overflow:hidden;
+    text-overflow:ellipsis;
+    white-space:nowrap;
+    max-width: 62vw;
+  }
+
   .when{
     font-size:12px;
     color:#00ff9d;
     opacity:.85;
-    margin-top:-6px;
-    margin-bottom:8px;
+    margin-top:4px;
   }
 
   .menu-btn {
@@ -394,27 +444,62 @@
     display:none;
     border:1px solid rgba(0,255,140,.25);
   }
+
+  /* ✅ Comentários (alinhados, sem float) */
+  .cRow{
+    position:relative;
+    background:#000;
+    border:1px solid rgba(0,255,140,.35);
+    padding:10px 44px 10px 10px;
+    border-radius:12px;
+    margin-bottom:8px;
+  }
+  .cHead{ display:flex; align-items:center; gap:10px; margin-bottom:6px; min-width:0; }
+  .cAvatar{
+    width:34px; height:34px;
+    border-radius:50%;
+    overflow:hidden;
+    background:#000;
+    border:1px solid rgba(0,255,157,.45);
+    flex:0 0 auto;
+    display:flex; align-items:center; justify-content:center;
+  }
+  .cAvatar img{ width:100%; height:100%; object-fit:cover; display:block; }
+  .cAvatar .init{ font-weight:900; color:#00ff9d; }
+  .cName{
+    font-weight:900;
+    color:#00ff9d;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    white-space:nowrap;
+    max-width: 62vw;
+  }
+  .cText{ opacity:.95; }
+
   .coment-menu-btn{
-    float:right;
+    position:absolute;
+    top:10px;
+    right:10px;
     font-size:20px;
     cursor:pointer;
     color:#00ff9d;
-    margin-left:8px;
     user-select:none;
+    line-height:1;
   }
   .coment-menu-box{
     position:absolute;
-    top:5px;
-    right:5px;
+    top:34px;
+    right:10px;
     background:#00ff9d;
     color:#000;
-    padding:5px 10px;
+    padding:6px 10px;
     border-radius:8px;
     display:none;
     font-weight:900;
     cursor:pointer;
     box-shadow:0 0 10px rgba(0,255,157,.55);
     z-index:5;
+    line-height:1;
   }
 
   /* Friends */
@@ -429,14 +514,23 @@
     background: rgba(255,255,255,.03);
     margin-bottom:8px;
   }
+  /* ✅ centralizar (amigos online) */
+  .friendRow.centered{
+    justify-content:center;
+    text-align:center;
+  }
   .friendLeft{
     min-width:0;
     display:flex;
     align-items:center;
     gap:10px;
   }
+  .friendRow.centered .friendLeft{
+    flex-direction:column;
+    gap:8px;
+  }
   .friendAvatar{
-    width:42px; height:42px;
+    width:54px; height:54px;
     border-radius:50%;
     overflow:hidden;
     background:#0d0d0d;
@@ -456,13 +550,19 @@
     overflow:hidden;
     text-overflow:ellipsis;
     white-space:nowrap;
-    max-width: 56vw;
+    max-width: 80vw;
   }
   .friendRight{
     display:flex; align-items:center; gap:8px;
     font-size:12px;
     opacity:.9;
     white-space:nowrap;
+  }
+  /* ✅ no modo centralizado, joga status pra baixo */
+  .friendRow.centered .friendRight{
+    justify-content:center;
+    width:100%;
+    margin-top:6px;
   }
 </style>
 </head>
@@ -833,7 +933,10 @@ function setAboutReadOnly(prof){
 function applyProfileUI(p){
   const prof = p || {};
 
-  meName.textContent = USER_NAME ? ("@" + USER_NAME) : "—";
+  /* ✅ tirar @usuario de cima */
+  meName.textContent = "";
+
+  /* ✅ nome do perfil (h1) na cor já está */
   profileName.textContent = prof.name || USER_NAME || "Usuário";
   cityText.textContent = prof.city || "Sem cidade";
 
@@ -903,7 +1006,6 @@ async function saveProfile(){
     saveInfo.style.display = "block";
     setTimeout(()=> saveInfo.style.display="none", 1600);
 
-    meName.textContent = "@" + USER_NAME;
     profileName.textContent = name;
     cityText.textContent = city || "Sem cidade";
     avatarInitial.textContent = initials(name);
@@ -1040,7 +1142,7 @@ avatarInput.addEventListener("change", async (e)=>{
       updatedAt: firebase.database.ServerValue.TIMESTAMP
     });
 
-    // ✅ salva também no presence para a lista de online pegar rápido (sem precisar ler profiles)
+    // ✅ salva também no presence para a lista de online pegar rápido
     DB.ref("presence/" + UID).update({
       avatarDataUrl: dataUrl
     }).catch(()=>{});
@@ -1061,6 +1163,49 @@ function openTab(which){
   });
   document.getElementById("tab_"+which).classList.add("active");
   document.getElementById("panel_"+which).classList.add("active");
+}
+
+/* ====================== PERFIL CACHE PARA AVATAR NO FEED ====================== */
+const profileCache = new Map();
+async function getProfileForUID(uid, fallbackName){
+  if(!uid) return { url:"", name: fallbackName || "Usuário" };
+  if(profileCache.has(uid)) return profileCache.get(uid);
+
+  try{
+    const snap = await DB.ref("profiles/" + uid).once("value");
+    const p = snap.val() || {};
+    const name = p.name || fallbackName || "Usuário";
+    const url = p.avatarDataUrl || p.avatarUrl || "";
+    const obj = { url, name };
+    profileCache.set(uid, obj);
+
+    // live update
+    DB.ref("profiles/" + uid).on("value", s=>{
+      const px = s.val() || {};
+      const nn = px.name || name;
+      const uu = px.avatarDataUrl || px.avatarUrl || "";
+      profileCache.set(uid, { url: uu, name: nn });
+      updatePostAvatarsInDOM(uid, uu, nn);
+    });
+
+    return obj;
+  }catch(e){
+    const obj = { url:"", name: fallbackName || "Usuário" };
+    profileCache.set(uid, obj);
+    return obj;
+  }
+}
+function updatePostAvatarsInDOM(uid, url, name){
+  document.querySelectorAll(`[data-post-avatar-uid="${uid}"]`).forEach(el=>{
+    if(url){
+      el.innerHTML = `<img src="${url}" alt="avatar">`;
+    }else{
+      el.innerHTML = `<div class="init">${escapeHTML(initials(name||"U"))}</div>`;
+    }
+  });
+  document.querySelectorAll(`[data-post-name-uid="${uid}"]`).forEach(el=>{
+    el.textContent = name || "Usuário";
+  });
 }
 
 /* ====================== FEED só do usuário ====================== */
@@ -1196,7 +1341,8 @@ async function excluirPost(postId){
   postsCount.textContent = `${postsCountNum} postagens`;
 }
 
-function postHTML(id, postData){
+/* ✅ Post com avatar do usuário no lugar da estrela */
+async function postHTML(id, postData){
   let midia = "";
   if(postData.mediaUrl){
     const isImg = (postData.mediaType || "").startsWith("image/");
@@ -1205,9 +1351,17 @@ function postHTML(id, postData){
       : `<video src="${postData.mediaUrl}" controls preload="metadata" playsinline></video>`;
   }
 
-  const nome = escapeHTML(postData.userName || "Usuário");
+  const uid = postData.uid || "";
+  const fallbackName = postData.userName || "Usuário";
+  const prof = await getProfileForUID(uid, fallbackName);
+
+  const nome = escapeHTML(prof.name || fallbackName);
   const texto = escapeHTML(postData.text || "");
   const quando = postData.createdAt ? fmtDate(postData.createdAt) : "";
+
+  const avatarHTML = prof.url
+    ? `<img src="${prof.url}" alt="avatar">`
+    : `<div class="init">${escapeHTML(initials(prof.name || fallbackName))}</div>`;
 
   return `
   <div class="post" id="${id}">
@@ -1216,9 +1370,19 @@ function postHTML(id, postData){
       <div onclick="excluirPost('${id}')">Excluir post</div>
     </div>
 
-    <h3>🌟 ${nome}</h3>
-    <div class="when">${escapeHTML(quando)}</div>
-    <p>${texto}</p>
+    <div class="postHead">
+      <div class="postAvatar" data-post-avatar-uid="${escapeHTML(uid)}">
+        ${avatarHTML}
+      </div>
+      <div class="postHeadText">
+        <div class="postNameLine">
+          <div class="postName" data-post-name-uid="${escapeHTML(uid)}">${nome}</div>
+        </div>
+        <div class="when">${escapeHTML(quando)}</div>
+      </div>
+    </div>
+
+    <p style="margin:12px 0 0 0;">${texto}</p>
 
     <div class="mediaWrap" id="mediaWrap_${id}">
       ${midia}
@@ -1264,7 +1428,7 @@ function listenLikes(postId){
 }
 
 function listenComments(postId){
-  DB.ref("comments/" + postId).orderByChild("createdAt").on("value", snap=>{
+  DB.ref("comments/" + postId).orderByChild("createdAt").on("value", async snap=>{
     const lista = document.getElementById("listaComentarios_"+postId);
     const contador = document.getElementById("contadorComentarios_"+postId);
     if(!lista || !contador) return;
@@ -1273,28 +1437,42 @@ function listenComments(postId){
     const arr = Object.keys(obj).map(cid=>({ cid, ...obj[cid] }))
       .sort((a,b)=>(a.createdAt||0)-(b.createdAt||0));
 
-    lista.innerHTML = arr.map(c=>{
+    if(arr.length === 0){
+      lista.innerHTML = "";
+      contador.innerHTML = "";
+      return;
+    }
+
+    const htmls = await Promise.all(arr.map(async c=>{
       const nome = escapeHTML(c.userName || "Usuário");
       const txt = escapeHTML(c.text || "");
+      // (comentários aqui continuam simples, como seu original)
+
       return `
-        <div id="${c.cid}" style="background:#000;border:1px solid rgba(0,255,140,.35);padding:10px;border-radius:12px;margin-bottom:8px;position:relative;">
-          <b style="color:#00ff9d;">${nome}:</b> 💬 ${txt}
+        <div id="${c.cid}" class="cRow">
+          <div class="cHead">
+            <div class="cAvatar"><div class="init">${escapeHTML(initials(c.userName||"U"))}</div></div>
+            <div class="cName">${nome}</div>
+          </div>
+          <div class="cText">💬 ${txt}</div>
+
           <span class="coment-menu-btn" onclick="toggleComentMenu('${c.cid}')">⋮</span>
           <div class="coment-menu-box" id="menu_${c.cid}" onclick="excluirComentario('${c.cid}','${postId}')">
             Excluir
           </div>
         </div>
       `;
-    }).join("");
+    }));
+
+    lista.innerHTML = htmls.join("");
 
     const total = arr.length;
-    if(total === 0) contador.innerHTML = "";
-    else if(total === 1) contador.innerHTML = "1 comentário";
+    if(total === 1) contador.innerHTML = "1 comentário";
     else contador.innerHTML = `${total} comentários`;
   });
 }
 
-function renderMyPost(postId, data){
+async function renderMyPost(postId, data){
   if(postsCache.has(postId)) return;
   if(data.uid !== UID) return;
 
@@ -1302,7 +1480,7 @@ function renderMyPost(postId, data){
 
   const feed = document.getElementById("myFeed");
   const temp = document.createElement("div");
-  temp.innerHTML = postHTML(postId, data).trim();
+  temp.innerHTML = (await postHTML(postId, data)).trim();
   feed.prepend(temp.firstChild);
 
   listenLikes(postId);
@@ -1319,7 +1497,7 @@ function listenMyPosts(){
   myFeed.innerHTML = `<div style="opacity:.85; padding:12px;">Carregando suas postagens...</div>`;
 
   const q = DB.ref("posts").orderByChild("uid").equalTo(UID).limitToLast(200);
-  q.on("value", snap=>{
+  q.on("value", async snap=>{
     const obj = snap.val() || {};
     const entries = Object.keys(obj).map(id=>({ id, ...obj[id] }))
       .sort((a,b)=>(a.createdAt||0)-(b.createdAt||0));
@@ -1334,11 +1512,13 @@ function listenMyPosts(){
       return;
     }
 
-    entries.slice().reverse().forEach(p=> renderMyPost(p.id, p));
+    for(const p of entries.slice().reverse()){
+      await renderMyPost(p.id, p);
+    }
   });
 }
 
-/* ====================== AMIGOS ONLINE (com FOTO) ====================== */
+/* ====================== AMIGOS ONLINE (com FOTO + CENTRALIZADO) ====================== */
 function friendAvatarHTML(u){
   const name = u.userName || "Usuário";
   const init = initials(name);
@@ -1375,7 +1555,7 @@ function listenOnline(){
       const last = u.lastActive ? fmtDate(u.lastActive) : "";
 
       return `
-        <div class="friendRow">
+        <div class="friendRow centered">
           <div class="friendLeft">
             <div class="friendAvatar">
               ${friendAvatarHTML(u)}
@@ -1398,7 +1578,6 @@ function listenOnline(){
 
 /* ====================== BOOT ====================== */
 (async function boot(){
-  meName.textContent = USER_NAME ? ("@" + USER_NAME) : "—";
   profileName.textContent = USER_NAME || "Usuário";
   avatarInitial.textContent = initials(USER_NAME || "U");
 
