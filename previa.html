@@ -30,15 +30,8 @@
     justify-content:space-between;
     gap:12px;
   }
-  .topbar .left{
-    display:flex; align-items:center; gap:10px; min-width:0;
-  }
-  .topbar .center{
-    flex:1;
-    display:flex;
-    justify-content:center;
-    align-items:center;
-  }
+  .topbar .left{ display:flex; align-items:center; gap:10px; min-width:0; }
+  .topbar .center{ flex:1; display:flex; justify-content:center; align-items:center; }
   .brand{
     font-weight:900;
     color:#00ff8c;
@@ -128,7 +121,7 @@
   .avatar img{
     width:100%;
     height:100%;
-    object-fit:cover;     /* ✅ preenchida */
+    object-fit:cover;
     object-position:center;
     display:block;
   }
@@ -214,25 +207,6 @@
     line-height:1.45;
     word-break:break-word;
   }
-  .bioMeta{
-    margin-top:10px;
-    display:flex;
-    gap:10px;
-    flex-wrap:wrap;
-    opacity:.95;
-    font-weight:900;
-  }
-  .metaPill{
-    display:inline-flex;
-    gap:8px;
-    align-items:center;
-    padding:7px 12px;
-    border-radius:999px;
-    background: rgba(0,255,140,.10);
-    border:1px solid rgba(0,255,140,.25);
-    color:#00ff8c;
-    font-size:13px;
-  }
 
   /* POSTS */
   .post{
@@ -265,14 +239,11 @@
   .postAvatar img{
     width:100%;
     height:100%;
-    object-fit:cover;     /* ✅ preenchida */
+    object-fit:cover;
     object-position:center;
     display:block;
   }
-  .postAvatar .init{
-    font-weight:900;
-    color:#00ff9d;
-  }
+  .postAvatar .init{ font-weight:900; color:#00ff9d; }
   .postName{
     font-weight:900;
     font-size:22px;
@@ -299,6 +270,80 @@
     display:block;
   }
 
+  /* AÇÕES (curtir/comentar) */
+  .post-actions{
+    display:flex;
+    justify-content:space-around;
+    margin-top:14px;
+    flex-wrap:wrap;
+    gap:10px;
+  }
+  .btn-action{
+    color:#00ff9d;
+    padding:10px 12px;
+    border-radius:12px;
+    font-weight:900;
+    cursor:pointer;
+    transition:0.2s;
+    text-align:center;
+    border: 1px solid rgba(0,255,157,.25);
+    background: rgba(0,0,0,.15);
+    user-select:none;
+    min-width:160px;
+  }
+  .contador{
+    margin-top:6px;
+    font-size:13px;
+    color:#00ff9d;
+    text-align:center;
+    opacity:.95;
+    line-height:1.35;
+    word-break: break-word;
+  }
+
+  .coment-area{
+    background:#111;
+    padding:10px;
+    margin-top:10px;
+    border-radius:12px;
+    display:none;
+    border:1px solid rgba(0,255,140,.22);
+  }
+
+  .cRow{
+    background:#000;
+    border:1px solid rgba(0,255,157,.35);
+    padding:10px;
+    border-radius:10px;
+    margin-bottom:8px;
+  }
+  .cHead{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    margin-bottom:6px;
+    min-width:0;
+  }
+  .cAvatar{
+    width:34px; height:34px;
+    border-radius:50%;
+    overflow:hidden;
+    background:#000;
+    border:1px solid rgba(0,255,157,.45);
+    flex:0 0 auto;
+    display:flex; align-items:center; justify-content:center;
+  }
+  .cAvatar img{ width:100%; height:100%; object-fit:cover; display:block; }
+  .cName{
+    font-weight:900;
+    color:#00ff9d;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    white-space:nowrap;
+    max-width: 62vw;
+  }
+  .cText{ opacity:.95; }
+
   .empty{
     opacity:.85;
     padding:12px;
@@ -307,10 +352,79 @@
     border-radius:14px;
     margin-top:12px;
   }
+
+  /* LOGIN (pra curtir/comentar) */
+  .login-overlay{
+    position:fixed; inset:0;
+    background: rgba(0,0,0,0.94);
+    display:none;
+    align-items:center;
+    justify-content:center;
+    z-index: 9999999;
+    padding: 16px;
+  }
+  .login-card{
+    width: min(520px, 94vw);
+    max-width: 94vw;
+    background:#0d0d0d;
+    border:2px solid #00ff8c;
+    border-radius:22px;
+    box-shadow:0 0 28px rgba(0,255,140,.45);
+    padding: 18px;
+    text-align:center;
+  }
+  .login-title{
+    font-size: clamp(18px, 6vw, 26px);
+    font-weight: 900;
+    color:#00ff8c;
+    text-transform:uppercase;
+    letter-spacing:1.2px;
+    text-shadow: 0 0 10px #00ff8c, 0 0 22px #00ff8c;
+    margin: 4px 0 14px 0;
+    display:flex;
+    gap:10px;
+    align-items:center;
+    justify-content:center;
+  }
+  .login-input{
+    width: 100%;
+    display:block;
+    background:#111;
+    border:1px solid #00ff9d;
+    border-radius: 999px;
+    padding: 14px 18px;
+    color:#fff;
+    outline:none;
+    font-size: 16px;
+    box-shadow: inset 0 0 10px rgba(0,255,157,.22);
+  }
+  .login-btn{
+    width: 100%;
+    margin-top: 12px;
+    border:none;
+    border-radius: 999px;
+    padding: 16px 12px;
+    font-weight: 900;
+    cursor:pointer;
+    font-size: 18px;
+    transition:.18s;
+    background:#00ff8c;
+    color:#003b23;
+    box-shadow:0 0 18px rgba(0,255,140,.55);
+  }
 </style>
 </head>
 
 <body>
+
+<!-- LOGIN (pra curtir/comentar) -->
+<div class="login-overlay" id="loginOverlay">
+  <div class="login-card">
+    <div class="login-title"><i class="fa-solid fa-user"></i> ENTRAR</div>
+    <input id="loginName" class="login-input" maxlength="24" placeholder="Digite seu nome" autocomplete="off">
+    <button class="login-btn" onclick="confirmarNome()">Entrar</button>
+  </div>
+</div>
 
 <!-- TOPBAR -->
 <div class="topbar">
@@ -359,10 +473,7 @@
 
     <div class="bioBox">
       <div class="bioText" id="bioText">Carregando...</div>
-      <div class="bioMeta">
-        <span class="metaPill"><i class="fa-solid fa-user"></i> <span id="metaName">—</span></span>
-        <span class="metaPill"><i class="fa-solid fa-link"></i> <span id="metaLink">—</span></span>
-      </div>
+      <!-- ✅ removido: nome abaixo da bio e link -->
     </div>
 
     <div style="margin-top:14px; display:flex; align-items:center; justify-content:space-between; gap:10px;">
@@ -396,8 +507,6 @@ firebase.initializeApp(firebaseConfig);
 const DB = firebase.database();
 
 /* ====================== PARAMS: uid do perfil e back (voltar) ====================== */
-// Abra esta página assim:
-// previa.html?uid=UID_DO_DONO_DO_POST&back=https%3A%2F%2Fseusite.com%2Fpagina-do-usuario
 function getParams(){
   const u = new URLSearchParams(location.search);
   return {
@@ -415,6 +524,50 @@ function goBack(){
     history.back();
   }
 }
+
+/* ====================== LOGIN (pra curtir/comentar) ====================== */
+function getOrCreateUID(){
+  let uid = localStorage.getItem("uid_passageiro");
+  if(!uid){
+    uid = "u_" + Math.random().toString(36).slice(2) + "_" + Date.now();
+    localStorage.setItem("uid_passageiro", uid);
+  }
+  return uid;
+}
+let UID = getOrCreateUID();
+let USER_NAME = (localStorage.getItem("nome_passageiro") || "").trim();
+
+function abrirLogin(){
+  loginOverlay.style.display = "flex";
+  document.body.style.overflow = "hidden";
+  setTimeout(()=>{ try{ loginName.focus(); }catch(e){} }, 50);
+}
+function fecharLogin(){
+  loginOverlay.style.display = "none";
+  document.body.style.overflow = "";
+}
+function confirmarNome(){
+  let nome = (loginName.value || "").trim();
+  if(nome.length < 2){
+    alert("Digite um nome com pelo menos 2 letras.");
+    try{ loginName.focus(); }catch(e){}
+    return;
+  }
+  localStorage.setItem("nome_passageiro", nome);
+  USER_NAME = nome;
+  UID = getOrCreateUID();
+  fecharLogin();
+}
+function precisaLogin(){
+  if(!USER_NAME){
+    abrirLogin();
+    return true;
+  }
+  return false;
+}
+document.addEventListener("keydown", (e)=>{
+  if(loginOverlay.style.display === "flex" && e.key === "Enter"){ confirmarNome(); }
+});
 
 /* Helpers */
 function escapeHTML(str){
@@ -487,35 +640,23 @@ async function loadProfile(){
     setAvatar("", "U");
     setStatus(false);
     cityText.textContent = "—";
-    metaName.textContent = "—";
-    metaLink.textContent = "—";
     return;
   }
 
-  // PROFILE
   DB.ref("profiles/" + TARGET_UID).on("value", snap=>{
     const p = snap.val() || {};
     const name = p.name || "Usuário";
     const city = p.city || "Sem cidade";
     const bio  = p.bio  || "Sem biografia.";
-    const link = (p.link || "").trim();
 
     profileName.textContent = name;
     cityText.textContent = city;
     bioText.textContent = bio;
-    metaName.textContent = name;
-
-    if(link){
-      metaLink.innerHTML = `<a href="${escapeHTML(link)}" target="_blank" style="color:#00ff8c;font-weight:900;text-decoration:none;">${escapeHTML(link)}</a>`;
-    }else{
-      metaLink.textContent = "—";
-    }
 
     setCover(p.coverDataUrl || p.coverUrl || "");
     setAvatar(p.avatarDataUrl || p.avatarUrl || "", name);
   });
 
-  // PRESENCE (online/offline com amarelo)
   DB.ref("presence/" + TARGET_UID).on("value", snap=>{
     const u = snap.val() || {};
     const last = u.lastActive || 0;
@@ -525,8 +666,11 @@ async function loadProfile(){
   });
 }
 
-/* ====================== FEED DO USUÁRIO (somente visualização) ====================== */
-function postHTML(postId, d, name, avatarUrl){
+/* ====================== FEED DO USUÁRIO (com curtir e comentar) ====================== */
+let cachedName = "Usuário";
+let cachedAvatar = "";
+
+function postHTML(postId, d){
   let midia = "";
   if(d.mediaUrl){
     const isImg = (d.mediaType || "").startsWith("image/");
@@ -538,16 +682,16 @@ function postHTML(postId, d, name, avatarUrl){
   const texto = escapeHTML(d.text || "");
   const quando = d.createdAt ? fmtDate(d.createdAt) : "";
 
-  const av = avatarUrl
-    ? `<img src="${avatarUrl}" alt="avatar">`
-    : `<div class="init">${escapeHTML(initials(name))}</div>`;
+  const av = cachedAvatar
+    ? `<img src="${cachedAvatar}" alt="avatar">`
+    : `<div class="init">${escapeHTML(initials(cachedName))}</div>`;
 
   return `
     <div class="post" id="${postId}">
       <div class="postHead">
         <div class="postAvatar">${av}</div>
         <div style="min-width:0;">
-          <div class="postName">${escapeHTML(name)}</div>
+          <div class="postName">${escapeHTML(cachedName)}</div>
           <div class="when">${escapeHTML(quando)}</div>
         </div>
       </div>
@@ -557,16 +701,142 @@ function postHTML(postId, d, name, avatarUrl){
       <div class="mediaWrap">
         ${midia}
       </div>
+
+      <div class="post-actions">
+        <div style="text-align:center;">
+          <div class="btn-action" id="btnLike_${postId}" onclick="curtir('${postId}')">👍 Curtir</div>
+          <div class="contador" id="likesCount_${postId}"></div>
+        </div>
+
+        <div style="text-align:center;">
+          <div class="btn-action" onclick="abrirComentarios('${postId}')">💬 Comentar</div>
+          <div class="contador" id="commentsCount_${postId}"></div>
+        </div>
+      </div>
+
+      <div class="coment-area" id="comentBox_${postId}">
+        <div id="commentsList_${postId}" style="margin-bottom:12px;"></div>
+
+        <input type="text" id="commentInput_${postId}"
+          placeholder="Escreva um comentário..."
+          style="width:100%;padding:10px;border-radius:8px;border:1px solid #00ff9d;background:#000;color:#fff;">
+
+        <button class="btn" style="margin-top:10px;width:100%;" onclick="enviarComentario('${postId}')">
+          Enviar comentário
+        </button>
+      </div>
     </div>
   `;
 }
 
+function abrirComentarios(postId){
+  const box = document.getElementById("comentBox_"+postId);
+  if(!box) return;
+  box.style.display = "block";
+
+  document.removeEventListener("click", fecharBox);
+  function fecharBox(e){
+    const insideBox = box.contains(e.target);
+    const clickedButton = e.target.closest(".btn-action");
+    if(!insideBox && !clickedButton){
+      box.style.display = "none";
+      document.removeEventListener("click", fecharBox);
+    }
+  }
+  setTimeout(()=> document.addEventListener("click", fecharBox), 50);
+}
+
+async function curtir(postId){
+  if(precisaLogin()) return;
+  const likeRef = DB.ref(`likes/${postId}/${UID}`);
+  const snap = await likeRef.once("value");
+  const cur = snap.val();
+  if(cur) await likeRef.remove();
+  else await likeRef.set({
+    type:"like",
+    uid: UID,
+    userName: USER_NAME,
+    createdAt: firebase.database.ServerValue.TIMESTAMP
+  });
+}
+
+async function enviarComentario(postId){
+  if(precisaLogin()) return;
+  const input = document.getElementById("commentInput_"+postId);
+  if(!input) return;
+  const texto = (input.value || "").trim();
+  if(!texto) return;
+
+  const commentId = "cmt_" + Date.now() + "_" + Math.random().toString(36).slice(2);
+  await DB.ref(`comments/${postId}/${commentId}`).set({
+    uid: UID,
+    userName: USER_NAME,
+    text: texto,
+    createdAt: firebase.database.ServerValue.TIMESTAMP
+  });
+  input.value = "";
+}
+
+function listenLikes(postId){
+  DB.ref("likes/" + postId).on("value", snap=>{
+    const obj = snap.val() || {};
+    const entries = Object.values(obj);
+    const total = entries.length;
+    const mine = obj[UID];
+
+    const btn = document.getElementById("btnLike_"+postId);
+    const cont = document.getElementById("likesCount_"+postId);
+    if(!btn || !cont) return;
+
+    if(mine){
+      btn.textContent = "👍 Você curtiu";
+      btn.style.opacity = "1";
+    }else{
+      btn.textContent = "👍 Curtir";
+      btn.style.opacity = ".95";
+    }
+
+    if(total === 0) cont.textContent = "";
+    else cont.textContent = `${total} curtida${total>1?"s":""}`;
+  });
+}
+
+function listenComments(postId){
+  DB.ref("comments/" + postId).orderByChild("createdAt").on("value", snap=>{
+    const obj = snap.val() || {};
+    const arr = Object.keys(obj).map(id=>({ id, ...obj[id] }))
+      .sort((a,b)=>(a.createdAt||0)-(b.createdAt||0));
+
+    const cont = document.getElementById("commentsCount_"+postId);
+    const list = document.getElementById("commentsList_"+postId);
+    if(!cont || !list) return;
+
+    const total = arr.length;
+    cont.textContent = total ? `${total} comentário${total>1?"s":""}` : "";
+
+    if(total === 0){
+      list.innerHTML = `<div class="empty">Nenhum comentário ainda.</div>`;
+      return;
+    }
+
+    list.innerHTML = arr.map(c=>{
+      const nome = c.userName || "Usuário";
+      const txt = escapeHTML(c.text || "");
+      return `
+        <div class="cRow">
+          <div class="cHead">
+            <div class="cAvatar"><div class="init" style="font-weight:900;color:#00ff9d;">${escapeHTML(initials(nome))}</div></div>
+            <div class="cName">${escapeHTML(nome)}</div>
+          </div>
+          <div class="cText">💬 ${txt}</div>
+        </div>
+      `;
+    }).join("");
+  });
+}
+
 function listenFeed(){
   if(!TARGET_UID) return;
-
-  // vamos ouvir profile pra usar nome/avatar também nos posts
-  let cachedName = "Usuário";
-  let cachedAvatar = "";
 
   DB.ref("profiles/" + TARGET_UID).on("value", snap=>{
     const p = snap.val() || {};
@@ -574,10 +844,14 @@ function listenFeed(){
     cachedAvatar = p.avatarDataUrl || p.avatarUrl || "";
   });
 
-  const q = DB.ref("posts").orderByChild("uid").equalTo(TARGET_UID).limitToLast(200);
-  q.on("value", snap=>{
+  // ⚠️ IMPORTANTE: seu banco não tem índice por uid no caminho posts (é um objeto por postId).
+  // Então usamos "value" e filtramos no cliente (igual o seu feed).
+  const ref = DB.ref("posts").limitToLast(300);
+  ref.on("value", snap=>{
     const obj = snap.val() || {};
-    const entries = Object.keys(obj).map(id=>({ id, ...obj[id] }))
+    const entries = Object.keys(obj)
+      .map(id=>({ id, ...obj[id] }))
+      .filter(p => (p.uid || "") === TARGET_UID)
       .sort((a,b)=>(a.createdAt||0)-(b.createdAt||0));
 
     postsCount.textContent = `${entries.length} postagens`;
@@ -587,7 +861,13 @@ function listenFeed(){
       return;
     }
 
-    feed.innerHTML = entries.slice().reverse().map(p=> postHTML(p.id, p, cachedName, cachedAvatar)).join("");
+    // Render + listeners
+    feed.innerHTML = entries.slice().reverse().map(p=> postHTML(p.id, p)).join("");
+
+    entries.forEach(p=>{
+      listenLikes(p.id);
+      listenComments(p.id);
+    });
   });
 }
 
