@@ -19,7 +19,7 @@
     padding: 18px 10px;
     display: flex;
     justify-content: center;
-    gap: 40px;
+    gap: 50px;
     align-items: center;
     border-bottom: 2px solid #00ff8c;
     box-shadow: 0 0 15px #00ff8c;
@@ -41,8 +41,10 @@
     letter-spacing: 1.2px;
     text-shadow: 0 0 10px #00ff8c, 0 0 20px #00ff8c, 0 0 35px #00ff8c;
     white-space: nowrap;
+
     padding: 10px 12px;
     border-radius: 16px;
+
     position: relative;
   }
   .top-menu a:hover { transform: scale(1.06); }
@@ -51,6 +53,7 @@
     text-shadow: 0 0 10px #00ff8c, 0 0 20px #00ff8c, 0 0 40px #00ff8c;
   }
 
+  /* ✅ bolinha verde piscando do menu (online list) */
   .menu-online-dot{
     position:absolute;
     top: 6px;
@@ -68,39 +71,17 @@
   }
 
   @media(max-width:480px){
-    .top-menu { gap: 22px; padding: 14px 10px; }
+    .top-menu { gap: 26px; padding: 14px 10px; }
     .top-menu a { font-size: 14px; letter-spacing:.8px; padding: 12px 14px; }
     .top-menu a i { font-size: 24px; }
     .menu-online-dot{ top: 7px; right: 7px; }
   }
   @media (max-width:360px){
-    .top-menu{ gap: 18px; }
+    .top-menu{ gap: 20px; }
     .btn-action{ font-size:12px; padding:9px 10px; }
     .menu-btn{ font-size:26px; }
     .top-menu a i{ font-size: 22px; }
   }
-
-  /* ======================== AVATAR REUTILIZÁVEL ======================== */
-  .avaBox{
-    overflow:hidden;
-    background:#0d0d0d;
-    border:2px solid rgba(0,255,140,.25);
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    flex: 0 0 auto;
-    position:relative;
-  }
-  .avaBox img{ width:100%; height:100%; object-fit:cover; display:block; }
-  .avaInit{
-    font-weight:900;
-    color:#00ff8c;
-    text-shadow:0 0 14px rgba(0,255,140,.35);
-  }
-  .avaStory{ width:42px; height:42px; border-radius:50%; border:3px solid #2f6bff; box-shadow: 0 0 0 3px rgba(0,0,0,.25); background:#0f1112; }
-  .avaPost{ width:40px; height:40px; border-radius:50%; border:2px solid rgba(0,255,140,.35); }
-  .avaComment{ width:32px; height:32px; border-radius:50%; border:2px solid rgba(0,255,140,.25); }
-  .avaViewer{ width:34px; height:34px; border-radius:50%; border:2px solid rgba(0,255,140,.25); }
 
   /* ======================== STORIES (ESTILO INSTA) ======================== */
   .stories-wrapper{ padding: 12px 10px 6px 10px; }
@@ -152,10 +133,32 @@
     background: rgba(255,255,255,.35);
     border-radius:999px; overflow:hidden;
   }
+
+  /* ✅ avatar dos stories (não corta mais) */
   .avatarCircle{
     position:absolute; top:14px; left:14px;
+    width:42px; height:42px;
+    border-radius:50%;
+    background:#0b0b0b;
+    border:3px solid #2f6bff;
+    box-shadow: 0 0 0 3px rgba(0,0,0,.25);
+    overflow:hidden;
     z-index:6;
+    display:flex; align-items:center; justify-content:center;
   }
+  .avatarCircle img{
+    width:100%;
+    height:100%;
+    object-fit: contain;       /* ✅ NÃO CORTA */
+    object-position:center;    /* ✅ CENTRALIZA */
+    background:#0b0b0b;
+    display:block;
+  }
+  .avatarInitials{
+    font-weight:900; font-size:14px; color:#fff;
+    text-shadow: 0 0 10px rgba(0,0,0,.6);
+  }
+
   .storyName{
     position:absolute; left:14px; right:14px; bottom:14px;
     z-index:6;
@@ -263,7 +266,7 @@
     user-select:none;
   }
 
-  /* QUEM VIU */
+  /* ✅ QUEM VIU */
   .viewerFooter{
     position:absolute;
     left:0; right:0; bottom:0;
@@ -348,21 +351,40 @@
     margin-bottom: 8px;
   }
   .viewerRow:last-child{ margin-bottom:0; }
+
   .viewerLeft{
     display:flex; align-items:center; gap:10px; min-width:0;
   }
+  .viewerAva{
+    width:34px; height:34px; border-radius:50%;
+    overflow:hidden;
+    background:#0b0b0b;
+    border:2px solid rgba(0,255,140,.25);
+    display:flex; align-items:center; justify-content:center;
+    flex: 0 0 auto;
+  }
+  .viewerAva img{
+    width:100%; height:100%;
+    object-fit: contain;       /* ✅ NÃO CORTA */
+    object-position:center;
+    background:#0b0b0b;
+    display:block;
+  }
+  .viewerInit{ font-weight:900; color:#00ff8c; }
+
   .viewerName{
     font-weight: 900;
     color:#00ff8c;
     overflow:hidden;
     text-overflow:ellipsis;
     white-space:nowrap;
-    max-width: 60vw;
+    max-width: 70vw;
   }
   .viewerTime{
     font-size: 12px;
     opacity:.85;
     white-space:nowrap;
+    flex:0 0 auto;
   }
 
   /* ====================== LOGIN ====================== */
@@ -449,7 +471,7 @@
     color:#fff;
     font-size:16px;
     outline:none;
-    box-shadow:inset 0 0 8px rgba(0,0,0,.35);
+    box-shadow:inset 0 0 8px rgba(0,255,157,.35);
   }
   .add-btn{
     background:#111;
@@ -511,36 +533,45 @@
     background:#000;
   }
 
+  /* ✅ header do post com avatar */
   .postHead{
     display:flex;
     align-items:center;
     gap:10px;
-    margin-bottom: 10px;
-  }
-  .postHeadMid{
     min-width:0;
-    flex:1;
   }
-  .postNameRow{
+  .avaBox{
+    width:38px; height:38px;
+    border-radius:50%;
+    overflow:hidden;
+    background:#0b0b0b;
+    border:2px solid rgba(0,255,140,.25);
     display:flex;
     align-items:center;
-    gap:8px;
-    flex-wrap:wrap;
-    line-height:1.1;
+    justify-content:center;
+    flex: 0 0 auto;
   }
-  .postNameRow .name{
+  .avaBox img{
+    width:100%;
+    height:100%;
+    object-fit: contain;        /* ✅ NÃO CORTA */
+    object-position: center;    /* ✅ CENTRALIZA */
+    background:#0b0b0b;
+    display:block;
+  }
+  .avaInit{
+    font-weight:900;
+    color:#00ff8c;
+    text-shadow:0 0 14px rgba(0,255,140,.35);
+    font-size:14px;
+  }
+  .postName{
     font-weight:900;
     color:#fff;
     overflow:hidden;
     text-overflow:ellipsis;
     white-space:nowrap;
-    max-width: 70vw;
-  }
-  .postWhen{
-    font-size:12px;
-    color:#00ff9d;
-    opacity:.85;
-    margin-top:2px;
+    min-width:0;
   }
 
   .post-actions{
@@ -607,20 +638,6 @@
     z-index: 15;
   }
 
-  .commentRow{
-    display:flex;
-    gap:10px;
-    align-items:flex-start;
-    background:#000;
-    border:1px solid #00ff9d;
-    padding:8px;
-    border-radius:12px;
-    margin-bottom:7px;
-    position:relative;
-  }
-  .commentBody{ min-width:0; flex:1; }
-  .commentBody b{ color:#00ff9d; }
-
   .coment-menu-btn {
     float:right;
     font-size:20px;
@@ -643,6 +660,19 @@
     box-shadow: 0 0 10px rgba(0,255,157,.55);
     z-index:5;
   }
+
+  /* ✅ comentários com avatar */
+  .cRow{
+    display:flex;
+    gap:10px;
+    align-items:flex-start;
+  }
+  .cBody{ min-width:0; flex:1; }
+  .cName{
+    color:#00ff9d;
+    font-weight:900;
+  }
+  .cText{ color:#fff; opacity:.95; }
 
   /* ===================== LOADING ===================== */
   .loadingOverlay{
@@ -708,7 +738,7 @@
   </div>
 </div>
 
-<!-- MENU (✅ removido botão sair / ✅ ficou o ícone do perfil) -->
+<!-- MENU (sem botão sair / com ícone perfil) -->
 <nav class="top-menu">
   <a href="https://marcio2307.github.io/terreiro/estudo.html" title="Estudo" aria-label="Estudo">
     <i class="fa-solid fa-book"></i>
@@ -727,6 +757,7 @@
     <i class="fa-solid fa-play" id="radioIcon"></i>
   </a>
 
+  <!-- ✅ PERFIL (abre perfil.html) -->
   <a href="https://marcio2307.github.io/terreiro/perfil.html" title="Perfil" aria-label="Perfil">
     <i class="fa-solid fa-user"></i>
   </a>
@@ -746,7 +777,7 @@
   <div class="tapRight" id="tapRight"></div>
   <div id="viewerMedia"></div>
 
-  <!-- QUEM VIU -->
+  <!-- ✅ QUEM VIU -->
   <div class="viewerFooter" id="viewerFooter">
     <div class="viewerFooterInner" id="viewerFooterInner" onclick="toggleViewersPanel()">
       <div class="seenText">
@@ -807,78 +838,7 @@ firebase.initializeApp(firebaseConfig);
 const DB = firebase.database();
 const ST = firebase.storage();
 
-/* ====================== ✅ CACHE DE AVATAR ====================== */
-const avatarCache = {};
-const avatarPending = {};
-const avatarListeners = {};
-
-function escapeHTML(str){
-  return (str || "")
-    .replaceAll("&","&amp;")
-    .replaceAll("<","&lt;")
-    .replaceAll(">","&gt;")
-    .replaceAll('"',"&quot;")
-    .replaceAll("'","&#039;");
-}
-function initials(name){
-  const n = (name||"").trim().split(/\s+/).filter(Boolean);
-  if(!n.length) return "U";
-  const a = n[0][0] || "U";
-  const b = (n.length>1 ? n[n.length-1][0] : "") || "";
-  return (a+b).toUpperCase();
-}
-function avatarInnerHTML(uid, name){
-  const url = avatarCache[uid] || "";
-  if(url){
-    return `<img src="${url}" alt="avatar" loading="lazy">`;
-  }
-  return `<div class="avaInit">${escapeHTML(initials(name || "U"))}</div>`;
-}
-function updateAvatarDOM(uid){
-  document.querySelectorAll(`[data-avatar-uid="${uid}"]`).forEach(el=>{
-    const nm = el.getAttribute("data-avatar-name") || "Usuário";
-    el.innerHTML = avatarInnerHTML(uid, nm);
-  });
-}
-function setAvatar(uid, url){
-  if(!uid) return;
-  if(url && typeof url === "string"){
-    avatarCache[uid] = url;
-    updateAvatarDOM(uid);
-  }
-}
-function watchAvatar(uid){
-  if(!uid || avatarListeners[uid]) return;
-  avatarListeners[uid] = true;
-
-  DB.ref("profiles/" + uid).on("value", snap=>{
-    const p = snap.val() || {};
-    const url = p.avatarDataUrl || p.avatarUrl || "";
-    if(url) setAvatar(uid, url);
-  }, ()=>{});
-}
-async function ensureAvatar(uid){
-  if(!uid) return;
-  if(avatarCache[uid]) return;
-  if(avatarPending[uid]) return;
-  avatarPending[uid] = true;
-
-  try{
-    const snap = await DB.ref("profiles/" + uid).once("value");
-    const p = snap.val() || {};
-    const url = p.avatarDataUrl || p.avatarUrl || "";
-    if(url) setAvatar(uid, url);
-    watchAvatar(uid);
-  }catch(e){
-  }finally{
-    avatarPending[uid] = false;
-  }
-}
-function fmtDate(ts){
-  try{ return new Date(ts).toLocaleString("pt-BR"); }catch(e){ return ""; }
-}
-
-/* ====================== ✅ SOM ====================== */
+/* ====================== ✅ SOM (MP3 DO GITHUB) ====================== */
 const ACTION_SOUND_URL = "som.mp3";
 const actionSfx = new Audio(ACTION_SOUND_URL);
 actionSfx.preload = "auto";
@@ -938,7 +898,6 @@ function setRadioUI(isPlaying){
 function toggleRadio(){
   ensureRadio();
   unlockAudioOnce();
-
   if(!radioPlaying){
     radio.play().then(()=>setRadioUI(true)).catch(()=>setRadioUI(false));
   }else{
@@ -986,7 +945,6 @@ function confirmarNome(){
   fecharLogin();
 
   startPresence();
-
   setTimeout(()=>{ location.reload(); }, 80);
 }
 (function exigirLogin(){
@@ -1000,6 +958,26 @@ function precisaLogin(){
 document.addEventListener("keydown", (e)=>{
   if(loginOverlay.style.display === "flex" && e.key === "Enter"){ confirmarNome(); }
 });
+
+/* Helpers */
+function escapeHTML(str){
+  return (str || "")
+    .replaceAll("&","&amp;")
+    .replaceAll("<","&lt;")
+    .replaceAll(">","&gt;")
+    .replaceAll('"',"&quot;")
+    .replaceAll("'","&#039;");
+}
+function initials(name){
+  const n = (name||"").trim().split(/\s+/).filter(Boolean);
+  if(!n.length) return "U";
+  const a = n[0][0] || "U";
+  const b = (n.length>1 ? n[n.length-1][0] : "") || "";
+  return (a+b).toUpperCase();
+}
+function fmtDate(ts){
+  try{ return new Date(ts).toLocaleString("pt-BR"); }catch(e){ return ""; }
+}
 
 /* limites */
 const MAX_IMG_MB = 15;
@@ -1027,7 +1005,7 @@ function hideLoading(){
   loadingOverlay.style.display = "none";
 }
 
-/* ====================== PRESENÇA ONLINE ====================== */
+/* ====================== ✅ PRESENÇA ONLINE (INVISÍVEL) ====================== */
 let presenceRef = null;
 let presenceTimer = null;
 
@@ -1037,7 +1015,6 @@ function startPresence(){
     if(presenceTimer) return;
 
     presenceRef = DB.ref("presence/" + UID);
-
     const connectedRef = DB.ref(".info/connected");
     connectedRef.on("value", (snap)=>{
       if(snap.val() === true){
@@ -1061,33 +1038,78 @@ function startPresence(){
     }, 25000);
 
     window.addEventListener("beforeunload", ()=>{
-      try{
-        if(presenceTimer){ clearInterval(presenceTimer); presenceTimer=null; }
-        if(presenceRef){ presenceRef.remove().catch(()=>{}); presenceRef=null; }
-      }catch(e){}
+      try{ stopPresence(true); }catch(e){}
     });
   }catch(e){}
 }
-
+function stopPresence(silent){
+  try{
+    if(presenceTimer){ clearInterval(presenceTimer); presenceTimer=null; }
+    if(presenceRef){ presenceRef.remove().catch(()=>{}); presenceRef=null; }
+  }catch(e){}
+  if(!silent){}
+}
 if(USER_NAME && UID){
   startPresence();
 }
 
-/* ===================== ✅ PUXA AVATAR DO MEU PERFIL E SINCRONIZA ===================== */
-async function loadMyAvatarAndSync(){
-  if(!UID) return;
-  try{
-    const snap = await DB.ref("profiles/" + UID).once("value");
-    const p = snap.val() || {};
-    const url = p.avatarDataUrl || p.avatarUrl || "";
-    if(url){
-      setAvatar(UID, url);
-      DB.ref("presence/" + UID).update({ avatarDataUrl: url }).catch(()=>{});
-    }
-    watchAvatar(UID);
-  }catch(e){}
+/* ====================== ✅ PERFIS / AVATARES (atualiza em tempo real) ======================
+  Lê em: profiles/{uid}
+  Usa: avatarDataUrl (prioridade) ou avatarUrl
+  Sempre que alguém mudar a foto no perfil.html, atualiza aqui também (stories, posts, comentários, quem viu).
+*/
+const avatarCache = new Map();          // uid -> url (string) ou "" (sem foto)
+const nameCache = new Map();            // uid -> nome salvo no perfil (opcional)
+const profileUnsubs = new Map();        // uid -> true
+
+function getAvatarUrlFromProfile(p){
+  const prof = p || {};
+  return (prof.avatarDataUrl || prof.avatarUrl || "").toString();
 }
-loadMyAvatarAndSync();
+function ensureProfileListener(uid){
+  if(!uid) return;
+  if(profileUnsubs.has(uid)) return;
+  profileUnsubs.set(uid, true);
+
+  DB.ref("profiles/" + uid).on("value", (snap)=>{
+    const prof = snap.val() || {};
+    const url = getAvatarUrlFromProfile(prof);
+    const nm  = (prof.name || "").toString();
+
+    avatarCache.set(uid, url);
+    if(nm) nameCache.set(uid, nm);
+
+    // ✅ atualiza avatares já renderizados (posts/comments/viewers)
+    updateAvatarElements(uid);
+
+    // ✅ re-render stories para trocar as iniciais pela foto
+    try{ renderStoriesRow(); }catch(e){}
+  });
+}
+function getAvatarUrl(uid){
+  return avatarCache.get(uid) || "";
+}
+function getNameForUidFallback(uid, fallback){
+  return nameCache.get(uid) || fallback || "Usuário";
+}
+function updateAvatarElements(uid){
+  const url = getAvatarUrl(uid);
+  const nodes = document.querySelectorAll(`[data-avatar-uid="${uid}"]`);
+  nodes.forEach(node=>{
+    if(node.tagName === "IMG"){
+      if(url){
+        node.src = url;
+        node.style.display = "block";
+        const init = node.parentElement?.querySelector(".avaInit, .viewerInit, .avatarInitials");
+        if(init) init.style.display = "none";
+      }else{
+        node.style.display = "none";
+        const init = node.parentElement?.querySelector(".avaInit, .viewerInit, .avatarInitials");
+        if(init) init.style.display = "block";
+      }
+    }
+  });
+}
 </script>
 
 <script>
@@ -1100,8 +1122,10 @@ let activeStories = [];
 let current = 0;
 let viewerTimer = null;
 
+/* ✅ quem viu (variáveis) */
 let viewersPanelOpen = false;
 let viewersRef = null;
+/* ✅ só o DONO do story pode ver "quem viu" */
 let CAN_SEE_VIEWERS = false;
 
 function renderCreateCard(){
@@ -1140,6 +1164,22 @@ function buildSegRow(count){
   `;
 }
 
+/* ✅ avatar do story agora vem do PERFIL (não do story) */
+function storyAvatarHTML(uid, uname){
+  ensureProfileListener(uid);
+  const url = getAvatarUrl(uid);
+  if(url){
+    return `<div class="avatarCircle">
+      <img data-avatar-uid="${uid}" src="${url}" alt="avatar" loading="lazy">
+      <div class="avatarInitials" style="display:none;">${escapeHTML(initials(uname))}</div>
+    </div>`;
+  }
+  return `<div class="avatarCircle">
+    <img data-avatar-uid="${uid}" alt="avatar" style="display:none;">
+    <div class="avatarInitials">${escapeHTML(initials(uname))}</div>
+  </div>`;
+}
+
 function renderUserCard(group){
   const card = document.createElement("div");
   card.className = "storyCard";
@@ -1162,23 +1202,13 @@ function renderUserCard(group){
     `;
   }
 
-  const avatarBox = `
-    <div class="avatarCircle">
-      <div class="avaBox avaStory" data-avatar-uid="${group.uid}" data-avatar-name="${escapeHTML(uname)}">
-        ${avatarInnerHTML(group.uid, uname)}
-      </div>
-    </div>
-  `;
-
   card.innerHTML = `
     ${mediaHTML}
     <div class="storyShade"></div>
     ${segs}
-    ${avatarBox}
+    ${storyAvatarHTML(group.uid, uname)}
     <div class="storyName">${escapeHTML(uname)}</div>
   `;
-
-  ensureAvatar(group.uid);
 
   card.onclick = ()=>{
     if(group.items.length === 0) return;
@@ -1234,7 +1264,7 @@ async function addStory(file){
   }
 }
 
-/* QUEM VIU */
+/* ===================== ✅ QUEM VIU (nome + foto) ===================== */
 function closeViewersPanel(){
   viewersPanelOpen = false;
   viewersPanel.style.display = "none";
@@ -1256,6 +1286,26 @@ function detachViewersListener(){
     }
   }catch(e){}
 }
+function viewerRowHTML(v){
+  const uid = v.uid || "";
+  const uname = v.userName || "Usuário";
+  ensureProfileListener(uid);
+  const url = getAvatarUrl(uid);
+  const quando = v.viewedAt ? fmtDate(v.viewedAt) : "";
+
+  return `
+    <div class="viewerRow">
+      <div class="viewerLeft">
+        <div class="viewerAva">
+          <img data-avatar-uid="${escapeHTML(uid)}" ${url ? `src="${url}" style="display:block;"` : `style="display:none;"`} alt="avatar">
+          <div class="viewerInit" ${url ? `style="display:none;"` : ``}>${escapeHTML(initials(uname))}</div>
+        </div>
+        <div class="viewerName">${escapeHTML(uname)}</div>
+      </div>
+      <div class="viewerTime">${escapeHTML(quando)}</div>
+    </div>
+  `;
+}
 function updateViewersUI(viewsObj){
   const obj = viewsObj || {};
   const arr = Object.keys(obj).map(uid=>obj[uid]).filter(Boolean);
@@ -1272,24 +1322,10 @@ function updateViewersUI(viewsObj){
   if(total === 1) seenText.textContent = `${first} viu este story`;
   else seenText.textContent = `${first} e mais ${total-1} viram este story`;
 
-  viewersPanel.innerHTML = arr.map(v=>{
-    const nome = v.userName || "Usuário";
-    const quando = v.viewedAt ? fmtDate(v.viewedAt) : "";
-    const uid = v.uid || "";
-    if(uid) ensureAvatar(uid);
+  viewersPanel.innerHTML = arr.map(v=> viewerRowHTML(v)).join("");
 
-    return `
-      <div class="viewerRow">
-        <div class="viewerLeft">
-          <div class="avaBox avaViewer" data-avatar-uid="${escapeHTML(uid)}" data-avatar-name="${escapeHTML(nome)}">
-            ${avatarInnerHTML(uid, nome)}
-          </div>
-          <div class="viewerName">${escapeHTML(nome)}</div>
-        </div>
-        <div class="viewerTime">${escapeHTML(quando)}</div>
-      </div>
-    `;
-  }).join("");
+  // ✅ garante atualização imediata caso cache chegue depois
+  arr.forEach(v=>{ if(v.uid) updateAvatarElements(v.uid); });
 }
 async function markStoryView(story){
   try{
@@ -1460,6 +1496,7 @@ deleteBtn.onclick = async ()=>{
     const map = {};
     allStories.forEach(s=>{
       if(!s.uid) return;
+      ensureProfileListener(s.uid);
       if(!map[s.uid]) map[s.uid] = { uid:s.uid, userName:s.userName||"Usuário", items:[] };
       map[s.uid].items.push(s);
       map[s.uid].userName = s.userName || map[s.uid].userName;
@@ -1749,6 +1786,22 @@ async function excluirPost(id){
   playActionSound();
 }
 
+/* ✅ header do post agora usa foto do perfil (sem cortar) */
+function postHeaderHTML(uid, uname, pending){
+  ensureProfileListener(uid);
+  const url = getAvatarUrl(uid);
+  const init = initials(uname || "U");
+  return `
+    <div class="postHead">
+      <div class="avaBox">
+        <img data-avatar-uid="${escapeHTML(uid)}" ${url ? `src="${url}" style="display:block;"` : `style="display:none;"`} alt="avatar">
+        <div class="avaInit" ${url ? `style="display:none;"` : ``}>${escapeHTML(init)}</div>
+      </div>
+      <div class="postName">${escapeHTML(uname || "Usuário")} ${pending || ""}</div>
+    </div>
+  `;
+}
+
 function postHTML(id, postData){
   let midia = "";
   if(postData.mediaUrl){
@@ -1758,14 +1811,14 @@ function postHTML(id, postData){
       : `<video src="${postData.mediaUrl}" controls preload="metadata" playsinline></video>`;
   }
 
-  const uid = postData.uid || "";
   const nome = (postData.userName || "Usuário");
+  const uid  = (postData.uid || "");
   const texto = escapeHTML(postData.text || "");
-  const quandoTxt = postData.createdAt ? fmtDate(postData.createdAt) : "";
+  const quando = postData.createdAt
+    ? `<div style="font-size:12px;color:#00ff9d;opacity:.85;margin-top:6px;">${fmtDate(postData.createdAt)}</div>`
+    : "";
 
   const pending = postData._pending ? `<span class="pendingBadge">ENVIANDO…</span>` : "";
-
-  if(uid) ensureAvatar(uid);
 
   return `
   <div class="post" id="${id}" ${postData._pending ? 'data-pending="1"' : ''}>
@@ -1774,19 +1827,8 @@ function postHTML(id, postData){
       <div onclick="excluirPost('${id}')">Excluir</div>
     </div>
 
-    <div class="postHead">
-      <div class="avaBox avaPost" data-avatar-uid="${escapeHTML(uid)}" data-avatar-name="${escapeHTML(nome)}">
-        ${avatarInnerHTML(uid, nome)}
-      </div>
-      <div class="postHeadMid">
-        <div class="postNameRow">
-          <div class="name">${escapeHTML(nome)}</div>
-          ${pending}
-        </div>
-        <div class="postWhen">${escapeHTML(quandoTxt)}</div>
-      </div>
-    </div>
-
+    ${postHeaderHTML(uid, nome, pending)}
+    ${quando}
     <p>${texto}</p>
 
     <div class="mediaWrap" id="mediaWrap_${id}">
@@ -1847,20 +1889,16 @@ function atualizarPostDoServidor(id, data){
   const el = document.getElementById(id);
   if(!el) return;
 
-  const uid = data.uid || "";
-  const nome = data.userName || "Usuário";
-  if(uid) ensureAvatar(uid);
+  const head = el.querySelector(".postHead");
+  if(head){
+    head.outerHTML = postHeaderHTML(data.uid || "", data.userName || "Usuário", "");
+    // garante update caso cache chegue depois
+    if(data.uid) updateAvatarElements(data.uid);
+  }
 
-  const nameEl = el.querySelector(".postNameRow .name");
-  if(nameEl) nameEl.textContent = nome;
-
-  const whenEl = el.querySelector(".postWhen");
-  if(whenEl) whenEl.textContent = data.createdAt ? fmtDate(data.createdAt) : "";
-
-  const avatarEl = el.querySelector(`[data-avatar-uid="${uid}"]`);
-  if(avatarEl){
-    avatarEl.setAttribute("data-avatar-name", nome);
-    avatarEl.innerHTML = avatarInnerHTML(uid, nome);
+  const whenDiv = el.querySelector("div[style*='font-size:12px']");
+  if(whenDiv && data.createdAt){
+    whenDiv.textContent = fmtDate(data.createdAt);
   }
 
   const p = el.querySelector("p");
@@ -1887,6 +1925,36 @@ function listenLikes(postId){
   });
 }
 
+/* ✅ comentários agora mostram foto do perfil do usuário (sem cortar) */
+function commentHTML(c, postId){
+  const uid = c.uid || "";
+  const uname = c.userName || "Usuário";
+  ensureProfileListener(uid);
+  const url = getAvatarUrl(uid);
+  const init = initials(uname);
+
+  return `
+    <div id="${c.cid}" style="background:#000;border:1px solid #00ff9d;padding:10px;border-radius:10px;margin-bottom:8px;position:relative;">
+      <div class="cRow">
+        <div class="avaBox" style="width:34px;height:34px;border-color:rgba(0,255,157,.35);">
+          <img data-avatar-uid="${escapeHTML(uid)}" ${url ? `src="${url}" style="display:block;"` : `style="display:none;"`} alt="avatar">
+          <div class="avaInit" ${url ? `style="display:none;"` : ``}>${escapeHTML(init)}</div>
+        </div>
+        <div class="cBody">
+          <div class="cName">${escapeHTML(uname)}</div>
+          <div class="cText">💬 ${escapeHTML(c.text || "")}</div>
+        </div>
+      </div>
+
+      <span class="coment-menu-btn" onclick="toggleComentMenu('${c.cid}')">⋮</span>
+      <div class="coment-menu-box" id="menu_${c.cid}"
+        onclick="excluirComentario('${c.cid}','${postId}')">
+        Excluir
+      </div>
+    </div>
+  `;
+}
+
 function listenComments(postId){
   DB.ref("comments/" + postId).orderByChild("createdAt").on("value", snap=>{
     const lista = document.getElementById("listaComentarios_"+postId);
@@ -1897,31 +1965,10 @@ function listenComments(postId){
     const arr = Object.keys(obj).map(cid=>({ cid, ...obj[cid] }))
       .sort((a,b)=>(a.createdAt||0)-(b.createdAt||0));
 
-    lista.innerHTML = arr.map(c=>{
-      const uid = c.uid || "";
-      const nome = c.userName || "Usuário";
-      const txt = escapeHTML(c.text || "");
+    lista.innerHTML = arr.map(c=> commentHTML(c, postId)).join("");
 
-      if(uid) ensureAvatar(uid);
-
-      return `
-        <div class="commentRow" id="${c.cid}">
-          <div class="avaBox avaComment" data-avatar-uid="${escapeHTML(uid)}" data-avatar-name="${escapeHTML(nome)}">
-            ${avatarInnerHTML(uid, nome)}
-          </div>
-
-          <div class="commentBody">
-            <b>${escapeHTML(nome)}:</b> 💬 ${txt}
-          </div>
-
-          <span class="coment-menu-btn" onclick="toggleComentMenu('${c.cid}')">⋮</span>
-          <div class="coment-menu-box" id="menu_${c.cid}"
-            onclick="excluirComentario('${c.cid}','${postId}')">
-            Excluir
-          </div>
-        </div>
-      `;
-    }).join("");
+    // garante update se cache vier depois
+    arr.forEach(c=>{ if(c.uid) updateAvatarElements(c.uid); });
 
     const total = arr.length;
     if(total === 0) contador.innerHTML = "";
@@ -1936,6 +1983,9 @@ function listenComments(postId){
   ref.on("child_added", snap=>{
     const id = snap.key;
     const data = snap.val() || {};
+
+    // prepara listener do perfil do autor
+    if(data.uid) ensureProfileListener(data.uid);
 
     const el = document.getElementById(id);
     if(el){
@@ -1972,6 +2022,9 @@ function pumpRenderQueue(){
         feed.prepend(temp.firstChild);
         listenLikes(it.id);
         listenComments(it.id);
+
+        // garante atualização do avatar do autor
+        if(it.data.uid) updateAvatarElements(it.data.uid);
       }
       n++;
     }
