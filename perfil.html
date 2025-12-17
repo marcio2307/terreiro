@@ -504,7 +504,7 @@
     top:10px;
     right:10px;
     font-size:20px;
-    cursor:pointer;
+    cursor: pointer;
     color:#00ff9d;
     user-select:none;
     line-height:1;
@@ -648,10 +648,10 @@
 
   <!-- TABS -->
   <div class="tabs">
-    <div class="tab active" id="tab_posts" onclick="openTab('posts')"><i class="fa-solid fa-newspaper"></i> Postagens</div>
-    <div class="tab" id="tab_about" onclick="openTab('about')"><i class="fa-solid fa-circle-info"></i> Sobre</div>
-    <div class="tab" id="tab_profile" onclick="openTab('profile')"><i class="fa-solid fa-user-pen"></i> Perfil</div>
-    <div class="tab" id="tab_friends" onclick="openTab('friends')"><i class="fa-solid fa-users"></i> Amigos online</div>
+    <div class="tab active" id="tab_posts" onclick="toggleTab('posts')"><i class="fa-solid fa-newspaper"></i> Postagens</div>
+    <div class="tab" id="tab_about" onclick="toggleTab('about')"><i class="fa-solid fa-circle-info"></i> Sobre</div>
+    <div class="tab" id="tab_profile" onclick="toggleTab('profile')"><i class="fa-solid fa-user-pen"></i> Perfil</div>
+    <div class="tab" id="tab_friends" onclick="toggleTab('friends')"><i class="fa-solid fa-users"></i> Amigos online</div>
   </div>
 
   <!-- POSTAGENS -->
@@ -1175,14 +1175,33 @@ avatarInput.addEventListener("change", async (e)=>{
   }
 });
 
-/* TABS */
-function openTab(which){
+/* ✅ TABS COM TOGGLE (clicou no mesmo: fecha / clicou em outro: abre) */
+let CURRENT_TAB = "posts";
+
+function setTabActive(which){
   ["posts","about","profile","friends"].forEach(k=>{
     document.getElementById("tab_"+k).classList.remove("active");
     document.getElementById("panel_"+k).classList.remove("active");
   });
   document.getElementById("tab_"+which).classList.add("active");
   document.getElementById("panel_"+which).classList.add("active");
+  CURRENT_TAB = which;
+}
+
+function closeAllTabs(){
+  ["posts","about","profile","friends"].forEach(k=>{
+    document.getElementById("tab_"+k).classList.remove("active");
+    document.getElementById("panel_"+k).classList.remove("active");
+  });
+  CURRENT_TAB = "";
+}
+
+function toggleTab(which){
+  if(CURRENT_TAB === which){
+    closeAllTabs();
+  }else{
+    setTabActive(which);
+  }
 }
 
 /* ====================== PERFIL CACHE PARA AVATAR NO FEED ====================== */
@@ -1603,6 +1622,9 @@ function listenOnline(){
 
   listenMyPosts();
   listenOnline();
+
+  // ✅ garante que inicia na aba Postagens como antes
+  setTabActive("posts");
 })();
 </script>
 
