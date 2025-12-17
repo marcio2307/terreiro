@@ -8,139 +8,160 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
 <style>
-  *{ box-sizing:border-box; }
-  html,body{ width:100%; max-width:100%; overflow-x:hidden; }
-  body{
-    margin:0;
-    background:#000;
-    font-family: Arial, sans-serif;
-    color:#fff;
-    padding-bottom: env(safe-area-inset-bottom);
-  }
+*{ box-sizing:border-box; }
+html,body{ width:100%; max-width:100%; overflow-x:hidden; }
+body{
+  margin:0;
+  background:#000;
+  font-family: Arial, sans-serif;
+  color:#fff;
+  padding-bottom: env(safe-area-inset-bottom);
+}
 
-  /* topo no estilo do site */
-  .topbar{
-    position: sticky;
-    top:0;
-    z-index: 9999;
-    background:#0d0d0d;
-    border-bottom: 2px solid #00ff8c;
-    box-shadow: 0 0 15px #00ff8c;
-    padding: 14px 12px;
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    gap: 12px;
-  }
-  .title{
-    display:flex;
-    align-items:center;
-    gap:10px;
-    font-weight: 900;
-    color:#00ff8c;
-    text-transform: uppercase;
-    letter-spacing:1.1px;
-    text-shadow: 0 0 10px #00ff8c, 0 0 20px #00ff8c;
-    font-size: 16px;
-  }
-  .backBtn{
-    color:#00ff8c;
-    text-decoration:none;
-    display:flex;
-    align-items:center;
-    gap:8px;
-    padding:10px 12px;
-    border-radius:16px;
-    border: 1px solid rgba(0,255,140,.25);
-    background: rgba(0,0,0,.2);
-    box-shadow: 0 0 14px rgba(0,255,140,.08);
-    user-select:none;
-  }
+/* topo */
+.topbar{
+  position: sticky;
+  top:0;
+  z-index: 9999;
+  background:#0d0d0d;
+  border-bottom: 2px solid #00ff8c;
+  box-shadow: 0 0 15px #00ff8c;
+  padding: 14px 12px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap: 12px;
+}
+.title{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  font-weight: 900;
+  color:#00ff8c;
+  text-transform: uppercase;
+  letter-spacing:1.1px;
+  text-shadow: 0 0 10px #00ff8c, 0 0 20px #00ff8c;
+  font-size: 16px;
+}
+.backBtn{
+  color:#00ff8c;
+  text-decoration:none;
+  display:flex;
+  align-items:center;
+  gap:8px;
+  padding:10px 12px;
+  border-radius:16px;
+  border: 1px solid rgba(0,255,140,.25);
+  background: rgba(0,0,0,.2);
+}
 
-  .wrap{
-    padding: 14px 12px;
-    max-width: 760px;
-    margin: 0 auto;
-  }
+.wrap{
+  padding: 14px 12px;
+  max-width: 760px;
+  margin: 0 auto;
+}
 
-  .card{
-    background:#0d0d0d;
-    border:1px solid rgba(0,255,157,.45);
-    box-shadow:0 0 14px rgba(0,255,157,.25);
-    border-radius:18px;
-    padding: 14px;
-  }
+.card{
+  background:#0d0d0d;
+  border:1px solid rgba(0,255,157,.45);
+  box-shadow:0 0 14px rgba(0,255,157,.25);
+  border-radius:18px;
+  padding: 14px;
+}
 
-  .sub{
-    opacity:.9;
-    font-size: 13px;
-    margin-top: 6px;
-    color:#c8ffe6;
-  }
+.sub{
+  opacity:.9;
+  font-size: 13px;
+  margin-top: 6px;
+  color:#c8ffe6;
+}
 
-  .list{
-    margin-top: 14px;
-    display:flex;
-    flex-direction:column;
-    gap: 10px;
-  }
+.list{
+  margin-top: 14px;
+  display:flex;
+  flex-direction:column;
+  gap: 10px;
+}
 
-  .row{
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    gap: 10px;
-    padding: 12px 12px;
-    border-radius: 14px;
-    border: 1px solid rgba(255,255,255,.06);
-    background: rgba(255,255,255,.03);
-  }
+.row{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap: 10px;
+  padding: 12px;
+  border-radius: 14px;
+  border: 1px solid rgba(255,255,255,.06);
+  background: rgba(255,255,255,.03);
+}
 
-  .left{
-    display:flex;
-    align-items:center;
-    gap: 10px;
-    min-width:0;
-  }
+.left{
+  display:flex;
+  align-items:center;
+  gap: 10px;
+  min-width:0;
+}
 
-  .dot{
-    width: 12px;
-    height: 12px;
-    border-radius: 50%;
-    background: #00ff4c;
-    box-shadow: 0 0 16px rgba(0,255,76,.9);
-    animation: blinkDot 0.9s infinite;
-    flex: 0 0 auto;
-  }
-  @keyframes blinkDot{
-    0%,100%{ transform: scale(1); opacity: 1; }
-    50%{ transform: scale(1.35); opacity: .25; }
-  }
+/* avatar */
+.avatar{
+  width:42px;
+  height:42px;
+  border-radius:50%;
+  overflow:hidden;
+  background:#000;
+  border:2px solid #00ff8c;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  flex:0 0 auto;
+}
+.avatar img{
+  width:100%;
+  height:100%;
+  object-fit: cover;
+}
+.avatar .init{
+  font-weight:900;
+  color:#00ff8c;
+}
 
-  .name{
-    font-weight: 900;
-    color:#00ff8c;
-    overflow:hidden;
-    text-overflow:ellipsis;
-    white-space:nowrap;
-  }
+/* online dot */
+.dot{
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #00ff4c;
+  box-shadow: 0 0 16px rgba(0,255,76,.9);
+  animation: blinkDot 0.9s infinite;
+}
+@keyframes blinkDot{
+  0%,100%{ transform: scale(1); opacity: 1; }
+  50%{ transform: scale(1.35); opacity: .25; }
+}
 
-  .time{
-    font-size: 12px;
-    opacity:.85;
-    white-space:nowrap;
-    color:#d7fff2;
-  }
+.name{
+  font-weight: 900;
+  color:#00ff8c;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+}
 
-  .empty{
-    padding: 14px;
-    border-radius: 14px;
-    border: 1px dashed rgba(0,255,157,.25);
-    background: rgba(0,255,157,.06);
-    color:#d7fff2;
-    text-align:center;
-    font-weight: 900;
-  }
+.time{
+  font-size: 12px;
+  opacity:.85;
+  white-space:nowrap;
+  color:#d7fff2;
+}
+
+.empty{
+  padding: 14px;
+  border-radius: 14px;
+  border: 1px dashed rgba(0,255,157,.25);
+  background: rgba(0,255,157,.06);
+  color:#d7fff2;
+  text-align:center;
+  font-weight: 900;
+}
 </style>
 </head>
 
@@ -156,16 +177,16 @@
 <div class="wrap">
   <div class="card">
     <div style="display:flex;align-items:center;gap:10px;font-weight:900;">
-      <i class="fa-solid fa-circle" style="color:#00ff4c;text-shadow:0 0 16px rgba(0,255,76,.8)"></i>
+      <i class="fa-solid fa-circle" style="color:#00ff4c"></i>
       <div>Lista em tempo real</div>
     </div>
-    <div class="sub">Mostra quem está online agora (atualiza automaticamente).</div>
+    <div class="sub">Mostra quem está online agora.</div>
 
     <div class="list" id="list"></div>
   </div>
 </div>
 
-<!-- Firebase (mesmo projeto) -->
+<!-- Firebase -->
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
 
@@ -182,57 +203,59 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 const DB = firebase.database();
 
+const listEl = document.getElementById("list");
+const ONLINE_WINDOW_MS = 70000;
+
+function initials(name){
+  const n = (name||"").trim().split(/\s+/);
+  return ((n[0]?.[0]||"U") + (n[1]?.[0]||"")).toUpperCase();
+}
 function fmt(ts){
   try{ return new Date(ts).toLocaleString("pt-BR"); }catch(e){ return ""; }
 }
 
-function escapeHTML(str){
-  return (str || "")
-    .replaceAll("&","&amp;")
-    .replaceAll("<","&lt;")
-    .replaceAll(">","&gt;")
-    .replaceAll('"',"&quot;")
-    .replaceAll("'","&#039;");
-}
-
-const listEl = document.getElementById("list");
-
-// ✅ considera online se lastActive foi nos últimos 70s
-const ONLINE_WINDOW_MS = 70000;
-
-DB.ref("presence").on("value", (snap)=>{
+DB.ref("presence").on("value", async snap=>{
   const obj = snap.val() || {};
   const now = Date.now();
 
-  let arr = Object.keys(obj).map(k => obj[k]).filter(Boolean);
-
-  // filtra só quem realmente está ativo agora
-  arr = arr.filter(u=>{
-    const la = u.lastActive || 0;
-    return u.online === true && (now - la) <= ONLINE_WINDOW_MS;
+  let arr = Object.values(obj).filter(u=>{
+    return u && u.online === true && (now - (u.lastActive||0)) <= ONLINE_WINDOW_MS;
   });
-
-  // ordena por nome
-  arr.sort((a,b)=> (a.userName||"").localeCompare((b.userName||""), "pt-BR"));
 
   if(arr.length === 0){
     listEl.innerHTML = `<div class="empty">Ninguém online agora</div>`;
     return;
   }
 
-  listEl.innerHTML = arr.map(u=>{
-    const nome = escapeHTML(u.userName || "Usuário");
-    const la = u.lastActive ? fmt(u.lastActive) : "";
+  const rows = await Promise.all(arr.map(async u=>{
+    const uid = u.uid;
+    const nome = u.userName || "Usuário";
+    const la = fmt(u.lastActive);
+
+    let avatarHTML = `<div class="avatar"><div class="init">${initials(nome)}</div></div>`;
+
+    try{
+      const pSnap = await DB.ref("profiles/"+uid).once("value");
+      const p = pSnap.val() || {};
+      const foto = p.avatarDataUrl || p.avatarUrl;
+      if(foto){
+        avatarHTML = `<div class="avatar"><img src="${foto}"></div>`;
+      }
+    }catch(e){}
+
     return `
       <div class="row">
         <div class="left">
+          ${avatarHTML}
           <span class="dot"></span>
           <div class="name">${nome}</div>
         </div>
-        <div class="time">${escapeHTML(la)}</div>
+        <div class="time">${la}</div>
       </div>
     `;
-  }).join("");
+  }));
+
+  listEl.innerHTML = rows.join("");
 });
 </script>
 
