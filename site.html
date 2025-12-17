@@ -41,10 +41,8 @@
     letter-spacing: 1.2px;
     text-shadow: 0 0 10px #00ff8c, 0 0 20px #00ff8c, 0 0 35px #00ff8c;
     white-space: nowrap;
-
     padding: 10px 12px;
     border-radius: 16px;
-
     position: relative;
   }
   .top-menu a:hover { transform: scale(1.06); }
@@ -53,7 +51,6 @@
     text-shadow: 0 0 10px #00ff8c, 0 0 20px #00ff8c, 0 0 40px #00ff8c;
   }
 
-  /* ✅ bolinha verde piscando do menu (online list) */
   .menu-online-dot{
     position:absolute;
     top: 6px;
@@ -133,32 +130,22 @@
     background: rgba(255,255,255,.35);
     border-radius:999px; overflow:hidden;
   }
-
-  /* ✅ avatar dos stories (não corta mais) */
   .avatarCircle{
     position:absolute; top:14px; left:14px;
     width:42px; height:42px;
     border-radius:50%;
-    background:#0b0b0b;
+    background:#0f1112;
     border:3px solid #2f6bff;
     box-shadow: 0 0 0 3px rgba(0,0,0,.25);
     overflow:hidden;
     z-index:6;
     display:flex; align-items:center; justify-content:center;
   }
-  .avatarCircle img{
-    width:100%;
-    height:100%;
-    object-fit: contain;       /* ✅ NÃO CORTA */
-    object-position:center;    /* ✅ CENTRALIZA */
-    background:#0b0b0b;
-    display:block;
-  }
+  .avatarCircle img{ width:100%; height:100%; object-fit:cover; display:block; }
   .avatarInitials{
     font-weight:900; font-size:14px; color:#fff;
     text-shadow: 0 0 10px rgba(0,0,0,.6);
   }
-
   .storyName{
     position:absolute; left:14px; right:14px; bottom:14px;
     z-index:6;
@@ -351,40 +338,18 @@
     margin-bottom: 8px;
   }
   .viewerRow:last-child{ margin-bottom:0; }
-
-  .viewerLeft{
-    display:flex; align-items:center; gap:10px; min-width:0;
-  }
-  .viewerAva{
-    width:34px; height:34px; border-radius:50%;
-    overflow:hidden;
-    background:#0b0b0b;
-    border:2px solid rgba(0,255,140,.25);
-    display:flex; align-items:center; justify-content:center;
-    flex: 0 0 auto;
-  }
-  .viewerAva img{
-    width:100%; height:100%;
-    object-fit: contain;       /* ✅ NÃO CORTA */
-    object-position:center;
-    background:#0b0b0b;
-    display:block;
-  }
-  .viewerInit{ font-weight:900; color:#00ff8c; }
-
   .viewerName{
     font-weight: 900;
     color:#00ff8c;
     overflow:hidden;
     text-overflow:ellipsis;
     white-space:nowrap;
-    max-width: 70vw;
+    max-width: 70%;
   }
   .viewerTime{
     font-size: 12px;
     opacity:.85;
     white-space:nowrap;
-    flex:0 0 auto;
   }
 
   /* ====================== LOGIN ====================== */
@@ -526,52 +491,71 @@
     box-shadow:0 0 10px rgba(0,255,157,.45);
     position:relative;
   }
-  .post img,.post video{
+
+  /* ✅ CABEÇALHO COM FOTO (não usa mais 🌟) */
+  .postHead{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    padding-right:44px; /* espaço do menu ⋮ */
+  }
+  .postAvatar{
+    width:56px;
+    height:56px;
+    border-radius:50%;
+    overflow:hidden;
+    background:#000;
+    border:2px solid rgba(0,255,157,.55);
+    box-shadow:0 0 14px rgba(0,255,157,.22);
+    flex:0 0 auto;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+  }
+  /* ✅ AQUI é o principal: avatar sempre "preenchido" e não afetado pelo CSS de mídia */
+  .postAvatar img{
+    width:100%;
+    height:100%;
+    object-fit: cover;      /* preenche (corta) */
+    object-position:center;
+    display:block;
+  }
+  .postAvatar .init{
+    font-weight:900;
+    color:#00ff9d;
+  }
+  .postHeadText{ min-width:0; }
+  .postNameLine{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    flex-wrap:wrap;
+  }
+  .postName{
+    font-weight:900;
+    font-size:22px;
+    color:#7bffb5;
+    text-shadow: 0 0 10px rgba(0,255,157,.25);
+    overflow:hidden;
+    text-overflow:ellipsis;
+    white-space:nowrap;
+    max-width: 62vw;
+  }
+  .postWhen{
+    font-size:12px;
+    color:#00ff9d;
+    opacity:.85;
+    margin-top:4px;
+  }
+
+  /* ✅ CORRIGIDO: NÃO AFETA AVATAR DO POST */
+  .post .mediaWrap img,
+  .post .mediaWrap video{
     width:100%;
     border-radius:12px;
     margin-top:10px;
     background:#000;
-  }
-
-  /* ✅ header do post com avatar */
-  .postHead{
-    display:flex;
-    align-items:center;
-    gap:10px;
-    min-width:0;
-  }
-  .avaBox{
-    width:38px; height:38px;
-    border-radius:50%;
-    overflow:hidden;
-    background:#0b0b0b;
-    border:2px solid rgba(0,255,140,.25);
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    flex: 0 0 auto;
-  }
-  .avaBox img{
-    width:100%;
-    height:100%;
-    object-fit: contain;        /* ✅ NÃO CORTA */
-    object-position: center;    /* ✅ CENTRALIZA */
-    background:#0b0b0b;
     display:block;
-  }
-  .avaInit{
-    font-weight:900;
-    color:#00ff8c;
-    text-shadow:0 0 14px rgba(0,255,140,.35);
-    font-size:14px;
-  }
-  .postName{
-    font-weight:900;
-    color:#fff;
-    overflow:hidden;
-    text-overflow:ellipsis;
-    white-space:nowrap;
-    min-width:0;
   }
 
   .post-actions{
@@ -611,6 +595,7 @@
     margin-top:10px;
     border-radius:12px;
     display:none;
+    border:1px solid rgba(0,255,140,.22);
   }
 
   .menu-btn {
@@ -638,41 +623,71 @@
     z-index: 15;
   }
 
-  .coment-menu-btn {
-    float:right;
+  /* ✅ Comentários: CORRIGIDO 3 pontinhos desalinhado */
+  .cRow{
+    position:relative;
+    background:#000;
+    border:1px solid #00ff9d;
+    padding:10px 44px 10px 10px; /* espaço pro ⋮ */
+    border-radius:10px;
+    margin-bottom:8px;
+  }
+  .cHead{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    margin-bottom:6px;
+    min-width:0;
+  }
+  .cAvatar{
+    width:34px; height:34px;
+    border-radius:50%;
+    overflow:hidden;
+    background:#000;
+    border:1px solid rgba(0,255,157,.45);
+    flex:0 0 auto;
+    display:flex; align-items:center; justify-content:center;
+  }
+  .cAvatar img{
+    width:100%; height:100%;
+    object-fit: cover;
+    display:block;
+  }
+  .cName{
+    font-weight:900;
+    color:#00ff9d;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    white-space:nowrap;
+    max-width: 62vw;
+  }
+  .cText{ opacity:.95; }
+
+  .coment-menu-btn{
+    position:absolute;
+    top:10px;
+    right:10px;
     font-size:20px;
     cursor:pointer;
     color:#00ff9d;
-    margin-left:8px;
     user-select:none;
+    line-height:1;
   }
-  .coment-menu-box {
+  .coment-menu-box{
     position:absolute;
-    top:5px;
-    right:5px;
+    top:34px;
+    right:10px;
     background:#00ff9d;
     color:#000;
-    padding:5px 10px;
+    padding:6px 10px;
     border-radius:8px;
     display:none;
-    font-weight:bold;
+    font-weight:900;
     cursor:pointer;
     box-shadow: 0 0 10px rgba(0,255,157,.55);
     z-index:5;
+    line-height:1;
   }
-
-  /* ✅ comentários com avatar */
-  .cRow{
-    display:flex;
-    gap:10px;
-    align-items:flex-start;
-  }
-  .cBody{ min-width:0; flex:1; }
-  .cName{
-    color:#00ff9d;
-    font-weight:900;
-  }
-  .cText{ color:#fff; opacity:.95; }
 
   /* ===================== LOADING ===================== */
   .loadingOverlay{
@@ -738,7 +753,7 @@
   </div>
 </div>
 
-<!-- MENU (sem botão sair / com ícone perfil) -->
+<!-- MENU (sem botão sair + com ícone perfil) -->
 <nav class="top-menu">
   <a href="https://marcio2307.github.io/terreiro/estudo.html" title="Estudo" aria-label="Estudo">
     <i class="fa-solid fa-book"></i>
@@ -757,7 +772,6 @@
     <i class="fa-solid fa-play" id="radioIcon"></i>
   </a>
 
-  <!-- ✅ PERFIL (abre perfil.html) -->
   <a href="https://marcio2307.github.io/terreiro/perfil.html" title="Perfil" aria-label="Perfil">
     <i class="fa-solid fa-user"></i>
   </a>
@@ -838,7 +852,7 @@ firebase.initializeApp(firebaseConfig);
 const DB = firebase.database();
 const ST = firebase.storage();
 
-/* ====================== ✅ SOM (MP3 DO GITHUB) ====================== */
+/* ====================== ✅ SOM ====================== */
 const ACTION_SOUND_URL = "som.mp3";
 const actionSfx = new Audio(ACTION_SOUND_URL);
 actionSfx.preload = "auto";
@@ -887,14 +901,12 @@ function ensureRadio(){
   radio.addEventListener("ended", ()=>{ setRadioUI(false); });
   radio.addEventListener("error", ()=>{ setRadioUI(false); });
 }
-
 function setRadioUI(isPlaying){
   radioPlaying = !!isPlaying;
   const icon = document.getElementById("radioIcon");
   if(!icon) return;
   icon.className = radioPlaying ? "fa-solid fa-pause" : "fa-solid fa-play";
 }
-
 function toggleRadio(){
   ensureRadio();
   unlockAudioOnce();
@@ -943,7 +955,6 @@ function confirmarNome(){
   USER_NAME = nome;
   UID = getOrCreateUID();
   fecharLogin();
-
   startPresence();
   setTimeout(()=>{ location.reload(); }, 80);
 }
@@ -1005,7 +1016,7 @@ function hideLoading(){
   loadingOverlay.style.display = "none";
 }
 
-/* ====================== ✅ PRESENÇA ONLINE (INVISÍVEL) ====================== */
+/* ====================== ✅ PRESENÇA ONLINE ====================== */
 let presenceRef = null;
 let presenceTimer = null;
 
@@ -1015,6 +1026,7 @@ function startPresence(){
     if(presenceTimer) return;
 
     presenceRef = DB.ref("presence/" + UID);
+
     const connectedRef = DB.ref(".info/connected");
     connectedRef.on("value", (snap)=>{
       if(snap.val() === true){
@@ -1044,75 +1056,85 @@ function startPresence(){
 }
 function stopPresence(silent){
   try{
-    if(presenceTimer){ clearInterval(presenceTimer); presenceTimer=null; }
-    if(presenceRef){ presenceRef.remove().catch(()=>{}); presenceRef=null; }
+    if(presenceTimer){ clearInterval(presenceTimer); presenceTimer = null; }
+    if(presenceRef){ presenceRef.remove().catch(()=>{}); presenceRef = null; }
   }catch(e){}
   if(!silent){}
 }
-if(USER_NAME && UID){
-  startPresence();
-}
-
-/* ====================== ✅ PERFIS / AVATARES (atualiza em tempo real) ======================
-  Lê em: profiles/{uid}
-  Usa: avatarDataUrl (prioridade) ou avatarUrl
-  Sempre que alguém mudar a foto no perfil.html, atualiza aqui também (stories, posts, comentários, quem viu).
-*/
-const avatarCache = new Map();          // uid -> url (string) ou "" (sem foto)
-const nameCache = new Map();            // uid -> nome salvo no perfil (opcional)
-const profileUnsubs = new Map();        // uid -> true
-
-function getAvatarUrlFromProfile(p){
-  const prof = p || {};
-  return (prof.avatarDataUrl || prof.avatarUrl || "").toString();
-}
-function ensureProfileListener(uid){
-  if(!uid) return;
-  if(profileUnsubs.has(uid)) return;
-  profileUnsubs.set(uid, true);
-
-  DB.ref("profiles/" + uid).on("value", (snap)=>{
-    const prof = snap.val() || {};
-    const url = getAvatarUrlFromProfile(prof);
-    const nm  = (prof.name || "").toString();
-
-    avatarCache.set(uid, url);
-    if(nm) nameCache.set(uid, nm);
-
-    // ✅ atualiza avatares já renderizados (posts/comments/viewers)
-    updateAvatarElements(uid);
-
-    // ✅ re-render stories para trocar as iniciais pela foto
-    try{ renderStoriesRow(); }catch(e){}
-  });
-}
-function getAvatarUrl(uid){
-  return avatarCache.get(uid) || "";
-}
-function getNameForUidFallback(uid, fallback){
-  return nameCache.get(uid) || fallback || "Usuário";
-}
-function updateAvatarElements(uid){
-  const url = getAvatarUrl(uid);
-  const nodes = document.querySelectorAll(`[data-avatar-uid="${uid}"]`);
-  nodes.forEach(node=>{
-    if(node.tagName === "IMG"){
-      if(url){
-        node.src = url;
-        node.style.display = "block";
-        const init = node.parentElement?.querySelector(".avaInit, .viewerInit, .avatarInitials");
-        if(init) init.style.display = "none";
-      }else{
-        node.style.display = "none";
-        const init = node.parentElement?.querySelector(".avaInit, .viewerInit, .avatarInitials");
-        if(init) init.style.display = "block";
-      }
-    }
-  });
-}
+if(USER_NAME && UID){ startPresence(); }
 </script>
 
 <script>
+/* ===================== PERFIS (avatar sincroniza com perfil.html) ===================== */
+const profileCache = new Map();
+function PROFILE_REF(uid){ return DB.ref("profiles/" + uid); }
+
+async function getAvatarForUID(uid, fallbackName){
+  if(!uid) return { url:"", name: fallbackName || "Usuário" };
+  if(profileCache.has(uid)) return profileCache.get(uid);
+
+  try{
+    const snap = await PROFILE_REF(uid).once("value");
+    const p = snap.val() || {};
+    const name = p.name || fallbackName || "Usuário";
+    const url = p.avatarDataUrl || p.avatarUrl || "";
+    const obj = { url, name };
+    profileCache.set(uid, obj);
+
+    PROFILE_REF(uid).on("value", s=>{
+      const px = s.val() || {};
+      const nn = px.name || name;
+      const uu = px.avatarDataUrl || px.avatarUrl || "";
+      profileCache.set(uid, { url: uu, name: nn });
+      updateAvatarsInDOM(uid, uu, nn);
+      updateStoryAvatarsInDOM(uid, uu, nn);
+      updateViewerAvatarsInDOM(uid, uu, nn);
+    });
+
+    return obj;
+  }catch(e){
+    const obj = { url:"", name: fallbackName || "Usuário" };
+    profileCache.set(uid, obj);
+    return obj;
+  }
+}
+
+function updateAvatarsInDOM(uid, url, name){
+  document.querySelectorAll(`[data-avatar-uid="${uid}"]`).forEach(el=>{
+    if(url){
+      el.innerHTML = `<img src="${url}" alt="avatar">`;
+    }else{
+      el.innerHTML = `<div class="init">${escapeHTML(initials(name||"U"))}</div>`;
+    }
+  });
+  document.querySelectorAll(`[data-name-uid="${uid}"]`).forEach(el=>{
+    el.textContent = name || "Usuário";
+  });
+}
+
+function updateStoryAvatarsInDOM(uid, url, name){
+  document.querySelectorAll(`[data-story-avatar-uid="${uid}"]`).forEach(el=>{
+    if(url){
+      el.innerHTML = `<img src="${url}" alt="avatar">`;
+    }else{
+      el.innerHTML = `<div class="avatarInitials">${escapeHTML(initials(name||"U"))}</div>`;
+    }
+  });
+  document.querySelectorAll(`[data-story-name-uid="${uid}"]`).forEach(el=>{
+    el.textContent = name || "Usuário";
+  });
+}
+
+function updateViewerAvatarsInDOM(uid, url, name){
+  document.querySelectorAll(`[data-viewer-avatar-uid="${uid}"]`).forEach(el=>{
+    if(url){
+      el.innerHTML = `<img src="${url}" alt="avatar">`;
+    }else{
+      el.textContent = escapeHTML(initials(name||"U"));
+    }
+  });
+}
+
 /* ===================== STORIES estilo Insta ===================== */
 const menuTop = document.querySelector('.top-menu');
 
@@ -1122,10 +1144,8 @@ let activeStories = [];
 let current = 0;
 let viewerTimer = null;
 
-/* ✅ quem viu (variáveis) */
 let viewersPanelOpen = false;
 let viewersRef = null;
-/* ✅ só o DONO do story pode ver "quem viu" */
 let CAN_SEE_VIEWERS = false;
 
 function renderCreateCard(){
@@ -1164,22 +1184,6 @@ function buildSegRow(count){
   `;
 }
 
-/* ✅ avatar do story agora vem do PERFIL (não do story) */
-function storyAvatarHTML(uid, uname){
-  ensureProfileListener(uid);
-  const url = getAvatarUrl(uid);
-  if(url){
-    return `<div class="avatarCircle">
-      <img data-avatar-uid="${uid}" src="${url}" alt="avatar" loading="lazy">
-      <div class="avatarInitials" style="display:none;">${escapeHTML(initials(uname))}</div>
-    </div>`;
-  }
-  return `<div class="avatarCircle">
-    <img data-avatar-uid="${uid}" alt="avatar" style="display:none;">
-    <div class="avatarInitials">${escapeHTML(initials(uname))}</div>
-  </div>`;
-}
-
 function renderUserCard(group){
   const card = document.createElement("div");
   card.className = "storyCard";
@@ -1202,13 +1206,23 @@ function renderUserCard(group){
     `;
   }
 
+  const avatarHTML = `
+    <div class="avatarCircle" data-story-avatar-uid="${escapeHTML(group.uid)}">
+      <div class="avatarInitials">${escapeHTML(initials(uname))}</div>
+    </div>
+  `;
+
   card.innerHTML = `
     ${mediaHTML}
     <div class="storyShade"></div>
     ${segs}
-    ${storyAvatarHTML(group.uid, uname)}
-    <div class="storyName">${escapeHTML(uname)}</div>
+    ${avatarHTML}
+    <div class="storyName" data-story-name-uid="${escapeHTML(group.uid)}">${escapeHTML(uname)}</div>
   `;
+
+  getAvatarForUID(group.uid, uname).then(({url, name})=>{
+    updateStoryAvatarsInDOM(group.uid, url, name);
+  });
 
   card.onclick = ()=>{
     if(group.items.length === 0) return;
@@ -1264,7 +1278,7 @@ async function addStory(file){
   }
 }
 
-/* ===================== ✅ QUEM VIU (nome + foto) ===================== */
+/* ===================== ✅ QUEM VIU (com nome + foto) ===================== */
 function closeViewersPanel(){
   viewersPanelOpen = false;
   viewersPanel.style.display = "none";
@@ -1286,27 +1300,7 @@ function detachViewersListener(){
     }
   }catch(e){}
 }
-function viewerRowHTML(v){
-  const uid = v.uid || "";
-  const uname = v.userName || "Usuário";
-  ensureProfileListener(uid);
-  const url = getAvatarUrl(uid);
-  const quando = v.viewedAt ? fmtDate(v.viewedAt) : "";
-
-  return `
-    <div class="viewerRow">
-      <div class="viewerLeft">
-        <div class="viewerAva">
-          <img data-avatar-uid="${escapeHTML(uid)}" ${url ? `src="${url}" style="display:block;"` : `style="display:none;"`} alt="avatar">
-          <div class="viewerInit" ${url ? `style="display:none;"` : ``}>${escapeHTML(initials(uname))}</div>
-        </div>
-        <div class="viewerName">${escapeHTML(uname)}</div>
-      </div>
-      <div class="viewerTime">${escapeHTML(quando)}</div>
-    </div>
-  `;
-}
-function updateViewersUI(viewsObj){
+async function updateViewersUI(viewsObj){
   const obj = viewsObj || {};
   const arr = Object.keys(obj).map(uid=>obj[uid]).filter(Boolean);
   arr.sort((a,b)=>(a.viewedAt||0)-(b.viewedAt||0));
@@ -1322,10 +1316,30 @@ function updateViewersUI(viewsObj){
   if(total === 1) seenText.textContent = `${first} viu este story`;
   else seenText.textContent = `${first} e mais ${total-1} viram este story`;
 
-  viewersPanel.innerHTML = arr.map(v=> viewerRowHTML(v)).join("");
+  const rows = await Promise.all(arr.map(async v=>{
+    const nome = (v.userName || "Usuário");
+    const quando = v.viewedAt ? fmtDate(v.viewedAt) : "";
+    const prof = await getAvatarForUID(v.uid, nome);
+    const ava = prof.url
+      ? `<div style="width:34px;height:34px;border-radius:50%;overflow:hidden;border:1px solid rgba(0,255,140,.25);flex:0 0 auto;">
+           <img src="${prof.url}" style="width:100%;height:100%;object-fit:cover;display:block;" alt="avatar">
+         </div>`
+      : `<div style="width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;border:1px solid rgba(0,255,140,.25);color:#00ff8c;font-weight:900;flex:0 0 auto;">
+           ${escapeHTML(initials(nome))}
+         </div>`;
 
-  // ✅ garante atualização imediata caso cache chegue depois
-  arr.forEach(v=>{ if(v.uid) updateAvatarElements(v.uid); });
+    return `
+      <div class="viewerRow">
+        <div style="display:flex;align-items:center;gap:10px;min-width:0;">
+          ${ava}
+          <div class="viewerName" style="max-width: 58vw;">${escapeHTML(nome)}</div>
+        </div>
+        <div class="viewerTime">${escapeHTML(quando)}</div>
+      </div>
+    `;
+  }));
+
+  viewersPanel.innerHTML = rows.join("");
 }
 async function markStoryView(story){
   try{
@@ -1496,7 +1510,6 @@ deleteBtn.onclick = async ()=>{
     const map = {};
     allStories.forEach(s=>{
       if(!s.uid) return;
-      ensureProfileListener(s.uid);
       if(!map[s.uid]) map[s.uid] = { uid:s.uid, userName:s.userName||"Usuário", items:[] };
       map[s.uid].items.push(s);
       map[s.uid].userName = s.userName || map[s.uid].userName;
@@ -1554,8 +1567,8 @@ fileInput.onchange = e=>{
 
   previewContent.innerHTML =
     selectedFile.type.startsWith("image/")
-      ? `<img src="${url}" style="width:100%;border-radius:10px;" loading="lazy">`
-      : `<video src="${url}" controls preload="metadata" playsinline style="width:100%;border-radius:10px;background:#000;"></video>`;
+      ? `<img src="${url}" style="width:100%;border-radius:10px;display:block;" loading="lazy">`
+      : `<video src="${url}" controls preload="metadata" playsinline style="width:100%;border-radius:10px;background:#000;display:block;"></video>`;
   previewBox.style.display = "block";
 };
 
@@ -1786,23 +1799,8 @@ async function excluirPost(id){
   playActionSound();
 }
 
-/* ✅ header do post agora usa foto do perfil (sem cortar) */
-function postHeaderHTML(uid, uname, pending){
-  ensureProfileListener(uid);
-  const url = getAvatarUrl(uid);
-  const init = initials(uname || "U");
-  return `
-    <div class="postHead">
-      <div class="avaBox">
-        <img data-avatar-uid="${escapeHTML(uid)}" ${url ? `src="${url}" style="display:block;"` : `style="display:none;"`} alt="avatar">
-        <div class="avaInit" ${url ? `style="display:none;"` : ``}>${escapeHTML(init)}</div>
-      </div>
-      <div class="postName">${escapeHTML(uname || "Usuário")} ${pending || ""}</div>
-    </div>
-  `;
-}
-
-function postHTML(id, postData){
+/* ✅ post HTML com avatar preenchido (sem ser afetado por .post .mediaWrap) */
+function postHTML(id, postData, avatarUrl){
   let midia = "";
   if(postData.mediaUrl){
     const isImg = (postData.mediaType || "").startsWith("image/");
@@ -1811,14 +1809,20 @@ function postHTML(id, postData){
       : `<video src="${postData.mediaUrl}" controls preload="metadata" playsinline></video>`;
   }
 
-  const nome = (postData.userName || "Usuário");
-  const uid  = (postData.uid || "");
   const texto = escapeHTML(postData.text || "");
-  const quando = postData.createdAt
-    ? `<div style="font-size:12px;color:#00ff9d;opacity:.85;margin-top:6px;">${fmtDate(postData.createdAt)}</div>`
-    : "";
-
+  const when = postData.createdAt ? fmtDate(postData.createdAt) : "";
   const pending = postData._pending ? `<span class="pendingBadge">ENVIANDO…</span>` : "";
+
+  const uid = postData.uid || "";
+  const uname = postData.userName || "Usuário";
+
+  const avatarHTML = `
+    <div class="postAvatar" data-avatar-uid="${escapeHTML(uid)}">
+      ${avatarUrl
+        ? `<img src="${avatarUrl}" alt="avatar">`
+        : `<div class="init">${escapeHTML(initials(uname))}</div>`}
+    </div>
+  `;
 
   return `
   <div class="post" id="${id}" ${postData._pending ? 'data-pending="1"' : ''}>
@@ -1827,9 +1831,18 @@ function postHTML(id, postData){
       <div onclick="excluirPost('${id}')">Excluir</div>
     </div>
 
-    ${postHeaderHTML(uid, nome, pending)}
-    ${quando}
-    <p>${texto}</p>
+    <div class="postHead">
+      ${avatarHTML}
+      <div class="postHeadText">
+        <div class="postNameLine">
+          <div class="postName" data-name-uid="${escapeHTML(uid)}">${escapeHTML(uname)}</div>
+          ${pending}
+        </div>
+        <div class="postWhen">${escapeHTML(when)}</div>
+      </div>
+    </div>
+
+    <p style="margin:12px 0 0 0;">${texto}</p>
 
     <div class="mediaWrap" id="mediaWrap_${id}">
       ${midia}
@@ -1878,28 +1891,26 @@ function criarPostOptimista(id, postData){
 
   const feed = document.getElementById("feed");
   const temp = document.createElement("div");
-  temp.innerHTML = postHTML(id, postData).trim();
-  feed.prepend(temp.firstChild);
 
-  listenLikes(id);
-  listenComments(id);
+  const uid = postData.uid || "";
+  getAvatarForUID(uid, postData.userName || "Usuário").then(({url, name})=>{
+    temp.innerHTML = postHTML(id, postData, url).trim();
+    feed.prepend(temp.firstChild);
+    listenLikes(id);
+    listenComments(id);
+    updateAvatarsInDOM(uid, url, name);
+  });
 }
 
 function atualizarPostDoServidor(id, data){
   const el = document.getElementById(id);
   if(!el) return;
 
-  const head = el.querySelector(".postHead");
-  if(head){
-    head.outerHTML = postHeaderHTML(data.uid || "", data.userName || "Usuário", "");
-    // garante update caso cache chegue depois
-    if(data.uid) updateAvatarElements(data.uid);
-  }
+  const nameEl = el.querySelector(`[data-name-uid]`);
+  if(nameEl) nameEl.textContent = data.userName || "Usuário";
 
-  const whenDiv = el.querySelector("div[style*='font-size:12px']");
-  if(whenDiv && data.createdAt){
-    whenDiv.textContent = fmtDate(data.createdAt);
-  }
+  const whenEl = el.querySelector(".postWhen");
+  if(whenEl && data.createdAt) whenEl.textContent = fmtDate(data.createdAt);
 
   const p = el.querySelector("p");
   if(p) p.textContent = (data.text || "");
@@ -1925,38 +1936,8 @@ function listenLikes(postId){
   });
 }
 
-/* ✅ comentários agora mostram foto do perfil do usuário (sem cortar) */
-function commentHTML(c, postId){
-  const uid = c.uid || "";
-  const uname = c.userName || "Usuário";
-  ensureProfileListener(uid);
-  const url = getAvatarUrl(uid);
-  const init = initials(uname);
-
-  return `
-    <div id="${c.cid}" style="background:#000;border:1px solid #00ff9d;padding:10px;border-radius:10px;margin-bottom:8px;position:relative;">
-      <div class="cRow">
-        <div class="avaBox" style="width:34px;height:34px;border-color:rgba(0,255,157,.35);">
-          <img data-avatar-uid="${escapeHTML(uid)}" ${url ? `src="${url}" style="display:block;"` : `style="display:none;"`} alt="avatar">
-          <div class="avaInit" ${url ? `style="display:none;"` : ``}>${escapeHTML(init)}</div>
-        </div>
-        <div class="cBody">
-          <div class="cName">${escapeHTML(uname)}</div>
-          <div class="cText">💬 ${escapeHTML(c.text || "")}</div>
-        </div>
-      </div>
-
-      <span class="coment-menu-btn" onclick="toggleComentMenu('${c.cid}')">⋮</span>
-      <div class="coment-menu-box" id="menu_${c.cid}"
-        onclick="excluirComentario('${c.cid}','${postId}')">
-        Excluir
-      </div>
-    </div>
-  `;
-}
-
 function listenComments(postId){
-  DB.ref("comments/" + postId).orderByChild("createdAt").on("value", snap=>{
+  DB.ref("comments/" + postId).orderByChild("createdAt").on("value", async snap=>{
     const lista = document.getElementById("listaComentarios_"+postId);
     const contador = document.getElementById("contadorComentarios_"+postId);
     if(!lista || !contador) return;
@@ -1965,10 +1946,32 @@ function listenComments(postId){
     const arr = Object.keys(obj).map(cid=>({ cid, ...obj[cid] }))
       .sort((a,b)=>(a.createdAt||0)-(b.createdAt||0));
 
-    lista.innerHTML = arr.map(c=> commentHTML(c, postId)).join("");
+    const htmls = await Promise.all(arr.map(async c=>{
+      const nome = (c.userName || "Usuário");
+      const txt = escapeHTML(c.text || "");
+      const prof = await getAvatarForUID(c.uid, nome);
+      const ava = prof.url
+        ? `<div class="cAvatar" data-avatar-uid="${escapeHTML(c.uid)}"><img src="${prof.url}" alt="avatar"></div>`
+        : `<div class="cAvatar" data-avatar-uid="${escapeHTML(c.uid)}"><div class="init">${escapeHTML(initials(nome))}</div></div>`;
 
-    // garante update se cache vier depois
-    arr.forEach(c=>{ if(c.uid) updateAvatarElements(c.uid); });
+      return `
+        <div id="${c.cid}" class="cRow">
+          <div class="cHead">
+            ${ava}
+            <div class="cName" data-name-uid="${escapeHTML(c.uid)}">${escapeHTML(nome)}</div>
+          </div>
+          <div class="cText">💬 ${txt}</div>
+
+          <span class="coment-menu-btn" onclick="toggleComentMenu('${c.cid}')">⋮</span>
+          <div class="coment-menu-box" id="menu_${c.cid}"
+            onclick="excluirComentario('${c.cid}','${postId}')">
+            Excluir
+          </div>
+        </div>
+      `;
+    }));
+
+    lista.innerHTML = htmls.join("");
 
     const total = arr.length;
     if(total === 0) contador.innerHTML = "";
@@ -1980,16 +1983,15 @@ function listenComments(postId){
 (function listenPostsFast(){
   const ref = DB.ref("posts").orderByChild("createdAt").limitToLast(200);
 
-  ref.on("child_added", snap=>{
+  ref.on("child_added", async snap=>{
     const id = snap.key;
     const data = snap.val() || {};
 
-    // prepara listener do perfil do autor
-    if(data.uid) ensureProfileListener(data.uid);
-
-    const el = document.getElementById(id);
-    if(el){
+    const existing = document.getElementById(id);
+    if(existing){
       atualizarPostDoServidor(id, data);
+      const prof = await getAvatarForUID(data.uid, data.userName);
+      updateAvatarsInDOM(data.uid, prof.url, prof.name);
       return;
     }
 
@@ -2010,31 +2012,34 @@ function pumpRenderQueue(){
   if(pumping) return;
   pumping = true;
 
-  const step = ()=>{
+  const step = async ()=>{
     let n = 0;
-    while(renderQueue.length && n < 8){
+    while(renderQueue.length && n < 6){
       const it = renderQueue.shift();
       if(!postsCache.has(it.id)){
         postsCache.add(it.id);
+
+        const prof = await getAvatarForUID(it.data.uid, it.data.userName || "Usuário");
+
         const feed = document.getElementById("feed");
         const temp = document.createElement("div");
-        temp.innerHTML = postHTML(it.id, it.data).trim();
+        temp.innerHTML = postHTML(it.id, it.data, prof.url).trim();
         feed.prepend(temp.firstChild);
+
         listenLikes(it.id);
         listenComments(it.id);
 
-        // garante atualização do avatar do autor
-        if(it.data.uid) updateAvatarElements(it.data.uid);
+        updateAvatarsInDOM(it.data.uid, prof.url, prof.name);
       }
       n++;
     }
     if(renderQueue.length){
-      requestAnimationFrame(step);
+      requestAnimationFrame(()=>step());
     }else{
       pumping = false;
     }
   };
-  requestAnimationFrame(step);
+  requestAnimationFrame(()=>step());
 }
 
 updateButton();
