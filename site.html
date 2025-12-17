@@ -449,7 +449,7 @@
     color:#fff;
     font-size:16px;
     outline:none;
-    box-shadow:inset 0 0 8px rgba(0,255,157,.35);
+    box-shadow:inset 0 0 8px rgba(0,0,0,.35);
   }
   .add-btn{
     background:#111;
@@ -708,7 +708,7 @@
   </div>
 </div>
 
-<!-- MENU -->
+<!-- MENU (✅ removido botão sair / ✅ ficou o ícone do perfil) -->
 <nav class="top-menu">
   <a href="https://marcio2307.github.io/terreiro/estudo.html" title="Estudo" aria-label="Estudo">
     <i class="fa-solid fa-book"></i>
@@ -719,18 +719,17 @@
     <span class="menu-online-dot" aria-hidden="true"></span>
   </a>
 
-  <a href="https://marcio2307.github.io/terreiro/sala.html" title="Reunião Online" aria-label="Reunião Online"><i class="fa-solid fa-video"></i></a>
+  <a href="https://marcio2307.github.io/terreiro/sala.html" title="Reunião Online" aria-label="Reunião Online">
+    <i class="fa-solid fa-video"></i>
+  </a>
 
   <a href="#" id="radioBtn" onclick="toggleRadio(); return false;" title="Rádio" aria-label="Rádio">
     <i class="fa-solid fa-play" id="radioIcon"></i>
   </a>
 
-  <!-- ✅ NOVO: ÍCONE PERFIL -->
   <a href="https://marcio2307.github.io/terreiro/perfil.html" title="Perfil" aria-label="Perfil">
     <i class="fa-solid fa-user"></i>
   </a>
-
-  <a href="#" onclick="sairNome(); return false;" title="Sair" aria-label="Sair"><i class="fa-solid fa-right-from-bracket"></i></a>
 </nav>
 
 <!-- STORIES -->
@@ -808,10 +807,10 @@ firebase.initializeApp(firebaseConfig);
 const DB = firebase.database();
 const ST = firebase.storage();
 
-/* ====================== ✅ CACHE DE AVATAR (SINCRONIZA COM PERFIL) ====================== */
-const avatarCache = {};      // uid -> url
-const avatarPending = {};    // uid -> true
-const avatarListeners = {};  // uid -> true
+/* ====================== ✅ CACHE DE AVATAR ====================== */
+const avatarCache = {};
+const avatarPending = {};
+const avatarListeners = {};
 
 function escapeHTML(str){
   return (str || "")
@@ -852,7 +851,6 @@ function watchAvatar(uid){
   if(!uid || avatarListeners[uid]) return;
   avatarListeners[uid] = true;
 
-  // ✅ listener contínuo no perfil: se a pessoa trocar a foto no perfil.html, atualiza no site inteiro
   DB.ref("profiles/" + uid).on("value", snap=>{
     const p = snap.val() || {};
     const url = p.avatarDataUrl || p.avatarUrl || "";
@@ -872,7 +870,6 @@ async function ensureAvatar(uid){
     if(url) setAvatar(uid, url);
     watchAvatar(uid);
   }catch(e){
-    // sem travar
   }finally{
     avatarPending[uid] = false;
   }
@@ -881,7 +878,7 @@ function fmtDate(ts){
   try{ return new Date(ts).toLocaleString("pt-BR"); }catch(e){ return ""; }
 }
 
-/* ====================== ✅ SOM (MP3 DO GITHUB) ====================== */
+/* ====================== ✅ SOM ====================== */
 const ACTION_SOUND_URL = "som.mp3";
 const actionSfx = new Audio(ACTION_SOUND_URL);
 actionSfx.preload = "auto";
@@ -996,23 +993,6 @@ function confirmarNome(){
   if(!USER_NAME) abrirLogin();
 })();
 
-function sairNome(){
-  stopPresence();
-
-  localStorage.removeItem("nome_passageiro");
-  localStorage.removeItem("uid_passageiro");
-
-  sessionStorage.removeItem("nome_passageiro");
-  sessionStorage.removeItem("uid_passageiro");
-
-  try{ if(radio) radio.pause(); }catch(e){}
-  setRadioUI(false);
-
-  USER_NAME = "";
-  UID = getOrCreateUID();
-  abrirLogin();
-}
-
 function precisaLogin(){
   if(!USER_NAME){ abrirLogin(); return true; }
   return false;
@@ -1081,32 +1061,19 @@ function startPresence(){
     }, 25000);
 
     window.addEventListener("beforeunload", ()=>{
-      try{ stopPresence(true); }catch(e){}
+      try{
+        if(presenceTimer){ clearInterval(presenceTimer); presenceTimer=null; }
+        if(presenceRef){ presenceRef.remove().catch(()=>{}); presenceRef=null; }
+      }catch(e){}
     });
   }catch(e){}
-}
-
-function stopPresence(silent){
-  try{
-    if(presenceTimer){
-      clearInterval(presenceTimer);
-      presenceTimer = null;
-    }
-    if(presenceRef){
-      presenceRef.remove().catch(()=>{});
-      presenceRef = null;
-    }
-  }catch(e){}
-  if(!silent){}
 }
 
 if(USER_NAME && UID){
   startPresence();
 }
-</script>
 
-<script>
-/* ===================== ✅ PUXA AVATAR DO MEU PERFIL E SINCRONIZA NO SITE ===================== */
+/* ===================== ✅ PUXA AVATAR DO MEU PERFIL E SINCRONIZA ===================== */
 async function loadMyAvatarAndSync(){
   if(!UID) return;
   try{
@@ -1115,11 +1082,9 @@ async function loadMyAvatarAndSync(){
     const url = p.avatarDataUrl || p.avatarUrl || "";
     if(url){
       setAvatar(UID, url);
-
-      // deixa presence com avatar também (pra quem lê presence)
       DB.ref("presence/" + UID).update({ avatarDataUrl: url }).catch(()=>{});
     }
-    watchAvatar(UID); // fica “ao vivo”: se mudar no perfil.html atualiza aqui
+    watchAvatar(UID);
   }catch(e){}
 }
 loadMyAvatarAndSync();
@@ -1197,7 +1162,6 @@ function renderUserCard(group){
     `;
   }
 
-  // ✅ AGORA o círculo do story mostra a FOTO DE PERFIL do usuário (não mais iniciais/cover)
   const avatarBox = `
     <div class="avatarCircle">
       <div class="avaBox avaStory" data-avatar-uid="${group.uid}" data-avatar-name="${escapeHTML(uname)}">
@@ -1214,7 +1178,6 @@ function renderUserCard(group){
     <div class="storyName">${escapeHTML(uname)}</div>
   `;
 
-  // garante avatar carregado
   ensureAvatar(group.uid);
 
   card.onclick = ()=>{
@@ -1313,7 +1276,6 @@ function updateViewersUI(viewsObj){
     const nome = v.userName || "Usuário";
     const quando = v.viewedAt ? fmtDate(v.viewedAt) : "";
     const uid = v.uid || "";
-
     if(uid) ensureAvatar(uid);
 
     return `
@@ -1514,7 +1476,7 @@ deleteBtn.onclick = async ()=>{
 </script>
 
 <script>
-/* ===================== FEED / MURAL (mais rápido) ===================== */
+/* ===================== FEED / MURAL ===================== */
 let selectedFile = null;
 let mode = "add";
 let longPress = {};
@@ -1812,7 +1774,6 @@ function postHTML(id, postData){
       <div onclick="excluirPost('${id}')">Excluir</div>
     </div>
 
-    <!-- ✅ header agora com FOTO + NOME (no lugar da estrela) -->
     <div class="postHead">
       <div class="avaBox avaPost" data-avatar-uid="${escapeHTML(uid)}" data-avatar-name="${escapeHTML(nome)}">
         ${avatarInnerHTML(uid, nome)}
@@ -1945,7 +1906,6 @@ function listenComments(postId){
 
       return `
         <div class="commentRow" id="${c.cid}">
-          <!-- ✅ avatar no comentário -->
           <div class="avaBox avaComment" data-avatar-uid="${escapeHTML(uid)}" data-avatar-name="${escapeHTML(nome)}">
             ${avatarInnerHTML(uid, nome)}
           </div>
