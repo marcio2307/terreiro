@@ -443,6 +443,12 @@
     border:2px solid rgba(0,255,140,.25);
     display:flex; align-items:center; justify-content:center;
     flex: 0 0 auto;
+    position:relative;
+  }
+  .friendAvatar img{
+    width:100%; height:100%;
+    object-fit:cover;
+    display:block;
   }
   .friendInit{ font-weight:900; color:#00ff8c; }
   .friendName{
@@ -474,7 +480,6 @@
 
 <div class="topbar">
   <div class="left">
-    <!-- ✅ VOLTAR: volta para o site e continua logado como o mesmo usuário -->
     <button class="btn ghost icon" title="Voltar" aria-label="Voltar" onclick="voltarSite()">
       <i class="fa-solid fa-arrow-left"></i>
     </button>
@@ -482,7 +487,6 @@
     <div class="meName" id="meName">—</div>
   </div>
   <div class="actions">
-    <!-- SAIR: desloga -->
     <button class="btn ghost" onclick="sairNome()">
       <i class="fa-solid fa-right-from-bracket"></i> Sair
     </button>
@@ -495,9 +499,7 @@
   <div class="cover" id="coverBox">
     <img id="coverImg" alt="Capa do perfil" style="display:none;">
     <div class="coverShade"></div>
-
     <input id="coverInput" class="filePicker" type="file" accept="image/*">
-    <!-- ✅ REMOVIDO: botão visível "Trocar capa" em cima da capa (igual ao seu print) -->
   </div>
 
   <!-- FOTO PERFIL + IDENTIDADE -->
@@ -664,12 +666,10 @@ const DB = firebase.database();
 
 /* ====================== VOLTAR (continua logado) ====================== */
 function voltarSite(){
-  // ✅ garante que o site vai ler o MESMO usuário do perfil (localStorage + sessionStorage)
   const nome = (localStorage.getItem("nome_passageiro") || "").trim();
   const uid  = (localStorage.getItem("uid_passageiro") || "").trim();
   if(nome) sessionStorage.setItem("nome_passageiro", nome);
   if(uid)  sessionStorage.setItem("uid_passageiro", uid);
-
   window.location.href = "https://marcio2307.github.io/terreiro/site.html";
 }
 
@@ -721,12 +721,10 @@ function confirmarNome(){
 /* SAIR: desloga */
 function sairNome(){
   stopPresence(true);
-
   localStorage.removeItem("nome_passageiro");
   localStorage.removeItem("uid_passageiro");
   sessionStorage.removeItem("nome_passageiro");
   sessionStorage.removeItem("uid_passageiro");
-
   USER_NAME = "";
   UID = getOrCreateUID();
   abrirLogin();
@@ -890,7 +888,6 @@ async function saveProfile(){
   }
 
   try{
-    // ✅ garante que perfil e site usem o MESMO usuário
     localStorage.setItem("nome_passageiro", name);
     sessionStorage.setItem("nome_passageiro", name);
     USER_NAME = name;
@@ -1042,6 +1039,11 @@ avatarInput.addEventListener("change", async (e)=>{
       avatarDataUrl: dataUrl,
       updatedAt: firebase.database.ServerValue.TIMESTAMP
     });
+
+    // ✅ salva também no presence para a lista de online pegar rápido (sem precisar ler profiles)
+    DB.ref("presence/" + UID).update({
+      avatarDataUrl: dataUrl
+    }).catch(()=>{});
 
   }catch(err){
     console.log("AVATAR ERROR:", err);
@@ -1336,7 +1338,18 @@ function listenMyPosts(){
   });
 }
 
-/* ====================== AMIGOS ONLINE ====================== */
+/* ====================== AMIGOS ONLINE (com FOTO) ====================== */
+function friendAvatarHTML(u){
+  const name = u.userName || "Usuário";
+  const init = initials(name);
+  const imgUrl = u.avatarDataUrl || u.avatarUrl || "";
+
+  if(imgUrl){
+    return `<img src="${imgUrl}" alt="avatar">`;
+  }
+  return `<div class="friendInit">${escapeHTML(init)}</div>`;
+}
+
 function listenOnline(){
   const ref = DB.ref("presence");
   ref.on("value", snap=>{
@@ -1360,13 +1373,12 @@ function listenOnline(){
     const rows = alive.slice(0, 80).map(u=>{
       const name = u.userName || "Usuário";
       const last = u.lastActive ? fmtDate(u.lastActive) : "";
-      const init = initials(name);
 
       return `
         <div class="friendRow">
           <div class="friendLeft">
             <div class="friendAvatar">
-              <div class="friendInit">${escapeHTML(init)}</div>
+              ${friendAvatarHTML(u)}
             </div>
             <div style="min-width:0;">
               <div class="friendName">${escapeHTML(name)} ${u.uid===UID ? `<span style="opacity:.85;">(você)</span>` : ""}</div>
@@ -1391,6 +1403,16 @@ function listenOnline(){
   avatarInitial.textContent = initials(USER_NAME || "U");
 
   await loadProfile();
+
+  // ✅ se já tiver avatar no perfil, coloca no presence também (pra online ter foto)
+  try{
+    const pSnap = await PROFILE_REF().once("value");
+    const p = pSnap.val() || {};
+    if(p.avatarDataUrl){
+      DB.ref("presence/" + UID).update({ avatarDataUrl: p.avatarDataUrl }).catch(()=>{});
+    }
+  }catch(e){}
+
   listenMyPosts();
   listenOnline();
 })();
