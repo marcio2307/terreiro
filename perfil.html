@@ -1,0 +1,1400 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<title>Perfil • estilo Facebook</title>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+<style>
+  *{ box-sizing:border-box; }
+  html,body{ width:100%; max-width:100%; overflow-x:hidden; }
+  body{
+    margin:0;
+    background:#000;
+    color:#fff;
+    font-family: Arial, sans-serif;
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+
+  /* Topbar */
+  .topbar{
+    position: sticky; top:0; z-index:9999;
+    background:#0d0d0d;
+    border-bottom:2px solid #00ff8c;
+    box-shadow:0 0 15px #00ff8c;
+    padding: 12px 12px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:12px;
+  }
+  .topbar .left{ display:flex; align-items:center; gap:10px; min-width:0; }
+  .brand{
+    font-weight:900;
+    color:#00ff8c;
+    letter-spacing:1px;
+    text-shadow:0 0 10px #00ff8c, 0 0 20px #00ff8c;
+    white-space:nowrap;
+  }
+  .meName{
+    opacity:.95;
+    font-weight:800;
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    max-width: 48vw;
+  }
+  .topbar .actions{ display:flex; align-items:center; gap:10px; }
+
+  .btn{
+    border:none;
+    cursor:pointer;
+    font-weight:900;
+    padding:10px 12px;
+    border-radius:999px;
+    background:#00ff8c;
+    color:#003b23;
+    box-shadow:0 0 14px rgba(0,255,140,.55);
+    user-select:none;
+    display:inline-flex;
+    align-items:center;
+    gap:8px;
+    justify-content:center;
+    text-decoration:none;
+  }
+  .btn:active{ transform:scale(.99); }
+  .btn.ghost{
+    background:rgba(0,255,140,.10);
+    color:#00ff8c;
+    border:1px solid rgba(0,255,140,.35);
+    box-shadow:0 0 12px rgba(0,255,140,.18);
+  }
+  .btn.icon{ width:44px; height:44px; padding:0; }
+
+  /* Login overlay */
+  .login-overlay{
+    position:fixed; inset:0;
+    background: rgba(0,0,0,0.94);
+    display:none;
+    align-items:center;
+    justify-content:center;
+    z-index: 9999999;
+    padding: 16px;
+  }
+  .login-card{
+    width: min(520px, 94vw);
+    background:#0d0d0d;
+    border:2px solid #00ff8c;
+    border-radius:22px;
+    box-shadow:0 0 28px rgba(0,255,140,.45);
+    padding: 18px;
+    text-align:center;
+  }
+  .login-title{
+    font-size: clamp(18px, 6vw, 26px);
+    font-weight: 900;
+    color:#00ff8c;
+    text-transform:uppercase;
+    letter-spacing:1.2px;
+    text-shadow: 0 0 10px #00ff8c, 0 0 22px #00ff8c;
+    margin: 4px 0 14px 0;
+    display:flex;
+    gap:10px;
+    align-items:center;
+    justify-content:center;
+  }
+  .login-input{
+    width:100%;
+    background:#111;
+    border:1px solid #00ff9d;
+    border-radius: 999px;
+    padding: 14px 18px;
+    color:#fff;
+    outline:none;
+    font-size: 16px;
+    box-shadow: inset 0 0 10px rgba(0,255,157,.22);
+  }
+  .login-btn{
+    width: 100%;
+    margin-top: 12px;
+    border:none;
+    border-radius: 999px;
+    padding: 16px 12px;
+    font-weight: 900;
+    cursor:pointer;
+    font-size: 18px;
+    transition:.18s;
+    background:#00ff8c;
+    color:#003b23;
+    box-shadow:0 0 18px rgba(0,255,140,.55);
+  }
+
+  /* ✅ input file NÃO pode display:none */
+  .filePicker{
+    position:absolute;
+    left:-99999px;
+    top:0;
+    width:1px;
+    height:1px;
+    opacity:0;
+  }
+
+  .profileWrap{ width:min(980px, 100%); margin: 0 auto; }
+
+  /* ✅ CAPA */
+  .cover{
+    position:relative;
+    width:100%;
+    height: clamp(190px, 36vw, 340px);
+    background:#111;
+    overflow:hidden;
+    border-bottom:1px solid rgba(0,255,140,.22);
+  }
+  .cover img{
+    width:100%;
+    height:100%;
+    object-fit:cover;
+    display:block;
+    background:#000;
+    filter: contrast(1.05) saturate(1.05);
+  }
+  .coverShade{
+    position:absolute; inset:auto 0 0 0;
+    height:55%;
+    background: linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(0,0,0,.35) 35%, rgba(0,0,0,.85) 100%);
+    pointer-events:none;
+  }
+
+  .avatarRow{
+    position:relative;
+    padding: 0 12px 12px 12px;
+    margin-top: -58px;
+    display:flex;
+    gap:12px;
+    align-items:flex-end;
+    flex-wrap:wrap;
+  }
+  .avatar{
+    width: 120px;
+    height: 120px;
+    border-radius: 50%;
+    overflow:hidden;
+    background:#0d0d0d;
+    border:4px solid #000;
+    box-shadow: 0 0 0 3px rgba(0,255,140,.22), 0 10px 28px rgba(0,0,0,.55);
+    flex:0 0 auto;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+  }
+  .avatar img{ width:100%; height:100%; object-fit:cover; display:block; }
+  .avatarInitial{
+    font-weight:900; font-size:34px;
+    color:#00ff8c;
+    text-shadow:0 0 14px rgba(0,255,140,.45);
+  }
+
+  .identity{ min-width: 220px; flex:1; }
+  .identity h1{
+    margin:0;
+    font-size: clamp(22px, 6vw, 34px);
+    font-weight: 900;
+    letter-spacing:.2px;
+  }
+  .identity .sub{
+    margin-top:6px;
+    opacity:.9;
+    display:flex;
+    flex-wrap:wrap;
+    gap:10px;
+    align-items:center;
+  }
+  .pill{
+    display:inline-flex;
+    gap:8px;
+    align-items:center;
+    padding:7px 12px;
+    border-radius:999px;
+    background: rgba(0,255,140,.10);
+    border:1px solid rgba(0,255,140,.25);
+    color:#00ff8c;
+    font-weight:900;
+    font-size:13px;
+  }
+  .onlineDot{
+    width:10px; height:10px; border-radius:50%;
+    background:#00ff4c;
+    box-shadow:0 0 14px rgba(0,255,76,.9);
+    animation: blinkDot .9s infinite;
+  }
+  @keyframes blinkDot{
+    0%,100%{ transform:scale(1); opacity:1; }
+    50%{ transform:scale(1.35); opacity:.25; }
+  }
+
+  /* Tabs */
+  .tabs{
+    display:flex;
+    gap:10px;
+    padding: 10px 12px 0 12px;
+    flex-wrap:wrap;
+  }
+  .tab{
+    cursor:pointer;
+    padding:10px 14px;
+    border-radius:999px;
+    background:#0d0d0d;
+    border:1px solid rgba(0,255,140,.25);
+    color:#00ff8c;
+    font-weight:900;
+    user-select:none;
+  }
+  .tab.active{
+    background:#00ff8c;
+    color:#003b23;
+    box-shadow:0 0 14px rgba(0,255,140,.55);
+    border-color: rgba(0,255,140,.55);
+  }
+
+  .panel{ padding: 12px; display:none; }
+  .panel.active{ display:block; }
+
+  .card{
+    background:#0d0d0d;
+    border:1px solid rgba(0,255,140,.25);
+    border-radius:18px;
+    padding:12px;
+    box-shadow:0 0 14px rgba(0,255,140,.14);
+  }
+
+  /* SOBRE (somente leitura) */
+  .infoRow{
+    display:flex;
+    gap:10px;
+    padding:10px;
+    border-radius:14px;
+    border:1px solid rgba(255,255,255,.06);
+    background: rgba(255,255,255,.03);
+    margin-top:10px;
+    align-items:flex-start;
+  }
+  .infoRow i{ color:#00ff8c; margin-top:2px; }
+  .infoTitle{ font-weight:900; color:#00ff8c; }
+  .infoText{ opacity:.92; word-break:break-word; }
+
+  /* PERFIL (edição) */
+  .field{ display:flex; flex-direction:column; gap:7px; margin-bottom:10px; }
+  .label{
+    font-weight:900;
+    color:#00ff8c;
+    font-size:13px;
+    opacity:.95;
+    letter-spacing:.3px;
+  }
+  .input, .textarea{
+    width:100%;
+    background:#111;
+    border:1px solid rgba(0,255,140,.35);
+    border-radius:14px;
+    padding: 12px 12px;
+    color:#fff;
+    outline:none;
+    box-shadow: inset 0 0 10px rgba(0,255,157,.15);
+    font-size:15px;
+  }
+  .textarea{ min-height: 90px; resize: vertical; }
+  .rowBtns{ display:flex; gap:10px; flex-wrap:wrap; }
+
+  /* Feed Post (só do usuário) */
+  .post{
+    background:#0d0d0d;
+    margin: 12px 0;
+    padding: 15px;
+    border-radius:16px;
+    border:1px solid #00ff9d;
+    box-shadow:0 0 10px rgba(0,255,157,.25);
+    position:relative;
+  }
+  .post img,.post video{
+    width:100%;
+    border-radius:12px;
+    margin-top:10px;
+    background:#000;
+  }
+  .post h3{ margin: 0 0 8px 0; }
+  .when{
+    font-size:12px;
+    color:#00ff9d;
+    opacity:.85;
+    margin-top:-6px;
+    margin-bottom:8px;
+  }
+
+  .menu-btn {
+    position:absolute;
+    top: 10px;
+    right: 10px;
+    font-size: 28px;
+    cursor: pointer;
+    color: #00ff9d;
+    z-index: 10;
+    user-select:none;
+  }
+  .menu-box {
+    position:absolute;
+    top: 45px;
+    right: 10px;
+    background:#00ff9d;
+    color:#000;
+    padding: 10px 15px;
+    border-radius: 10px;
+    display:none;
+    cursor:pointer;
+    font-weight:900;
+    box-shadow: 0 0 12px rgba(0,255,157,.55);
+    z-index: 15;
+  }
+
+  .post-actions{
+    display:flex;
+    justify-content:space-around;
+    margin-top:15px;
+    flex-wrap:wrap;
+    gap: 10px;
+  }
+  .btn-action{
+    color:#00ff9d;
+    padding:10px 12px;
+    border-radius:12px;
+    font-weight:900;
+    cursor:pointer;
+    transition:0.2s;
+    text-align:center;
+    border: 1px solid rgba(0,255,157,.25);
+    background: rgba(0,0,0,.15);
+    user-select:none;
+    min-width:160px;
+  }
+  .contador{
+    margin-top:6px;
+    font-size:13px;
+    color:#00ff9d;
+    text-align:center;
+    opacity:.95;
+    line-height:1.35;
+    word-break: break-word;
+  }
+  .coment-area{
+    background:#111;
+    padding:10px;
+    margin-top:10px;
+    border-radius:12px;
+    display:none;
+    border:1px solid rgba(0,255,140,.25);
+  }
+  .coment-menu-btn{
+    float:right;
+    font-size:20px;
+    cursor:pointer;
+    color:#00ff9d;
+    margin-left:8px;
+    user-select:none;
+  }
+  .coment-menu-box{
+    position:absolute;
+    top:5px;
+    right:5px;
+    background:#00ff9d;
+    color:#000;
+    padding:5px 10px;
+    border-radius:8px;
+    display:none;
+    font-weight:900;
+    cursor:pointer;
+    box-shadow:0 0 10px rgba(0,255,157,.55);
+    z-index:5;
+  }
+
+  /* Friends */
+  .friendRow{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:10px;
+    padding:10px 10px;
+    border-radius:14px;
+    border:1px solid rgba(255,255,255,.06);
+    background: rgba(255,255,255,.03);
+    margin-bottom:8px;
+  }
+  .friendLeft{
+    min-width:0;
+    display:flex;
+    align-items:center;
+    gap:10px;
+  }
+  .friendAvatar{
+    width:42px; height:42px;
+    border-radius:50%;
+    overflow:hidden;
+    background:#0d0d0d;
+    border:2px solid rgba(0,255,140,.25);
+    display:flex; align-items:center; justify-content:center;
+    flex: 0 0 auto;
+  }
+  .friendInit{ font-weight:900; color:#00ff8c; }
+  .friendName{
+    font-weight:900;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    white-space:nowrap;
+    max-width: 56vw;
+  }
+  .friendRight{
+    display:flex; align-items:center; gap:8px;
+    font-size:12px;
+    opacity:.9;
+    white-space:nowrap;
+  }
+</style>
+</head>
+
+<body>
+
+<!-- LOGIN -->
+<div class="login-overlay" id="loginOverlay">
+  <div class="login-card">
+    <div class="login-title"><i class="fa-solid fa-user"></i> ENTRAR</div>
+    <input id="loginName" class="login-input" maxlength="24" placeholder="Digite seu nome" autocomplete="off">
+    <button class="login-btn" onclick="confirmarNome()">Entrar</button>
+  </div>
+</div>
+
+<div class="topbar">
+  <div class="left">
+    <!-- ✅ VOLTAR: volta para o site e continua logado como o mesmo usuário -->
+    <button class="btn ghost icon" title="Voltar" aria-label="Voltar" onclick="voltarSite()">
+      <i class="fa-solid fa-arrow-left"></i>
+    </button>
+    <div class="brand">PERFIL</div>
+    <div class="meName" id="meName">—</div>
+  </div>
+  <div class="actions">
+    <!-- SAIR: desloga -->
+    <button class="btn ghost" onclick="sairNome()">
+      <i class="fa-solid fa-right-from-bracket"></i> Sair
+    </button>
+  </div>
+</div>
+
+<div class="profileWrap">
+
+  <!-- CAPA -->
+  <div class="cover" id="coverBox">
+    <img id="coverImg" alt="Capa do perfil" style="display:none;">
+    <div class="coverShade"></div>
+
+    <input id="coverInput" class="filePicker" type="file" accept="image/*">
+    <!-- ✅ REMOVIDO: botão visível "Trocar capa" em cima da capa (igual ao seu print) -->
+  </div>
+
+  <!-- FOTO PERFIL + IDENTIDADE -->
+  <div class="avatarRow">
+    <div class="avatar" id="avatarBox">
+      <img id="avatarImg" alt="Foto do perfil" style="display:none;">
+      <div id="avatarInitial" class="avatarInitial">U</div>
+    </div>
+
+    <input id="avatarInput" class="filePicker" type="file" accept="image/*">
+
+    <div class="identity">
+      <h1 id="profileName">—</h1>
+      <div class="sub">
+        <span class="pill"><span class="onlineDot"></span> Online</span>
+        <span class="pill"><i class="fa-solid fa-location-dot"></i> <span id="cityText">Sem cidade</span></span>
+      </div>
+    </div>
+  </div>
+
+  <!-- TABS -->
+  <div class="tabs">
+    <div class="tab active" id="tab_posts" onclick="openTab('posts')"><i class="fa-solid fa-newspaper"></i> Postagens</div>
+    <div class="tab" id="tab_about" onclick="openTab('about')"><i class="fa-solid fa-circle-info"></i> Sobre</div>
+    <div class="tab" id="tab_profile" onclick="openTab('profile')"><i class="fa-solid fa-user-pen"></i> Perfil</div>
+    <div class="tab" id="tab_friends" onclick="openTab('friends')"><i class="fa-solid fa-users"></i> Amigos online</div>
+  </div>
+
+  <!-- POSTAGENS -->
+  <div class="panel active" id="panel_posts">
+    <div class="card">
+      <div style="display:flex; align-items:center; justify-content:space-between; gap:10px;">
+        <div style="font-weight:900; color:#00ff8c; letter-spacing:.4px;">
+          <i class="fa-solid fa-list"></i> Feed do usuário
+        </div>
+        <div style="opacity:.85; font-size:13px;" id="postsCount">0 postagens</div>
+      </div>
+      <div id="myFeed" style="margin-top:10px;"></div>
+    </div>
+  </div>
+
+  <!-- SOBRE (somente leitura) -->
+  <div class="panel" id="panel_about">
+    <div class="card">
+      <div style="font-weight:900; color:#00ff8c; letter-spacing:.4px;">
+        <i class="fa-solid fa-circle-info"></i> Informações
+      </div>
+
+      <div class="infoRow">
+        <i class="fa-solid fa-user"></i>
+        <div>
+          <div class="infoTitle">Nome</div>
+          <div class="infoText" id="aboutShowName">—</div>
+        </div>
+      </div>
+
+      <div class="infoRow">
+        <i class="fa-solid fa-location-dot"></i>
+        <div>
+          <div class="infoTitle">Cidade</div>
+          <div class="infoText" id="aboutShowCity">—</div>
+        </div>
+      </div>
+
+      <div class="infoRow">
+        <i class="fa-solid fa-message"></i>
+        <div>
+          <div class="infoTitle">Bio</div>
+          <div class="infoText" id="aboutShowBio">—</div>
+        </div>
+      </div>
+
+      <div class="infoRow">
+        <i class="fa-solid fa-link"></i>
+        <div>
+          <div class="infoTitle">Link</div>
+          <div class="infoText" id="aboutShowLink">—</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PERFIL (edição) -->
+  <div class="panel" id="panel_profile">
+    <div class="card">
+      <div style="display:flex; align-items:center; justify-content:space-between; gap:10px;">
+        <div style="font-weight:900; color:#00ff8c; letter-spacing:.4px;">
+          <i class="fa-solid fa-user-pen"></i> Editar perfil
+        </div>
+      </div>
+
+      <div style="margin-top:12px; display:flex; gap:10px; flex-wrap:wrap;">
+        <button class="btn ghost" onclick="abrirGaleriaAvatar()"><i class="fa-solid fa-camera"></i> Trocar foto</button>
+        <button class="btn ghost" onclick="abrirGaleriaCapa()"><i class="fa-solid fa-image"></i> Trocar capa</button>
+      </div>
+
+      <div style="margin-top:12px;">
+        <div class="field">
+          <div class="label">Nome</div>
+          <input class="input" id="aboutName" maxlength="24" placeholder="Seu nome">
+        </div>
+
+        <div class="field">
+          <div class="label">Cidade</div>
+          <input class="input" id="aboutCity" maxlength="40" placeholder="Ex: Fortaleza">
+        </div>
+
+        <div class="field">
+          <div class="label">Bio</div>
+          <textarea class="textarea" id="aboutBio" maxlength="220" placeholder="Escreva algo sobre você..."></textarea>
+        </div>
+
+        <div class="field">
+          <div class="label">Link (opcional)</div>
+          <input class="input" id="aboutLink" maxlength="120" placeholder="https://...">
+        </div>
+
+        <div class="rowBtns">
+          <button class="btn" onclick="saveProfile()"><i class="fa-solid fa-floppy-disk"></i> Salvar</button>
+          <button class="btn ghost" onclick="loadProfile()"><i class="fa-solid fa-rotate"></i> Recarregar</button>
+        </div>
+
+        <div id="saveInfo" style="margin-top:10px; opacity:.9; font-weight:900; color:#00ff8c; display:none;">
+          Salvo ✅
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- AMIGOS ONLINE -->
+  <div class="panel" id="panel_friends">
+    <div class="card">
+      <div style="display:flex; align-items:center; justify-content:space-between; gap:10px;">
+        <div style="font-weight:900; color:#00ff8c; letter-spacing:.4px;">
+          <i class="fa-solid fa-users"></i> Quem está online agora
+        </div>
+        <div style="opacity:.85; font-size:13px;" id="onlineCount">0 online</div>
+      </div>
+
+      <div id="onlineList" style="margin-top:12px;"></div>
+    </div>
+  </div>
+
+</div>
+
+<!-- Firebase -->
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-storage.js"></script>
+
+<script>
+/* ====================== FIREBASE (MESMO DO SEU SITE) ====================== */
+const firebaseConfig = {
+  apiKey: "AIzaSyAt4CeGjdbjzdtMH1qZHw6RuBFJ6SeTDKk",
+  authDomain: "coletivo-f34d4.firebaseapp.com",
+  databaseURL: "https://coletivo-f34d4-default-rtdb.firebaseio.com",
+  projectId: "coletivo-f34d4",
+  storageBucket: "coletivo-f34d4.firebasestorage.app",
+  messagingSenderId: "296376447787",
+  appId: "1:296376447787:web:1341c59c8087d6ac1e4b6e"
+};
+firebase.initializeApp(firebaseConfig);
+const DB = firebase.database();
+
+/* ====================== VOLTAR (continua logado) ====================== */
+function voltarSite(){
+  // ✅ garante que o site vai ler o MESMO usuário do perfil (localStorage + sessionStorage)
+  const nome = (localStorage.getItem("nome_passageiro") || "").trim();
+  const uid  = (localStorage.getItem("uid_passageiro") || "").trim();
+  if(nome) sessionStorage.setItem("nome_passageiro", nome);
+  if(uid)  sessionStorage.setItem("uid_passageiro", uid);
+
+  window.location.href = "https://marcio2307.github.io/terreiro/site.html";
+}
+
+/* ====================== LOGIN + UID ====================== */
+function getOrCreateUID(){
+  let uid = localStorage.getItem("uid_passageiro");
+  if(!uid){
+    uid = "u_" + Math.random().toString(36).slice(2) + "_" + Date.now();
+    localStorage.setItem("uid_passageiro", uid);
+  }
+  sessionStorage.setItem("uid_passageiro", uid);
+  return uid;
+}
+let UID = getOrCreateUID();
+
+function getNomeSalvo(){
+  return (localStorage.getItem("nome_passageiro") || "").trim();
+}
+let USER_NAME = getNomeSalvo();
+
+function abrirLogin(){
+  loginOverlay.style.display = "flex";
+  document.body.style.overflow = "hidden";
+  setTimeout(()=>{ try{ loginName.focus(); }catch(e){} }, 50);
+}
+function fecharLogin(){
+  loginOverlay.style.display = "none";
+  document.body.style.overflow = "";
+}
+function confirmarNome(){
+  let nome = (loginName.value || "").trim();
+  if(nome.length < 2){
+    alert("Digite um nome com pelo menos 2 letras.");
+    try{ loginName.focus(); }catch(e){}
+    return;
+  }
+  localStorage.setItem("nome_passageiro", nome);
+  sessionStorage.setItem("nome_passageiro", nome);
+  USER_NAME = nome;
+  UID = getOrCreateUID();
+  fecharLogin();
+  startPresence();
+  setTimeout(()=>{ location.reload(); }, 80);
+}
+(function exigirLogin(){
+  if(!USER_NAME) abrirLogin();
+})();
+
+/* SAIR: desloga */
+function sairNome(){
+  stopPresence(true);
+
+  localStorage.removeItem("nome_passageiro");
+  localStorage.removeItem("uid_passageiro");
+  sessionStorage.removeItem("nome_passageiro");
+  sessionStorage.removeItem("uid_passageiro");
+
+  USER_NAME = "";
+  UID = getOrCreateUID();
+  abrirLogin();
+}
+
+document.addEventListener("keydown", (e)=>{
+  if(loginOverlay.style.display === "flex" && e.key === "Enter"){ confirmarNome(); }
+});
+
+/* Helpers */
+function escapeHTML(str){
+  return (str || "")
+    .replaceAll("&","&amp;").replaceAll("<","&lt;")
+    .replaceAll(">","&gt;").replaceAll('"',"&quot;")
+    .replaceAll("'","&#039;");
+}
+function initials(name){
+  const n = (name||"").trim().split(/\s+/).filter(Boolean);
+  if(!n.length) return "U";
+  const a = n[0][0] || "U";
+  const b = (n.length>1 ? n[n.length-1][0] : "") || "";
+  return (a+b).toUpperCase();
+}
+function fmtDate(ts){
+  try{ return new Date(ts).toLocaleString("pt-BR"); }catch(e){ return ""; }
+}
+
+/* ====================== PRESENÇA ONLINE ====================== */
+let presenceRef = null;
+let presenceTimer = null;
+
+function startPresence(){
+  try{
+    if(!USER_NAME || !UID) return;
+    if(presenceTimer) return;
+
+    presenceRef = DB.ref("presence/" + UID);
+    const connectedRef = DB.ref(".info/connected");
+
+    connectedRef.on("value", (snap)=>{
+      if(snap.val() === true){
+        presenceRef.onDisconnect().remove().catch(()=>{});
+        presenceRef.set({
+          uid: UID,
+          userName: USER_NAME,
+          online: true,
+          onlineAt: firebase.database.ServerValue.TIMESTAMP,
+          lastActive: firebase.database.ServerValue.TIMESTAMP
+        }).catch(()=>{});
+      }
+    });
+
+    presenceTimer = setInterval(()=>{
+      if(!presenceRef) return;
+      presenceRef.update({
+        online: true,
+        lastActive: firebase.database.ServerValue.TIMESTAMP
+      }).catch(()=>{});
+    }, 25000);
+
+    window.addEventListener("beforeunload", ()=>{
+      try{ stopPresence(true); }catch(e){}
+    });
+  }catch(e){}
+}
+function stopPresence(){
+  try{
+    if(presenceTimer){ clearInterval(presenceTimer); presenceTimer=null; }
+    if(presenceRef){ presenceRef.remove().catch(()=>{}); presenceRef=null; }
+  }catch(e){}
+}
+if(USER_NAME && UID){ startPresence(); }
+
+/* ====================== PERFIL (profiles/{uid}) ====================== */
+const PROFILE_REF = () => DB.ref("profiles/" + UID);
+
+function attachingAvatar(url, nameForInitial){
+  if(url){
+    avatarImg.src = url;
+    avatarImg.style.display = "block";
+    avatarInitial.style.display = "none";
+  }else{
+    avatarImg.style.display = "none";
+    avatarInitial.style.display = "block";
+    avatarInitial.textContent = initials(nameForInitial || "U");
+  }
+}
+function attachingCover(url){
+  if(url){
+    coverImg.src = url;
+    coverImg.style.display = "block";
+  }else{
+    coverImg.style.display = "none";
+  }
+}
+
+function setAboutReadOnly(prof){
+  aboutShowName.textContent = prof.name || USER_NAME || "—";
+  aboutShowCity.textContent = prof.city ? prof.city : "—";
+  aboutShowBio.textContent  = prof.bio ? prof.bio : "—";
+  aboutShowLink.innerHTML = prof.link
+    ? `<span class="infoText"><a href="${escapeHTML(prof.link)}" target="_blank" style="color:#00ff8c;font-weight:900;text-decoration:none;">${escapeHTML(prof.link)}</a></span>`
+    : "—";
+}
+
+function applyProfileUI(p){
+  const prof = p || {};
+
+  meName.textContent = USER_NAME ? ("@" + USER_NAME) : "—";
+  profileName.textContent = prof.name || USER_NAME || "Usuário";
+  cityText.textContent = prof.city || "Sem cidade";
+
+  aboutName.value = prof.name || USER_NAME || "";
+  aboutCity.value = prof.city || "";
+  aboutBio.value = prof.bio || "";
+  aboutLink.value = prof.link || "";
+
+  setAboutReadOnly({
+    name: prof.name || USER_NAME || "",
+    city: prof.city || "",
+    bio: prof.bio || "",
+    link: prof.link || ""
+  });
+
+  attachingCover(prof.coverDataUrl || prof.coverUrl || "");
+  attachingAvatar(prof.avatarDataUrl || prof.avatarUrl || "", prof.name || USER_NAME || "U");
+}
+
+async function loadProfile(){
+  if(!USER_NAME) return;
+  try{
+    const snap = await PROFILE_REF().once("value");
+    if(!snap.exists()){
+      await PROFILE_REF().set({
+        uid: UID,
+        name: USER_NAME,
+        city: "",
+        bio: "",
+        link: "",
+        createdAt: firebase.database.ServerValue.TIMESTAMP,
+        updatedAt: firebase.database.ServerValue.TIMESTAMP
+      });
+      applyProfileUI({ name: USER_NAME });
+      return;
+    }
+    applyProfileUI(snap.val() || {});
+  }catch(e){ console.log(e); }
+}
+
+async function saveProfile(){
+  if(!USER_NAME) return;
+
+  const name = (aboutName.value || "").trim().slice(0,24);
+  const city = (aboutCity.value || "").trim().slice(0,40);
+  const bio  = (aboutBio.value || "").trim().slice(0,220);
+  const link = (aboutLink.value || "").trim().slice(0,120);
+
+  if(name.length < 2){
+    alert("O nome precisa ter pelo menos 2 letras.");
+    return;
+  }
+
+  try{
+    // ✅ garante que perfil e site usem o MESMO usuário
+    localStorage.setItem("nome_passageiro", name);
+    sessionStorage.setItem("nome_passageiro", name);
+    USER_NAME = name;
+
+    await PROFILE_REF().update({
+      uid: UID,
+      name, city, bio, link,
+      updatedAt: firebase.database.ServerValue.TIMESTAMP
+    });
+
+    DB.ref("presence/" + UID).update({ userName: name }).catch(()=>{});
+
+    saveInfo.style.display = "block";
+    setTimeout(()=> saveInfo.style.display="none", 1600);
+
+    meName.textContent = "@" + USER_NAME;
+    profileName.textContent = name;
+    cityText.textContent = city || "Sem cidade";
+    avatarInitial.textContent = initials(name);
+    setAboutReadOnly({ name, city, bio, link });
+  }catch(e){
+    console.log(e);
+    alert("Erro ao salvar.");
+  }
+}
+
+/* ====================== GALERIA ====================== */
+function abrirGaleriaCapa(){
+  if(!USER_NAME){ abrirLogin(); return; }
+  coverInput.value = "";
+  coverInput.click();
+}
+function abrirGaleriaAvatar(){
+  if(!USER_NAME){ abrirLogin(); return; }
+  avatarInput.value = "";
+  avatarInput.click();
+}
+
+/* ====================== CORTE/REDIMENSIONAMENTO ====================== */
+const MAX_IMG_MB = 18;
+function checkImageSize(file){
+  const mb = file.size/(1024*1024);
+  if(mb > MAX_IMG_MB){
+    alert(`Imagem muito grande (${mb.toFixed(1)}MB). Envie até ${MAX_IMG_MB}MB.`);
+    return false;
+  }
+  return true;
+}
+function loadImageFromFile(file){
+  return new Promise((resolve, reject)=>{
+    const url = URL.createObjectURL(file);
+    const img = new Image();
+    img.onload = ()=>{ try{ URL.revokeObjectURL(url); }catch(e){} resolve(img); };
+    img.onerror = (e)=>{ try{ URL.revokeObjectURL(url); }catch(_e){} reject(e); };
+    img.src = url;
+  });
+}
+function cropToCoverDataUrl(img, outW=1400, outH=420, quality=0.85){
+  const canvas = document.createElement("canvas");
+  canvas.width = outW;
+  canvas.height = outH;
+  const ctx = canvas.getContext("2d");
+
+  const targetAR = outW / outH;
+  const srcAR = img.width / img.height;
+
+  let sx=0, sy=0, sw=img.width, sh=img.height;
+  if(srcAR > targetAR){
+    sh = img.height;
+    sw = Math.round(sh * targetAR);
+    sx = Math.round((img.width - sw) / 2);
+    sy = 0;
+  }else{
+    sw = img.width;
+    sh = Math.round(sw / targetAR);
+    sx = 0;
+    sy = Math.round((img.height - sh) / 2);
+  }
+
+  ctx.drawImage(img, sx, sy, sw, sh, 0, 0, outW, outH);
+  return canvas.toDataURL("image/jpeg", quality);
+}
+function cropToAvatarDataUrl(img, outSize=420, quality=0.86){
+  const canvas = document.createElement("canvas");
+  canvas.width = outSize;
+  canvas.height = outSize;
+  const ctx = canvas.getContext("2d");
+
+  const side = Math.min(img.width, img.height);
+  const sx = Math.round((img.width - side)/2);
+  const sy = Math.round((img.height - side)/2);
+
+  ctx.drawImage(img, sx, sy, side, side, 0, 0, outSize, outSize);
+  return canvas.toDataURL("image/jpeg", quality);
+}
+
+/* UPLOAD CAPA */
+coverInput.addEventListener("change", async (e)=>{
+  const file = e.target.files && e.target.files[0];
+  if(!file) return;
+
+  if(!file.type || !file.type.startsWith("image/")){
+    alert("Envie uma imagem (JPG/PNG/etc).");
+    return;
+  }
+  if(!checkImageSize(file)) return;
+
+  try{
+    const img = await loadImageFromFile(file);
+    const rect = coverBox.getBoundingClientRect();
+    const outW = Math.min(1600, Math.max(1100, Math.round(rect.width * 2)));
+    const outH = Math.round((rect.height * outW) / rect.width);
+
+    const dataUrl = cropToCoverDataUrl(img, outW, outH, 0.86);
+
+    attachingCover(dataUrl);
+
+    await PROFILE_REF().update({
+      coverDataUrl: dataUrl,
+      updatedAt: firebase.database.ServerValue.TIMESTAMP
+    });
+
+  }catch(err){
+    console.log("COVER ERROR:", err);
+    alert("Erro ao salvar a capa.");
+  }finally{
+    coverInput.value = "";
+  }
+});
+
+/* UPLOAD AVATAR */
+avatarInput.addEventListener("change", async (e)=>{
+  const file = e.target.files && e.target.files[0];
+  if(!file) return;
+
+  if(!file.type || !file.type.startsWith("image/")){
+    alert("Envie uma imagem (JPG/PNG/etc).");
+    return;
+  }
+  if(!checkImageSize(file)) return;
+
+  try{
+    const img = await loadImageFromFile(file);
+    const dataUrl = cropToAvatarDataUrl(img, 520, 0.86);
+
+    attachingAvatar(dataUrl, USER_NAME);
+
+    await PROFILE_REF().update({
+      avatarDataUrl: dataUrl,
+      updatedAt: firebase.database.ServerValue.TIMESTAMP
+    });
+
+  }catch(err){
+    console.log("AVATAR ERROR:", err);
+    alert("Erro ao salvar a foto de perfil.");
+  }finally{
+    avatarInput.value = "";
+  }
+});
+
+/* TABS */
+function openTab(which){
+  ["posts","about","profile","friends"].forEach(k=>{
+    document.getElementById("tab_"+k).classList.remove("active");
+    document.getElementById("panel_"+k).classList.remove("active");
+  });
+  document.getElementById("tab_"+which).classList.add("active");
+  document.getElementById("panel_"+which).classList.add("active");
+}
+
+/* ====================== FEED só do usuário ====================== */
+const postsCache = new Set();
+let postsCountNum = 0;
+
+function toggleMenu(id){
+  let m = document.getElementById("menu_"+id);
+  if(!m) return;
+  m.style.display = (m.style.display==="block" ? "none" : "block");
+}
+function abrirComentarios(id){
+  const box = document.getElementById("comentarios_"+id);
+  if(!box) return;
+  box.style.display = "block";
+
+  document.removeEventListener("click", fecharBox);
+  function fecharBox(e){
+    const insideBox = box.contains(e.target);
+    const clickedButton = e.target.closest(".btn-action");
+    if(!insideBox && !clickedButton){
+      box.style.display = "none";
+      document.removeEventListener("click", fecharBox);
+    }
+  }
+  setTimeout(()=> document.addEventListener("click", fecharBox), 50);
+}
+
+async function curtir(postId){
+  if(!USER_NAME){ abrirLogin(); return; }
+  const likeRef = DB.ref(`likes/${postId}/${UID}`);
+  const snap = await likeRef.once("value");
+  const cur = snap.val();
+  if(cur) await likeRef.remove();
+  else await likeRef.set({ type:"like", uid:UID, userName:USER_NAME, createdAt: firebase.database.ServerValue.TIMESTAMP });
+}
+async function amei(postId){
+  if(!USER_NAME){ abrirLogin(); return; }
+  const likeRef = DB.ref(`likes/${postId}/${UID}`);
+  const snap = await likeRef.once("value");
+  const cur = snap.val();
+  if(cur && cur.type === "love") await likeRef.remove();
+  else await likeRef.set({ type:"love", uid:UID, userName:USER_NAME, createdAt: firebase.database.ServerValue.TIMESTAMP });
+}
+
+let holdTimer = null;
+let longPress = {};
+function pressionarCurtir(id){
+  longPress[id] = false;
+  holdTimer = setTimeout(()=>{
+    longPress[id] = true;
+    amei(id);
+  }, 500);
+}
+function soltarCurtir(){ if(holdTimer) clearTimeout(holdTimer); }
+
+function atualizarCurtidasUI(postId, likesObj){
+  const btn = document.getElementById("curtir_"+postId);
+  const cont = document.getElementById("contadorCurtidas_"+postId);
+  if(!btn || !cont) return;
+
+  const likes = likesObj || {};
+  const entries = Object.values(likes);
+  const total = entries.length;
+  const my = likes[UID];
+
+  if(my){
+    if(my.type === "love"){
+      btn.textContent = "❤️ Você amou";
+      btn.style.color = "#ff008c";
+    }else{
+      btn.textContent = "👍 Você curtiu";
+      btn.style.color = "#00ff9d";
+    }
+  }else{
+    btn.textContent = "👍 Curtir";
+    btn.style.color = "#00ff9d";
+  }
+
+  if(total === 0){ cont.innerHTML = ""; return; }
+
+  const sorted = entries.sort((a,b)=>(a.createdAt||0)-(b.createdAt||0));
+  const nomes = sorted.map(x => (x.uid === UID ? "Você" : escapeHTML(x.userName || "Usuário")));
+  cont.innerHTML = `Curtidas (${total}): <b>${nomes.join(", ")}</b>`;
+}
+
+async function enviarComentario(postId){
+  if(!USER_NAME){ abrirLogin(); return; }
+  const input = document.getElementById("comentarioInput_"+postId);
+  if(!input) return;
+  const texto = input.value.trim();
+  if(!texto) return;
+
+  const commentId = "cmt_" + Date.now() + "_" + Math.random().toString(36).slice(2);
+  await DB.ref(`comments/${postId}/${commentId}`).set({
+    uid: UID,
+    userName: USER_NAME,
+    text: texto,
+    createdAt: firebase.database.ServerValue.TIMESTAMP
+  });
+  input.value = "";
+}
+
+function toggleComentMenu(cid){
+  const menu = document.getElementById("menu_"+cid);
+  if(!menu) return;
+  menu.style.display = (menu.style.display==="block" ? "none" : "block");
+}
+
+async function excluirComentario(cid, postId){
+  await DB.ref(`comments/${postId}/${cid}`).remove();
+}
+
+async function excluirPost(postId){
+  const snap = await DB.ref("posts/" + postId).once("value");
+  const data = snap.val();
+  if(!data) return;
+
+  if(data.uid !== UID){
+    alert("Você só pode excluir suas próprias postagens.");
+    return;
+  }
+
+  await DB.ref("posts/" + postId).remove();
+  await DB.ref("likes/" + postId).remove().catch(()=>{});
+  await DB.ref("comments/" + postId).remove().catch(()=>{});
+
+  const el = document.getElementById(postId);
+  if(el) el.remove();
+  postsCache.delete(postId);
+
+  postsCountNum = Math.max(0, postsCountNum - 1);
+  postsCount.textContent = `${postsCountNum} postagens`;
+}
+
+function postHTML(id, postData){
+  let midia = "";
+  if(postData.mediaUrl){
+    const isImg = (postData.mediaType || "").startsWith("image/");
+    midia = isImg
+      ? `<img src="${postData.mediaUrl}" loading="lazy">`
+      : `<video src="${postData.mediaUrl}" controls preload="metadata" playsinline></video>`;
+  }
+
+  const nome = escapeHTML(postData.userName || "Usuário");
+  const texto = escapeHTML(postData.text || "");
+  const quando = postData.createdAt ? fmtDate(postData.createdAt) : "";
+
+  return `
+  <div class="post" id="${id}">
+    <div class="menu-btn" onclick="toggleMenu('${id}')">⋮</div>
+    <div class="menu-box" id="menu_${id}">
+      <div onclick="excluirPost('${id}')">Excluir post</div>
+    </div>
+
+    <h3>🌟 ${nome}</h3>
+    <div class="when">${escapeHTML(quando)}</div>
+    <p>${texto}</p>
+
+    <div class="mediaWrap" id="mediaWrap_${id}">
+      ${midia}
+    </div>
+
+    <div class="post-actions">
+      <div style="text-align:center;">
+        <div class="btn-action"
+          id="curtir_${id}"
+          onmousedown="pressionarCurtir('${id}')"
+          onmouseup="soltarCurtir()"
+          ontouchstart="pressionarCurtir('${id}')"
+          ontouchend="soltarCurtir()"
+          onclick="curtir('${id}')">
+          👍 Curtir
+        </div>
+        <div class="contador" id="contadorCurtidas_${id}"></div>
+      </div>
+
+      <div style="text-align:center;">
+        <div class="btn-action" onclick="abrirComentarios('${id}')">💬 Comentar</div>
+        <div class="contador" id="contadorComentarios_${id}"></div>
+      </div>
+    </div>
+
+    <div class="coment-area" id="comentarios_${id}">
+      <div id="listaComentarios_${id}" style="margin-bottom:15px;"></div>
+
+      <input type="text" id="comentarioInput_${id}"
+        placeholder="Escreva um comentário..."
+        style="width:100%;padding:10px;border-radius:10px;border:1px solid rgba(0,255,140,.35);background:#000;color:#fff;">
+
+      <button class="btn" style="margin-top:10px;" onclick="enviarComentario('${id}')">Enviar</button>
+    </div>
+  </div>
+  `;
+}
+
+function listenLikes(postId){
+  DB.ref("likes/" + postId).on("value", snap=>{
+    atualizarCurtidasUI(postId, snap.val() || {});
+  });
+}
+
+function listenComments(postId){
+  DB.ref("comments/" + postId).orderByChild("createdAt").on("value", snap=>{
+    const lista = document.getElementById("listaComentarios_"+postId);
+    const contador = document.getElementById("contadorComentarios_"+postId);
+    if(!lista || !contador) return;
+
+    const obj = snap.val() || {};
+    const arr = Object.keys(obj).map(cid=>({ cid, ...obj[cid] }))
+      .sort((a,b)=>(a.createdAt||0)-(b.createdAt||0));
+
+    lista.innerHTML = arr.map(c=>{
+      const nome = escapeHTML(c.userName || "Usuário");
+      const txt = escapeHTML(c.text || "");
+      return `
+        <div id="${c.cid}" style="background:#000;border:1px solid rgba(0,255,140,.35);padding:10px;border-radius:12px;margin-bottom:8px;position:relative;">
+          <b style="color:#00ff9d;">${nome}:</b> 💬 ${txt}
+          <span class="coment-menu-btn" onclick="toggleComentMenu('${c.cid}')">⋮</span>
+          <div class="coment-menu-box" id="menu_${c.cid}" onclick="excluirComentario('${c.cid}','${postId}')">
+            Excluir
+          </div>
+        </div>
+      `;
+    }).join("");
+
+    const total = arr.length;
+    if(total === 0) contador.innerHTML = "";
+    else if(total === 1) contador.innerHTML = "1 comentário";
+    else contador.innerHTML = `${total} comentários`;
+  });
+}
+
+function renderMyPost(postId, data){
+  if(postsCache.has(postId)) return;
+  if(data.uid !== UID) return;
+
+  postsCache.add(postId);
+
+  const feed = document.getElementById("myFeed");
+  const temp = document.createElement("div");
+  temp.innerHTML = postHTML(postId, data).trim();
+  feed.prepend(temp.firstChild);
+
+  listenLikes(postId);
+  listenComments(postId);
+
+  postsCountNum++;
+  postsCount.textContent = `${postsCountNum} postagens`;
+}
+
+function listenMyPosts(){
+  postsCache.clear();
+  postsCountNum = 0;
+  postsCount.textContent = `0 postagens`;
+  myFeed.innerHTML = `<div style="opacity:.85; padding:12px;">Carregando suas postagens...</div>`;
+
+  const q = DB.ref("posts").orderByChild("uid").equalTo(UID).limitToLast(200);
+  q.on("value", snap=>{
+    const obj = snap.val() || {};
+    const entries = Object.keys(obj).map(id=>({ id, ...obj[id] }))
+      .sort((a,b)=>(a.createdAt||0)-(b.createdAt||0));
+
+    myFeed.innerHTML = "";
+    postsCache.clear();
+    postsCountNum = 0;
+
+    if(entries.length === 0){
+      myFeed.innerHTML = `<div style="opacity:.85; padding:12px;">Você ainda não postou nada.</div>`;
+      postsCount.textContent = `0 postagens`;
+      return;
+    }
+
+    entries.slice().reverse().forEach(p=> renderMyPost(p.id, p));
+  });
+}
+
+/* ====================== AMIGOS ONLINE ====================== */
+function listenOnline(){
+  const ref = DB.ref("presence");
+  ref.on("value", snap=>{
+    const obj = snap.val() || {};
+    const arr = Object.keys(obj).map(uid=>obj[uid]).filter(Boolean);
+
+    const now = Date.now();
+    const alive = arr.filter(u=>{
+      const last = u.lastActive || 0;
+      return (u.online === true) && (now - last < 65000);
+    });
+
+    alive.sort((a,b)=>(b.lastActive||0)-(a.lastActive||0));
+    onlineCount.textContent = `${alive.length} online`;
+
+    if(alive.length === 0){
+      onlineList.innerHTML = `<div style="opacity:.85; padding:12px;">Ninguém online agora.</div>`;
+      return;
+    }
+
+    const rows = alive.slice(0, 80).map(u=>{
+      const name = u.userName || "Usuário";
+      const last = u.lastActive ? fmtDate(u.lastActive) : "";
+      const init = initials(name);
+
+      return `
+        <div class="friendRow">
+          <div class="friendLeft">
+            <div class="friendAvatar">
+              <div class="friendInit">${escapeHTML(init)}</div>
+            </div>
+            <div style="min-width:0;">
+              <div class="friendName">${escapeHTML(name)} ${u.uid===UID ? `<span style="opacity:.85;">(você)</span>` : ""}</div>
+            </div>
+          </div>
+          <div class="friendRight">
+            <span class="onlineDot"></span>
+            <span>${escapeHTML(last)}</span>
+          </div>
+        </div>
+      `;
+    });
+
+    onlineList.innerHTML = rows.join("");
+  });
+}
+
+/* ====================== BOOT ====================== */
+(async function boot(){
+  meName.textContent = USER_NAME ? ("@" + USER_NAME) : "—";
+  profileName.textContent = USER_NAME || "Usuário";
+  avatarInitial.textContent = initials(USER_NAME || "U");
+
+  await loadProfile();
+  listenMyPosts();
+  listenOnline();
+})();
+</script>
+
+</body>
+</html>
