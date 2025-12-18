@@ -63,12 +63,6 @@
     box-shadow:0 0 12px rgba(0,255,140,.18);
   }
   .btn.icon{ width:44px; height:44px; padding:0; }
-  .backLabel{
-    font-weight:900;
-    color:#00ff8c;
-    text-shadow:0 0 10px rgba(0,255,140,.35);
-    white-space:nowrap;
-  }
 
   .wrap{ width:min(980px, 100%); margin:0 auto; }
 
@@ -461,14 +455,9 @@
   <span id="toastText">Online</span>
 </div>
 
-<!-- TOPBAR -->
+<!-- TOPBAR (SEM BOTÃO VOLTAR) -->
 <div class="topbar">
-  <div class="left">
-    <button class="btn ghost icon" title="Voltar" aria-label="Voltar" onclick="goBack()">
-      <i class="fa-solid fa-arrow-left"></i>
-    </button>
-    <div class="backLabel">Voltar</div>
-  </div>
+  <div style="width:44px;"></div>
   <div class="center">
     <div class="brand"></div>
   </div>
@@ -551,13 +540,7 @@ function getParams(){
 const PARAMS = getParams();
 const TARGET_UID = PARAMS.uid;
 
-function goBack(){
-  if(PARAMS.back){
-    window.location.href = PARAMS.back;
-  }else{
-    history.back();
-  }
-}
+/* (REMOVIDO) goBack e botão voltar — não é mais usado */
 
 /* ====================== LOGIN (pra curtir/comentar) ====================== */
 function getOrCreateUID(){
