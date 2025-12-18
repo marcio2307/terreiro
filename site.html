@@ -17,9 +17,10 @@
     width:100%;
     background:#000;
     display:flex;
-    justify-content:center;
+    justify-content:space-between; /* ✅ logo esquerda + messenger direita */
     align-items:center;
-    padding: 10px 10px 6px 10px;
+    padding: 10px 12px 6px 12px;
+    gap: 12px;
   }
   .logo-bar img{
     width: clamp(180px, 58vw, 420px);
@@ -31,6 +32,54 @@
   @media(max-width:480px){
     .logo-bar{ padding: 10px 10px 6px 10px; }
     .logo-bar img{ max-height: 86px; }
+  }
+
+  /* ✅ Botão Messenger */
+  .messenger-btn{
+    position:relative;
+    width: 56px;
+    height: 56px;
+    border-radius: 16px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    cursor:pointer;
+    user-select:none;
+    text-decoration:none;
+
+    background: rgba(13,13,13,.85);
+    border: 2px solid #00ff8c;
+    box-shadow: 0 0 15px rgba(0,255,140,.35);
+    color:#00ff8c;
+    transition: transform .15s ease, box-shadow .15s ease;
+    flex: 0 0 auto;
+  }
+  .messenger-btn:hover{ transform: scale(1.04); box-shadow: 0 0 18px rgba(0,255,140,.55); }
+  .messenger-btn i{
+    font-size: 28px;
+    text-shadow: 0 0 10px #00ff8c, 0 0 20px #00ff8c;
+  }
+  .messenger-dot{
+    position:absolute;
+    top: 8px;
+    right: 8px;
+    width: 12px;
+    height: 12px;
+    border-radius:50%;
+    background: #ffd400; /* ✅ amarelo */
+    box-shadow: 0 0 14px rgba(255,212,0,.95);
+    border: 2px solid #000;
+    display:none;
+    animation: blinkYellow .8s infinite;
+  }
+  @keyframes blinkYellow{
+    0%,100%{ transform: scale(1); opacity: 1; }
+    50%{ transform: scale(1.35); opacity: .25; }
+  }
+  @media(max-width:480px){
+    .messenger-btn{ width: 50px; height:50px; border-radius: 14px; }
+    .messenger-btn i{ font-size: 26px; }
+    .messenger-dot{ top: 7px; right: 7px; width: 11px; height:11px; }
   }
 
   /* ======================== MENU NEON ======================== */
@@ -513,12 +562,12 @@
     position:relative;
   }
 
-  /* ✅ CABEÇALHO COM FOTO (não usa mais 🌟) */
+  /* ✅ CABEÇALHO COM FOTO */
   .postHead{
     display:flex;
     align-items:center;
     gap:12px;
-    padding-right:44px; /* espaço do menu ⋮ */
+    padding-right:44px;
   }
   .postAvatar{
     width:56px;
@@ -775,9 +824,15 @@
   </div>
 </div>
 
-<!-- ✅ LOGO ACIMA DO MENU (CENTRALIZADA / RESPONSIVA) -->
+<!-- ✅ LOGO ESQUERDA + MESSENGER DIREITA -->
 <div class="logo-bar">
   <img src="https://i.ibb.co/h1RmgKSX/Chat-GPT-Image-17-12-2025-21-32-09.png" alt="Logo" loading="eager">
+
+  <!-- ✅ Ícone estilo Messenger (abre o batepapo) -->
+  <a class="messenger-btn" href="https://marcio2307.github.io/terreiro/batepapo.html" onclick="onOpenBatepapo(event)" title="Bate-papo" aria-label="Bate-papo">
+    <i class="fa-brands fa-facebook-messenger"></i>
+    <span class="messenger-dot" id="messengerDot" aria-hidden="true"></span>
+  </a>
 </div>
 
 <!-- MENU (sem botão sair + com ícone perfil) -->
@@ -879,11 +934,17 @@ firebase.initializeApp(firebaseConfig);
 const DB = firebase.database();
 const ST = firebase.storage();
 
-/* ====================== ✅ SOM ====================== */
+/* ====================== ✅ SOM (AÇÕES DO SITE) ====================== */
 const ACTION_SOUND_URL = "som.mp3";
 const actionSfx = new Audio(ACTION_SOUND_URL);
 actionSfx.preload = "auto";
 actionSfx.volume = 1.0;
+
+/* ✅ SOM DO BATEPAPO (notificação) */
+const CHAT_SOUND_URL = "somm.mp3"; // ✅ arquivo no GitHub na mesma pasta do site
+const chatNotifySfx = new Audio(CHAT_SOUND_URL);
+chatNotifySfx.preload = "auto";
+chatNotifySfx.volume = 1.0;
 
 let audioUnlocked = false;
 function unlockAudioOnce(){
@@ -891,16 +952,27 @@ function unlockAudioOnce(){
   audioUnlocked = true;
   try{
     actionSfx.muted = false;
-    const p = actionSfx.play();
-    if(p && p.then){
-      p.then(()=>{ actionSfx.pause(); actionSfx.currentTime = 0; }).catch(()=>{});
+    chatNotifySfx.muted = false;
+
+    // "Destrava" em iOS/Android
+    const p1 = actionSfx.play();
+    if(p1 && p1.then){
+      p1.then(()=>{ actionSfx.pause(); actionSfx.currentTime = 0; }).catch(()=>{});
     }else{
       actionSfx.pause(); actionSfx.currentTime = 0;
+    }
+
+    const p2 = chatNotifySfx.play();
+    if(p2 && p2.then){
+      p2.then(()=>{ chatNotifySfx.pause(); chatNotifySfx.currentTime = 0; }).catch(()=>{});
+    }else{
+      chatNotifySfx.pause(); chatNotifySfx.currentTime = 0;
     }
   }catch(e){}
 }
 document.addEventListener("touchstart", unlockAudioOnce, { once:true, passive:true });
 document.addEventListener("click", unlockAudioOnce, { once:true });
+document.addEventListener("pointerdown", unlockAudioOnce, { once:true });
 
 function playActionSound(){
   if(!ACTION_SOUND_URL || ACTION_SOUND_URL.includes("COLE_AQUI")) return;
@@ -909,6 +981,31 @@ function playActionSound(){
     actionSfx.currentTime = 0;
     actionSfx.play().catch(()=>{});
   }catch(e){}
+}
+function playChatSound(){
+  if(!CHAT_SOUND_URL) return;
+  try{
+    chatNotifySfx.pause();
+    chatNotifySfx.currentTime = 0;
+    chatNotifySfx.play().catch(()=>{});
+  }catch(e){}
+}
+
+/* ====================== ✅ MESSENGER (abre batepapo + destrava áudio) ====================== */
+const BATEPAPO_URL = "https://marcio2307.github.io/terreiro/batepapo.html";
+const messengerDot = document.getElementById("messengerDot");
+let dotTimer = null;
+
+function showMessengerDotFor5s(){
+  if(!messengerDot) return;
+  messengerDot.style.display = "block";
+  if(dotTimer) clearTimeout(dotTimer);
+  dotTimer = setTimeout(()=>{ messengerDot.style.display = "none"; }, 5000);
+}
+function onOpenBatepapo(ev){
+  // mantém o link, mas garante desbloqueio do áudio (mobile)
+  unlockAudioOnce();
+  // deixa seguir para o href normalmente
 }
 
 /* ====================== RADIO PLAYER (MENU) ====================== */
@@ -961,6 +1058,9 @@ function getNomeSalvo(){
   return (localStorage.getItem("nome_passageiro") || "").trim();
 }
 let USER_NAME = getNomeSalvo();
+
+const loginOverlay = document.getElementById("loginOverlay");
+const loginName = document.getElementById("loginName");
 
 function abrirLogin(){
   loginOverlay.style.display = "flex";
@@ -1042,6 +1142,9 @@ function checkSize(file){
 }
 
 /* Loading */
+const loadingOverlay = document.getElementById("loadingOverlay");
+const loadingText = document.getElementById("loadingText");
+const loadingSub  = document.getElementById("loadingSub");
 function showLoading(title, sub){
   loadingText.textContent = title || "Enviando...";
   loadingSub.textContent = sub || "Aguarde um instante";
@@ -1097,6 +1200,36 @@ function stopPresence(silent){
   if(!silent){}
 }
 if(USER_NAME && UID){ startPresence(); }
+</script>
+
+<script>
+/* ===================== ✅ NOTIFICAÇÃO DO BATEPAPO (som + bolinha 5s) ===================== */
+const ROOM_ID = "global";
+const MSG_PATH = `groupChat/${ROOM_ID}/messages`;
+
+const seenMsgIds = new Set();
+let chatFirstLoadDone = false;
+
+// ouvimos os últimos 200 (para montar o "primeiro carregamento") e depois só notificamos novas
+DB.ref(MSG_PATH).orderByChild("createdAt").limitToLast(200).on("child_added", (snap)=>{
+  const m = snap.val() || {};
+  const id = m.id || snap.key;
+  if(!id) return;
+
+  if(seenMsgIds.has(id)) return;
+  seenMsgIds.add(id);
+
+  if(chatFirstLoadDone){
+    // ✅ toca som + bolinha amarela 5s
+    unlockAudioOnce();
+    playChatSound();
+    showMessengerDotFor5s();
+  }else{
+    // termina o "first load" depois de um curtinho
+    clearTimeout(window.__chatFirstLoadTimer);
+    window.__chatFirstLoadTimer = setTimeout(()=>{ chatFirstLoadDone = true; }, 900);
+  }
+});
 </script>
 
 <script>
@@ -1169,7 +1302,9 @@ function updateViewerAvatarsInDOM(uid, url, name){
     }
   });
 }
+</script>
 
+<script>
 /* ===================== STORIES estilo Insta ===================== */
 const menuTop = document.querySelector('.top-menu');
 
@@ -1769,7 +1904,7 @@ function atualizarCurtidasUI(postId, likesObj){
 }
 
 /* ✅✅✅ TOGGLE COMENTÁRIOS: 1 clique abre, 2º clique fecha */
-const commentCloseHandlers = {}; // postId -> function
+const commentCloseHandlers = {};
 function fecharComentarios(id){
   const box = document.getElementById("comentarios_"+id);
   if(!box) return;
@@ -1783,25 +1918,21 @@ function abrirComentarios(id){
   const box = document.getElementById("comentarios_"+id);
   if(!box) return;
 
-  // se já está aberto, fecha no 2º clique
   if(box.style.display === "block"){
     fecharComentarios(id);
     return;
   }
 
-  // abre
   box.style.display = "block";
 
-  // remove listener antigo desse post (se existir)
   if(commentCloseHandlers[id]){
     document.removeEventListener("click", commentCloseHandlers[id]);
     delete commentCloseHandlers[id];
   }
 
-  // fecha ao clicar fora
   const handler = (e)=>{
     const insideBox = box.contains(e.target);
-    const clickedButton = e.target.closest(".btn-action"); // botão Comentar / Curtir
+    const clickedButton = e.target.closest(".btn-action");
     const clickedMenu = e.target.closest(".coment-menu-btn") || e.target.closest(".coment-menu-box");
     if(!insideBox && !clickedButton && !clickedMenu){
       fecharComentarios(id);
