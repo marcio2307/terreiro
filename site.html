@@ -488,45 +488,6 @@
     user-select:none;
   }
 
-  /* ✅ REAÇÕES (aparece só em stories de OUTROS usuários) */
-  .reactionBar{
-    position:absolute;
-    left: 16px;
-    bottom: calc(18px + env(safe-area-inset-bottom));
-    z-index: 35;
-    display:none;
-    gap: 10px;
-    align-items:center;
-    pointer-events:auto;
-    user-select:none;
-  }
-  .reactBtn{
-    width: 46px;
-    height: 46px;
-    border-radius: 14px;
-    border: 1px solid rgba(0,255,140,.28);
-    background: rgba(0,0,0,.45);
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    cursor:pointer;
-    box-shadow: 0 0 18px rgba(0,255,140,.12);
-    transition: transform .12s ease, box-shadow .12s ease, border-color .12s ease;
-  }
-  .reactBtn:active{ transform: scale(.98); }
-  .reactBtn i{
-    font-size: 22px;
-    color: #fff;
-    text-shadow: 0 0 12px rgba(0,0,0,.55);
-  }
-  .reactBtn.selected{
-    border-color: rgba(0,255,140,.75);
-    box-shadow: 0 0 24px rgba(0,255,140,.25);
-    transform: translateY(-1px);
-  }
-
   /* ✅ QUEM VIU */
   .viewerFooter{
     position:absolute;
@@ -625,19 +586,86 @@
     opacity:.85;
     white-space:nowrap;
   }
-  .viewerReact{
-    display:inline-flex;
+
+  /* ===================== ✅ REAÇÕES DO STORY (APENAS PARA STORIES DE OUTROS) ===================== */
+  .reactionBar{
+    position:absolute;
+    right: 14px;
+    bottom: calc(18px + env(safe-area-inset-bottom));
+    z-index: 40;
+    display:none;
+    gap: 10px;
+    align-items:center;
+    padding: 10px 10px;
+    border-radius: 999px;
+    background: rgba(0,0,0,.55);
+    border: 1px solid rgba(255,255,255,.10);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    box-shadow: 0 0 22px rgba(0,0,0,.35);
+    user-select:none;
+    pointer-events:auto;
+  }
+  .reactBtn{
+    width: 46px;
+    height: 46px;
+    border-radius: 50%;
+    display:flex;
     align-items:center;
     justify-content:center;
-    width:30px;
-    height:30px;
-    border-radius: 10px;
-    margin-left:8px;
-    border:1px solid rgba(0,255,140,.22);
-    background: rgba(0,0,0,.35);
-    color:#fff;
-    font-size: 16px;
-    flex: 0 0 auto;
+    cursor:pointer;
+    border: 1px solid rgba(255,255,255,.12);
+    background: rgba(255,255,255,.06);
+    transition: transform .12s ease, box-shadow .12s ease, filter .12s ease;
+    position:relative;
+  }
+  .reactBtn:active{ transform: scale(.92); }
+  .reactIcon{
+    font-size: 22px;
+    line-height: 1;
+    filter: drop-shadow(0 0 10px rgba(0,0,0,.35));
+  }
+  .reactBtn.love .reactIcon{ color:#ff2a2a; text-shadow: 0 0 18px rgba(255,42,42,.55); }
+  .reactBtn.like .reactIcon{ color:#00ff8c; text-shadow: 0 0 20px rgba(0,255,140,.65); }
+  .reactBtn.haha .reactIcon{ color:#ffd400; text-shadow: 0 0 18px rgba(255,212,0,.55); }
+
+  .reactBtn.selected{
+    box-shadow: 0 0 18px rgba(255,255,255,.10), 0 0 28px rgba(0,255,140,.18);
+    border-color: rgba(0,255,140,.28);
+    transform: translateY(-1px);
+  }
+
+  /* ✅✅✅ animação "subir igual facebook" (CORRIGIDA: cada reação sobe na cor certa) */
+  .floatReaction{
+    position:absolute;
+    right: 0;
+    bottom: 0;
+    transform: translateY(0);
+    opacity: 0;
+    pointer-events:none;
+    z-index: 60;
+    font-size: 28px;
+    will-change: transform, opacity;
+    animation: floatUp 900ms ease-out forwards;
+    filter: drop-shadow(0 0 14px rgba(0,0,0,.55));
+  }
+  .floatReaction.love{
+    color:#ff2a2a;
+    text-shadow: 0 0 18px rgba(255,42,42,.55);
+  }
+  .floatReaction.like{
+    color:#00ff8c;
+    text-shadow: 0 0 20px rgba(0,255,140,.65);
+  }
+  .floatReaction.haha{
+    color:#ffd400;
+    text-shadow: 0 0 18px rgba(255,212,0,.55);
+  }
+  @keyframes floatUp{
+    0%   { transform: translate(0, 0) scale(.85); opacity: 0; }
+    10%  { opacity: 1; }
+    55%  { transform: translate(-10px, -95px) scale(1.15); opacity: 1; }
+    100% { transform: translate(-18px, -150px) scale(1.0); opacity: 0; }
   }
 
   /* ====================== LOGIN ====================== */
@@ -1114,14 +1142,20 @@
   <div class="tapRight" id="tapRight"></div>
   <div id="viewerMedia"></div>
 
-  <!-- ✅ REAÇÕES (SÓ EM STORIES DOS OUTROS) -->
-  <div class="reactionBar" id="reactionBar">
-    <div class="reactBtn" id="react_love" title="Coração" onclick="reactToStory('love')"><i class="fa-solid fa-heart"></i></div>
-    <div class="reactBtn" id="react_like" title="Curtir" onclick="reactToStory('like')"><i class="fa-solid fa-thumbs-up"></i></div>
-    <div class="reactBtn" id="react_haha" title="Haha" onclick="reactToStory('haha')"><i class="fa-solid fa-face-laugh-squint"></i></div>
+  <!-- ✅ REAÇÕES (APENAS NOS STORIES DE OUTROS) - AGORA DO LADO DIREITO -->
+  <div class="reactionBar" id="reactionBar" aria-label="Reagir ao story">
+    <div class="reactBtn love" id="reactLove" title="Coração" onclick="reactToStory('love')">
+      <span class="reactIcon">❤</span>
+    </div>
+    <div class="reactBtn like" id="reactLike" title="Curtir" onclick="reactToStory('like')">
+      <span class="reactIcon">👍</span>
+    </div>
+    <div class="reactBtn haha" id="reactHaha" title="Haha" onclick="reactToStory('haha')">
+      <span class="reactIcon">😂</span>
+    </div>
   </div>
 
-  <!-- ✅ QUEM VIU (DONO DO STORY) -->
+  <!-- ✅ QUEM VIU -->
   <div class="viewerFooter" id="viewerFooter">
     <div class="viewerFooterInner" id="viewerFooterInner" onclick="toggleViewersPanel()">
       <div class="seenText">
@@ -1693,107 +1727,430 @@ let viewersPanelOpen = false;
 let viewersRef = null;
 let CAN_SEE_VIEWERS = false;
 
-/* ✅ Reações */
-let reactionsRef = null;
-let myReactionRef = null;
-let currentReactionsObj = {};
-let myCurrentReaction = null;
-
 const reactionBar = document.getElementById("reactionBar");
-const reactBtnLove = document.getElementById("react_love");
-const reactBtnLike = document.getElementById("react_like");
-const reactBtnHaha = document.getElementById("react_haha");
+const reactLove = document.getElementById("reactLove");
+const reactLike = document.getElementById("reactLike");
+const reactHaha = document.getElementById("reactHaha");
 
-function reactIcon(type){
+let reactionsRef = null;
+let _latestViewsObj = {};
+let _latestReactsObj = {};
+
+/* ===== helpers de reação ===== */
+function reactionEmoji(type){
+  // ✅ força emoji colorido (coração NÃO fica branco)
   if(type === "love") return "❤️";
   if(type === "like") return "👍";
-  if(type === "haha") return "😆";
-  return "";
+  if(type === "haha") return "😂";
+  return "👍";
 }
-function clearReactSelected(){
-  [reactBtnLove, reactBtnLike, reactBtnHaha].forEach(b=>b && b.classList.remove("selected"));
+function reactionLabel(type){
+  if(type === "love") return "Coração";
+  if(type === "like") return "Curtir";
+  if(type === "haha") return "Haha";
+  return "Reação";
 }
-function setReactSelected(type){
-  clearReactSelected();
-  if(type === "love") reactBtnLove.classList.add("selected");
-  if(type === "like") reactBtnLike.classList.add("selected");
-  if(type === "haha") reactBtnHaha.classList.add("selected");
+function resetReactionButtons(){
+  reactLove.classList.remove("selected");
+  reactLike.classList.remove("selected");
+  reactHaha.classList.remove("selected");
 }
-function detachReactionsListener(){
+function selectReactionButton(type){
+  resetReactionButtons();
+  if(type === "love") reactLove.classList.add("selected");
+  if(type === "like") reactLike.classList.add("selected");
+  if(type === "haha") reactHaha.classList.add("selected");
+}
+function floatingReactionAnim(type){
   try{
-    if(reactionsRef){ reactionsRef.off(); reactionsRef = null; }
-  }catch(e){}
-  try{
-    if(myReactionRef){ myReactionRef.off(); myReactionRef = null; }
-  }catch(e){}
-  currentReactionsObj = {};
-  myCurrentReaction = null;
-  clearReactSelected();
-}
-function attachReactionsListener(story){
-  detachReactionsListener();
-  if(!story || !story.id) return;
+    const el = document.createElement("div");
+    el.className = "floatReaction " + (type || "");
+    el.textContent = reactionEmoji(type);
 
-  // para o DONO: precisamos das reações para mostrar junto dos viewers
-  reactionsRef = DB.ref(`storyReactions/${story.id}`);
-  reactionsRef.on("value", snap=>{
-    currentReactionsObj = snap.val() || {};
-    if(CAN_SEE_VIEWERS){
-      // re-renderiza lista com reações também
-      if(viewersRef){
-        // updateViewersUI será chamado pelo listener de views,
-        // mas aqui garantimos que ao mudar reação também atualize.
-        DB.ref(`storyViews/${story.id}`).once("value").then(s=>{
-          updateViewersUI(s.val() || {}, currentReactionsObj);
-        }).catch(()=>{});
-      }
-    }
-  });
+    // nasce próximo do botão correspondente
+    const btn = type==="love" ? reactLove : (type==="like" ? reactLike : reactHaha);
+    const rect = btn.getBoundingClientRect();
+    const vr = viewer.getBoundingClientRect();
 
-  // para QUEM ESTÁ VENDO (não dono): escuta a reação do próprio usuário
-  if(story.uid !== UID){
-    myReactionRef = DB.ref(`storyReactions/${story.id}/${UID}`);
-    myReactionRef.on("value", s=>{
-      const v = s.val();
-      myCurrentReaction = v ? (v.type || null) : null;
-      setReactSelected(myCurrentReaction);
-    });
-  }
+    el.style.right = (vr.right - rect.right + 10) + "px";
+    el.style.bottom = (vr.bottom - rect.bottom + 12) + "px";
+
+    viewer.appendChild(el);
+    setTimeout(()=>{ el.remove(); }, 1000);
+  }catch(e){}
 }
 
+/* ===================== REAÇÕES: grava no Firebase ===================== */
 async function reactToStory(type){
   try{
+    if(precisaLogin()) return;
     const s = activeStories[current];
     if(!s || !s.id) return;
-    if(precisaLogin()) return;
 
-    // só pode reagir em story de OUTRO usuário
+    // só em stories de outros usuários
     if(s.uid === UID) return;
+
+    unlockAudioOnce();
+    floatingReactionAnim(type);
 
     const ref = DB.ref(`storyReactions/${s.id}/${UID}`);
     const snap = await ref.once("value");
     const cur = snap.val();
 
-    // toggle: se clicar na mesma reação, remove; se clicar em outra, troca
+    // se clicar na mesma reação, remove (toggle)
     if(cur && cur.type === type){
       await ref.remove();
-      myCurrentReaction = null;
-      clearReactSelected();
+      resetReactionButtons();
     }else{
       await ref.set({
         uid: UID,
         userName: USER_NAME,
         type: type,
-        reactedAt: firebase.database.ServerValue.TIMESTAMP
+        createdAt: firebase.database.ServerValue.TIMESTAMP
       });
-      myCurrentReaction = type;
-      setReactSelected(type);
+      selectReactionButton(type);
     }
 
     playActionSound();
   }catch(e){}
 }
 
+function detachReactionsListener(){
+  try{
+    if(reactionsRef){
+      reactionsRef.off();
+      reactionsRef = null;
+    }
+  }catch(e){}
+}
+
+/* ===================== ✅ QUEM VIU (com nome + foto) ===================== */
+function closeViewersPanel(){
+  viewersPanelOpen = false;
+  viewersPanel.style.display = "none";
+  const ch = document.getElementById("seenChevron");
+  if(ch) ch.className = "fa-solid fa-chevron-up";
+}
+function toggleViewersPanel(){
+  if(!CAN_SEE_VIEWERS) return;
+  viewersPanelOpen = !viewersPanelOpen;
+  viewersPanel.style.display = viewersPanelOpen ? "block" : "none";
+  const ch = document.getElementById("seenChevron");
+  if(ch) ch.className = viewersPanelOpen ? "fa-solid fa-chevron-down" : "fa-solid fa-chevron-up";
+}
+function detachViewersListener(){
+  try{
+    if(viewersRef){
+      viewersRef.off();
+      viewersRef = null;
+    }
+  }catch(e){}
+}
+
+/* ✅✅✅ dono: painel UNIFICADO (somente FOTO + NOME + REAÇÃO) */
+async function renderOwnerPanel(viewsObj, reactsObj){
+  const views = viewsObj || {};
+  const reacts = reactsObj || {};
+
+  // monta mapa único por UID
+  const map = new Map();
+
+  // quem viu
+  Object.keys(views).forEach(uid=>{
+    const v = views[uid];
+    if(!v || !uid) return;
+    map.set(uid, {
+      uid,
+      userName: v.userName || "Usuário",
+      viewedAt: v.viewedAt || 0,
+      reactionType: null,
+      reactedAt: 0
+    });
+  });
+
+  // quem reagiu (pode ter reagido sem "view" registrado)
+  Object.keys(reacts).forEach(uid=>{
+    const r = reacts[uid];
+    if(!r || !uid) return;
+
+    const cur = map.get(uid) || {
+      uid,
+      userName: r.userName || "Usuário",
+      viewedAt: 0,
+      reactionType: null,
+      reactedAt: 0
+    };
+
+    cur.userName = r.userName || cur.userName || "Usuário";
+    cur.reactionType = r.type || null;
+    cur.reactedAt = r.createdAt || 0;
+
+    map.set(uid, cur);
+  });
+
+  const arr = Array.from(map.values());
+
+  // ordena: primeiro os mais recentes (view ou reaction)
+  arr.sort((a,b)=>{
+    const ta = Math.max(a.viewedAt||0, a.reactedAt||0);
+    const tb = Math.max(b.viewedAt||0, b.reactedAt||0);
+    return tb - ta;
+  });
+
+  // texto de "quem viu"
+  const totalViews = Object.keys(views).length;
+  if(totalViews === 0){
+    seenText.textContent = "Ninguém viu ainda";
+  }else{
+    // tenta pegar um nome legal do primeiro viewer (mais antigo) só pra frase
+    const viewArr = Object.keys(views).map(uid=>views[uid]).filter(Boolean).sort((a,b)=>(a.viewedAt||0)-(b.viewedAt||0));
+    const first = viewArr[0]?.userName || "Alguém";
+    if(totalViews === 1) seenText.textContent = `${first} viu este story`;
+    else seenText.textContent = `${first} e mais ${totalViews-1} viram este story`;
+  }
+
+  if(!arr.length){
+    viewersPanel.innerHTML = `<div style="padding:10px;opacity:.9;">Ninguém ainda.</div>`;
+    return;
+  }
+
+  const rows = await Promise.all(arr.map(async u=>{
+    const nome = (u.userName || "Usuário");
+    const prof = await getAvatarForUID(u.uid, nome);
+
+    const ava = prof.url
+      ? `<div style="width:36px;height:36px;border-radius:50%;overflow:hidden;border:1px solid rgba(0,255,140,.25);flex:0 0 auto;cursor:pointer;"
+              onclick="openProfileModal('${escapeHTML(u.uid)}')">
+           <img src="${prof.url}" style="width:100%;height:100%;object-fit:cover;display:block;" alt="avatar">
+         </div>`
+      : `<div style="width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;border:1px solid rgba(0,255,140,.25);color:#00ff8c;font-weight:900;flex:0 0 auto;cursor:pointer;"
+              onclick="openProfileModal('${escapeHTML(u.uid)}')">
+           ${escapeHTML(initials(nome))}
+         </div>`;
+
+    const type = u.reactionType;
+    const icon = type ? reactionEmoji(type) : "";
+    const color = type==="love" ? "#ff2a2a" : (type==="like" ? "#00ff8c" : (type==="haha" ? "#ffd400" : "#fff"));
+
+    return `
+      <div class="viewerRow" style="justify-content:space-between;">
+        <div style="display:flex;align-items:center;gap:10px;min-width:0;">
+          ${ava}
+          <div class="viewerName" style="max-width: 64vw;" onclick="openProfileModal('${escapeHTML(u.uid)}')">${escapeHTML(nome)}</div>
+        </div>
+
+        <div style="min-width:40px;display:flex;align-items:center;justify-content:flex-end;">
+          ${type ? `<div style="font-size:20px;color:${color};text-shadow:0 0 12px rgba(0,0,0,.4);">${icon}</div>` : `<div style="width:20px;height:20px;opacity:.15;">&nbsp;</div>`}
+        </div>
+      </div>
+    `;
+  }));
+
+  viewersPanel.innerHTML = rows.join("");
+}
+
+async function markStoryView(story){
+  try{
+    if(!story || !story.id) return;
+    if(precisaLogin()) return;
+    if(story.uid === UID) return;
+    await DB.ref(`storyViews/${story.id}/${UID}`).set({
+      uid: UID,
+      userName: USER_NAME,
+      viewedAt: firebase.database.ServerValue.TIMESTAMP
+    });
+  }catch(e){}
+}
+
+function attachOwnerListeners(story){
+  // dono do story: escuta views + reacts e renderiza junto no painel
+  detachViewersListener();
+  detachReactionsListener();
+  closeViewersPanel();
+
+  viewersPanel.innerHTML = `<div style="padding:10px;opacity:.9;">Carregando...</div>`;
+  seenText.textContent = "Carregando visualizações...";
+
+  if(!story || !story.id) return;
+
+  _latestViewsObj = {};
+  _latestReactsObj = {};
+
+  viewersRef = DB.ref(`storyViews/${story.id}`);
+  viewersRef.on("value", snap=>{
+    _latestViewsObj = snap.val() || {};
+    renderOwnerPanel(_latestViewsObj, _latestReactsObj);
+  });
+
+  reactionsRef = DB.ref(`storyReactions/${story.id}`);
+  reactionsRef.on("value", snap=>{
+    _latestReactsObj = snap.val() || {};
+    renderOwnerPanel(_latestViewsObj, _latestReactsObj);
+  });
+}
+
+/* VIEWER */
+function openViewer(idx){
+  current = idx;
+  viewer.style.display = "flex";
+  menuTop.classList.add("hide");
+  showStory();
+}
+function closeViewer(){
+  stopVideo();
+  viewer.style.display = "none";
+  deleteBtn.style.display = "none";
+  menuTop.classList.remove("hide");
+  clearTimeout(viewerTimer);
+  viewerTimer = null;
+
+  detachViewersListener();
+  detachReactionsListener();
+  closeViewersPanel();
+
+  // esconde barra de reação
+  reactionBar.style.display = "none";
+  resetReactionButtons();
+}
+function showStory(){
+  clearTimeout(viewerTimer);
+  viewerTimer = null;
+
+  viewerMedia.innerHTML = "";
+  bars.innerHTML = "";
+
+  const total = activeStories.length;
+  for(let i=0;i<total;i++){
+    const bar = document.createElement("div");
+    bar.className = "bar";
+    const fill = document.createElement("div");
+    fill.className = "barFill";
+    bar.appendChild(fill);
+    bars.appendChild(bar);
+    if(i<current) fill.style.width="100%";
+    if(i===current) fill.id="currentFill";
+  }
+
+  const s = activeStories[current];
+  if(!s){ closeViewer(); return; }
+
+  deleteBtn.style.display = "none";
+
+  CAN_SEE_VIEWERS = (s.uid === UID);
+
+  // ✅ barra de reações: só aparece quando for story de OUTRO usuário
+  if(s.uid !== UID){
+    reactionBar.style.display = "flex";
+    resetReactionButtons();
+
+    // marca visualização
+    markStoryView(s);
+
+    // pega minha reação atual para destacar (sem listener pesado)
+    DB.ref(`storyReactions/${s.id}/${UID}`).once("value").then(sn=>{
+      const v = sn.val();
+      if(v && v.type) selectReactionButton(v.type);
+      else resetReactionButtons();
+    }).catch(()=>{});
+  }else{
+    reactionBar.style.display = "none";
+    resetReactionButtons();
+  }
+
+  // ✅ dono: vê painel (foto + nome + reação)
+  if(CAN_SEE_VIEWERS){
+    viewerFooter.style.display = "block";
+    attachOwnerListeners(s);
+  }else{
+    viewerFooter.style.display = "none";
+    detachViewersListener();
+    detachReactionsListener();
+    closeViewersPanel();
+  }
+
+  // mídia
+  if((s.type||"").includes("image")){
+    const el = document.createElement("img");
+    el.src = s.url;
+    viewerMedia.appendChild(el);
+    runProgress(120000);
+    viewerTimer = setTimeout(()=>nextStory(), 120000);
+  }else{
+    const el = document.createElement("video");
+    el.src = s.url;
+    el.autoplay = true;
+    el.muted = false;
+    el.volume = 1;
+    el.controls = true;
+    el.playsInline = true;
+    el.preload = "metadata";
+
+    el.onloadedmetadata = ()=>{
+      const realDur = (el.duration||0)*1000;
+      const dur = Math.min(realDur||6000, 120000);
+      runProgress(dur);
+      viewerTimer = setTimeout(()=>nextStory(), dur);
+    };
+
+    viewerMedia.appendChild(el);
+    el.play().catch(()=>{});
+  }
+}
+function runProgress(ms){
+  const fill = document.getElementById("currentFill");
+  if(!fill) return;
+  fill.style.transition="none";
+  fill.style.width="0";
+  setTimeout(()=>{
+    fill.style.transition = `width ${ms}ms linear`;
+    fill.style.width="100%";
+  }, 40);
+}
+function stopVideo(){
+  const vid = viewerMedia.querySelector("video");
+  if(vid){
+    try{ vid.pause(); }catch(e){}
+    try{ vid.currentTime = 0; }catch(e){}
+    try{ vid.src = ""; }catch(e){}
+  }
+}
+function nextStory(){
+  stopVideo();
+  current++;
+  if(current >= activeStories.length) closeViewer();
+  else showStory();
+}
+function prevStory(){
+  if(current<=0) return;
+  stopVideo();
+  current--;
+  showStory();
+}
+tapRight.onclick = nextStory;
+tapLeft.onclick = prevStory;
+
+dots.onclick = ()=>{ deleteBtn.style.display = (deleteBtn.style.display==="block" ? "none" : "block"); };
+deleteBtn.onclick = async ()=>{
+  const s = activeStories[current];
+  if(!s) return;
+  try{
+    stopVideo();
+    await DB.ref("stories/" + s.id).remove();
+    await DB.ref("storyViews/" + s.id).remove().catch(()=>{});
+    await DB.ref("storyReactions/" + s.id).remove().catch(()=>{});
+    if(s.storagePath){
+      await ST.ref().child(s.storagePath).delete().catch(()=>{});
+    }
+    playActionSound();
+    if(current>0) current--;
+    closeViewer();
+  }catch(err){
+    console.log(err);
+    alert("Erro ao excluir story.");
+  }
+};
+
+/* cards */
 function renderCreateCard(){
   const card = document.createElement("div");
   card.className = "storyCard createCard";
@@ -1925,259 +2282,6 @@ async function addStory(file){
     hideLoading();
   }
 }
-
-/* ===================== ✅ QUEM VIU + REAÇÕES (com nome + foto) ===================== */
-function closeViewersPanel(){
-  viewersPanelOpen = false;
-  viewersPanel.style.display = "none";
-  const ch = document.getElementById("seenChevron");
-  if(ch) ch.className = "fa-solid fa-chevron-up";
-}
-function toggleViewersPanel(){
-  if(!CAN_SEE_VIEWERS) return;
-  viewersPanelOpen = !viewersPanelOpen;
-  viewersPanel.style.display = viewersPanelOpen ? "block" : "none";
-  const ch = document.getElementById("seenChevron");
-  if(ch) ch.className = viewersPanelOpen ? "fa-solid fa-chevron-down" : "fa-solid fa-chevron-up";
-}
-function detachViewersListener(){
-  try{
-    if(viewersRef){
-      viewersRef.off();
-      viewersRef = null;
-    }
-  }catch(e){}
-}
-
-/* ✅ agora recebe também reactionsObj */
-async function updateViewersUI(viewsObj, reactionsObj){
-  const obj = viewsObj || {};
-  const react = reactionsObj || {};
-
-  const arr = Object.keys(obj).map(uid=>obj[uid]).filter(Boolean);
-  arr.sort((a,b)=>(a.viewedAt||0)-(b.viewedAt||0));
-  const total = arr.length;
-
-  if(total === 0){
-    seenText.textContent = "Ninguém viu ainda";
-    viewersPanel.innerHTML = `<div style="padding:10px;opacity:.9;">Ninguém viu ainda.</div>`;
-    return;
-  }
-
-  const first = arr[0]?.userName || "Alguém";
-  if(total === 1) seenText.textContent = `${first} viu este story`;
-  else seenText.textContent = `${first} e mais ${total-1} viram este story`;
-
-  const rows = await Promise.all(arr.map(async v=>{
-    const nome = (v.userName || "Usuário");
-    const quando = v.viewedAt ? fmtDate(v.viewedAt) : "";
-
-    const r = react[v.uid];
-    const rType = r ? (r.type || "") : "";
-    const rIcon = rType ? reactIcon(rType) : "";
-
-    const prof = await getAvatarForUID(v.uid, nome);
-    const ava = prof.url
-      ? `<div style="width:34px;height:34px;border-radius:50%;overflow:hidden;border:1px solid rgba(0,255,140,.25);flex:0 0 auto;cursor:pointer;"
-              onclick="openProfileModal('${escapeHTML(v.uid)}')">
-           <img src="${prof.url}" style="width:100%;height:100%;object-fit:cover;display:block;" alt="avatar">
-         </div>`
-      : `<div style="width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;border:1px solid rgba(0,255,140,.25);color:#00ff8c;font-weight:900;flex:0 0 auto;cursor:pointer;"
-              onclick="openProfileModal('${escapeHTML(v.uid)}')">
-           ${escapeHTML(initials(nome))}
-         </div>`;
-
-    const reactHTML = rIcon ? `<span class="viewerReact" title="Reação">${escapeHTML(rIcon)}</span>` : "";
-
-    return `
-      <div class="viewerRow">
-        <div style="display:flex;align-items:center;gap:10px;min-width:0;">
-          ${ava}
-          <div class="viewerName" style="max-width: 50vw;">${escapeHTML(nome)}</div>
-          ${reactHTML}
-        </div>
-        <div class="viewerTime">${escapeHTML(quando)}</div>
-      </div>
-    `;
-  }));
-
-  viewersPanel.innerHTML = rows.join("");
-}
-
-async function markStoryView(story){
-  try{
-    if(!story || !story.id) return;
-    if(precisaLogin()) return;
-    if(story.uid === UID) return;
-    await DB.ref(`storyViews/${story.id}/${UID}`).set({
-      uid: UID,
-      userName: USER_NAME,
-      viewedAt: firebase.database.ServerValue.TIMESTAMP
-    });
-  }catch(e){}
-}
-
-function attachViewersListener(story){
-  detachViewersListener();
-  closeViewersPanel();
-  viewersPanel.innerHTML = "";
-  seenText.textContent = "Carregando visualizações...";
-  if(!story || !story.id) return;
-
-  // views
-  viewersRef = DB.ref(`storyViews/${story.id}`);
-  viewersRef.on("value", snap=>{
-    updateViewersUI(snap.val() || {}, currentReactionsObj || {});
-  });
-}
-
-/* VIEWER */
-function openViewer(idx){
-  current = idx;
-  viewer.style.display = "flex";
-  menuTop.classList.add("hide");
-  showStory();
-}
-function closeViewer(){
-  stopVideo();
-  viewer.style.display = "none";
-  deleteBtn.style.display = "none";
-  menuTop.classList.remove("hide");
-  clearTimeout(viewerTimer);
-  viewerTimer = null;
-
-  detachViewersListener();
-  detachReactionsListener();
-  closeViewersPanel();
-
-  // some a barra de reações ao fechar
-  reactionBar.style.display = "none";
-}
-
-function showStory(){
-  clearTimeout(viewerTimer);
-  viewerTimer = null;
-
-  viewerMedia.innerHTML = "";
-  bars.innerHTML = "";
-
-  const total = activeStories.length;
-  for(let i=0;i<total;i++){
-    const bar = document.createElement("div");
-    bar.className = "bar";
-    const fill = document.createElement("div");
-    fill.className = "barFill";
-    bar.appendChild(fill);
-    bars.appendChild(bar);
-    if(i<current) fill.style.width="100%";
-    if(i===current) fill.id="currentFill";
-  }
-
-  const s = activeStories[current];
-  if(!s){ closeViewer(); return; }
-
-  deleteBtn.style.display = "none";
-
-  CAN_SEE_VIEWERS = (s.uid === UID);
-
-  // ✅ DONO: mostra "quem viu"; NÃO dono: mostra reações (canto esquerdo embaixo)
-  if(CAN_SEE_VIEWERS){
-    viewerFooter.style.display = "block";
-    reactionBar.style.display = "none";
-    attachViewersListener(s);
-  }else{
-    viewerFooter.style.display = "none";
-    detachViewersListener();
-    closeViewersPanel();
-
-    reactionBar.style.display = "flex";
-  }
-
-  // ✅ escuta reações do story atual (para dono e para quem reage)
-  attachReactionsListener(s);
-
-  markStoryView(s);
-
-  if((s.type||"").includes("image")){
-    const el = document.createElement("img");
-    el.src = s.url;
-    viewerMedia.appendChild(el);
-    runProgress(120000);
-    viewerTimer = setTimeout(()=>nextStory(), 120000);
-  }else{
-    const el = document.createElement("video");
-    el.src = s.url;
-    el.autoplay = true;
-    el.muted = false;
-    el.volume = 1;
-    el.controls = true;
-    el.playsInline = true;
-    el.preload = "metadata";
-
-    el.onloadedmetadata = ()=>{
-      const realDur = (el.duration||0)*1000;
-      const dur = Math.min(realDur||6000, 120000);
-      runProgress(dur);
-      viewerTimer = setTimeout(()=>nextStory(), dur);
-    };
-
-    viewerMedia.appendChild(el);
-    el.play().catch(()=>{});
-  }
-}
-function runProgress(ms){
-  const fill = document.getElementById("currentFill");
-  if(!fill) return;
-  fill.style.transition="none";
-  fill.style.width="0";
-  setTimeout(()=>{
-    fill.style.transition = `width ${ms}ms linear`;
-    fill.style.width="100%";
-  }, 40);
-}
-function stopVideo(){
-  const vid = viewerMedia.querySelector("video");
-  if(vid){
-    try{ vid.pause(); }catch(e){}
-    try{ vid.currentTime = 0; }catch(e){}
-    try{ vid.src = ""; }catch(e){}
-  }
-}
-function nextStory(){
-  stopVideo();
-  current++;
-  if(current >= activeStories.length) closeViewer();
-  else showStory();
-}
-function prevStory(){
-  if(current<=0) return;
-  stopVideo();
-  current--;
-  showStory();
-}
-tapRight.onclick = nextStory;
-tapLeft.onclick = prevStory;
-
-dots.onclick = ()=>{ deleteBtn.style.display = (deleteBtn.style.display==="block" ? "none" : "block"); };
-deleteBtn.onclick = async ()=>{
-  const s = activeStories[current];
-  if(!s) return;
-  try{
-    stopVideo();
-    await DB.ref("stories/" + s.id).remove();
-    await DB.ref("storyViews/" + s.id).remove().catch(()=>{});
-    await DB.ref("storyReactions/" + s.id).remove().catch(()=>{});
-    if(s.storagePath){
-      await ST.ref().child(s.storagePath).delete().catch(()=>{});
-    }
-    playActionSound();
-    if(current>0) current--;
-    closeViewer();
-  }catch(err){
-    console.log(err);
-    alert("Erro ao excluir story.");
-  }
-};
 
 (function listenStories(){
   const ref = DB.ref("stories").orderByChild("createdAt").limitToLast(500);
