@@ -80,6 +80,7 @@
     background:#111;
     overflow:hidden;
     border-bottom:1px solid rgba(0,255,140,.22);
+    cursor:pointer; /* ✅ clicar na capa/previa */
   }
   .cover img{
     width:100%;
@@ -117,6 +118,7 @@
     display:flex;
     align-items:center;
     justify-content:center;
+    cursor:pointer; /* ✅ clicar no avatar/previa */
   }
   .avatar img{
     width:100%;
@@ -334,6 +336,7 @@
     display:flex; align-items:center; justify-content:center;
   }
   .cAvatar img{ width:100%; height:100%; object-fit:cover; display:block; }
+  .cAvatar .init{ font-weight:900; color:#00ff9d; }
   .cName{
     font-weight:900;
     color:#00ff9d;
@@ -412,6 +415,32 @@
     color:#003b23;
     box-shadow:0 0 18px rgba(0,255,140,.55);
   }
+
+  /* ✅ MINI POPUP ONLINE/OFFLINE ao clicar na prévia */
+  .toastStatus{
+    position: fixed;
+    left: 50%;
+    bottom: calc(16px + env(safe-area-inset-bottom));
+    transform: translateX(-50%);
+    background: rgba(0,0,0,.82);
+    border: 1px solid rgba(0,255,140,.35);
+    box-shadow: 0 0 18px rgba(0,255,140,.22);
+    color: #fff;
+    padding: 10px 14px;
+    border-radius: 999px;
+    font-weight: 900;
+    display:none;
+    align-items:center;
+    gap:10px;
+    z-index: 99999999;
+    max-width: 92vw;
+    text-align:center;
+  }
+  .toastDot{
+    width:10px; height:10px; border-radius:50%;
+  }
+  .toastDot.on{ background:#00ff4c; box-shadow:0 0 14px rgba(0,255,76,.9); }
+  .toastDot.off{ background:#ffd000; box-shadow:0 0 14px rgba(255,208,0,.75); }
 </style>
 </head>
 
@@ -424,6 +453,12 @@
     <input id="loginName" class="login-input" maxlength="24" placeholder="Digite seu nome" autocomplete="off">
     <button class="login-btn" onclick="confirmarNome()">Entrar</button>
   </div>
+</div>
+
+<!-- ✅ TOAST STATUS -->
+<div class="toastStatus" id="toastStatus" aria-live="polite">
+  <span class="toastDot on" id="toastDot"></span>
+  <span id="toastText">Online</span>
 </div>
 
 <!-- TOPBAR -->
@@ -443,14 +478,14 @@
 <div class="wrap">
 
   <!-- CAPA -->
-  <div class="cover">
+  <div class="cover" id="previewClickableCover" title="Toque para ver o status">
     <img id="coverImg" alt="Capa do perfil">
     <div class="coverShade"></div>
   </div>
 
   <!-- FOTO PERFIL + IDENTIDADE -->
   <div class="avatarRow">
-    <div class="avatar">
+    <div class="avatar" id="previewClickableAvatar" title="Toque para ver o status">
       <img id="avatarImg" alt="Foto do perfil" style="display:none;">
       <div id="avatarInitial" class="avatarInitial">U</div>
     </div>
@@ -473,7 +508,6 @@
 
     <div class="bioBox">
       <div class="bioText" id="bioText">Carregando...</div>
-      <!-- ✅ removido: nome abaixo da bio e link -->
     </div>
 
     <div style="margin-top:14px; display:flex; align-items:center; justify-content:space-between; gap:10px;">
@@ -573,7 +607,7 @@ document.addEventListener("keydown", (e)=>{
 function escapeHTML(str){
   return (str || "")
     .replaceAll("&","&amp;").replaceAll("<","&lt;")
-    .replaceAll(">","&gt;").replaceAll('"',"&quot;")
+    .replaceAll(">","&gt;").replaceAll('"',"quot;")
     .replaceAll("'","&#039;");
 }
 function initials(name){
@@ -616,7 +650,10 @@ function setCover(url){
     </svg>
   `);
 }
+let CURRENT_ONLINE = false; /* ✅ status atual pra mostrar no clique */
+
 function setStatus(isOnline){
+  CURRENT_ONLINE = !!isOnline;
   if(isOnline){
     statusText.textContent = "Online";
     statusDot.classList.remove("offline");
@@ -630,6 +667,21 @@ function setStatus(isOnline){
     statusPill.classList.add("offline");
   }
 }
+
+/* ✅ mostrar status ao clicar na prévia (capa ou avatar) */
+let toastTimer = null;
+function showStatusToast(){
+  const on = CURRENT_ONLINE === true;
+  toastDot.classList.toggle("on", on);
+  toastDot.classList.toggle("off", !on);
+  toastText.textContent = on ? "Online agora" : "Offline agora";
+
+  toastStatus.style.display = "inline-flex";
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(()=>{ toastStatus.style.display = "none"; }, 1600);
+}
+previewClickableCover.addEventListener("click", showStatusToast);
+previewClickableAvatar.addEventListener("click", showStatusToast);
 
 /* ====================== CARREGAR PERFIL ====================== */
 async function loadProfile(){
@@ -670,6 +722,26 @@ async function loadProfile(){
 let cachedName = "Usuário";
 let cachedAvatar = "";
 
+/* ✅ pega foto do comentarista:
+   - se o seu banco tiver "profiles/{uid}/avatarDataUrl" ou "avatarUrl", ele mostra a foto
+   - se não tiver, mostra iniciais */
+const avatarCache = {}; // uid -> url ou ""
+function getAvatarUrlFromProfile(p){
+  return (p && (p.avatarDataUrl || p.avatarUrl || "")) || "";
+}
+function fetchAvatarUrl(uid){
+  return new Promise((resolve)=>{
+    if(!uid){ resolve(""); return; }
+    if(avatarCache[uid] !== undefined){ resolve(avatarCache[uid]); return; }
+    DB.ref("profiles/" + uid).once("value").then(s=>{
+      const p = s.val() || {};
+      const url = getAvatarUrlFromProfile(p) || "";
+      avatarCache[uid] = url;
+      resolve(url);
+    }).catch(()=>{ avatarCache[uid]=""; resolve(""); });
+  });
+}
+
 function postHTML(postId, d){
   let midia = "";
   if(d.mediaUrl){
@@ -709,7 +781,8 @@ function postHTML(postId, d){
         </div>
 
         <div style="text-align:center;">
-          <div class="btn-action" onclick="abrirComentarios('${postId}')">💬 Comentar</div>
+          <!-- ✅ 1 clique abre / 2 clique fecha -->
+          <div class="btn-action" onclick="toggleComentarios('${postId}')">💬 Comentar</div>
           <div class="contador" id="commentsCount_${postId}"></div>
         </div>
       </div>
@@ -729,21 +802,12 @@ function postHTML(postId, d){
   `;
 }
 
-function abrirComentarios(postId){
+/* ✅ 1 clique abre / 2 clique fecha (toggle) */
+function toggleComentarios(postId){
   const box = document.getElementById("comentBox_"+postId);
   if(!box) return;
-  box.style.display = "block";
-
-  document.removeEventListener("click", fecharBox);
-  function fecharBox(e){
-    const insideBox = box.contains(e.target);
-    const clickedButton = e.target.closest(".btn-action");
-    if(!insideBox && !clickedButton){
-      box.style.display = "none";
-      document.removeEventListener("click", fecharBox);
-    }
-  }
-  setTimeout(()=> document.addEventListener("click", fecharBox), 50);
+  const isOpen = (box.style.display === "block");
+  box.style.display = isOpen ? "none" : "block";
 }
 
 async function curtir(postId){
@@ -768,9 +832,14 @@ async function enviarComentario(postId){
   if(!texto) return;
 
   const commentId = "cmt_" + Date.now() + "_" + Math.random().toString(36).slice(2);
+
+  /* ✅ tenta salvar também foto do usuário que comenta (se existir em profiles) */
+  const myAvatarUrl = await fetchAvatarUrl(UID);
+
   await DB.ref(`comments/${postId}/${commentId}`).set({
     uid: UID,
     userName: USER_NAME,
+    avatarUrl: myAvatarUrl || "",   // ✅ foto no comentário (se houver)
     text: texto,
     createdAt: firebase.database.ServerValue.TIMESTAMP
   });
@@ -801,8 +870,10 @@ function listenLikes(postId){
   });
 }
 
+/* ✅ agora mostra FOTO do comentarista:
+   prioridade: comment.avatarUrl -> profiles/{uid} -> iniciais */
 function listenComments(postId){
-  DB.ref("comments/" + postId).orderByChild("createdAt").on("value", snap=>{
+  DB.ref("comments/" + postId).orderByChild("createdAt").on("value", async snap=>{
     const obj = snap.val() || {};
     const arr = Object.keys(obj).map(id=>({ id, ...obj[id] }))
       .sort((a,b)=>(a.createdAt||0)-(b.createdAt||0));
@@ -819,19 +890,32 @@ function listenComments(postId){
       return;
     }
 
-    list.innerHTML = arr.map(c=>{
+    const htmlParts = await Promise.all(arr.map(async (c)=>{
       const nome = c.userName || "Usuário";
       const txt = escapeHTML(c.text || "");
+      const uid = c.uid || "";
+      let url = (c.avatarUrl || "").trim();
+
+      if(!url && uid){
+        url = await fetchAvatarUrl(uid);
+      }
+
+      const avatarHTML = url
+        ? `<img src="${url}" alt="foto">`
+        : `<div class="init">${escapeHTML(initials(nome))}</div>`;
+
       return `
         <div class="cRow">
           <div class="cHead">
-            <div class="cAvatar"><div class="init" style="font-weight:900;color:#00ff9d;">${escapeHTML(initials(nome))}</div></div>
+            <div class="cAvatar">${avatarHTML}</div>
             <div class="cName">${escapeHTML(nome)}</div>
           </div>
           <div class="cText">💬 ${txt}</div>
         </div>
       `;
-    }).join("");
+    }));
+
+    list.innerHTML = htmlParts.join("");
   });
 }
 
@@ -844,8 +928,6 @@ function listenFeed(){
     cachedAvatar = p.avatarDataUrl || p.avatarUrl || "";
   });
 
-  // ⚠️ IMPORTANTE: seu banco não tem índice por uid no caminho posts (é um objeto por postId).
-  // Então usamos "value" e filtramos no cliente (igual o seu feed).
   const ref = DB.ref("posts").limitToLast(300);
   ref.on("value", snap=>{
     const obj = snap.val() || {};
@@ -861,7 +943,6 @@ function listenFeed(){
       return;
     }
 
-    // Render + listeners
     feed.innerHTML = entries.slice().reverse().map(p=> postHTML(p.id, p)).join("");
 
     entries.forEach(p=>{
@@ -883,4 +964,3 @@ function listenFeed(){
 
 </body>
 </html>
-
