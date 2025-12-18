@@ -129,17 +129,25 @@
     padding-top: env(safe-area-inset-top);
   }
   .topbarInner{
-    height: 56px;
+    min-height: 56px;
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    position:relative;
+    padding: 10px 10px 10px 10px;
+    gap: 10px;
+  }
+  .topRow{
+    height: 40px;
     display:flex;
     align-items:center;
     justify-content:center;
     position:relative;
-    padding: 0 10px;
   }
 
   .backBtn{
     position:absolute;
-    left: 10px;
+    left: 0px;
     top: 50%;
     transform: translateY(-50%);
     display:flex;
@@ -164,6 +172,77 @@
     text-shadow: 0 0 12px rgba(0,255,157,.22);
     letter-spacing:.4px;
     font-size: 18px;
+    text-align:center;
+  }
+
+  /* ===================== ONLINE STORIES ===================== */
+  .onlineBar{
+    width:100%;
+    overflow-x:auto;
+    overflow-y:hidden;
+    -webkit-overflow-scrolling: touch;
+    display:flex;
+    gap: 10px;
+    padding: 0 2px 2px 2px;
+  }
+  .onlineBar::-webkit-scrollbar{ height:6px; }
+  .onlineBar::-webkit-scrollbar-thumb{ background:#00ff9d; border-radius:999px; }
+
+  .oItem{
+    flex:0 0 auto;
+    width: 54px;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:6px;
+    user-select:none;
+  }
+  .oAvatar{
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    overflow:hidden;
+    background:#000;
+    border: 2px solid rgba(0,255,157,.55);
+    box-shadow: 0 0 12px rgba(0,255,157,.20);
+    position:relative;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+  }
+  .oAvatar img{ width:100%; height:100%; object-fit:cover; display:block; }
+  .oAvatar .init{
+    font-weight:900;
+    color:#00ff9d;
+    font-size: 14px;
+  }
+
+  /* bolinha verde piscando */
+  .oDot{
+    position:absolute;
+    right: 2px;
+    bottom: 2px;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: #00ff4c;
+    border: 2px solid #0d0d0d;
+    box-shadow: 0 0 14px rgba(0,255,76,.9);
+    animation: blinkDot 0.9s infinite;
+  }
+  @keyframes blinkDot{
+    0%, 100%{ transform: scale(1); opacity: 1; }
+    50%{ transform: scale(1.35); opacity: .25; }
+  }
+
+  .oName{
+    font-size: 10px;
+    opacity:.9;
+    color:#7bffb5;
+    max-width: 54px;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    white-space:nowrap;
     text-align:center;
   }
 
@@ -208,7 +287,7 @@
     border-radius: 16px;
     padding: 10px 44px 10px 12px;
     box-shadow: 0 0 10px rgba(0,255,157,.12);
-    overflow: visible; /* ✅ para o "Excluir" não cortar no celular */
+    overflow: visible;
   }
   .msgTop{
     display:flex;
@@ -239,10 +318,7 @@
     overflow-wrap:anywhere;
     opacity:.98;
   }
-  .msgMedia{
-    margin-top: 8px;
-    width:100%;
-  }
+  .msgMedia{ margin-top: 8px; width:100%; }
   .msgMedia img{
     width: 100%;
     max-width: 520px;
@@ -262,13 +338,10 @@
     user-select:none;
     line-height:1;
   }
-
-  /* ✅ Excluir mais bonito (e sem cortar) */
   .msgMenuBox{
     position:absolute;
     top: 38px;
     right: 10px;
-    display:none;
     z-index: 999;
     cursor:pointer;
     user-select:none;
@@ -286,7 +359,7 @@
     white-space: nowrap;
     min-width: 120px;
 
-    display: none;
+    display:none;
     align-items:center;
     gap: 10px;
     justify-content:center;
@@ -408,9 +481,6 @@
     cursor:pointer;
     user-select:none;
   }
-
-  /* Mobile: garante zero rolagem horizontal */
-  .app, .messages, .composer, .composerInner, .msgRow, .msgBubble { max-width:100%; }
 </style>
 </head>
 
@@ -439,11 +509,18 @@
   <!-- TOPO -->
   <div class="topbar">
     <div class="topbarInner">
-      <a class="backBtn" href="#" onclick="goBackSite(event)">
-        <i class="fa-solid fa-arrow-left"></i>
-        <span>Voltar</span>
-      </a>
-      <div class="title">Grupo do terreiro</div>
+
+      <div class="topRow">
+        <a class="backBtn" href="#" onclick="goBackSite(event)">
+          <i class="fa-solid fa-arrow-left"></i>
+          <span>Voltar</span>
+        </a>
+        <div class="title">Grupo do terreiro</div>
+      </div>
+
+      <!-- ✅ ONLINE AVATARS (STORIES) -->
+      <div class="onlineBar" id="onlineBar" aria-label="Usuários online"></div>
+
     </div>
   </div>
 
@@ -510,7 +587,7 @@ const DB = firebase.database();
 const ST = firebase.storage();
 
 /* ====================== SOM (ENVIAR E RECEBER) ====================== */
-const CHAT_SOUND_URL = "somm.mp3";
+const CHAT_SOUND_URL = "somm.mp3"; // coloque esse arquivo no GitHub na mesma pasta do HTML
 const chatSfx = new Audio(CHAT_SOUND_URL);
 chatSfx.preload = "auto";
 chatSfx.volume = 1.0;
@@ -621,15 +698,12 @@ function fmtDate(ts){
 const loadingOverlay = document.getElementById("loadingOverlay");
 const loadingText = document.getElementById("loadingText");
 const loadingSub  = document.getElementById("loadingSub");
-
 function showLoading(title, sub){
   loadingText.textContent = title || "Enviando...";
   loadingSub.textContent = sub || "Aguarde um instante";
   loadingOverlay.style.display = "flex";
 }
-function hideLoading(){
-  loadingOverlay.style.display = "none";
-}
+function hideLoading(){ loadingOverlay.style.display = "none"; }
 
 /* ====================== PRESENÇA ONLINE ====================== */
 let presenceRef = null;
@@ -702,6 +776,7 @@ async function getAvatarForUID(uid, fallbackName){
       const uu = px.avatarDataUrl || px.avatarUrl || "";
       profileCache.set(uid, { url: uu, name: nn });
 
+      // Atualiza avatars nas mensagens
       document.querySelectorAll(`[data-avatar-uid="${uid}"]`).forEach(el=>{
         if(uu) el.innerHTML = `<img src="${uu}" alt="avatar">`;
         else el.innerHTML = `<div class="init">${escapeHTML(initials(nn||"U"))}</div>`;
@@ -709,6 +784,15 @@ async function getAvatarForUID(uid, fallbackName){
       document.querySelectorAll(`[data-name-uid="${uid}"]`).forEach(el=>{
         el.textContent = nn || "Usuário";
       });
+
+      // Atualiza online bar (se existir)
+      const oAva = document.querySelector(`[data-online-avatar-uid="${uid}"]`);
+      if(oAva){
+        if(uu) oAva.innerHTML = `<img src="${uu}" alt="avatar">`;
+        else oAva.innerHTML = `<div class="init">${escapeHTML(initials(nn||"U"))}</div>`;
+      }
+      const oName = document.querySelector(`[data-online-name-uid="${uid}"]`);
+      if(oName) oName.textContent = nn || "Usuário";
     });
 
     return obj;
@@ -718,6 +802,42 @@ async function getAvatarForUID(uid, fallbackName){
     return obj;
   }
 }
+</script>
+
+<script>
+/* ===================== ONLINE BAR (STORIES) ===================== */
+const onlineBar = document.getElementById("onlineBar");
+
+function onlineItemHTML(uid, name, avatarUrl){
+  const ava = avatarUrl
+    ? `<div class="oAvatar" data-online-avatar-uid="${escapeHTML(uid)}"><img src="${avatarUrl}" alt="avatar"><span class="oDot"></span></div>`
+    : `<div class="oAvatar" data-online-avatar-uid="${escapeHTML(uid)}"><div class="init">${escapeHTML(initials(name||"U"))}</div><span class="oDot"></span></div>`;
+
+  return `
+    <div class="oItem" title="${escapeHTML(name||'Usuário')}">
+      ${ava}
+      <div class="oName" data-online-name-uid="${escapeHTML(uid)}">${escapeHTML(name||"Usuário")}</div>
+    </div>
+  `;
+}
+
+DB.ref("presence").on("value", async (snap)=>{
+  const obj = snap.val() || {};
+  const users = Object.values(obj)
+    .filter(Boolean)
+    .sort((a,b)=>(b.lastActive||0)-(a.lastActive||0));
+
+  const first = users.slice(0, 80);
+
+  const htmls = await Promise.all(first.map(async u=>{
+    const uid = u.uid || "";
+    const nm  = u.userName || "Usuário";
+    const prof = await getAvatarForUID(uid, nm);
+    return onlineItemHTML(uid, prof.name || nm, prof.url || "");
+  }));
+
+  onlineBar.innerHTML = htmls.join("");
+});
 </script>
 
 <script>
