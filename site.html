@@ -12,6 +12,27 @@
   html, body{ width:100%; max-width:100%; overflow-x:hidden; }
   body{ margin:0; background:#000; font-family: Arial, sans-serif; color:#fff; padding-bottom: env(safe-area-inset-bottom); }
 
+  /* ======================== LOGO (ACIMA DO MENU) ======================== */
+  .logo-bar{
+    width:100%;
+    background:#000;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    padding: 10px 10px 6px 10px;
+  }
+  .logo-bar img{
+    width: clamp(180px, 58vw, 420px);
+    height: auto;
+    max-height: 120px;
+    object-fit: contain;
+    display:block;
+  }
+  @media(max-width:480px){
+    .logo-bar{ padding: 10px 10px 6px 10px; }
+    .logo-bar img{ max-height: 86px; }
+  }
+
   /* ======================== MENU NEON ======================== */
   .top-menu {
     width: 100%;
@@ -752,6 +773,11 @@
     <div class="loadingText" id="loadingText">Enviando...</div>
     <div class="loadingSub" id="loadingSub">Aguarde um instante</div>
   </div>
+</div>
+
+<!-- ✅ LOGO ACIMA DO MENU (CENTRALIZADA / RESPONSIVA) -->
+<div class="logo-bar">
+  <img src="https://i.ibb.co/h1RmgKSX/Chat-GPT-Image-17-12-2025-21-32-09.png" alt="Logo" loading="eager">
 </div>
 
 <!-- MENU (sem botão sair + com ícone perfil) -->
