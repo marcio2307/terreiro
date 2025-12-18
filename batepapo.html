@@ -164,6 +164,7 @@
     text-shadow: 0 0 12px rgba(0,255,157,.22);
     letter-spacing:.4px;
     font-size: 18px;
+    text-align:center;
   }
 
   /* Área de mensagens (rola só aqui) */
@@ -207,7 +208,7 @@
     border-radius: 16px;
     padding: 10px 44px 10px 12px;
     box-shadow: 0 0 10px rgba(0,255,157,.12);
-    overflow:hidden;
+    overflow: visible; /* ✅ para o "Excluir" não cortar no celular */
   }
   .msgTop{
     display:flex;
@@ -261,21 +262,36 @@
     user-select:none;
     line-height:1;
   }
+
+  /* ✅ Excluir mais bonito (e sem cortar) */
   .msgMenuBox{
     position:absolute;
     top: 38px;
     right: 10px;
-    background:#00ff9d;
-    color:#000;
-    padding: 8px 10px;
-    border-radius: 10px;
     display:none;
-    font-weight:900;
+    z-index: 999;
     cursor:pointer;
-    box-shadow: 0 0 12px rgba(0,255,157,.55);
-    z-index: 5;
-    line-height:1;
+    user-select:none;
+
+    background: linear-gradient(180deg, #00ff9d 0%, #7bffb5 100%);
+    color:#003b23;
+    padding: 10px 14px;
+    border-radius: 14px;
+    font-weight: 900;
+    font-size: 14px;
+    letter-spacing: .2px;
+    box-shadow: 0 0 18px rgba(0,255,157,.55);
+    border: 1px solid rgba(0,0,0,.25);
+
+    white-space: nowrap;
+    min-width: 120px;
+
+    display: none;
+    align-items:center;
+    gap: 10px;
+    justify-content:center;
   }
+  .msgMenuBox i{ font-size: 16px; }
 
   /* Composer */
   .composer{
@@ -427,7 +443,7 @@
         <i class="fa-solid fa-arrow-left"></i>
         <span>Voltar</span>
       </a>
-      <div class="title">Bate papo</div>
+      <div class="title">Grupo do terreiro</div>
     </div>
   </div>
 
@@ -476,7 +492,6 @@
 const BACK_URL = "https://marcio2307.github.io/terreiro/site.html";
 function goBackSite(ev){
   ev.preventDefault();
-  // não remove localStorage (mantém nome/uid)
   window.location.href = BACK_URL;
 }
 
@@ -495,7 +510,6 @@ const DB = firebase.database();
 const ST = firebase.storage();
 
 /* ====================== SOM (ENVIAR E RECEBER) ====================== */
-/* Coloque o arquivo somm.mp3 na MESMA PASTA deste HTML no GitHub Pages */
 const CHAT_SOUND_URL = "somm.mp3";
 const chatSfx = new Audio(CHAT_SOUND_URL);
 chatSfx.preload = "auto";
@@ -802,7 +816,7 @@ async function sendText(){
 
   try{
     await pushMessage({ text, mediaUrl:null, mediaType:null, storagePath:null });
-    playChatSound(); // som ao ENVIAR
+    playChatSound();
     msgInput.value = "";
     autoGrow();
   }catch(err){
@@ -813,7 +827,7 @@ async function sendText(){
   }
 }
 
-/* Enviar imagem (com texto opcional) */
+/* Enviar imagem */
 async function sendImage(file){
   if(precisaLogin()) return;
 
@@ -841,7 +855,7 @@ async function sendImage(file){
       createdAt: firebase.database.ServerValue.TIMESTAMP
     });
 
-    playChatSound(); // som ao ENVIAR
+    playChatSound();
     msgInput.value = "";
     autoGrow();
   }catch(err){
@@ -867,11 +881,11 @@ async function pushMessage({text, mediaUrl, mediaType, storagePath}){
   });
 }
 
-/* Toggle menu ⋮ e excluir (QUALQUER usuário pode excluir QUALQUER msg) */
+/* Menu ⋮ e excluir */
 function toggleMsgMenu(id){
   const box = document.getElementById("menu_"+id);
   if(!box) return;
-  box.style.display = (box.style.display === "block" ? "none" : "block");
+  box.style.display = (box.style.display === "flex" ? "none" : "flex");
 }
 async function deleteMessage(id){
   try{
@@ -910,7 +924,9 @@ function messageHTML(m, avatarUrl, displayName){
       ${avatar}
       <div class="msgBubble">
         <div class="msgMenuBtn" onclick="toggleMsgMenu('${escapeHTML(m.id)}')">⋮</div>
-        <div class="msgMenuBox" id="menu_${escapeHTML(m.id)}" onclick="deleteMessage('${escapeHTML(m.id)}')">Excluir</div>
+        <div class="msgMenuBox" id="menu_${escapeHTML(m.id)}" onclick="deleteMessage('${escapeHTML(m.id)}')">
+          <i class="fa-solid fa-trash"></i> Excluir
+        </div>
 
         <div class="msgTop">
           <div class="msgName" data-name-uid="${escapeHTML(uid)}">${escapeHTML(name)}</div>
@@ -924,12 +940,11 @@ function messageHTML(m, avatarUrl, displayName){
   `;
 }
 
-/* Scroll helper */
 function scrollToBottom(){
   messagesEl.scrollTop = messagesEl.scrollHeight;
 }
 
-/* Listener (últimas 200) + som ao RECEBER */
+/* Listener + som ao receber (não no carregamento inicial) */
 const rendered = new Set();
 let firstLoadDone = false;
 
@@ -946,16 +961,11 @@ DB.ref(MSG_PATH).orderByChild("createdAt").limitToLast(200).on("child_added", as
   wrapper.innerHTML = messageHTML(m, prof.url, prof.name).trim();
   messagesEl.appendChild(wrapper.firstChild);
 
-  // Som ao RECEBER (não toca no carregamento inicial)
-  if(firstLoadDone){
-    playChatSound();
-  }
+  if(firstLoadDone) playChatSound();
 
   setTimeout(()=>{ scrollToBottom(); }, 20);
 
-  // marca que já carregou pelo menos uma vez
   if(!firstLoadDone){
-    // após o primeiro batch começar a entrar, ativamos depois de um pequeno delay
     clearTimeout(window.__firstLoadTimer);
     window.__firstLoadTimer = setTimeout(()=>{ firstLoadDone = true; }, 900);
   }
