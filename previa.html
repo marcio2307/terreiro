@@ -80,7 +80,7 @@
     background:#111;
     overflow:hidden;
     border-bottom:1px solid rgba(0,255,140,.22);
-    cursor:pointer; /* ✅ clicar na capa/previa */
+    cursor:pointer;
   }
   .cover img{
     width:100%;
@@ -118,7 +118,7 @@
     display:flex;
     align-items:center;
     justify-content:center;
-    cursor:pointer; /* ✅ clicar no avatar/previa */
+    cursor:pointer;
   }
   .avatar img{
     width:100%;
@@ -416,7 +416,7 @@
     box-shadow:0 0 18px rgba(0,255,140,.55);
   }
 
-  /* ✅ MINI POPUP ONLINE/OFFLINE ao clicar na prévia */
+  /* TOAST STATUS */
   .toastStatus{
     position: fixed;
     left: 50%;
@@ -455,7 +455,7 @@
   </div>
 </div>
 
-<!-- ✅ TOAST STATUS -->
+<!-- TOAST STATUS -->
 <div class="toastStatus" id="toastStatus" aria-live="polite">
   <span class="toastDot on" id="toastDot"></span>
   <span id="toastText">Online</span>
@@ -607,7 +607,7 @@ document.addEventListener("keydown", (e)=>{
 function escapeHTML(str){
   return (str || "")
     .replaceAll("&","&amp;").replaceAll("<","&lt;")
-    .replaceAll(">","&gt;").replaceAll('"',"quot;")
+    .replaceAll(">","&gt;").replaceAll('"',"&quot;")
     .replaceAll("'","&#039;");
 }
 function initials(name){
@@ -650,10 +650,15 @@ function setCover(url){
     </svg>
   `);
 }
-let CURRENT_ONLINE = false; /* ✅ status atual pra mostrar no clique */
+
+/* ✅ status do perfil que está aberto (TARGET_UID) */
+let CURRENT_TARGET_ONLINE = false;
+
+/* ✅ status do PRÓPRIO usuário (UID local: uid_passageiro) */
+let CURRENT_SELF_ONLINE = true; // se está navegando aqui, consideramos online (e atualizamos presença)
 
 function setStatus(isOnline){
-  CURRENT_ONLINE = !!isOnline;
+  CURRENT_TARGET_ONLINE = !!isOnline;
   if(isOnline){
     statusText.textContent = "Online";
     statusDot.classList.remove("offline");
@@ -668,13 +673,48 @@ function setStatus(isOnline){
   }
 }
 
-/* ✅ mostrar status ao clicar na prévia (capa ou avatar) */
+/* ✅ marca presença do PRÓPRIO usuário na tabela presence/{UID} */
+function startSelfPresence(){
+  const ref = DB.ref("presence/" + UID);
+  function ping(){
+    ref.update({
+      online: true,
+      lastActive: firebase.database.ServerValue.TIMESTAMP
+    }).catch(()=>{});
+  }
+  ping();
+  setInterval(ping, 25000);
+
+  // tenta ficar offline ao sair
+  try{
+    window.addEventListener("beforeunload", ()=>{
+      ref.update({ online:false, lastActive: Date.now() }).catch(()=>{});
+    });
+  }catch(e){}
+}
+
+/* ✅ escuta presença do PRÓPRIO usuário */
+function listenSelfPresence(){
+  DB.ref("presence/" + UID).on("value", snap=>{
+    const u = snap.val() || {};
+    const last = u.lastActive || 0;
+    const now = Date.now();
+    CURRENT_SELF_ONLINE = (u.online === true) && (now - last < 65000);
+  });
+}
+
+/* ✅ mostrar status ao clicar na prévia
+   - se estou vendo meu próprio perfil (TARGET_UID === UID): mostra "VOCÊ está Online/Offline"
+   - se é outro perfil: mostra status do perfil alvo */
 let toastTimer = null;
 function showStatusToast(){
-  const on = CURRENT_ONLINE === true;
+  const isSelfProfile = (TARGET_UID && UID && TARGET_UID === UID);
+  const on = isSelfProfile ? (CURRENT_SELF_ONLINE === true) : (CURRENT_TARGET_ONLINE === true);
+  const label = isSelfProfile ? (on ? "Você está Online" : "Você está Offline") : (on ? "Online agora" : "Offline agora");
+
   toastDot.classList.toggle("on", on);
   toastDot.classList.toggle("off", !on);
-  toastText.textContent = on ? "Online agora" : "Offline agora";
+  toastText.textContent = label;
 
   toastStatus.style.display = "inline-flex";
   clearTimeout(toastTimer);
@@ -709,6 +749,7 @@ async function loadProfile(){
     setAvatar(p.avatarDataUrl || p.avatarUrl || "", name);
   });
 
+  // status do perfil alvo
   DB.ref("presence/" + TARGET_UID).on("value", snap=>{
     const u = snap.val() || {};
     const last = u.lastActive || 0;
@@ -722,10 +763,8 @@ async function loadProfile(){
 let cachedName = "Usuário";
 let cachedAvatar = "";
 
-/* ✅ pega foto do comentarista:
-   - se o seu banco tiver "profiles/{uid}/avatarDataUrl" ou "avatarUrl", ele mostra a foto
-   - se não tiver, mostra iniciais */
-const avatarCache = {}; // uid -> url ou ""
+/* fotos nos comentários */
+const avatarCache = {};
 function getAvatarUrlFromProfile(p){
   return (p && (p.avatarDataUrl || p.avatarUrl || "")) || "";
 }
@@ -781,7 +820,6 @@ function postHTML(postId, d){
         </div>
 
         <div style="text-align:center;">
-          <!-- ✅ 1 clique abre / 2 clique fecha -->
           <div class="btn-action" onclick="toggleComentarios('${postId}')">💬 Comentar</div>
           <div class="contador" id="commentsCount_${postId}"></div>
         </div>
@@ -802,12 +840,10 @@ function postHTML(postId, d){
   `;
 }
 
-/* ✅ 1 clique abre / 2 clique fecha (toggle) */
 function toggleComentarios(postId){
   const box = document.getElementById("comentBox_"+postId);
   if(!box) return;
-  const isOpen = (box.style.display === "block");
-  box.style.display = isOpen ? "none" : "block";
+  box.style.display = (box.style.display === "block") ? "none" : "block";
 }
 
 async function curtir(postId){
@@ -832,14 +868,12 @@ async function enviarComentario(postId){
   if(!texto) return;
 
   const commentId = "cmt_" + Date.now() + "_" + Math.random().toString(36).slice(2);
-
-  /* ✅ tenta salvar também foto do usuário que comenta (se existir em profiles) */
   const myAvatarUrl = await fetchAvatarUrl(UID);
 
   await DB.ref(`comments/${postId}/${commentId}`).set({
     uid: UID,
     userName: USER_NAME,
-    avatarUrl: myAvatarUrl || "",   // ✅ foto no comentário (se houver)
+    avatarUrl: myAvatarUrl || "",
     text: texto,
     createdAt: firebase.database.ServerValue.TIMESTAMP
   });
@@ -849,8 +883,7 @@ async function enviarComentario(postId){
 function listenLikes(postId){
   DB.ref("likes/" + postId).on("value", snap=>{
     const obj = snap.val() || {};
-    const entries = Object.values(obj);
-    const total = entries.length;
+    const total = Object.values(obj).length;
     const mine = obj[UID];
 
     const btn = document.getElementById("btnLike_"+postId);
@@ -865,13 +898,10 @@ function listenLikes(postId){
       btn.style.opacity = ".95";
     }
 
-    if(total === 0) cont.textContent = "";
-    else cont.textContent = `${total} curtida${total>1?"s":""}`;
+    cont.textContent = total ? `${total} curtida${total>1?"s":""}` : "";
   });
 }
 
-/* ✅ agora mostra FOTO do comentarista:
-   prioridade: comment.avatarUrl -> profiles/{uid} -> iniciais */
 function listenComments(postId){
   DB.ref("comments/" + postId).orderByChild("createdAt").on("value", async snap=>{
     const obj = snap.val() || {};
@@ -895,10 +925,7 @@ function listenComments(postId){
       const txt = escapeHTML(c.text || "");
       const uid = c.uid || "";
       let url = (c.avatarUrl || "").trim();
-
-      if(!url && uid){
-        url = await fetchAvatarUrl(uid);
-      }
+      if(!url && uid) url = await fetchAvatarUrl(uid);
 
       const avatarHTML = url
         ? `<img src="${url}" alt="foto">`
@@ -957,6 +984,11 @@ function listenFeed(){
   setCover("");
   setAvatar("", "U");
   setStatus(false);
+
+  // ✅ presença do próprio usuário + escuta do próprio status
+  startSelfPresence();
+  listenSelfPresence();
+
   await loadProfile();
   listenFeed();
 })();
