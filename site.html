@@ -368,6 +368,7 @@
     justify-content:center;
     border-bottom: 1px solid rgba(0,255,157,.15);
     overflow:hidden;
+    position: relative;
   }
   .connPhoto img{
     width:100%;
@@ -406,6 +407,26 @@
     padding: 10px;
     opacity: .85;
     font-weight: 700;
+  }
+
+  /* ✅ bolinha ONLINE/OFFLINE nos conectados */
+  .connDot{
+    position:absolute;
+    top:8px; right:8px;
+    width:10px; height:10px;
+    border-radius:50%;
+    border: 2px solid #000;
+    box-shadow: 0 0 14px rgba(0,0,0,.35);
+  }
+  .connDot.on{
+    background:#00ff4c;
+    box-shadow: 0 0 14px rgba(0,255,76,.9);
+    animation: blinkDot 0.9s infinite;
+  }
+  .connDot.off{
+    background:#7a7a7a;
+    box-shadow: 0 0 10px rgba(122,122,122,.35);
+    animation: none;
   }
 
   /* ======================== VIEWER ======================== */
@@ -1211,6 +1232,33 @@ function fecharLogin(){
   loginOverlay.style.display = "none";
   document.body.style.overflow = "";
 }
+
+/* ✅✅✅ REGISTRO DE "USUÁRIOS LOGADOS" (mesmo OFFLINE) */
+let userRegistryTimer = null;
+function registerUser(){
+  try{
+    if(!USER_NAME || !UID) return;
+
+    const ref = DB.ref("users/" + UID);
+    // cria/atualiza sem apagar campos
+    ref.update({
+      uid: UID,
+      userName: USER_NAME,
+      firstSeen: firebase.database.ServerValue.TIMESTAMP,
+      lastSeen: firebase.database.ServerValue.TIMESTAMP
+    }).catch(()=>{});
+
+    if(!userRegistryTimer){
+      userRegistryTimer = setInterval(()=>{
+        DB.ref("users/" + UID).update({
+          userName: USER_NAME,
+          lastSeen: firebase.database.ServerValue.TIMESTAMP
+        }).catch(()=>{});
+      }, 25000);
+    }
+  }catch(e){}
+}
+
 function confirmarNome(){
   let nome = (loginName.value || "").trim();
   if(nome.length < 2){
@@ -1222,7 +1270,13 @@ function confirmarNome(){
   USER_NAME = nome;
   UID = getOrCreateUID();
   fecharLogin();
+
+  // ✅ registra no "users" (logados)
+  registerUser();
+
+  // ✅ presença online normal
   startPresence();
+
   setTimeout(()=>{ location.reload(); }, 80);
 }
 (function exigirLogin(){
@@ -1319,6 +1373,9 @@ function startPresence(){
     if(!USER_NAME || !UID) return;
     if(presenceTimer) return;
 
+    // ✅ garante registro de usuário (mesmo offline)
+    registerUser();
+
     presenceRef = DB.ref("presence/" + UID);
 
     const connectedRef = DB.ref(".info/connected");
@@ -1341,6 +1398,12 @@ function startPresence(){
         online: true,
         lastActive: firebase.database.ServerValue.TIMESTAMP
       }).catch(()=>{});
+
+      // ✅ também atualiza "users" (logados)
+      DB.ref("users/" + UID).update({
+        userName: USER_NAME,
+        lastSeen: firebase.database.ServerValue.TIMESTAMP
+      }).catch(()=>{});
     }, 25000);
 
     window.addEventListener("beforeunload", ()=>{
@@ -1355,7 +1418,11 @@ function stopPresence(silent){
   }catch(e){}
   if(!silent){}
 }
-if(USER_NAME && UID){ startPresence(); }
+if(USER_NAME && UID){
+  // ✅ registra usuário e liga presença
+  registerUser();
+  startPresence();
+}
 </script>
 
 <script>
@@ -1434,9 +1501,12 @@ function updateViewerAvatarsInDOM(uid, url, name){
 function updateConnectionsAvatarsInDOM(uid, url, name){
   document.querySelectorAll(`[data-conn-photo-uid="${uid}"]`).forEach(el=>{
     if(url){
-      el.innerHTML = `<img src="${url}" alt="avatar">`;
+      // mantém a bolinha (connDot) se existir no HTML do card
+      const dot = el.querySelector(".connDot");
+      el.innerHTML = `<img src="${url}" alt="avatar">` + (dot ? dot.outerHTML : "");
     }else{
-      el.innerHTML = `<div class="connInit">${escapeHTML(initials(name||"U"))}</div>`;
+      const dot = el.querySelector(".connDot");
+      el.innerHTML = `<div class="connInit">${escapeHTML(initials(name||"U"))}</div>` + (dot ? dot.outerHTML : "");
     }
   });
   document.querySelectorAll(`[data-conn-name-uid="${uid}"]`).forEach(el=>{
@@ -1518,9 +1588,16 @@ msgBtn.addEventListener("click", ()=>{
 </script>
 
 <script>
-/* ===================== ✅ BLOCO "CONECTADOS NO FACECUMBA" (APÓS A 1ª PUBLICAÇÃO DO FEED) ===================== */
+/* ===================== ✅ BLOCO "CONECTADOS NO FACECUMBA"
+   ✅ AGORA MOSTRA TODOS QUE JÁ ESTÃO "LOGADOS" (users/*) MESMO OFFLINE
+   ✅ E MOSTRA BOLINHA VERDE SE ESTIVER ONLINE (presence/*)
+===================== */
+
 const CONNECTIONS_ID = "connectionsSection";
-let connectionsUsers = []; // [{uid,userName,lastActive,onlineAt}]
+
+// base "users" (logados) + status online por "presence"
+let connectionsUsers = []; // [{uid,userName,lastSeen,firstSeen,isOnline}]
+let onlineSet = new Set(); // uids online
 
 function ensureConnectionsSection(){
   const feed = document.getElementById("feed");
@@ -1555,10 +1632,10 @@ async function renderConnections(){
   const sec = document.getElementById(CONNECTIONS_ID);
   if(!sec) return;
 
-  // ordena: mais recentes primeiro
+  // ordena por lastSeen (quem entrou/abriu recentemente)
   const list = connectionsUsers
     .filter(u => u && u.uid && u.uid !== UID)
-    .sort((a,b)=> (b.lastActive||b.onlineAt||0) - (a.lastActive||a.onlineAt||0))
+    .sort((a,b)=> (b.lastSeen||b.firstSeen||0) - (a.lastSeen||a.firstSeen||0))
     .slice(0, 10);
 
   sec.innerHTML = `
@@ -1567,7 +1644,7 @@ async function renderConnections(){
       <span>CONECTADOS NO FACECUMBA</span>
     </div>
     <div class="connGrid" id="connGrid"></div>
-    <div id="connEmpty" class="connEmpty" style="display:none;">Ninguém online agora. Volte já já 🙂</div>
+    <div id="connEmpty" class="connEmpty" style="display:none;">Ainda não tem ninguém logado. Seja o primeiro 🙂</div>
   `;
 
   const grid = sec.querySelector("#connGrid");
@@ -1585,10 +1662,14 @@ async function renderConnections(){
       ? `<img src="${prof.url}" alt="avatar">`
       : `<div class="connInit">${escapeHTML(initials(name))}</div>`;
 
-    // quadrado + botão ver perfil
+    const dotClass = u.isOnline ? "on" : "off";
+
     return `
       <div class="connCard">
-        <div class="connPhoto" data-conn-photo-uid="${escapeHTML(u.uid)}">${photo}</div>
+        <div class="connPhoto" data-conn-photo-uid="${escapeHTML(u.uid)}">
+          ${photo}
+          <span class="connDot ${dotClass}" title="${u.isOnline ? "Online" : "Offline"}"></span>
+        </div>
         <div class="connName" data-conn-name-uid="${escapeHTML(u.uid)}">${escapeHTML(name)}</div>
         <button class="connBtn" onclick="openProfileModal('${escapeHTML(u.uid)}')">Ver perfil</button>
       </div>
@@ -1598,10 +1679,24 @@ async function renderConnections(){
   grid.innerHTML = cards.join("");
 }
 
+/* ✅ escuta presença pra saber quem está ONLINE agora */
 (function listenConnectionsPresence(){
-  // usuários cadastrados e logados = presence/*
-  const ref = DB.ref("presence").orderByChild("lastActive").limitToLast(80);
+  const ref = DB.ref("presence"); // presença é online
+  ref.on("value", (snap)=>{
+    const obj = snap.val() || {};
+    onlineSet = new Set(Object.keys(obj || {}).filter(Boolean));
+    // recalcula isOnline
+    connectionsUsers = (connectionsUsers || []).map(u=>({
+      ...u,
+      isOnline: onlineSet.has(u.uid)
+    }));
+    ensureConnectionsSection();
+  });
+})();
 
+/* ✅ escuta usuários LOGADOS (persistente) */
+(function listenConnectionsUsers(){
+  const ref = DB.ref("users").orderByChild("lastSeen").limitToLast(250);
   ref.on("value", (snap)=>{
     const obj = snap.val() || {};
     const arr = Object.keys(obj).map(k => obj[k]).filter(Boolean);
@@ -1609,11 +1704,11 @@ async function renderConnections(){
     connectionsUsers = arr.map(x=>({
       uid: x.uid || "",
       userName: x.userName || "Usuário",
-      lastActive: x.lastActive || 0,
-      onlineAt: x.onlineAt || 0
+      lastSeen: x.lastSeen || 0,
+      firstSeen: x.firstSeen || 0,
+      isOnline: onlineSet.has(x.uid || "")
     }));
 
-    // atualiza posição (sempre depois do 1º post)
     ensureConnectionsSection();
   });
 })();
