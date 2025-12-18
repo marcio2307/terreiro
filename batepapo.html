@@ -1,0 +1,981 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<title>Chat Aberto (Grupo)</title>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+<style>
+  *{ box-sizing:border-box; }
+  html,body{ width:100%; height:100%; margin:0; overflow-x:hidden; }
+  body{
+    background:#000;
+    font-family: Arial, sans-serif;
+    color:#fff;
+    padding-bottom: env(safe-area-inset-bottom);
+    overscroll-behavior: none;
+  }
+
+  /* ====================== LOGIN ====================== */
+  .login-overlay{
+    position:fixed; inset:0;
+    background: rgba(0,0,0,0.94);
+    display:none;
+    align-items:center;
+    justify-content:center;
+    z-index: 9999999;
+    padding: 16px;
+  }
+  .login-card{
+    width: min(520px, 94vw);
+    max-width: 94vw;
+    background:#0d0d0d;
+    border:2px solid #00ff8c;
+    border-radius:22px;
+    box-shadow:0 0 28px rgba(0,255,140,.45);
+    padding: 18px;
+    text-align:center;
+  }
+  .login-title{
+    font-size: clamp(18px, 6vw, 26px);
+    font-weight: 900;
+    color:#00ff8c;
+    text-transform:uppercase;
+    letter-spacing:1.2px;
+    text-shadow: 0 0 10px #00ff8c, 0 0 22px #00ff8c;
+    margin: 4px 0 14px 0;
+    display:flex;
+    gap:10px;
+    align-items:center;
+    justify-content:center;
+  }
+  .login-input{
+    width: 100%;
+    background:#111;
+    border:1px solid #00ff9d;
+    border-radius: 999px;
+    padding: 14px 18px;
+    color:#fff;
+    outline:none;
+    font-size: 16px;
+    box-shadow: inset 0 0 10px rgba(0,255,157,.22);
+  }
+  .login-btn{
+    width: 100%;
+    margin-top: 12px;
+    border:none;
+    border-radius: 999px;
+    padding: 16px 12px;
+    font-weight: 900;
+    cursor:pointer;
+    font-size: 18px;
+    transition:.18s;
+    background:#00ff8c;
+    color:#003b23;
+    box-shadow:0 0 18px rgba(0,255,140,.55);
+  }
+  .login-btn:active{ transform: scale(.99); }
+
+  /* ===================== LOADING ===================== */
+  .loadingOverlay{
+    position:fixed; inset:0;
+    background: rgba(0,0,0,.78);
+    display:none;
+    align-items:center;
+    justify-content:center;
+    z-index: 99999999;
+    padding: 18px;
+  }
+  .loadingCard{
+    width: min(520px, 92vw);
+    background:#0d0d0d;
+    border:2px solid #00ff8c;
+    border-radius:18px;
+    box-shadow:0 0 25px rgba(0,255,140,.45);
+    padding:18px;
+    text-align:center;
+  }
+  .spinner{
+    width:46px;height:46px;border-radius:50%;
+    border:4px solid rgba(0,255,140,.25);
+    border-top-color:#00ff8c;
+    margin:0 auto 10px auto;
+    animation: spin 0.9s linear infinite;
+  }
+  @keyframes spin{ to{ transform: rotate(360deg);} }
+  .loadingText{ color:#00ff8c; font-weight:900; letter-spacing:.6px; }
+  .loadingSub{ margin-top:6px; color:#fff; opacity:.85; font-size:14px; }
+
+  /* ===================== LAYOUT CHAT (MOBILE FIRST) ===================== */
+  .app{
+    height: 100vh;
+    height: 100dvh;
+    display:flex;
+    flex-direction:column;
+    width:100%;
+    overflow:hidden;
+  }
+
+  /* Topo */
+  .topbar{
+    position: sticky;
+    top:0;
+    z-index: 9999;
+    background:#0d0d0d;
+    border-bottom: 2px solid rgba(0,255,157,.55);
+    box-shadow: 0 0 14px rgba(0,255,157,.22);
+    padding-top: env(safe-area-inset-top);
+  }
+  .topbarInner{
+    height: 56px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    position:relative;
+    padding: 0 10px;
+  }
+
+  .backBtn{
+    position:absolute;
+    left: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    display:flex;
+    align-items:center;
+    gap:10px;
+    border:1px solid rgba(0,255,157,.35);
+    background: rgba(0,0,0,.25);
+    color:#00ff9d;
+    padding: 10px 12px;
+    border-radius: 14px;
+    cursor:pointer;
+    user-select:none;
+    text-decoration:none;
+    font-weight:900;
+    box-shadow: 0 0 10px rgba(0,255,157,.12);
+  }
+  .backBtn i{ font-size:18px; }
+
+  .title{
+    font-weight:900;
+    color:#00ff9d;
+    text-shadow: 0 0 12px rgba(0,255,157,.22);
+    letter-spacing:.4px;
+    font-size: 18px;
+  }
+
+  /* Área de mensagens (rola só aqui) */
+  .messages{
+    flex:1;
+    overflow-y:auto;
+    overflow-x:hidden;
+    padding: 12px 12px;
+    background: #000;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior: contain;
+  }
+
+  /* Mensagens estilo WhatsApp */
+  .msgRow{
+    display:flex;
+    gap:10px;
+    align-items:flex-start;
+    margin-bottom: 12px;
+    max-width: 100%;
+  }
+  .msgAvatar{
+    width:42px;height:42px;border-radius:50%;
+    overflow:hidden;
+    background:#000;
+    border:1px solid rgba(0,255,157,.55);
+    box-shadow: 0 0 10px rgba(0,255,157,.18);
+    flex:0 0 auto;
+    display:flex;align-items:center;justify-content:center;
+  }
+  .msgAvatar img{ width:100%;height:100%;object-fit:cover;display:block; }
+  .msgAvatar .init{ font-weight:900; color:#00ff9d; }
+
+  .msgBubble{
+    position:relative;
+    flex:1;
+    min-width:0;
+    max-width: 100%;
+    background: #0d0d0d;
+    border: 1px solid rgba(0,255,157,.35);
+    border-radius: 16px;
+    padding: 10px 44px 10px 12px;
+    box-shadow: 0 0 10px rgba(0,255,157,.12);
+    overflow:hidden;
+  }
+  .msgTop{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:10px;
+    margin-bottom: 6px;
+    min-width:0;
+  }
+  .msgName{
+    font-weight:900;
+    color:#7bffb5;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    white-space:nowrap;
+    max-width: 62vw;
+  }
+  .msgTime{
+    font-size:12px;
+    color:#00ff9d;
+    opacity:.85;
+    white-space:nowrap;
+    flex:0 0 auto;
+  }
+  .msgText{
+    white-space: pre-wrap;
+    word-break: break-word;
+    overflow-wrap:anywhere;
+    opacity:.98;
+  }
+  .msgMedia{
+    margin-top: 8px;
+    width:100%;
+  }
+  .msgMedia img{
+    width: 100%;
+    max-width: 520px;
+    border-radius: 12px;
+    display:block;
+    background:#000;
+    border: 1px solid rgba(0,255,157,.25);
+  }
+
+  .msgMenuBtn{
+    position:absolute;
+    top: 10px;
+    right: 10px;
+    font-size: 22px;
+    cursor:pointer;
+    color:#00ff9d;
+    user-select:none;
+    line-height:1;
+  }
+  .msgMenuBox{
+    position:absolute;
+    top: 38px;
+    right: 10px;
+    background:#00ff9d;
+    color:#000;
+    padding: 8px 10px;
+    border-radius: 10px;
+    display:none;
+    font-weight:900;
+    cursor:pointer;
+    box-shadow: 0 0 12px rgba(0,255,157,.55);
+    z-index: 5;
+    line-height:1;
+  }
+
+  /* Composer */
+  .composer{
+    position: sticky;
+    bottom: 0;
+    z-index: 9998;
+    background: #000;
+    padding: 10px 12px calc(10px + env(safe-area-inset-bottom)) 12px;
+    border-top: 1px solid rgba(0,255,157,.2);
+  }
+  .composerInner{
+    width: 100%;
+    margin: 0 auto;
+    background:#0d0d0d;
+    border:1px solid rgba(0,255,157,.55);
+    box-shadow: 0 0 12px rgba(0,255,157,.28);
+    border-radius: 18px;
+    padding: 10px;
+    display:flex;
+    gap:10px;
+    align-items:flex-end;
+  }
+  .btnCircle{
+    width:46px;height:46px;border-radius:50%;
+    display:flex;align-items:center;justify-content:center;
+    cursor:pointer;
+    flex:0 0 auto;
+    border:2px solid #00ff9d;
+    background:#111;
+    color:#00ff9d;
+    box-shadow: 0 0 10px rgba(0,255,157,.25);
+    font-size:20px;
+    user-select:none;
+  }
+  .btnSend{
+    width:46px;height:46px;border-radius:50%;
+    display:flex;align-items:center;justify-content:center;
+    cursor:pointer;
+    flex:0 0 auto;
+    border:2px solid #003b23;
+    background:#00ff9d;
+    color:#003b23;
+    box-shadow: 0 0 14px rgba(0,255,157,.45);
+    font-size:22px;
+    user-select:none;
+  }
+  textarea{
+    flex:1;
+    min-width:0;
+    resize:none;
+    border:none;
+    outline:none;
+    background:#111;
+    color:#fff;
+    border-radius: 16px;
+    padding: 12px 12px;
+    font-size: 16px;
+    border:1px solid rgba(0,255,157,.45);
+    box-shadow: inset 0 0 10px rgba(0,255,157,.18);
+    max-height: 140px;
+    line-height: 1.25;
+  }
+  input[type="file"]{ display:none; }
+
+  /* Emoji panel */
+  .emojiPanel{
+    position: fixed;
+    left: 50%;
+    transform: translateX(-50%);
+    bottom: calc(86px + env(safe-area-inset-bottom));
+    width: min(520px, 94vw);
+    background: rgba(0,0,0,.92);
+    border:1px solid rgba(0,255,157,.45);
+    box-shadow: 0 0 16px rgba(0,255,157,.22);
+    border-radius: 16px;
+    padding: 10px;
+    display:none;
+    z-index: 999999;
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+  }
+  .emojiGrid{
+    display:grid;
+    grid-template-columns: repeat(8, 1fr);
+    gap: 8px;
+  }
+  .emojiBtn{
+    font-size: 22px;
+    padding: 8px 0;
+    border-radius: 12px;
+    background: rgba(255,255,255,.04);
+    border: 1px solid rgba(255,255,255,.06);
+    cursor:pointer;
+    user-select:none;
+    text-align:center;
+  }
+  .emojiTop{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:10px;
+    margin-bottom: 8px;
+  }
+  .emojiTop .ttl{
+    color:#00ff9d;
+    font-weight:900;
+  }
+  .emojiClose{
+    width:36px;height:36px;border-radius: 12px;
+    display:flex;align-items:center;justify-content:center;
+    background: rgba(0,255,157,.12);
+    border:1px solid rgba(0,255,157,.25);
+    color:#00ff9d;
+    cursor:pointer;
+    user-select:none;
+  }
+
+  /* Mobile: garante zero rolagem horizontal */
+  .app, .messages, .composer, .composerInner, .msgRow, .msgBubble { max-width:100%; }
+</style>
+</head>
+
+<body>
+
+<!-- LOGIN -->
+<div class="login-overlay" id="loginOverlay">
+  <div class="login-card">
+    <div class="login-title"><i class="fa-solid fa-user"></i> ENTRAR</div>
+    <input id="loginName" class="login-input" maxlength="24" placeholder="Digite seu nome" autocomplete="off">
+    <button class="login-btn" onclick="confirmarNome()">Entrar</button>
+  </div>
+</div>
+
+<!-- LOADING -->
+<div class="loadingOverlay" id="loadingOverlay">
+  <div class="loadingCard">
+    <div class="spinner"></div>
+    <div class="loadingText" id="loadingText">Enviando...</div>
+    <div class="loadingSub" id="loadingSub">Aguarde um instante</div>
+  </div>
+</div>
+
+<div class="app">
+
+  <!-- TOPO -->
+  <div class="topbar">
+    <div class="topbarInner">
+      <a class="backBtn" href="#" onclick="goBackSite(event)">
+        <i class="fa-solid fa-arrow-left"></i>
+        <span>Voltar</span>
+      </a>
+      <div class="title">Bate papo</div>
+    </div>
+  </div>
+
+  <!-- MENSAGENS -->
+  <div class="messages" id="messages"></div>
+
+  <!-- COMPOSER -->
+  <div class="composer">
+    <div class="composerInner">
+      <div class="btnCircle" title="Emojis" aria-label="Emojis" onclick="toggleEmojiPanel()">
+        <i class="fa-regular fa-face-smile"></i>
+      </div>
+
+      <div class="btnCircle" title="Enviar imagem" aria-label="Enviar imagem" onclick="openFile()">
+        <i class="fa-solid fa-image"></i>
+      </div>
+
+      <textarea id="msgInput" rows="1" placeholder="Digite sua mensagem..."></textarea>
+
+      <div class="btnSend" title="Enviar" aria-label="Enviar" onclick="sendText()">
+        <i class="fa-solid fa-paper-plane"></i>
+      </div>
+
+      <input type="file" id="imgInput" accept="image/*">
+    </div>
+  </div>
+
+</div>
+
+<!-- Emoji Panel -->
+<div class="emojiPanel" id="emojiPanel">
+  <div class="emojiTop">
+    <div class="ttl">Emojis</div>
+    <div class="emojiClose" onclick="toggleEmojiPanel(false)"><i class="fa-solid fa-xmark"></i></div>
+  </div>
+  <div class="emojiGrid" id="emojiGrid"></div>
+</div>
+
+<!-- Firebase -->
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-storage.js"></script>
+
+<script>
+/* ====================== VOLTAR PARA O SITE (SEM DESLOGAR) ====================== */
+const BACK_URL = "https://marcio2307.github.io/terreiro/site.html";
+function goBackSite(ev){
+  ev.preventDefault();
+  // não remove localStorage (mantém nome/uid)
+  window.location.href = BACK_URL;
+}
+
+/* ====================== FIREBASE ====================== */
+const firebaseConfig = {
+  apiKey: "AIzaSyAt4CeGjdbjzdtMH1qZHw6RuBFJ6SeTDKk",
+  authDomain: "coletivo-f34d4.firebaseapp.com",
+  databaseURL: "https://coletivo-f34d4-default-rtdb.firebaseio.com",
+  projectId: "coletivo-f34d4",
+  storageBucket: "coletivo-f34d4.firebasestorage.app",
+  messagingSenderId: "296376447787",
+  appId: "1:296376447787:web:1341c59c8087d6ac1e4b6e"
+};
+firebase.initializeApp(firebaseConfig);
+const DB = firebase.database();
+const ST = firebase.storage();
+
+/* ====================== SOM (ENVIAR E RECEBER) ====================== */
+/* Coloque o arquivo somm.mp3 na MESMA PASTA deste HTML no GitHub Pages */
+const CHAT_SOUND_URL = "somm.mp3";
+const chatSfx = new Audio(CHAT_SOUND_URL);
+chatSfx.preload = "auto";
+chatSfx.volume = 1.0;
+
+let audioUnlocked = false;
+function unlockAudioOnce(){
+  if(audioUnlocked) return;
+  audioUnlocked = true;
+  try{
+    chatSfx.muted = false;
+    const p = chatSfx.play();
+    if(p && p.then){
+      p.then(()=>{ chatSfx.pause(); chatSfx.currentTime = 0; }).catch(()=>{});
+    }else{
+      chatSfx.pause(); chatSfx.currentTime = 0;
+    }
+  }catch(e){}
+}
+document.addEventListener("touchstart", unlockAudioOnce, { once:true, passive:true });
+document.addEventListener("click", unlockAudioOnce, { once:true });
+document.addEventListener("pointerdown", unlockAudioOnce, { once:true });
+
+function playChatSound(){
+  if(!CHAT_SOUND_URL) return;
+  try{
+    chatSfx.pause();
+    chatSfx.currentTime = 0;
+    chatSfx.play().catch(()=>{});
+  }catch(e){}
+}
+
+/* ====================== LOGIN + UID ====================== */
+function getOrCreateUID(){
+  let uid = localStorage.getItem("uid_passageiro");
+  if(!uid){
+    uid = "u_" + Math.random().toString(36).slice(2) + "_" + Date.now();
+    localStorage.setItem("uid_passageiro", uid);
+  }
+  sessionStorage.setItem("uid_passageiro", uid);
+  return uid;
+}
+let UID = getOrCreateUID();
+
+function getNomeSalvo(){
+  return (localStorage.getItem("nome_passageiro") || "").trim();
+}
+let USER_NAME = getNomeSalvo();
+
+const loginOverlay = document.getElementById("loginOverlay");
+const loginName = document.getElementById("loginName");
+
+function abrirLogin(){
+  loginOverlay.style.display = "flex";
+  document.body.style.overflow = "hidden";
+  setTimeout(()=>{ try{ loginName.focus(); }catch(e){} }, 50);
+}
+function fecharLogin(){
+  loginOverlay.style.display = "none";
+  document.body.style.overflow = "";
+}
+function confirmarNome(){
+  let nome = (loginName.value || "").trim();
+  if(nome.length < 2){
+    alert("Digite um nome com pelo menos 2 letras.");
+    try{ loginName.focus(); }catch(e){}
+    return;
+  }
+  localStorage.setItem("nome_passageiro", nome);
+  USER_NAME = nome;
+  UID = getOrCreateUID();
+  fecharLogin();
+  startPresence();
+  setTimeout(()=>{ location.reload(); }, 80);
+}
+(function exigirLogin(){
+  if(!USER_NAME) abrirLogin();
+})();
+
+function precisaLogin(){
+  if(!USER_NAME){ abrirLogin(); return true; }
+  return false;
+}
+document.addEventListener("keydown", (e)=>{
+  if(loginOverlay.style.display === "flex" && e.key === "Enter"){ confirmarNome(); }
+});
+
+/* Helpers */
+function escapeHTML(str){
+  return (str || "")
+    .replaceAll("&","&amp;")
+    .replaceAll("<","&lt;")
+    .replaceAll(">","&gt;")
+    .replaceAll('"',"&quot;")
+    .replaceAll("'","&#039;");
+}
+function initials(name){
+  const n = (name||"").trim().split(/\s+/).filter(Boolean);
+  if(!n.length) return "U";
+  const a = n[0][0] || "U";
+  const b = (n.length>1 ? n[n.length-1][0] : "") || "";
+  return (a+b).toUpperCase();
+}
+function fmtDate(ts){
+  try{ return new Date(ts).toLocaleString("pt-BR"); }catch(e){ return ""; }
+}
+
+/* ====================== LOADING ====================== */
+const loadingOverlay = document.getElementById("loadingOverlay");
+const loadingText = document.getElementById("loadingText");
+const loadingSub  = document.getElementById("loadingSub");
+
+function showLoading(title, sub){
+  loadingText.textContent = title || "Enviando...";
+  loadingSub.textContent = sub || "Aguarde um instante";
+  loadingOverlay.style.display = "flex";
+}
+function hideLoading(){
+  loadingOverlay.style.display = "none";
+}
+
+/* ====================== PRESENÇA ONLINE ====================== */
+let presenceRef = null;
+let presenceTimer = null;
+
+function startPresence(){
+  try{
+    if(!USER_NAME || !UID) return;
+    if(presenceTimer) return;
+
+    presenceRef = DB.ref("presence/" + UID);
+
+    const connectedRef = DB.ref(".info/connected");
+    connectedRef.on("value", (snap)=>{
+      if(snap.val() === true){
+        presenceRef.onDisconnect().remove().catch(()=>{});
+        presenceRef.set({
+          uid: UID,
+          userName: USER_NAME,
+          online: true,
+          onlineAt: firebase.database.ServerValue.TIMESTAMP,
+          lastActive: firebase.database.ServerValue.TIMESTAMP
+        }).catch(()=>{});
+      }
+    });
+
+    presenceTimer = setInterval(()=>{
+      if(!presenceRef) return;
+      presenceRef.update({
+        online: true,
+        lastActive: firebase.database.ServerValue.TIMESTAMP
+      }).catch(()=>{});
+    }, 25000);
+
+    window.addEventListener("beforeunload", ()=>{
+      try{ stopPresence(true); }catch(e){}
+    });
+  }catch(e){}
+}
+function stopPresence(silent){
+  try{
+    if(presenceTimer){ clearInterval(presenceTimer); presenceTimer = null; }
+    if(presenceRef){ presenceRef.remove().catch(()=>{}); presenceRef = null; }
+  }catch(e){}
+  if(!silent){}
+}
+if(USER_NAME && UID){ startPresence(); }
+</script>
+
+<script>
+/* ===================== PERFIS (avatar sincroniza com perfil.html) ===================== */
+const profileCache = new Map();
+function PROFILE_REF(uid){ return DB.ref("profiles/" + uid); }
+
+async function getAvatarForUID(uid, fallbackName){
+  if(!uid) return { url:"", name: fallbackName || "Usuário" };
+  if(profileCache.has(uid)) return profileCache.get(uid);
+
+  try{
+    const snap = await PROFILE_REF(uid).once("value");
+    const p = snap.val() || {};
+    const name = p.name || fallbackName || "Usuário";
+    const url = p.avatarDataUrl || p.avatarUrl || "";
+    const obj = { url, name };
+    profileCache.set(uid, obj);
+
+    PROFILE_REF(uid).on("value", s=>{
+      const px = s.val() || {};
+      const nn = px.name || name;
+      const uu = px.avatarDataUrl || px.avatarUrl || "";
+      profileCache.set(uid, { url: uu, name: nn });
+
+      document.querySelectorAll(`[data-avatar-uid="${uid}"]`).forEach(el=>{
+        if(uu) el.innerHTML = `<img src="${uu}" alt="avatar">`;
+        else el.innerHTML = `<div class="init">${escapeHTML(initials(nn||"U"))}</div>`;
+      });
+      document.querySelectorAll(`[data-name-uid="${uid}"]`).forEach(el=>{
+        el.textContent = nn || "Usuário";
+      });
+    });
+
+    return obj;
+  }catch(e){
+    const obj = { url:"", name: fallbackName || "Usuário" };
+    profileCache.set(uid, obj);
+    return obj;
+  }
+}
+</script>
+
+<script>
+/* ===================== CHAT ABERTO (GRUPO) ===================== */
+const ROOM_ID = "global";
+const MSG_PATH = `groupChat/${ROOM_ID}/messages`;
+
+const messagesEl = document.getElementById("messages");
+const msgInput = document.getElementById("msgInput");
+const imgInput = document.getElementById("imgInput");
+
+/* Emoji panel */
+const emojiPanel = document.getElementById("emojiPanel");
+const emojiGrid  = document.getElementById("emojiGrid");
+const EMOJIS = ["😀","😁","😂","🤣","😊","😍","😘","😎",
+                "😢","😭","😡","😱","🙏","✨","🔥","💖",
+                "👍","👎","👏","🙌","🤝","💬","🎉","💥",
+                "🌙","⭐","🌟","🌈","🍀","🧿","🔮","🕯️",
+                "❤️","💛","💚","💙","💜","🤍","🖤","💗"];
+emojiGrid.innerHTML = EMOJIS.map(e=>`<div class="emojiBtn" onclick="insertEmoji('${e.replaceAll("'","\\'")}')">${e}</div>`).join("");
+
+function toggleEmojiPanel(force){
+  const show = (typeof force === "boolean") ? force : (emojiPanel.style.display !== "block");
+  emojiPanel.style.display = show ? "block" : "none";
+}
+function insertEmoji(e){
+  msgInput.focus();
+  const start = msgInput.selectionStart || 0;
+  const end   = msgInput.selectionEnd || 0;
+  const v = msgInput.value || "";
+  msgInput.value = v.slice(0,start) + e + v.slice(end);
+  const pos = start + e.length;
+  msgInput.setSelectionRange(pos,pos);
+}
+
+/* Fechar emoji ao clicar fora */
+document.addEventListener("click", (ev)=>{
+  const inside = emojiPanel.contains(ev.target);
+  const clickedEmojiBtn = ev.target.closest(".btnCircle");
+  if(!inside && !clickedEmojiBtn && emojiPanel.style.display === "block"){
+    if(!ev.target.closest(".composerInner")) toggleEmojiPanel(false);
+  }
+});
+
+/* Auto-grow textarea */
+function autoGrow(){
+  msgInput.style.height = "auto";
+  msgInput.style.height = Math.min(msgInput.scrollHeight, 140) + "px";
+}
+msgInput.addEventListener("input", autoGrow);
+autoGrow();
+
+/* Enter envia / Shift+Enter quebra linha */
+msgInput.addEventListener("keydown", (e)=>{
+  if(e.key === "Enter" && !e.shiftKey){
+    e.preventDefault();
+    sendText();
+  }
+});
+
+/* Upload imagem */
+function openFile(){
+  if(precisaLogin()) return;
+  imgInput.click();
+}
+imgInput.addEventListener("change", async (e)=>{
+  if(precisaLogin()) return;
+  const file = e.target.files && e.target.files[0];
+  if(!file) return;
+
+  if(!file.type.startsWith("image/")){
+    alert("Envie apenas imagem.");
+    imgInput.value = "";
+    return;
+  }
+  const mb = file.size/(1024*1024);
+  if(mb > 15){
+    alert(`Imagem muito grande (${mb.toFixed(1)}MB). Envie até 15MB.`);
+    imgInput.value = "";
+    return;
+  }
+
+  await sendImage(file);
+  imgInput.value = "";
+});
+
+/* Enviar texto */
+async function sendText(){
+  if(precisaLogin()) return;
+
+  const text = (msgInput.value || "").trim();
+  if(!text) return;
+
+  toggleEmojiPanel(false);
+  showLoading("Enviando...", "Publicando no chat");
+
+  try{
+    await pushMessage({ text, mediaUrl:null, mediaType:null, storagePath:null });
+    playChatSound(); // som ao ENVIAR
+    msgInput.value = "";
+    autoGrow();
+  }catch(err){
+    console.log(err);
+    alert("Erro ao enviar mensagem.");
+  }finally{
+    hideLoading();
+  }
+}
+
+/* Enviar imagem (com texto opcional) */
+async function sendImage(file){
+  if(precisaLogin()) return;
+
+  const text = (msgInput.value || "").trim();
+  toggleEmojiPanel(false);
+
+  showLoading("Enviando imagem...", "No celular pode demorar um pouco");
+
+  try{
+    const msgId = "msg_" + Date.now() + "_" + Math.random().toString(36).slice(2);
+    const storagePath = `groupChat/${ROOM_ID}/${UID}/${msgId}`;
+    const ref = ST.ref().child(storagePath);
+
+    await ref.put(file, { contentType: file.type });
+    const url = await ref.getDownloadURL();
+
+    await DB.ref(`${MSG_PATH}/${msgId}`).set({
+      id: msgId,
+      uid: UID,
+      userName: USER_NAME,
+      text: text || "",
+      mediaUrl: url,
+      mediaType: file.type,
+      storagePath,
+      createdAt: firebase.database.ServerValue.TIMESTAMP
+    });
+
+    playChatSound(); // som ao ENVIAR
+    msgInput.value = "";
+    autoGrow();
+  }catch(err){
+    console.log(err);
+    alert("Erro ao enviar imagem.");
+  }finally{
+    hideLoading();
+  }
+}
+
+/* Criar msg (texto puro) */
+async function pushMessage({text, mediaUrl, mediaType, storagePath}){
+  const msgId = "msg_" + Date.now() + "_" + Math.random().toString(36).slice(2);
+  await DB.ref(`${MSG_PATH}/${msgId}`).set({
+    id: msgId,
+    uid: UID,
+    userName: USER_NAME,
+    text: (text || "").toString(),
+    mediaUrl: mediaUrl || null,
+    mediaType: mediaType || null,
+    storagePath: storagePath || null,
+    createdAt: firebase.database.ServerValue.TIMESTAMP
+  });
+}
+
+/* Toggle menu ⋮ e excluir (QUALQUER usuário pode excluir QUALQUER msg) */
+function toggleMsgMenu(id){
+  const box = document.getElementById("menu_"+id);
+  if(!box) return;
+  box.style.display = (box.style.display === "block" ? "none" : "block");
+}
+async function deleteMessage(id){
+  try{
+    const snap = await DB.ref(`${MSG_PATH}/${id}`).once("value");
+    const data = snap.val();
+
+    await DB.ref(`${MSG_PATH}/${id}`).remove();
+
+    if(data && data.storagePath){
+      await ST.ref().child(data.storagePath).delete().catch(()=>{});
+    }
+    playChatSound();
+  }catch(err){
+    console.log(err);
+    alert("Erro ao excluir.");
+  }
+}
+
+/* Render */
+function messageHTML(m, avatarUrl, displayName){
+  const uid = m.uid || "";
+  const name = displayName || m.userName || "Usuário";
+  const when = m.createdAt ? fmtDate(m.createdAt) : "";
+  const text = escapeHTML(m.text || "");
+
+  const avatar = avatarUrl
+    ? `<div class="msgAvatar" data-avatar-uid="${escapeHTML(uid)}"><img src="${avatarUrl}" alt="avatar"></div>`
+    : `<div class="msgAvatar" data-avatar-uid="${escapeHTML(uid)}"><div class="init">${escapeHTML(initials(name))}</div></div>`;
+
+  const media = m.mediaUrl
+    ? `<div class="msgMedia"><img src="${m.mediaUrl}" alt="imagem" loading="lazy"></div>`
+    : "";
+
+  return `
+    <div class="msgRow" id="${escapeHTML(m.id)}">
+      ${avatar}
+      <div class="msgBubble">
+        <div class="msgMenuBtn" onclick="toggleMsgMenu('${escapeHTML(m.id)}')">⋮</div>
+        <div class="msgMenuBox" id="menu_${escapeHTML(m.id)}" onclick="deleteMessage('${escapeHTML(m.id)}')">Excluir</div>
+
+        <div class="msgTop">
+          <div class="msgName" data-name-uid="${escapeHTML(uid)}">${escapeHTML(name)}</div>
+          <div class="msgTime">${escapeHTML(when)}</div>
+        </div>
+
+        ${text ? `<div class="msgText">${text}</div>` : ``}
+        ${media}
+      </div>
+    </div>
+  `;
+}
+
+/* Scroll helper */
+function scrollToBottom(){
+  messagesEl.scrollTop = messagesEl.scrollHeight;
+}
+
+/* Listener (últimas 200) + som ao RECEBER */
+const rendered = new Set();
+let firstLoadDone = false;
+
+DB.ref(MSG_PATH).orderByChild("createdAt").limitToLast(200).on("child_added", async (snap)=>{
+  const m = snap.val() || {};
+  if(!m.id) m.id = snap.key;
+
+  if(rendered.has(m.id)) return;
+  rendered.add(m.id);
+
+  const prof = await getAvatarForUID(m.uid, m.userName || "Usuário");
+
+  const wrapper = document.createElement("div");
+  wrapper.innerHTML = messageHTML(m, prof.url, prof.name).trim();
+  messagesEl.appendChild(wrapper.firstChild);
+
+  // Som ao RECEBER (não toca no carregamento inicial)
+  if(firstLoadDone){
+    playChatSound();
+  }
+
+  setTimeout(()=>{ scrollToBottom(); }, 20);
+
+  // marca que já carregou pelo menos uma vez
+  if(!firstLoadDone){
+    // após o primeiro batch começar a entrar, ativamos depois de um pequeno delay
+    clearTimeout(window.__firstLoadTimer);
+    window.__firstLoadTimer = setTimeout(()=>{ firstLoadDone = true; }, 900);
+  }
+});
+
+DB.ref(MSG_PATH).on("child_removed", (snap)=>{
+  const id = snap.key;
+  rendered.delete(id);
+  const el = document.getElementById(id);
+  if(el) el.remove();
+});
+
+/* Fecha menus ⋮ ao clicar fora */
+document.addEventListener("click", (e)=>{
+  const clickedBtn = e.target.closest(".msgMenuBtn");
+  const clickedBox = e.target.closest(".msgMenuBox");
+  if(clickedBtn || clickedBox) return;
+  document.querySelectorAll(".msgMenuBox").forEach(b=> b.style.display = "none");
+});
+</script>
+
+</body>
+</html>
