@@ -12,74 +12,79 @@
   html, body{ width:100%; max-width:100%; overflow-x:hidden; }
   body{ margin:0; background:#000; font-family: Arial, sans-serif; color:#fff; padding-bottom: env(safe-area-inset-bottom); }
 
-  /* ======================== LOGO (ACIMA DO MENU) ======================== */
+  /* ======================== LOGO + MESSENGER (TOPO) ======================== */
   .logo-bar{
     width:100%;
     background:#000;
     display:flex;
-    justify-content:space-between; /* ✅ logo esquerda + messenger direita */
     align-items:center;
+    justify-content:space-between;
+    gap:12px;
     padding: 10px 12px 6px 12px;
-    gap: 12px;
   }
-  .logo-bar img{
-    width: clamp(180px, 58vw, 420px);
-    height: auto;
-    max-height: 120px;
+  .logo-left{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    min-width:0;
+  }
+  .logo-left img{
+    width: clamp(160px, 52vw, 360px);
+    height:auto;
+    max-height: 110px;
     object-fit: contain;
     display:block;
   }
-  @media(max-width:480px){
-    .logo-bar{ padding: 10px 10px 6px 10px; }
-    .logo-bar img{ max-height: 86px; }
-  }
 
-  /* ✅ Botão Messenger */
-  .messenger-btn{
+  /* Ícone Messenger SEM círculo */
+  .msgBtn{
     position:relative;
-    width: 56px;
-    height: 56px;
-    border-radius: 16px;
     display:flex;
     align-items:center;
     justify-content:center;
     cursor:pointer;
     user-select:none;
-    text-decoration:none;
 
-    background: rgba(13,13,13,.85);
-    border: 2px solid #00ff8c;
-    box-shadow: 0 0 15px rgba(0,255,140,.35);
+    width:52px;
+    height:52px;
+
+    background: transparent;
+    border:none;
+    outline:none;
+    padding:0;
+  }
+  .msgBtn i{
+    font-size: 34px;
     color:#00ff8c;
-    transition: transform .15s ease, box-shadow .15s ease;
-    flex: 0 0 auto;
+    text-shadow: 0 0 10px #00ff8c, 0 0 20px #00ff8c, 0 0 35px #00ff8c;
+    line-height:1;
   }
-  .messenger-btn:hover{ transform: scale(1.04); box-shadow: 0 0 18px rgba(0,255,140,.55); }
-  .messenger-btn i{
-    font-size: 28px;
-    text-shadow: 0 0 10px #00ff8c, 0 0 20px #00ff8c;
-  }
-  .messenger-dot{
+
+  /* Bolinha vermelha com número */
+  .msgBadge{
     position:absolute;
-    top: 8px;
-    right: 8px;
-    width: 12px;
-    height: 12px;
-    border-radius:50%;
-    background: #ffd400; /* ✅ amarelo */
-    box-shadow: 0 0 14px rgba(255,212,0,.95);
-    border: 2px solid #000;
+    top: 2px;
+    right: 2px;
+    min-width: 20px;
+    height: 20px;
+    padding: 0 6px;
+    border-radius: 999px;
+    background: #ff2a2a;
+    color: #fff;
+    font-weight: 900;
+    font-size: 12px;
     display:none;
-    animation: blinkYellow .8s infinite;
+    align-items:center;
+    justify-content:center;
+    box-shadow: 0 0 14px rgba(255,42,42,.65);
+    border: 2px solid #000;
   }
-  @keyframes blinkYellow{
-    0%,100%{ transform: scale(1); opacity: 1; }
-    50%{ transform: scale(1.35); opacity: .25; }
-  }
+
   @media(max-width:480px){
-    .messenger-btn{ width: 50px; height:50px; border-radius: 14px; }
-    .messenger-btn i{ font-size: 26px; }
-    .messenger-dot{ top: 7px; right: 7px; width: 11px; height:11px; }
+    .logo-bar{ padding: 10px 10px 6px 10px; }
+    .logo-left img{ max-height: 86px; }
+    .msgBtn{ width:46px; height:46px; }
+    .msgBtn i{ font-size: 32px; }
   }
 
   /* ======================== MENU NEON ======================== */
@@ -562,7 +567,6 @@
     position:relative;
   }
 
-  /* ✅ CABEÇALHO COM FOTO */
   .postHead{
     display:flex;
     align-items:center;
@@ -692,7 +696,6 @@
     z-index: 15;
   }
 
-  /* ✅ Comentários */
   .cRow{
     position:relative;
     background:#000;
@@ -824,15 +827,16 @@
   </div>
 </div>
 
-<!-- ✅ LOGO ESQUERDA + MESSENGER DIREITA -->
+<!-- ✅ TOPO: LOGO À ESQUERDA + MESSENGER À DIREITA -->
 <div class="logo-bar">
-  <img src="https://i.ibb.co/h1RmgKSX/Chat-GPT-Image-17-12-2025-21-32-09.png" alt="Logo" loading="eager">
+  <div class="logo-left">
+    <img src="https://i.ibb.co/h1RmgKSX/Chat-GPT-Image-17-12-2025-21-32-09.png" alt="Logo" loading="eager">
+  </div>
 
-  <!-- ✅ Ícone estilo Messenger (abre o batepapo) -->
-  <a class="messenger-btn" href="https://marcio2307.github.io/terreiro/batepapo.html" onclick="onOpenBatepapo(event)" title="Bate-papo" aria-label="Bate-papo">
+  <button class="msgBtn" id="msgBtn" title="Bate-papo" aria-label="Bate-papo">
     <i class="fa-brands fa-facebook-messenger"></i>
-    <span class="messenger-dot" id="messengerDot" aria-hidden="true"></span>
-  </a>
+    <span class="msgBadge" id="msgBadge">0</span>
+  </button>
 </div>
 
 <!-- MENU (sem botão sair + com ícone perfil) -->
@@ -940,11 +944,11 @@ const actionSfx = new Audio(ACTION_SOUND_URL);
 actionSfx.preload = "auto";
 actionSfx.volume = 1.0;
 
-/* ✅ SOM DO BATEPAPO (notificação) */
-const CHAT_SOUND_URL = "somm.mp3"; // ✅ arquivo no GitHub na mesma pasta do site
-const chatNotifySfx = new Audio(CHAT_SOUND_URL);
-chatNotifySfx.preload = "auto";
-chatNotifySfx.volume = 1.0;
+/* ====================== ✅ SOM DO CHAT (SOMM.MP3) ====================== */
+const CHAT_SOUND_URL = "somm.mp3"; // coloque esse arquivo no GitHub na mesma pasta do site.html
+const chatSfx = new Audio(CHAT_SOUND_URL);
+chatSfx.preload = "auto";
+chatSfx.volume = 1.0;
 
 let audioUnlocked = false;
 function unlockAudioOnce(){
@@ -952,27 +956,19 @@ function unlockAudioOnce(){
   audioUnlocked = true;
   try{
     actionSfx.muted = false;
-    chatNotifySfx.muted = false;
+    chatSfx.muted = false;
 
-    // "Destrava" em iOS/Android
     const p1 = actionSfx.play();
-    if(p1 && p1.then){
-      p1.then(()=>{ actionSfx.pause(); actionSfx.currentTime = 0; }).catch(()=>{});
-    }else{
-      actionSfx.pause(); actionSfx.currentTime = 0;
-    }
+    if(p1 && p1.then) p1.then(()=>{ actionSfx.pause(); actionSfx.currentTime = 0; }).catch(()=>{});
+    else { actionSfx.pause(); actionSfx.currentTime = 0; }
 
-    const p2 = chatNotifySfx.play();
-    if(p2 && p2.then){
-      p2.then(()=>{ chatNotifySfx.pause(); chatNotifySfx.currentTime = 0; }).catch(()=>{});
-    }else{
-      chatNotifySfx.pause(); chatNotifySfx.currentTime = 0;
-    }
+    const p2 = chatSfx.play();
+    if(p2 && p2.then) p2.then(()=>{ chatSfx.pause(); chatSfx.currentTime = 0; }).catch(()=>{});
+    else { chatSfx.pause(); chatSfx.currentTime = 0; }
   }catch(e){}
 }
 document.addEventListener("touchstart", unlockAudioOnce, { once:true, passive:true });
 document.addEventListener("click", unlockAudioOnce, { once:true });
-document.addEventListener("pointerdown", unlockAudioOnce, { once:true });
 
 function playActionSound(){
   if(!ACTION_SOUND_URL || ACTION_SOUND_URL.includes("COLE_AQUI")) return;
@@ -985,27 +981,10 @@ function playActionSound(){
 function playChatSound(){
   if(!CHAT_SOUND_URL) return;
   try{
-    chatNotifySfx.pause();
-    chatNotifySfx.currentTime = 0;
-    chatNotifySfx.play().catch(()=>{});
+    chatSfx.pause();
+    chatSfx.currentTime = 0;
+    chatSfx.play().catch(()=>{});
   }catch(e){}
-}
-
-/* ====================== ✅ MESSENGER (abre batepapo + destrava áudio) ====================== */
-const BATEPAPO_URL = "https://marcio2307.github.io/terreiro/batepapo.html";
-const messengerDot = document.getElementById("messengerDot");
-let dotTimer = null;
-
-function showMessengerDotFor5s(){
-  if(!messengerDot) return;
-  messengerDot.style.display = "block";
-  if(dotTimer) clearTimeout(dotTimer);
-  dotTimer = setTimeout(()=>{ messengerDot.style.display = "none"; }, 5000);
-}
-function onOpenBatepapo(ev){
-  // mantém o link, mas garante desbloqueio do áudio (mobile)
-  unlockAudioOnce();
-  // deixa seguir para o href normalmente
 }
 
 /* ====================== RADIO PLAYER (MENU) ====================== */
@@ -1103,7 +1082,7 @@ function escapeHTML(str){
     .replaceAll("&","&amp;")
     .replaceAll("<","&lt;")
     .replaceAll(">","&gt;")
-    .replaceAll('"',"&quot;")
+    .replaceAll('"',"quot;")
     .replaceAll("'","&#039;");
 }
 function initials(name){
@@ -1142,9 +1121,6 @@ function checkSize(file){
 }
 
 /* Loading */
-const loadingOverlay = document.getElementById("loadingOverlay");
-const loadingText = document.getElementById("loadingText");
-const loadingSub  = document.getElementById("loadingSub");
 function showLoading(title, sub){
   loadingText.textContent = title || "Enviando...";
   loadingSub.textContent = sub || "Aguarde um instante";
@@ -1203,36 +1179,6 @@ if(USER_NAME && UID){ startPresence(); }
 </script>
 
 <script>
-/* ===================== ✅ NOTIFICAÇÃO DO BATEPAPO (som + bolinha 5s) ===================== */
-const ROOM_ID = "global";
-const MSG_PATH = `groupChat/${ROOM_ID}/messages`;
-
-const seenMsgIds = new Set();
-let chatFirstLoadDone = false;
-
-// ouvimos os últimos 200 (para montar o "primeiro carregamento") e depois só notificamos novas
-DB.ref(MSG_PATH).orderByChild("createdAt").limitToLast(200).on("child_added", (snap)=>{
-  const m = snap.val() || {};
-  const id = m.id || snap.key;
-  if(!id) return;
-
-  if(seenMsgIds.has(id)) return;
-  seenMsgIds.add(id);
-
-  if(chatFirstLoadDone){
-    // ✅ toca som + bolinha amarela 5s
-    unlockAudioOnce();
-    playChatSound();
-    showMessengerDotFor5s();
-  }else{
-    // termina o "first load" depois de um curtinho
-    clearTimeout(window.__chatFirstLoadTimer);
-    window.__chatFirstLoadTimer = setTimeout(()=>{ chatFirstLoadDone = true; }, 900);
-  }
-});
-</script>
-
-<script>
 /* ===================== PERFIS (avatar sincroniza com perfil.html) ===================== */
 const profileCache = new Map();
 function PROFILE_REF(uid){ return DB.ref("profiles/" + uid); }
@@ -1272,7 +1218,7 @@ function updateAvatarsInDOM(uid, url, name){
     if(url){
       el.innerHTML = `<img src="${url}" alt="avatar">`;
     }else{
-      el.innerHTML = `<div class="init">${escapeHTML(initials(name||"U"))}</div>`;
+      el.innerHTML = `<div class="init">${(initials(name||"U"))}</div>`;
     }
   });
   document.querySelectorAll(`[data-name-uid="${uid}"]`).forEach(el=>{
@@ -1281,27 +1227,102 @@ function updateAvatarsInDOM(uid, url, name){
 }
 
 function updateStoryAvatarsInDOM(uid, url, name){
-  document.querySelectorAll(`[data-story-avatar-uid="${escapeHTML(uid)}"]`).forEach(el=>{
+  document.querySelectorAll(`[data-story-avatar-uid="${uid}"]`).forEach(el=>{
     if(url){
       el.innerHTML = `<img src="${url}" alt="avatar">`;
     }else{
-      el.innerHTML = `<div class="avatarInitials">${escapeHTML(initials(name||"U"))}</div>`;
+      el.innerHTML = `<div class="avatarInitials">${initials(name||"U")}</div>`;
     }
   });
-  document.querySelectorAll(`[data-story-name-uid="${escapeHTML(uid)}"]`).forEach(el=>{
+  document.querySelectorAll(`[data-story-name-uid="${uid}"]`).forEach(el=>{
     el.textContent = name || "Usuário";
   });
 }
 
 function updateViewerAvatarsInDOM(uid, url, name){
-  document.querySelectorAll(`[data-viewer-avatar-uid="${escapeHTML(uid)}"]`).forEach(el=>{
+  document.querySelectorAll(`[data-viewer-avatar-uid="${uid}"]`).forEach(el=>{
     if(url){
       el.innerHTML = `<img src="${url}" alt="avatar">`;
     }else{
-      el.textContent = escapeHTML(initials(name||"U"));
+      el.textContent = initials(name||"U");
     }
   });
 }
+</script>
+
+<script>
+/* ===================== ✅ MESSENGER (BADGE + SOM DO CHAT) ===================== */
+const CHAT_URL = "https://marcio2307.github.io/terreiro/batepapo.html";
+const ROOM_ID = "global";
+const CHAT_MSG_PATH = `groupChat/${ROOM_ID}/messages`;
+
+const msgBtn = document.getElementById("msgBtn");
+const msgBadge = document.getElementById("msgBadge");
+
+let unread = 0;
+let firstChatLoadDone = false;
+const chatRendered = new Set();
+
+function renderBadge(){
+  if(unread <= 0){
+    msgBadge.style.display = "none";
+    msgBadge.textContent = "0";
+    return;
+  }
+  msgBadge.style.display = "inline-flex";
+  msgBadge.textContent = unread > 99 ? "99+" : String(unread);
+}
+
+function clearUnread(){
+  unread = 0;
+  renderBadge();
+  try{ localStorage.setItem("chat_unread_count", "0"); }catch(e){}
+}
+
+function incUnread(){
+  unread++;
+  renderBadge();
+  try{ localStorage.setItem("chat_unread_count", String(unread)); }catch(e){}
+}
+
+(function loadUnread(){
+  try{
+    const v = parseInt(localStorage.getItem("chat_unread_count")||"0", 10);
+    unread = isNaN(v) ? 0 : v;
+    renderBadge();
+  }catch(e){}
+})();
+
+msgBtn.addEventListener("click", ()=>{
+  unlockAudioOnce();
+  clearUnread();
+  window.location.href = CHAT_URL;
+});
+
+(function listenChatNotifications(){
+  const ref = DB.ref(CHAT_MSG_PATH).orderByChild("createdAt").limitToLast(200);
+
+  ref.on("child_added", (snap)=>{
+    const m = snap.val() || {};
+    const id = m.id || snap.key;
+    if(!id) return;
+    if(chatRendered.has(id)) return;
+    chatRendered.add(id);
+
+    // Depois que terminar o "carregamento inicial", conta como nova mensagem
+    if(firstChatLoadDone){
+      // Conta só mensagens de outras pessoas
+      if(m.uid && m.uid !== UID){
+        incUnread();
+        playChatSound();
+      }
+    }else{
+      // marca o fim do load inicial depois de um tempinho
+      clearTimeout(window.__chatFirstLoadTimer);
+      window.__chatFirstLoadTimer = setTimeout(()=>{ firstChatLoadDone = true; }, 900);
+    }
+  });
+})();
 </script>
 
 <script>
@@ -1899,8 +1920,8 @@ function atualizarCurtidasUI(postId, likesObj){
   if(total === 0){ cont.innerHTML = ""; return; }
 
   const sorted = entries.sort((a,b)=>(a.createdAt||0)-(b.createdAt||0));
-  const nomes = sorted.map(x => (x.uid === UID ? "Você" : escapeHTML(x.userName || "Usuário")));
-  cont.innerHTML = `Curtidas (${total}): <b>${nomes.join(", ")}</b>`;
+  const nomes = sorted.map(x => (x.uid === UID ? "Você" : (x.userName || "Usuário")));
+  cont.innerHTML = `Curtidas (${total}): <b>${nomes.map(escapeHTML).join(", ")}</b>`;
 }
 
 /* ✅✅✅ TOGGLE COMENTÁRIOS: 1 clique abre, 2º clique fecha */
@@ -1996,7 +2017,6 @@ async function excluirPost(id){
   playActionSound();
 }
 
-/* ✅ post HTML: avatar e nome abrem a PRÉVIA DO DONO DO POST */
 function postHTML(id, postData, avatarUrl){
   let midia = "";
   if(postData.mediaUrl){
