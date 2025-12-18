@@ -32,6 +32,19 @@ body{
   justify-content:space-between;
   gap: 12px;
 }
+.topLeft{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  min-width: 44px;
+}
+.topCenter{
+  flex:1;
+  display:flex;
+  justify-content:center; /* ✅ título no centro */
+  align-items:center;
+  text-align:center;
+}
 .title{
   display:flex;
   align-items:center;
@@ -42,6 +55,7 @@ body{
   letter-spacing:1.1px;
   text-shadow: 0 0 10px #00ff8c, 0 0 20px #00ff8c;
   font-size: 16px;
+  white-space:nowrap;
 }
 .backBtn{
   color:#00ff8c;
@@ -53,6 +67,10 @@ body{
   border-radius:16px;
   border: 1px solid rgba(0,255,140,.25);
   background: rgba(0,0,0,.2);
+}
+.rightSpacer{
+  width: 44px; /* ✅ espaçador p/ manter título central */
+  flex: 0 0 auto;
 }
 
 .wrap{
@@ -168,10 +186,20 @@ body{
 <body>
 
 <div class="topbar">
-  <div class="title"><i class="fa-solid fa-users"></i> Usuários Online</div>
-  <a class="backBtn" href="javascript:history.back()">
-    <i class="fa-solid fa-arrow-left"></i> Voltar
-  </a>
+  <!-- ✅ botão voltar do lado esquerdo -->
+  <div class="topLeft">
+    <a class="backBtn" href="javascript:history.back()">
+      <i class="fa-solid fa-arrow-left"></i> Voltar
+    </a>
+  </div>
+
+  <!-- ✅ título central -->
+  <div class="topCenter">
+    <div class="title"><i class="fa-solid fa-users"></i> Usuários Online</div>
+  </div>
+
+  <!-- ✅ espaçador para manter centralizado -->
+  <div class="rightSpacer"></div>
 </div>
 
 <div class="wrap">
@@ -206,6 +234,12 @@ const DB = firebase.database();
 const listEl = document.getElementById("list");
 const ONLINE_WINDOW_MS = 70000;
 
+function escapeHTML(str){
+  return (str||"")
+    .replaceAll("&","&amp;").replaceAll("<","&lt;")
+    .replaceAll(">","&gt;").replaceAll('"',"&quot;")
+    .replaceAll("'","&#039;");
+}
 function initials(name){
   const n = (name||"").trim().split(/\s+/);
   return ((n[0]?.[0]||"U") + (n[1]?.[0]||"")).toUpperCase();
@@ -232,14 +266,14 @@ DB.ref("presence").on("value", async snap=>{
     const nome = u.userName || "Usuário";
     const la = fmt(u.lastActive);
 
-    let avatarHTML = `<div class="avatar"><div class="init">${initials(nome)}</div></div>`;
+    let avatarHTML = `<div class="avatar"><div class="init">${escapeHTML(initials(nome))}</div></div>`;
 
     try{
       const pSnap = await DB.ref("profiles/"+uid).once("value");
       const p = pSnap.val() || {};
       const foto = p.avatarDataUrl || p.avatarUrl;
       if(foto){
-        avatarHTML = `<div class="avatar"><img src="${foto}"></div>`;
+        avatarHTML = `<div class="avatar"><img src="${foto}" alt="foto"></div>`;
       }
     }catch(e){}
 
@@ -248,9 +282,9 @@ DB.ref("presence").on("value", async snap=>{
         <div class="left">
           ${avatarHTML}
           <span class="dot"></span>
-          <div class="name">${nome}</div>
+          <div class="name">${escapeHTML(nome)}</div>
         </div>
-        <div class="time">${la}</div>
+        <div class="time">${escapeHTML(la)}</div>
       </div>
     `;
   }));
