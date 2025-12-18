@@ -155,8 +155,76 @@
     .top-menu a i{ font-size: 22px; }
   }
 
+  /* ===================== "NO QUE VOCÊ ESTÁ PENSANDO" (AGORA ACIMA DOS STORIES) ===================== */
+  .create-post{
+    background:#0d0d0d;
+    margin:10px 12px 10px 12px;
+    padding:14px;
+    border-radius:22px;
+    border:1px solid #00ff9d;
+    display:flex;
+    gap:10px;
+    align-items:center;
+    box-shadow:0 0 10px rgba(0,255,157,.45);
+  }
+  .input-box{
+    flex:1;
+    min-width: 0;
+    background:#111;
+    padding:12px 18px;
+    border-radius:999px;
+    border:1px solid #00ff9d;
+    color:#fff;
+    font-size:16px;
+    outline:none;
+    box-shadow:inset 0 0 8px rgba(0,255,157,.35);
+  }
+  .add-btn{
+    background:#111;
+    border:2px solid #00ff9d;
+    color:#00ff9d;
+    width:46px;
+    height:46px;
+    border-radius:50%;
+    font-size:22px;
+    font-weight:bold;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    cursor:pointer;
+    box-shadow:0 0 10px rgba(0,255,157,.45);
+    transition:.2s;
+    flex: 0 0 auto;
+  }
+  .whatsapp-send{
+    width:46px; height:46px;
+    background:#00ff9d;
+    border-radius:50%;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:26px;
+    color:#003b23;
+    cursor:pointer;
+    box-shadow:0 0 15px rgba(0,255,157,.55);
+    transition:.2s;
+    border:2px solid #003b23;
+    flex: 0 0 auto;
+  }
+  #fileInput{display:none;}
+
+  .preview{
+    margin:0 12px 10px 12px;
+    padding:15px;
+    background:#0d0d0d;
+    border:1px solid #00ff9d;
+    border-radius:15px;
+    box-shadow:0 0 10px rgba(0,255,157,.45);
+    display:none;
+  }
+
   /* ======================== STORIES (ESTILO INSTA) ======================== */
-  .stories-wrapper{ padding: 12px 10px 6px 10px; }
+  .stories-wrapper{ padding: 6px 10px 6px 10px; }
   .stories-row{
     display:flex;
     gap: 14px;
@@ -247,6 +315,98 @@
     box-shadow:0 0 24px rgba(0,255,140,.55);
   }
   .createLabel{ font-weight:800; opacity:.95; }
+
+  /* ======================== "CONECTADOS NO FACECUMBA" (APÓS A 1ª PUBLICAÇÃO) ======================== */
+  .connections{
+    background:#0d0d0d;
+    margin: 12px 12px 15px 12px;
+    padding: 14px;
+    border-radius: 18px;
+    border: 1px solid rgba(0,255,157,.55);
+    box-shadow: 0 0 10px rgba(0,255,157,.25);
+    position:relative;
+  }
+  .connectionsTitle{
+    font-weight: 900;
+    color:#00ff9d;
+    letter-spacing: .8px;
+    text-transform: uppercase;
+    text-shadow: 0 0 10px rgba(0,255,157,.25);
+    display:flex;
+    align-items:center;
+    gap:10px;
+    margin-bottom: 12px;
+  }
+  .connectionsTitle i{
+    color:#00ff9d;
+    text-shadow: 0 0 12px rgba(0,255,157,.35);
+  }
+  .connGrid{
+    display:grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+  }
+  @media(min-width:520px){
+    .connGrid{ grid-template-columns: repeat(5, 1fr); }
+  }
+  .connCard{
+    border-radius: 14px;
+    overflow:hidden;
+    border: 1px solid rgba(255,255,255,.08);
+    background: rgba(255,255,255,.03);
+    box-shadow: 0 10px 24px rgba(0,0,0,.28);
+    display:flex;
+    flex-direction:column;
+    min-width:0;
+  }
+  .connPhoto{
+    width:100%;
+    aspect-ratio: 1 / 1;
+    background:#000;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    border-bottom: 1px solid rgba(0,255,157,.15);
+    overflow:hidden;
+  }
+  .connPhoto img{
+    width:100%;
+    height:100%;
+    object-fit: cover;
+    display:block;
+  }
+  .connInit{
+    font-weight: 900;
+    color:#00ff9d;
+    font-size: 18px;
+    text-shadow: 0 0 12px rgba(0,255,157,.25);
+  }
+  .connName{
+    padding: 10px 10px 8px 10px;
+    font-weight: 900;
+    color:#fff;
+    font-size: 13px;
+    line-height: 1.1;
+    overflow:hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+  .connBtn{
+    margin: 0 10px 10px 10px;
+    border:none;
+    border-radius: 12px;
+    padding: 10px 8px;
+    font-weight: 900;
+    cursor:pointer;
+    background:#00ff9d;
+    color:#003b23;
+    box-shadow: 0 0 14px rgba(0,255,157,.35);
+  }
+  .connEmpty{
+    padding: 10px;
+    opacity: .85;
+    font-weight: 700;
+  }
 
   /* ======================== VIEWER ======================== */
   #viewer{
@@ -490,73 +650,6 @@
   .login-btn:active{ transform: scale(.99); }
 
   /* ===================== FEED ===================== */
-  .create-post{
-    background:#0d0d0d;
-    margin:10px 12px 15px 12px;
-    padding:14px;
-    border-radius:22px;
-    border:1px solid #00ff9d;
-    display:flex;
-    gap:10px;
-    align-items:center;
-    box-shadow:0 0 10px rgba(0,255,157,.45);
-  }
-  .input-box{
-    flex:1;
-    min-width: 0;
-    background:#111;
-    padding:12px 18px;
-    border-radius:999px;
-    border:1px solid #00ff9d;
-    color:#fff;
-    font-size:16px;
-    outline:none;
-    box-shadow:inset 0 0 8px rgba(0,255,157,.35);
-  }
-  .add-btn{
-    background:#111;
-    border:2px solid #00ff9d;
-    color:#00ff9d;
-    width:46px;
-    height:46px;
-    border-radius:50%;
-    font-size:22px;
-    font-weight:bold;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    cursor:pointer;
-    box-shadow:0 0 10px rgba(0,255,157,.45);
-    transition:.2s;
-    flex: 0 0 auto;
-  }
-  .whatsapp-send{
-    width:46px; height:46px;
-    background:#00ff9d;
-    border-radius:50%;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    font-size:26px;
-    color:#003b23;
-    cursor:pointer;
-    box-shadow:0 0 15px rgba(0,255,157,.55);
-    transition:.2s;
-    border:2px solid #003b23;
-    flex: 0 0 auto;
-  }
-  #fileInput{display:none;}
-
-  .preview{
-    margin:0 12px 15px 12px;
-    padding:15px;
-    background:#0d0d0d;
-    border:1px solid #00ff9d;
-    border-radius:15px;
-    box-shadow:0 0 10px rgba(0,255,157,.45);
-    display:none;
-  }
-
   .post{
     background:#0d0d0d;
     margin:15px 12px;
@@ -804,6 +897,62 @@
     font-size:12px;
     font-weight:900;
   }
+
+  /* ===================== MODAL PRÉVIA PERFIL (SEM SAIR DA PÁGINA) ===================== */
+  .profileModal{
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,.90);
+    display:none;
+    align-items:center;
+    justify-content:center;
+    z-index: 999999999;
+    padding: 14px;
+  }
+  .profileModalCard{
+    width: min(820px, 96vw);
+    height: min(86vh, 720px);
+    background:#0d0d0d;
+    border: 2px solid rgba(0,255,157,.55);
+    box-shadow: 0 0 22px rgba(0,255,157,.25);
+    border-radius: 18px;
+    overflow:hidden;
+    position:relative;
+  }
+  .profileModalTop{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:12px;
+    padding: 12px 12px;
+    border-bottom: 1px solid rgba(255,255,255,.08);
+    background: rgba(0,0,0,.35);
+  }
+  .profileModalTitle{
+    font-weight: 900;
+    color:#00ff9d;
+    display:flex;
+    align-items:center;
+    gap:10px;
+    letter-spacing:.6px;
+  }
+  .profileModalClose{
+    border:none;
+    border-radius: 12px;
+    padding: 10px 12px;
+    font-weight: 900;
+    cursor:pointer;
+    background:#00ff9d;
+    color:#003b23;
+    box-shadow: 0 0 14px rgba(0,255,157,.25);
+  }
+  .profileModalFrame{
+    width:100%;
+    height: calc(100% - 54px);
+    border:0;
+    display:block;
+    background:#000;
+  }
 </style>
 </head>
 
@@ -824,6 +973,17 @@
     <div class="spinner"></div>
     <div class="loadingText" id="loadingText">Enviando...</div>
     <div class="loadingSub" id="loadingSub">Aguarde um instante</div>
+  </div>
+</div>
+
+<!-- MODAL PRÉVIA PERFIL -->
+<div class="profileModal" id="profileModal">
+  <div class="profileModalCard">
+    <div class="profileModalTop">
+      <div class="profileModalTitle"><i class="fa-solid fa-id-card"></i> Prévia do Perfil</div>
+      <button class="profileModalClose" onclick="closeProfileModal()">Fechar</button>
+    </div>
+    <iframe class="profileModalFrame" id="profileFrame" src="about:blank"></iframe>
   </div>
 </div>
 
@@ -863,6 +1023,30 @@
   </a>
 </nav>
 
+<!-- ✅ AGORA: "NO QUE VOCÊ ESTÁ PENSANDO?" ACIMA DOS STORIES -->
+<div class="create-post">
+  <input type="text" id="postText" class="input-box" placeholder="No que você está pensando?" oninput="updateButton()">
+  <div class="add-btn" id="btnMain" onclick="buttonAction()">+</div>
+  <input type="file" id="fileInput" accept="image/*,video/*">
+</div>
+
+<div class="preview" id="previewBox">
+  <h3>Prévia da mídia</h3>
+  <div id="previewContent"></div>
+
+  <div style="margin-top:15px; display:flex; flex-direction:column; gap:12px;">
+    <button onclick="removerPreview()"
+      style="width:100%;padding:15px;font-size:20px;font-weight:bold;border:none;border-radius:18px;background:#ff6b6b;color:#fff;cursor:pointer;">
+      Excluir imagem
+    </button>
+
+    <button onclick="postar()"
+      style="width:100%;padding:15px;font-size:22px;font-weight:bold;border:none;border-radius:18px;background:#7bffb5;color:#000;cursor:pointer;">
+      Postar
+    </button>
+  </div>
+</div>
+
 <!-- STORIES -->
 <div class="stories-wrapper">
   <div class="stories-row" id="storiesRow"></div>
@@ -893,29 +1077,6 @@
 </div>
 
 <!-- FEED / MURAL -->
-<div class="create-post">
-  <input type="text" id="postText" class="input-box" placeholder="No que você está pensando?" oninput="updateButton()">
-  <div class="add-btn" id="btnMain" onclick="buttonAction()">+</div>
-  <input type="file" id="fileInput" accept="image/*,video/*">
-</div>
-
-<div class="preview" id="previewBox">
-  <h3>Prévia da mídia</h3>
-  <div id="previewContent"></div>
-
-  <div style="margin-top:15px; display:flex; flex-direction:column; gap:12px;">
-    <button onclick="removerPreview()"
-      style="width:100%;padding:15px;font-size:20px;font-weight:bold;border:none;border-radius:18px;background:#ff6b6b;color:#fff;cursor:pointer;">
-      Excluir imagem
-    </button>
-
-    <button onclick="postar()"
-      style="width:100%;padding:15px;font-size:22px;font-weight:bold;border:none;border-radius:18px;background:#7bffb5;color:#000;cursor:pointer;">
-      Postar
-    </button>
-  </div>
-</div>
-
 <div id="feed"></div>
 
 <!-- Firebase -->
@@ -1098,10 +1259,29 @@ function fmtDate(ts){
 
 /* ====================== ✅ ABRIR PRÉVIA DO PERFIL ====================== */
 const PREVIEW_URL = "https://marcio2307.github.io/terreiro/previa.html";
-function abrirPrevia(uid){
+
+/* modal */
+const profileModal = document.getElementById("profileModal");
+const profileFrame = document.getElementById("profileFrame");
+function openProfileModal(uid){
   if(!uid) return;
   const back = encodeURIComponent(window.location.href);
-  window.location.href = `${PREVIEW_URL}?uid=${encodeURIComponent(uid)}&back=${back}`;
+  profileFrame.src = `${PREVIEW_URL}?uid=${encodeURIComponent(uid)}&back=${back}`;
+  profileModal.style.display = "flex";
+  document.body.style.overflow = "hidden";
+}
+function closeProfileModal(){
+  profileModal.style.display = "none";
+  document.body.style.overflow = "";
+  profileFrame.src = "about:blank";
+}
+profileModal.addEventListener("click", (e)=>{
+  if(e.target === profileModal) closeProfileModal();
+});
+
+/* mantém a função antiga (caso você use em outros lugares) */
+function abrirPrevia(uid){
+  openProfileModal(uid);
 }
 
 /* limites */
@@ -1203,6 +1383,7 @@ async function getAvatarForUID(uid, fallbackName){
       updateAvatarsInDOM(uid, uu, nn);
       updateStoryAvatarsInDOM(uid, uu, nn);
       updateViewerAvatarsInDOM(uid, uu, nn);
+      updateConnectionsAvatarsInDOM(uid, uu, nn);
     });
 
     return obj;
@@ -1246,6 +1427,20 @@ function updateViewerAvatarsInDOM(uid, url, name){
     }else{
       el.textContent = initials(name||"U");
     }
+  });
+}
+
+/* para o bloco "conectados" */
+function updateConnectionsAvatarsInDOM(uid, url, name){
+  document.querySelectorAll(`[data-conn-photo-uid="${uid}"]`).forEach(el=>{
+    if(url){
+      el.innerHTML = `<img src="${url}" alt="avatar">`;
+    }else{
+      el.innerHTML = `<div class="connInit">${escapeHTML(initials(name||"U"))}</div>`;
+    }
+  });
+  document.querySelectorAll(`[data-conn-name-uid="${uid}"]`).forEach(el=>{
+    el.textContent = name || "Usuário";
   });
 }
 </script>
@@ -1309,18 +1504,117 @@ msgBtn.addEventListener("click", ()=>{
     if(chatRendered.has(id)) return;
     chatRendered.add(id);
 
-    // Depois que terminar o "carregamento inicial", conta como nova mensagem
     if(firstChatLoadDone){
-      // Conta só mensagens de outras pessoas
       if(m.uid && m.uid !== UID){
         incUnread();
         playChatSound();
       }
     }else{
-      // marca o fim do load inicial depois de um tempinho
       clearTimeout(window.__chatFirstLoadTimer);
       window.__chatFirstLoadTimer = setTimeout(()=>{ firstChatLoadDone = true; }, 900);
     }
+  });
+})();
+</script>
+
+<script>
+/* ===================== ✅ BLOCO "CONECTADOS NO FACECUMBA" (APÓS A 1ª PUBLICAÇÃO DO FEED) ===================== */
+const CONNECTIONS_ID = "connectionsSection";
+let connectionsUsers = []; // [{uid,userName,lastActive,onlineAt}]
+
+function ensureConnectionsSection(){
+  const feed = document.getElementById("feed");
+  if(!feed) return;
+
+  let sec = document.getElementById(CONNECTIONS_ID);
+
+  // pega a "primeira publicação" (topo do feed)
+  const firstPost = feed.querySelector(".post");
+
+  if(!firstPost){
+    if(sec) sec.remove();
+    return;
+  }
+
+  if(!sec){
+    sec = document.createElement("div");
+    sec.id = CONNECTIONS_ID;
+    sec.className = "connections";
+  }
+
+  // coloca sempre depois do primeiro post
+  const afterFirst = firstPost.nextSibling;
+  if(afterFirst !== sec){
+    feed.insertBefore(sec, afterFirst);
+  }
+
+  renderConnections();
+}
+
+async function renderConnections(){
+  const sec = document.getElementById(CONNECTIONS_ID);
+  if(!sec) return;
+
+  // ordena: mais recentes primeiro
+  const list = connectionsUsers
+    .filter(u => u && u.uid && u.uid !== UID)
+    .sort((a,b)=> (b.lastActive||b.onlineAt||0) - (a.lastActive||a.onlineAt||0))
+    .slice(0, 10);
+
+  sec.innerHTML = `
+    <div class="connectionsTitle">
+      <i class="fa-solid fa-users"></i>
+      <span>CONECTADOS NO FACECUMBA</span>
+    </div>
+    <div class="connGrid" id="connGrid"></div>
+    <div id="connEmpty" class="connEmpty" style="display:none;">Ninguém online agora. Volte já já 🙂</div>
+  `;
+
+  const grid = sec.querySelector("#connGrid");
+  const empty = sec.querySelector("#connEmpty");
+
+  if(!list.length){
+    empty.style.display = "block";
+    return;
+  }
+
+  const cards = await Promise.all(list.map(async u=>{
+    const prof = await getAvatarForUID(u.uid, u.userName || "Usuário");
+    const name = prof.name || u.userName || "Usuário";
+    const photo = prof.url
+      ? `<img src="${prof.url}" alt="avatar">`
+      : `<div class="connInit">${escapeHTML(initials(name))}</div>`;
+
+    // quadrado + botão ver perfil
+    return `
+      <div class="connCard">
+        <div class="connPhoto" data-conn-photo-uid="${escapeHTML(u.uid)}">${photo}</div>
+        <div class="connName" data-conn-name-uid="${escapeHTML(u.uid)}">${escapeHTML(name)}</div>
+        <button class="connBtn" onclick="openProfileModal('${escapeHTML(u.uid)}')">Ver perfil</button>
+      </div>
+    `;
+  }));
+
+  grid.innerHTML = cards.join("");
+}
+
+(function listenConnectionsPresence(){
+  // usuários cadastrados e logados = presence/*
+  const ref = DB.ref("presence").orderByChild("lastActive").limitToLast(80);
+
+  ref.on("value", (snap)=>{
+    const obj = snap.val() || {};
+    const arr = Object.keys(obj).map(k => obj[k]).filter(Boolean);
+
+    connectionsUsers = arr.map(x=>({
+      uid: x.uid || "",
+      userName: x.userName || "Usuário",
+      lastActive: x.lastActive || 0,
+      onlineAt: x.onlineAt || 0
+    }));
+
+    // atualiza posição (sempre depois do 1º post)
+    ensureConnectionsSection();
   });
 })();
 </script>
@@ -1400,7 +1694,7 @@ function renderUserCard(group){
   const avatarHTML = `
     <div class="avatarCircle"
          data-story-avatar-uid="${escapeHTML(group.uid)}"
-         onclick="event.stopPropagation(); abrirPrevia('${escapeHTML(group.uid)}')">
+         onclick="event.stopPropagation(); openProfileModal('${escapeHTML(group.uid)}')">
       <div class="avatarInitials">${escapeHTML(initials(uname))}</div>
     </div>
   `;
@@ -1515,11 +1809,11 @@ async function updateViewersUI(viewsObj){
     const prof = await getAvatarForUID(v.uid, nome);
     const ava = prof.url
       ? `<div style="width:34px;height:34px;border-radius:50%;overflow:hidden;border:1px solid rgba(0,255,140,.25);flex:0 0 auto;cursor:pointer;"
-              onclick="abrirPrevia('${escapeHTML(v.uid)}')">
+              onclick="openProfileModal('${escapeHTML(v.uid)}')">
            <img src="${prof.url}" style="width:100%;height:100%;object-fit:cover;display:block;" alt="avatar">
          </div>`
       : `<div style="width:34px;height:34px;border-radius:50%;display:flex;align-items:center;justify-content:center;border:1px solid rgba(0,255,140,.25);color:#00ff8c;font-weight:900;flex:0 0 auto;cursor:pointer;"
-              onclick="abrirPrevia('${escapeHTML(v.uid)}')">
+              onclick="openProfileModal('${escapeHTML(v.uid)}')">
            ${escapeHTML(initials(nome))}
          </div>`;
 
@@ -1924,7 +2218,7 @@ function atualizarCurtidasUI(postId, likesObj){
   cont.innerHTML = `Curtidas (${total}): <b>${nomes.map(escapeHTML).join(", ")}</b>`;
 }
 
-/* ✅✅✅ TOGGLE COMENTÁRIOS: 1 clique abre, 2º clique fecha */
+/* ✅✅✅ TOGGLE COMENTÁRIOS */
 const commentCloseHandlers = {};
 function fecharComentarios(id){
   const box = document.getElementById("comentarios_"+id);
@@ -2014,6 +2308,8 @@ async function excluirPost(id){
   const el = document.getElementById(id);
   if(el) el.remove();
   postsCache.delete(id);
+
+  ensureConnectionsSection();
   playActionSound();
 }
 
@@ -2034,7 +2330,7 @@ function postHTML(id, postData, avatarUrl){
   const uname = postData.userName || "Usuário";
 
   const avatarHTML = `
-    <div class="postAvatar" data-avatar-uid="${escapeHTML(uid)}" onclick="abrirPrevia('${escapeHTML(uid)}')">
+    <div class="postAvatar" data-avatar-uid="${escapeHTML(uid)}" onclick="openProfileModal('${escapeHTML(uid)}')">
       ${avatarUrl
         ? `<img src="${avatarUrl}" alt="avatar">`
         : `<div class="init">${escapeHTML(initials(uname))}</div>`}
@@ -2052,7 +2348,7 @@ function postHTML(id, postData, avatarUrl){
       ${avatarHTML}
       <div class="postHeadText">
         <div class="postNameLine">
-          <div class="postName" data-name-uid="${escapeHTML(uid)}" onclick="abrirPrevia('${escapeHTML(uid)}')">${escapeHTML(uname)}</div>
+          <div class="postName" data-name-uid="${escapeHTML(uid)}" onclick="openProfileModal('${escapeHTML(uid)}')">${escapeHTML(uname)}</div>
           ${pending}
         </div>
         <div class="postWhen">${escapeHTML(when)}</div>
@@ -2113,6 +2409,9 @@ function criarPostOptimista(id, postData){
   getAvatarForUID(uid, postData.userName || "Usuário").then(({url, name})=>{
     temp.innerHTML = postHTML(id, postData, url).trim();
     feed.prepend(temp.firstChild);
+
+    ensureConnectionsSection();
+
     listenLikes(id);
     listenComments(id);
     updateAvatarsInDOM(uid, url, name);
@@ -2145,6 +2444,8 @@ function atualizarPostDoServidor(id, data){
   }
 
   el.removeAttribute("data-pending");
+
+  ensureConnectionsSection();
 }
 
 function listenLikes(postId){
@@ -2169,14 +2470,14 @@ function listenComments(postId){
       const prof = await getAvatarForUID(c.uid, nome);
 
       const ava = prof.url
-        ? `<div class="cAvatar" data-avatar-uid="${escapeHTML(c.uid)}" onclick="abrirPrevia('${escapeHTML(c.uid)}')"><img src="${prof.url}" alt="avatar"></div>`
-        : `<div class="cAvatar" data-avatar-uid="${escapeHTML(c.uid)}" onclick="abrirPrevia('${escapeHTML(c.uid)}')"><div class="init">${escapeHTML(initials(nome))}</div></div>`;
+        ? `<div class="cAvatar" data-avatar-uid="${escapeHTML(c.uid)}" onclick="openProfileModal('${escapeHTML(c.uid)}')"><img src="${prof.url}" alt="avatar"></div>`
+        : `<div class="cAvatar" data-avatar-uid="${escapeHTML(c.uid)}" onclick="openProfileModal('${escapeHTML(c.uid)}')"><div class="init">${escapeHTML(initials(nome))}</div></div>`;
 
       return `
         <div id="${c.cid}" class="cRow">
           <div class="cHead">
             ${ava}
-            <div class="cName" data-name-uid="${escapeHTML(c.uid)}" onclick="abrirPrevia('${escapeHTML(c.uid)}')">${escapeHTML(nome)}</div>
+            <div class="cName" data-name-uid="${escapeHTML(c.uid)}" onclick="openProfileModal('${escapeHTML(c.uid)}')">${escapeHTML(nome)}</div>
           </div>
           <div class="cText">💬 ${txt}</div>
 
@@ -2223,6 +2524,7 @@ function listenComments(postId){
     postsCache.delete(id);
     const el = document.getElementById(id);
     if(el) el.remove();
+    ensureConnectionsSection();
   });
 })();
 
@@ -2248,6 +2550,8 @@ function pumpRenderQueue(){
         listenComments(it.id);
 
         updateAvatarsInDOM(it.data.uid, prof.url, prof.name);
+
+        ensureConnectionsSection();
       }
       n++;
     }
@@ -2255,6 +2559,7 @@ function pumpRenderQueue(){
       requestAnimationFrame(()=>step());
     }else{
       pumping = false;
+      ensureConnectionsSection();
     }
   };
   requestAnimationFrame(()=>step());
