@@ -488,6 +488,45 @@
     user-select:none;
   }
 
+  /* ✅ REAÇÕES (aparece só em stories de OUTROS usuários) */
+  .reactionBar{
+    position:absolute;
+    left: 16px;
+    bottom: calc(18px + env(safe-area-inset-bottom));
+    z-index: 35;
+    display:none;
+    gap: 10px;
+    align-items:center;
+    pointer-events:auto;
+    user-select:none;
+  }
+  .reactBtn{
+    width: 46px;
+    height: 46px;
+    border-radius: 14px;
+    border: 1px solid rgba(0,255,140,.28);
+    background: rgba(0,0,0,.45);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    cursor:pointer;
+    box-shadow: 0 0 18px rgba(0,255,140,.12);
+    transition: transform .12s ease, box-shadow .12s ease, border-color .12s ease;
+  }
+  .reactBtn:active{ transform: scale(.98); }
+  .reactBtn i{
+    font-size: 22px;
+    color: #fff;
+    text-shadow: 0 0 12px rgba(0,0,0,.55);
+  }
+  .reactBtn.selected{
+    border-color: rgba(0,255,140,.75);
+    box-shadow: 0 0 24px rgba(0,255,140,.25);
+    transform: translateY(-1px);
+  }
+
   /* ✅ QUEM VIU */
   .viewerFooter{
     position:absolute;
@@ -585,6 +624,20 @@
     font-size: 12px;
     opacity:.85;
     white-space:nowrap;
+  }
+  .viewerReact{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    width:30px;
+    height:30px;
+    border-radius: 10px;
+    margin-left:8px;
+    border:1px solid rgba(0,255,140,.22);
+    background: rgba(0,0,0,.35);
+    color:#fff;
+    font-size: 16px;
+    flex: 0 0 auto;
   }
 
   /* ====================== LOGIN ====================== */
@@ -1061,7 +1114,14 @@
   <div class="tapRight" id="tapRight"></div>
   <div id="viewerMedia"></div>
 
-  <!-- ✅ QUEM VIU -->
+  <!-- ✅ REAÇÕES (SÓ EM STORIES DOS OUTROS) -->
+  <div class="reactionBar" id="reactionBar">
+    <div class="reactBtn" id="react_love" title="Coração" onclick="reactToStory('love')"><i class="fa-solid fa-heart"></i></div>
+    <div class="reactBtn" id="react_like" title="Curtir" onclick="reactToStory('like')"><i class="fa-solid fa-thumbs-up"></i></div>
+    <div class="reactBtn" id="react_haha" title="Haha" onclick="reactToStory('haha')"><i class="fa-solid fa-face-laugh-squint"></i></div>
+  </div>
+
+  <!-- ✅ QUEM VIU (DONO DO STORY) -->
   <div class="viewerFooter" id="viewerFooter">
     <div class="viewerFooterInner" id="viewerFooterInner" onclick="toggleViewersPanel()">
       <div class="seenText">
@@ -1633,6 +1693,107 @@ let viewersPanelOpen = false;
 let viewersRef = null;
 let CAN_SEE_VIEWERS = false;
 
+/* ✅ Reações */
+let reactionsRef = null;
+let myReactionRef = null;
+let currentReactionsObj = {};
+let myCurrentReaction = null;
+
+const reactionBar = document.getElementById("reactionBar");
+const reactBtnLove = document.getElementById("react_love");
+const reactBtnLike = document.getElementById("react_like");
+const reactBtnHaha = document.getElementById("react_haha");
+
+function reactIcon(type){
+  if(type === "love") return "❤️";
+  if(type === "like") return "👍";
+  if(type === "haha") return "😆";
+  return "";
+}
+function clearReactSelected(){
+  [reactBtnLove, reactBtnLike, reactBtnHaha].forEach(b=>b && b.classList.remove("selected"));
+}
+function setReactSelected(type){
+  clearReactSelected();
+  if(type === "love") reactBtnLove.classList.add("selected");
+  if(type === "like") reactBtnLike.classList.add("selected");
+  if(type === "haha") reactBtnHaha.classList.add("selected");
+}
+function detachReactionsListener(){
+  try{
+    if(reactionsRef){ reactionsRef.off(); reactionsRef = null; }
+  }catch(e){}
+  try{
+    if(myReactionRef){ myReactionRef.off(); myReactionRef = null; }
+  }catch(e){}
+  currentReactionsObj = {};
+  myCurrentReaction = null;
+  clearReactSelected();
+}
+function attachReactionsListener(story){
+  detachReactionsListener();
+  if(!story || !story.id) return;
+
+  // para o DONO: precisamos das reações para mostrar junto dos viewers
+  reactionsRef = DB.ref(`storyReactions/${story.id}`);
+  reactionsRef.on("value", snap=>{
+    currentReactionsObj = snap.val() || {};
+    if(CAN_SEE_VIEWERS){
+      // re-renderiza lista com reações também
+      if(viewersRef){
+        // updateViewersUI será chamado pelo listener de views,
+        // mas aqui garantimos que ao mudar reação também atualize.
+        DB.ref(`storyViews/${story.id}`).once("value").then(s=>{
+          updateViewersUI(s.val() || {}, currentReactionsObj);
+        }).catch(()=>{});
+      }
+    }
+  });
+
+  // para QUEM ESTÁ VENDO (não dono): escuta a reação do próprio usuário
+  if(story.uid !== UID){
+    myReactionRef = DB.ref(`storyReactions/${story.id}/${UID}`);
+    myReactionRef.on("value", s=>{
+      const v = s.val();
+      myCurrentReaction = v ? (v.type || null) : null;
+      setReactSelected(myCurrentReaction);
+    });
+  }
+}
+
+async function reactToStory(type){
+  try{
+    const s = activeStories[current];
+    if(!s || !s.id) return;
+    if(precisaLogin()) return;
+
+    // só pode reagir em story de OUTRO usuário
+    if(s.uid === UID) return;
+
+    const ref = DB.ref(`storyReactions/${s.id}/${UID}`);
+    const snap = await ref.once("value");
+    const cur = snap.val();
+
+    // toggle: se clicar na mesma reação, remove; se clicar em outra, troca
+    if(cur && cur.type === type){
+      await ref.remove();
+      myCurrentReaction = null;
+      clearReactSelected();
+    }else{
+      await ref.set({
+        uid: UID,
+        userName: USER_NAME,
+        type: type,
+        reactedAt: firebase.database.ServerValue.TIMESTAMP
+      });
+      myCurrentReaction = type;
+      setReactSelected(type);
+    }
+
+    playActionSound();
+  }catch(e){}
+}
+
 function renderCreateCard(){
   const card = document.createElement("div");
   card.className = "storyCard createCard";
@@ -1765,7 +1926,7 @@ async function addStory(file){
   }
 }
 
-/* ===================== ✅ QUEM VIU (com nome + foto) ===================== */
+/* ===================== ✅ QUEM VIU + REAÇÕES (com nome + foto) ===================== */
 function closeViewersPanel(){
   viewersPanelOpen = false;
   viewersPanel.style.display = "none";
@@ -1787,8 +1948,12 @@ function detachViewersListener(){
     }
   }catch(e){}
 }
-async function updateViewersUI(viewsObj){
+
+/* ✅ agora recebe também reactionsObj */
+async function updateViewersUI(viewsObj, reactionsObj){
   const obj = viewsObj || {};
+  const react = reactionsObj || {};
+
   const arr = Object.keys(obj).map(uid=>obj[uid]).filter(Boolean);
   arr.sort((a,b)=>(a.viewedAt||0)-(b.viewedAt||0));
   const total = arr.length;
@@ -1806,6 +1971,11 @@ async function updateViewersUI(viewsObj){
   const rows = await Promise.all(arr.map(async v=>{
     const nome = (v.userName || "Usuário");
     const quando = v.viewedAt ? fmtDate(v.viewedAt) : "";
+
+    const r = react[v.uid];
+    const rType = r ? (r.type || "") : "";
+    const rIcon = rType ? reactIcon(rType) : "";
+
     const prof = await getAvatarForUID(v.uid, nome);
     const ava = prof.url
       ? `<div style="width:34px;height:34px;border-radius:50%;overflow:hidden;border:1px solid rgba(0,255,140,.25);flex:0 0 auto;cursor:pointer;"
@@ -1817,11 +1987,14 @@ async function updateViewersUI(viewsObj){
            ${escapeHTML(initials(nome))}
          </div>`;
 
+    const reactHTML = rIcon ? `<span class="viewerReact" title="Reação">${escapeHTML(rIcon)}</span>` : "";
+
     return `
       <div class="viewerRow">
         <div style="display:flex;align-items:center;gap:10px;min-width:0;">
           ${ava}
-          <div class="viewerName" style="max-width: 58vw;">${escapeHTML(nome)}</div>
+          <div class="viewerName" style="max-width: 50vw;">${escapeHTML(nome)}</div>
+          ${reactHTML}
         </div>
         <div class="viewerTime">${escapeHTML(quando)}</div>
       </div>
@@ -1830,6 +2003,7 @@ async function updateViewersUI(viewsObj){
 
   viewersPanel.innerHTML = rows.join("");
 }
+
 async function markStoryView(story){
   try{
     if(!story || !story.id) return;
@@ -1842,6 +2016,7 @@ async function markStoryView(story){
     });
   }catch(e){}
 }
+
 function attachViewersListener(story){
   detachViewersListener();
   closeViewersPanel();
@@ -1849,9 +2024,10 @@ function attachViewersListener(story){
   seenText.textContent = "Carregando visualizações...";
   if(!story || !story.id) return;
 
+  // views
   viewersRef = DB.ref(`storyViews/${story.id}`);
   viewersRef.on("value", snap=>{
-    updateViewersUI(snap.val() || {});
+    updateViewersUI(snap.val() || {}, currentReactionsObj || {});
   });
 }
 
@@ -1871,8 +2047,13 @@ function closeViewer(){
   viewerTimer = null;
 
   detachViewersListener();
+  detachReactionsListener();
   closeViewersPanel();
+
+  // some a barra de reações ao fechar
+  reactionBar.style.display = "none";
 }
+
 function showStory(){
   clearTimeout(viewerTimer);
   viewerTimer = null;
@@ -1898,14 +2079,22 @@ function showStory(){
   deleteBtn.style.display = "none";
 
   CAN_SEE_VIEWERS = (s.uid === UID);
+
+  // ✅ DONO: mostra "quem viu"; NÃO dono: mostra reações (canto esquerdo embaixo)
   if(CAN_SEE_VIEWERS){
     viewerFooter.style.display = "block";
+    reactionBar.style.display = "none";
     attachViewersListener(s);
   }else{
     viewerFooter.style.display = "none";
     detachViewersListener();
     closeViewersPanel();
+
+    reactionBar.style.display = "flex";
   }
+
+  // ✅ escuta reações do story atual (para dono e para quem reage)
+  attachReactionsListener(s);
 
   markStoryView(s);
 
@@ -1977,6 +2166,7 @@ deleteBtn.onclick = async ()=>{
     stopVideo();
     await DB.ref("stories/" + s.id).remove();
     await DB.ref("storyViews/" + s.id).remove().catch(()=>{});
+    await DB.ref("storyReactions/" + s.id).remove().catch(()=>{});
     if(s.storagePath){
       await ST.ref().child(s.storagePath).delete().catch(()=>{});
     }
@@ -2570,4 +2760,3 @@ updateButton();
 
 </body>
 </html>
-
