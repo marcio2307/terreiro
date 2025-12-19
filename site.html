@@ -5,6 +5,16 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
 <title>Menu + Stories + Feed (Estilo Facebook 2025)</title>
 
+<!-- ✅ OTIMIZAÇÃO: pré-conexões (deixa Firebase/CDN/Storage mais rápidos) -->
+<link rel="preconnect" href="https://www.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://firebasestorage.googleapis.com" crossorigin>
+<link rel="preconnect" href="https://coletivo-f34d4-default-rtdb.firebaseio.com" crossorigin>
+<link rel="preconnect" href="https://i.ibb.co" crossorigin>
+<link rel="dns-prefetch" href="//www.gstatic.com">
+<link rel="dns-prefetch" href="//firebasestorage.googleapis.com">
+<link rel="dns-prefetch" href="//coletivo-f34d4-default-rtdb.firebaseio.com">
+<link rel="dns-prefetch" href="//i.ibb.co">
+
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
 <style>
@@ -12,9 +22,9 @@
   html, body{ width:100%; max-width:100%; overflow-x:hidden; }
   body{
     margin:0;
-    background:#18191A;               /* ✅ Facebook dark */
+    background:#18191A;
     font-family: Arial, sans-serif;
-    color:#E4E6EB;                     /* ✅ texto Facebook */
+    color:#E4E6EB;
     padding-bottom: env(safe-area-inset-bottom);
   }
 
@@ -25,7 +35,7 @@
     --fb-border: rgba(255,255,255,.10);
     --fb-text: #E4E6EB;
     --fb-muted: rgba(228,230,235,.72);
-    --fb-blue: #0866FF;               /* ✅ azul Facebook */
+    --fb-blue: #0866FF;
     --fb-blue-2:#1877F2;
     --fb-green:#31A24C;
     --fb-red:#F02849;
@@ -56,7 +66,6 @@
     display:block;
   }
 
-  /* Ícone Messenger (estilo Facebook) */
   .msgBtn{
     position:relative;
     display:flex;
@@ -78,8 +87,6 @@
     color: var(--fb-text);
     line-height:1;
   }
-
-  /* Bolinha vermelha com número */
   .msgBadge{
     position:absolute;
     top: -6px;
@@ -113,7 +120,7 @@
     align-items: center;
     border-bottom: 1px solid var(--fb-border);
     position: sticky;
-    top: 66px; /* fica abaixo da logo-bar (sticky também) */
+    top: 66px;
     z-index: 9998;
   }
   .top-menu.hide{ display:none !important; }
@@ -160,7 +167,7 @@
     .top-menu a{ width: 44px; height: 44px; border-radius: 12px; }
   }
 
-  /* ===================== "NO QUE VOCÊ ESTÁ PENSANDO" (Facebook) ===================== */
+  /* ===================== "NO QUE VOCÊ ESTÁ PENSANDO" ===================== */
   .create-post{
     background: var(--fb-surface);
     margin: 12px 12px 10px 12px;
@@ -231,7 +238,7 @@
     display:none;
   }
 
-  /* ======================== STORIES (Facebook) ======================== */
+  /* ======================== STORIES ======================== */
   .stories-wrapper{ padding: 2px 10px 6px 10px; }
   .stories-row{
     display:flex;
@@ -320,7 +327,7 @@
   }
   .createLabel{ font-weight:900; opacity:.95; }
 
-  /* ======================== "CONECTADOS" (Facebook) ======================== */
+  /* ======================== "CONECTADOS" ======================== */
   .connections{
     background: var(--fb-surface);
     margin: 12px 12px 15px 12px;
@@ -371,11 +378,7 @@
     overflow:hidden;
   }
   .connPhoto img{ width:100%; height:100%; object-fit: cover; display:block; }
-  .connInit{
-    font-weight: 900;
-    color: var(--fb-text);
-    font-size: 18px;
-  }
+  .connInit{ font-weight: 900; color: var(--fb-text); font-size: 18px; }
   .connName{
     padding: 10px 10px 8px 10px;
     font-weight: 900;
@@ -561,7 +564,7 @@
     max-width: 70%;
   }
 
-  /* ===================== ✅ REAÇÕES DO STORY (Facebook vibe) ===================== */
+  /* ===================== ✅ REAÇÕES DO STORY ===================== */
   .reactionBar{
     position:absolute;
     right: 14px;
@@ -688,7 +691,7 @@
   }
   .login-btn:active{ transform: scale(.99); }
 
-  /* ===================== FEED (Facebook) ===================== */
+  /* ===================== FEED ===================== */
   .post{
     background: var(--fb-surface);
     margin: 10px 12px;
@@ -697,6 +700,8 @@
     border:1px solid var(--fb-border);
     box-shadow: var(--fb-shadow);
     position:relative;
+    content-visibility: auto;         /* ✅ OTIMIZAÇÃO: renderiza só quando precisa */
+    contain-intrinsic-size: 700px;    /* ✅ evita "pulos" antes de renderizar */
   }
   .postHead{
     display:flex;
@@ -1036,7 +1041,7 @@
 <!-- ✅ TOPO: LOGO À ESQUERDA + MESSENGER À DIREITA -->
 <div class="logo-bar">
   <div class="logo-left">
-    <img src="https://i.ibb.co/h1RmgKSX/Chat-GPT-Image-17-12-2025-21-32-09.png" alt="Logo" loading="eager">
+    <img src="https://i.ibb.co/h1RmgKSX/Chat-GPT-Image-17-12-2025-21-32-09.png" alt="Logo" loading="eager" fetchpriority="high">
   </div>
 
   <button class="msgBtn" id="msgBtn" title="Bate-papo" aria-label="Bate-papo">
@@ -1451,7 +1456,7 @@ async function getAvatarForUID(uid, fallbackName){
 function updateAvatarsInDOM(uid, url, name){
   document.querySelectorAll(`[data-avatar-uid="${uid}"]`).forEach(el=>{
     if(url){
-      el.innerHTML = `<img src="${url}" alt="avatar">`;
+      el.innerHTML = `<img src="${url}" alt="avatar" loading="lazy">`;
     }else{
       el.innerHTML = `<div class="init">${(initials(name||"U"))}</div>`;
     }
@@ -1463,7 +1468,7 @@ function updateAvatarsInDOM(uid, url, name){
 function updateStoryAvatarsInDOM(uid, url, name){
   document.querySelectorAll(`[data-story-avatar-uid="${uid}"]`).forEach(el=>{
     if(url){
-      el.innerHTML = `<img src="${url}" alt="avatar">`;
+      el.innerHTML = `<img src="${url}" alt="avatar" loading="lazy">`;
     }else{
       el.innerHTML = `<div class="avatarInitials">${initials(name||"U")}</div>`;
     }
@@ -1475,7 +1480,7 @@ function updateStoryAvatarsInDOM(uid, url, name){
 function updateViewerAvatarsInDOM(uid, url, name){
   document.querySelectorAll(`[data-viewer-avatar-uid="${uid}"]`).forEach(el=>{
     if(url){
-      el.innerHTML = `<img src="${url}" alt="avatar">`;
+      el.innerHTML = `<img src="${url}" alt="avatar" loading="lazy">`;
     }else{
       el.textContent = initials(name||"U");
     }
@@ -1484,7 +1489,7 @@ function updateViewerAvatarsInDOM(uid, url, name){
 function updateConnectionsAvatarsInDOM(uid, url, name){
   document.querySelectorAll(`[data-conn-photo-uid="${uid}"]`).forEach(el=>{
     if(url){
-      el.innerHTML = `<img src="${url}" alt="avatar">`;
+      el.innerHTML = `<img src="${url}" alt="avatar" loading="lazy">`;
     }else{
       el.innerHTML = `<div class="connInit">${escapeHTML(initials(name||"U"))}</div>`;
     }
@@ -1563,7 +1568,7 @@ msgBtn.addEventListener("click", ()=>{
 </script>
 
 <script>
-/* ===================== ✅ BLOCO "CONECTADOS" (APÓS A 1ª PUBLICAÇÃO) ===================== */
+/* ===================== ✅ BLOCO "CONECTADOS" ===================== */
 const CONNECTIONS_ID = "connectionsSection";
 let connectionsUsers = [];
 
@@ -1623,7 +1628,7 @@ async function renderConnections(){
     const prof = await getAvatarForUID(u.uid, u.userName || "Usuário");
     const name = prof.name || u.userName || "Usuário";
     const photo = prof.url
-      ? `<img src="${prof.url}" alt="avatar">`
+      ? `<img src="${prof.url}" alt="avatar" loading="lazy">`
       : `<div class="connInit">${escapeHTML(initials(name))}</div>`;
 
     return `
@@ -1837,7 +1842,7 @@ async function renderOwnerPanel(viewsObj, reactsObj){
     const ava = prof.url
       ? `<div style="width:36px;height:36px;border-radius:50%;overflow:hidden;border:1px solid rgba(255,255,255,.10);flex:0 0 auto;cursor:pointer;"
               onclick="openProfileModal('${escapeHTML(u.uid)}')">
-           <img src="${prof.url}" style="width:100%;height:100%;object-fit:cover;display:block;" alt="avatar">
+           <img src="${prof.url}" style="width:100%;height:100%;object-fit:cover;display:block;" alt="avatar" loading="lazy">
          </div>`
       : `<div style="width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;border:1px solid rgba(255,255,255,.10);color:var(--fb-text);font-weight:900;flex:0 0 auto;cursor:pointer;"
               onclick="openProfileModal('${escapeHTML(u.uid)}')">
@@ -2106,6 +2111,7 @@ function renderUserCard(group){
   if((cover.type||"").includes("image")){
     mediaHTML = `<img class="storyMedia" src="${cover.url}" alt="story" loading="lazy">`;
   }else{
+    /* ✅ OTIMIZAÇÃO: story-preview vídeo mais leve */
     mediaHTML = `<video class="storyMedia" src="${cover.url}" autoplay muted loop playsinline preload="metadata"></video>`;
   }
 
@@ -2206,7 +2212,13 @@ async function addStory(file){
 </script>
 
 <script>
-/* ===================== ✅ FEED (PERFORMANCE) ===================== */
+/* ===================== ✅ FEED (VÍDEOS MAIS RÁPIDOS / SEM DELAY) ===================== */
+/*
+  ✅ O que mudou aqui:
+  - Observer com rootMargin grande => pré-carrega o vídeo antes de aparecer
+  - Assim que entra "perto", seta src e preload="metadata" (abre muito mais rápido)
+  - Quando fica bem visível, dá play automático (muted) sem travar o celular
+*/
 let __feedObserver = null;
 
 function ensureFeedObserver(){
@@ -2217,31 +2229,47 @@ function ensureFeedObserver(){
       const v = entry.target;
       if(!v || v.tagName !== "VIDEO") return;
 
-      if(entry.isIntersecting && entry.intersectionRatio >= 0.60){
+      // ✅ Pré-carrega quando estiver "perto" do viewport (rootMargin cuida disso)
+      if(entry.isIntersecting){
         try{
           if(!v.__srcSet){
             const ds = v.getAttribute("data-src");
             if(ds){
               v.src = ds;
               v.__srcSet = true;
+
+              // ✅ Faz o metadata vir rápido (tempo/thumbnail/primeiros frames)
+              v.preload = "metadata";
+              v.setAttribute("preload","metadata");
+
+              // ✅ Dica pro navegador priorizar esse download quando necessário
+              v.setAttribute("fetchpriority","high");
+
               try{ v.load(); }catch(e){}
             }
           }
         }catch(e){}
 
-        try{
-          if(!v.__userUnmuted){
-            v.muted = true;
-            v.volume = 1.0;
-          }
-          const p = v.play();
-          if(p && p.catch) p.catch(()=>{});
-        }catch(e){}
+        // ✅ Só tenta tocar quando estiver bem visível (evita stress no aparelho)
+        if(entry.intersectionRatio >= 0.25){
+          try{
+            if(!v.__userUnmuted){
+              v.muted = true;
+              v.volume = 1.0;
+            }
+            const p = v.play();
+            if(p && p.catch) p.catch(()=>{});
+          }catch(e){}
+        }
       }else{
+        // ✅ Saiu da área => pausa (economiza CPU e rede)
         try{ v.pause(); }catch(e){}
       }
     });
-  }, { threshold: [0, 0.25, 0.60, 0.85, 1] });
+  }, {
+    threshold: [0, 0.10, 0.25, 0.60, 1],
+    rootMargin: "900px 0px 900px 0px"   /* ✅ pega vídeos antes de aparecer */
+  });
 }
 
 function muteAllFeedVideosExcept(exceptVideo){
@@ -2254,6 +2282,7 @@ function muteAllFeedVideosExcept(exceptVideo){
     }
   });
 }
+
 function setupOneFeedVideo(v){
   if(!v || v.__feedHooked) return;
   v.__feedHooked = true;
@@ -2268,7 +2297,11 @@ function setupOneFeedVideo(v){
     v.setAttribute("playsinline","");
     v.setAttribute("webkit-playsinline","");
     v.loop = true;
+
+    // ✅ Começa leve, mas quando o observer setar src ele muda pra metadata
     v.preload = "none";
+    v.setAttribute("preload","none");
+
     v.setAttribute("data-feedvideo","1");
   }catch(e){}
 
@@ -2281,14 +2314,19 @@ function setupOneFeedVideo(v){
         v.muted = false;
         v.volume = 1.0;
 
+        // ✅ Se o usuário clicou, garante que o vídeo já está com src
         if(!v.__srcSet){
           const ds = v.getAttribute("data-src");
           if(ds){
             v.src = ds;
             v.__srcSet = true;
+            v.preload = "metadata";
+            v.setAttribute("preload","metadata");
+            v.setAttribute("fetchpriority","high");
             try{ v.load(); }catch(e){}
           }
         }
+
         const p = v.play();
         if(p && p.catch) p.catch(()=>{});
       }else{
@@ -2303,6 +2341,7 @@ function setupOneFeedVideo(v){
 
   try{ __feedObserver.observe(v); }catch(e){}
 }
+
 function setupAllFeedVideos(){
   document.querySelectorAll("#feed video").forEach(setupOneFeedVideo);
 }
@@ -2640,7 +2679,7 @@ function postHTML(id, postData, avatarUrl){
   const avatarHTML = `
     <div class="postAvatar" data-avatar-uid="${escapeHTML(uid)}" onclick="openProfileModal('${escapeHTML(uid)}')">
       ${avatarUrl
-        ? `<img src="${avatarUrl}" alt="avatar">`
+        ? `<img src="${avatarUrl}" alt="avatar" loading="lazy">`
         : `<div class="init">${escapeHTML(initials(uname))}</div>`}
     </div>
   `;
@@ -2788,7 +2827,7 @@ function listenComments(postId){
       const prof = await getAvatarForUID(c.uid, nome);
 
       const ava = prof.url
-        ? `<div class="cAvatar" data-avatar-uid="${escapeHTML(c.uid)}" onclick="openProfileModal('${escapeHTML(c.uid)}')"><img src="${prof.url}" alt="avatar"></div>`
+        ? `<div class="cAvatar" data-avatar-uid="${escapeHTML(c.uid)}" onclick="openProfileModal('${escapeHTML(c.uid)}')"><img src="${prof.url}" alt="avatar" loading="lazy"></div>`
         : `<div class="cAvatar" data-avatar-uid="${escapeHTML(c.uid)}" onclick="openProfileModal('${escapeHTML(c.uid)}')"><div class="init">${escapeHTML(initials(nome))}</div></div>`;
 
       return `
@@ -2891,4 +2930,3 @@ setupAllFeedVideos();
 
 </body>
 </html>
-
