@@ -12,57 +12,69 @@
   html,body{ width:100%; max-width:100%; overflow-x:hidden; }
   body{
     margin:0;
-    background:#000;
-    color:#fff;
+    background:#18191A;               /* Facebook dark */
+    color:#E4E6EB;
     font-family: Arial, sans-serif;
     padding-bottom: env(safe-area-inset-bottom);
   }
 
-  /* TOPBAR */
+  :root{
+    --fb-bg:#18191A;
+    --fb-surface:#242526;
+    --fb-surface-2:#2D2E30;
+    --fb-border:rgba(255,255,255,.10);
+    --fb-text:#E4E6EB;
+    --fb-muted:rgba(228,230,235,.72);
+    --fb-blue:#0866FF;
+    --fb-blue-2:#1877F2;
+    --fb-green:#31A24C;
+    --fb-red:#F02849;
+    --fb-shadow:0 8px 18px rgba(0,0,0,.35);
+    --fb-radius:16px;
+  }
+
+  /* TOPBAR (estilo Facebook 2025) */
   .topbar{
     position: sticky; top:0; z-index:9999;
-    background:#0d0d0d;
-    border-bottom:2px solid #00ff8c;
-    box-shadow:0 0 15px #00ff8c;
-    padding: 12px 12px;
+    background: var(--fb-surface);
+    border-bottom:1px solid var(--fb-border);
+    box-shadow: 0 6px 16px rgba(0,0,0,.25);
+    padding: 10px 12px;
     display:flex;
     align-items:center;
     justify-content:space-between;
     gap:12px;
   }
-  .topbar .left{ display:flex; align-items:center; gap:10px; min-width:0; }
-  .topbar .center{ flex:1; display:flex; justify-content:center; align-items:center; }
+  .topbar .center{
+    flex:1;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    min-width:0;
+  }
   .brand{
     font-weight:900;
-    color:#00ff8c;
-    letter-spacing:1px;
-    text-shadow:0 0 10px #00ff8c, 0 0 20px #00ff8c;
+    color: var(--fb-text);
+    letter-spacing:.3px;
     white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    max-width: 92vw;
   }
-  .btn{
-    border:none;
-    cursor:pointer;
-    font-weight:900;
-    padding:10px 12px;
+  .iconBtn{
+    width:44px; height:44px;
     border-radius:999px;
-    background:#00ff8c;
-    color:#003b23;
-    box-shadow:0 0 14px rgba(0,255,140,.55);
-    user-select:none;
-    display:inline-flex;
+    border:1px solid var(--fb-border);
+    background: var(--fb-surface-2);
+    color: var(--fb-text);
+    display:flex;
     align-items:center;
-    gap:8px;
     justify-content:center;
-    text-decoration:none;
+    cursor:pointer;
+    user-select:none;
+    box-shadow: 0 6px 14px rgba(0,0,0,.22);
   }
-  .btn:active{ transform:scale(.99); }
-  .btn.ghost{
-    background:rgba(0,255,140,.10);
-    color:#00ff8c;
-    border:1px solid rgba(0,255,140,.35);
-    box-shadow:0 0 12px rgba(0,255,140,.18);
-  }
-  .btn.icon{ width:44px; height:44px; padding:0; }
+  .iconBtn:active{ transform:scale(.99); }
 
   .wrap{ width:min(980px, 100%); margin:0 auto; }
 
@@ -71,9 +83,9 @@
     position:relative;
     width:100%;
     height: clamp(190px, 36vw, 340px);
-    background:#111;
+    background: #111;
     overflow:hidden;
-    border-bottom:1px solid rgba(0,255,140,.22);
+    border-bottom:1px solid var(--fb-border);
     cursor:pointer;
   }
   .cover img{
@@ -82,7 +94,7 @@
     object-fit:cover;
     display:block;
     background:#000;
-    filter: contrast(1.05) saturate(1.05);
+    filter: contrast(1.02) saturate(1.03);
   }
   .coverShade{
     position:absolute; inset:auto 0 0 0;
@@ -105,9 +117,9 @@
     height: 120px;
     border-radius: 50%;
     overflow:hidden;
-    background:#0d0d0d;
-    border:4px solid #000;
-    box-shadow: 0 0 0 3px rgba(0,255,140,.22), 0 10px 28px rgba(0,0,0,.55);
+    background: #3A3B3C;
+    border:4px solid var(--fb-bg);
+    box-shadow: 0 0 0 3px rgba(8,102,255,.22), 0 10px 28px rgba(0,0,0,.55);
     flex:0 0 auto;
     display:flex;
     align-items:center;
@@ -123,8 +135,8 @@
   }
   .avatarInitial{
     font-weight:900; font-size:34px;
-    color:#00ff8c;
-    text-shadow:0 0 14px rgba(0,255,140,.45);
+    color:#fff;
+    text-shadow:0 0 14px rgba(0,0,0,.55);
   }
 
   .identity{ min-width: 220px; flex:1; }
@@ -133,8 +145,8 @@
     font-size: clamp(22px, 6vw, 34px);
     font-weight: 900;
     letter-spacing:.2px;
-    color:#00ff8c;
-    text-shadow:0 0 10px rgba(0,255,140,.35);
+    color: var(--fb-text);
+    text-shadow:0 2px 14px rgba(0,0,0,.55);
   }
   .sub{
     margin-top:8px;
@@ -142,7 +154,6 @@
     gap:10px;
     flex-wrap:wrap;
     align-items:center;
-    opacity:.95;
   }
   .pill{
     display:inline-flex;
@@ -150,38 +161,46 @@
     align-items:center;
     padding:7px 12px;
     border-radius:999px;
-    background: rgba(0,255,140,.10);
-    border:1px solid rgba(0,255,140,.25);
-    color:#00ff8c;
+    background: rgba(255,255,255,.06);
+    border:1px solid rgba(255,255,255,.10);
+    color: var(--fb-text);
     font-weight:900;
     font-size:13px;
+    user-select:none;
   }
   .dot{
     width:10px; height:10px; border-radius:50%;
     box-shadow:0 0 14px rgba(0,0,0,.35);
   }
-  .dot.online{ background:#00ff4c; box-shadow:0 0 14px rgba(0,255,76,.9); animation: blinkDot .9s infinite; }
-  .dot.offline{ background:#ffd000; box-shadow:0 0 14px rgba(255,208,0,.75); }
+  .dot.online{
+    background: var(--fb-green);
+    box-shadow:0 0 14px rgba(49,162,76,.6);
+    animation: blinkDot 1.0s infinite;
+  }
+  .dot.offline{
+    background:#F7B928;
+    box-shadow:0 0 14px rgba(247,185,40,.55);
+  }
   @keyframes blinkDot{
     0%,100%{ transform:scale(1); opacity:1; }
-    50%{ transform:scale(1.35); opacity:.25; }
+    50%{ transform:scale(1.25); opacity:.35; }
   }
   .pill.offline{
-    background: rgba(255,208,0,.10);
-    border:1px solid rgba(255,208,0,.35);
-    color:#ffd000;
+    background: rgba(247,185,40,.08);
+    border-color: rgba(247,185,40,.28);
+    color:#F7B928;
   }
 
   .card{
-    background:#0d0d0d;
-    border:1px solid rgba(0,255,140,.25);
-    border-radius:18px;
-    padding:12px;
-    box-shadow:0 0 14px rgba(0,255,140,.14);
+    background: var(--fb-surface);
+    border:1px solid var(--fb-border);
+    border-radius: var(--fb-radius);
+    padding: 12px;
+    box-shadow: var(--fb-shadow);
     margin: 12px;
   }
 
-  /* BIO acima do feed */
+  /* BIO */
   .bioBox{
     border:1px solid rgba(255,255,255,.06);
     background: rgba(255,255,255,.03);
@@ -191,42 +210,42 @@
   }
   .bioTitle{
     font-weight:900;
-    color:#00ff8c;
+    color: var(--fb-text);
     letter-spacing:.4px;
     display:flex;
     align-items:center;
     gap:10px;
   }
+  .bioTitle i{ color: var(--fb-blue); }
   .bioText{
     margin-top:10px;
     opacity:.92;
     line-height:1.45;
     word-break:break-word;
+    color: rgba(228,230,235,.95);
   }
 
-  /* POSTS */
+  /* POSTS (mesmo visual do feed) */
   .post{
-    background:#0d0d0d;
+    background: var(--fb-surface);
     margin: 12px 0;
-    padding: 15px;
-    border-radius:16px;
-    border:1px solid #00ff9d;
-    box-shadow:0 0 10px rgba(0,255,157,.25);
+    padding: 12px;
+    border-radius: var(--fb-radius);
+    border:1px solid var(--fb-border);
+    box-shadow: var(--fb-shadow);
     position:relative;
   }
   .postHead{
     display:flex;
     align-items:center;
-    gap:12px;
+    gap:10px;
   }
   .postAvatar{
-    width:52px;
-    height:52px;
+    width:42px; height:42px;
     border-radius:50%;
     overflow:hidden;
-    background:#000;
-    border:2px solid rgba(0,255,157,.55);
-    box-shadow:0 0 14px rgba(0,255,157,.22);
+    background:#3A3B3C;
+    border:1px solid rgba(255,255,255,.08);
     flex:0 0 auto;
     display:flex;
     align-items:center;
@@ -239,12 +258,15 @@
     object-position:center;
     display:block;
   }
-  .postAvatar .init{ font-weight:900; color:#00ff9d; }
+  .postAvatar .init{
+    font-weight:900;
+    color: var(--fb-text);
+  }
+
   .postName{
     font-weight:900;
-    font-size:22px;
-    color:#7bffb5;
-    text-shadow: 0 0 10px rgba(0,255,157,.25);
+    font-size:15px;
+    color: var(--fb-text);
     overflow:hidden;
     text-overflow:ellipsis;
     white-space:nowrap;
@@ -252,65 +274,73 @@
   }
   .when{
     font-size:12px;
-    color:#00ff9d;
-    opacity:.85;
-    margin-top:4px;
+    color: var(--fb-muted);
+    margin-top:3px;
   }
-  .post p{ margin:12px 0 0 0; opacity:.96; }
+  .post p{
+    margin:10px 0 0 0;
+    font-size:14px;
+    line-height:1.35;
+    color: rgba(228,230,235,.95);
+  }
 
   .mediaWrap img, .mediaWrap video{
     width:100%;
-    border-radius:12px;
+    border-radius: 14px;
     margin-top:10px;
     background:#000;
     display:block;
+    border:1px solid rgba(255,255,255,.08);
   }
 
-  /* AÇÕES (curtir/comentar) */
+  /* AÇÕES */
   .post-actions{
     display:flex;
     justify-content:space-around;
-    margin-top:14px;
+    margin-top:12px;
     flex-wrap:wrap;
-    gap:10px;
+    gap: 8px;
   }
   .btn-action{
-    color:#00ff9d;
-    padding:10px 12px;
-    border-radius:12px;
+    color: var(--fb-text);
+    padding: 10px 12px;
+    border-radius: 10px;
     font-weight:900;
     cursor:pointer;
-    transition:0.2s;
+    transition:.15s;
     text-align:center;
-    border: 1px solid rgba(0,255,157,.25);
-    background: rgba(0,0,0,.15);
+    border: 1px solid rgba(255,255,255,.10);
+    background: rgba(255,255,255,.06);
     user-select:none;
-    min-width:160px;
+    min-width: 150px;
   }
+  .btn-action:hover{ background: rgba(255,255,255,.08); }
+  .btn-action:active{ transform: scale(.99); }
+
   .contador{
     margin-top:6px;
-    font-size:13px;
-    color:#00ff9d;
+    font-size:12px;
+    color: var(--fb-muted);
     text-align:center;
-    opacity:.95;
     line-height:1.35;
     word-break: break-word;
   }
 
   .coment-area{
-    background:#111;
+    background: rgba(255,255,255,.04);
     padding:10px;
     margin-top:10px;
-    border-radius:12px;
+    border-radius: 14px;
     display:none;
-    border:1px solid rgba(0,255,140,.22);
+    border:1px solid rgba(255,255,255,.10);
   }
 
   .cRow{
-    background:#000;
-    border:1px solid rgba(0,255,157,.35);
+    position:relative;
+    background: rgba(255,255,255,.03);
+    border:1px solid rgba(255,255,255,.10);
     padding:10px;
-    border-radius:10px;
+    border-radius: 14px;
     margin-bottom:8px;
   }
   .cHead{
@@ -321,33 +351,35 @@
     min-width:0;
   }
   .cAvatar{
-    width:34px; height:34px;
+    width:30px; height:30px;
     border-radius:50%;
     overflow:hidden;
-    background:#000;
-    border:1px solid rgba(0,255,157,.45);
+    background:#3A3B3C;
+    border:1px solid rgba(255,255,255,.08);
     flex:0 0 auto;
     display:flex; align-items:center; justify-content:center;
   }
   .cAvatar img{ width:100%; height:100%; object-fit:cover; display:block; }
-  .cAvatar .init{ font-weight:900; color:#00ff9d; }
+  .cAvatar .init{ font-weight:900; color: var(--fb-text); }
   .cName{
     font-weight:900;
-    color:#00ff9d;
+    color: var(--fb-text);
     overflow:hidden;
     text-overflow:ellipsis;
     white-space:nowrap;
     max-width: 62vw;
+    font-size:14px;
   }
-  .cText{ opacity:.95; }
+  .cText{ opacity:.95; font-size:13px; color: rgba(228,230,235,.92); }
 
   .empty{
-    opacity:.85;
+    opacity:.9;
     padding:12px;
-    border:1px solid rgba(255,255,255,.06);
+    border:1px solid rgba(255,255,255,.08);
     background: rgba(255,255,255,.03);
     border-radius:14px;
     margin-top:12px;
+    color: var(--fb-text);
   }
 
   /* LOGIN (pra curtir/comentar) */
@@ -363,63 +395,62 @@
   .login-card{
     width: min(520px, 94vw);
     max-width: 94vw;
-    background:#0d0d0d;
-    border:2px solid #00ff8c;
-    border-radius:22px;
-    box-shadow:0 0 28px rgba(0,255,140,.45);
+    background: var(--fb-surface);
+    border:1px solid var(--fb-border);
+    border-radius: 18px;
+    box-shadow: var(--fb-shadow);
     padding: 18px;
     text-align:center;
   }
   .login-title{
-    font-size: clamp(18px, 6vw, 26px);
+    font-size: clamp(18px, 6vw, 24px);
     font-weight: 900;
-    color:#00ff8c;
-    text-transform:uppercase;
-    letter-spacing:1.2px;
-    text-shadow: 0 0 10px #00ff8c, 0 0 22px #00ff8c;
+    color: var(--fb-text);
+    letter-spacing:.5px;
     margin: 4px 0 14px 0;
     display:flex;
     gap:10px;
     align-items:center;
     justify-content:center;
   }
+  .login-title i{ color: var(--fb-blue); }
   .login-input{
     width: 100%;
     display:block;
-    background:#111;
-    border:1px solid #00ff9d;
+    background:#3A3B3C;
+    border:1px solid rgba(255,255,255,.10);
     border-radius: 999px;
     padding: 14px 18px;
-    color:#fff;
+    color: var(--fb-text);
     outline:none;
     font-size: 16px;
-    box-shadow: inset 0 0 10px rgba(0,255,157,.22);
   }
   .login-btn{
     width: 100%;
     margin-top: 12px;
     border:none;
     border-radius: 999px;
-    padding: 16px 12px;
+    padding: 14px 12px;
     font-weight: 900;
     cursor:pointer;
-    font-size: 18px;
-    transition:.18s;
-    background:#00ff8c;
-    color:#003b23;
-    box-shadow:0 0 18px rgba(0,255,140,.55);
+    font-size: 16px;
+    transition:.15s;
+    background: var(--fb-blue);
+    color:#fff;
+    box-shadow: 0 10px 20px rgba(0,0,0,.22);
   }
+  .login-btn:active{ transform:scale(.99); }
 
-  /* TOAST STATUS */
+  /* TOAST STATUS (Facebook vibe) */
   .toastStatus{
     position: fixed;
     left: 50%;
     bottom: calc(16px + env(safe-area-inset-bottom));
     transform: translateX(-50%);
-    background: rgba(0,0,0,.82);
-    border: 1px solid rgba(0,255,140,.35);
-    box-shadow: 0 0 18px rgba(0,255,140,.22);
-    color: #fff;
+    background: rgba(36,37,38,.92);
+    border: 1px solid rgba(255,255,255,.10);
+    box-shadow: 0 10px 20px rgba(0,0,0,.35);
+    color: var(--fb-text);
     padding: 10px 14px;
     border-radius: 999px;
     font-weight: 900;
@@ -429,12 +460,20 @@
     z-index: 99999999;
     max-width: 92vw;
     text-align:center;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
   }
   .toastDot{
     width:10px; height:10px; border-radius:50%;
+    box-shadow: 0 0 0 3px rgba(0,0,0,.18);
   }
-  .toastDot.on{ background:#00ff4c; box-shadow:0 0 14px rgba(0,255,76,.9); }
-  .toastDot.off{ background:#ffd000; box-shadow:0 0 14px rgba(255,208,0,.75); }
+  .toastDot.on{ background: var(--fb-green); box-shadow:0 0 14px rgba(49,162,76,.55); }
+  .toastDot.off{ background:#F7B928; box-shadow:0 0 14px rgba(247,185,40,.45); }
+
+  /* pequenos ajustes mobile */
+  @media(max-width:480px){
+    .avatar{ width:104px; height:104px; }
+  }
 </style>
 </head>
 
@@ -455,13 +494,15 @@
   <span id="toastText">Online</span>
 </div>
 
-<!-- TOPBAR (SEM BOTÃO VOLTAR) -->
+<!-- TOPBAR -->
 <div class="topbar">
   <div style="width:44px;"></div>
   <div class="center">
-    <div class="brand"></div>
+    <div class="brand" id="brandTitle">Prévia do Perfil</div>
   </div>
-  <div style="width:44px;"></div>
+  <button class="iconBtn" id="infoBtn" title="Status" aria-label="Status">
+    <i class="fa-solid fa-circle-info"></i>
+  </button>
 </div>
 
 <div class="wrap">
@@ -486,7 +527,7 @@
           <span class="dot online" id="statusDot"></span>
           <span id="statusText">Online</span>
         </span>
-        <span class="pill"><i class="fa-solid fa-location-dot"></i> <span id="cityText">—</span></span>
+        <span class="pill"><i class="fa-solid fa-location-dot" style="color:var(--fb-blue)"></i> <span id="cityText">—</span></span>
       </div>
     </div>
   </div>
@@ -500,10 +541,10 @@
     </div>
 
     <div style="margin-top:14px; display:flex; align-items:center; justify-content:space-between; gap:10px;">
-      <div style="font-weight:900; color:#00ff8c; letter-spacing:.4px;">
-        <i class="fa-solid fa-list"></i> Feed do usuário
+      <div style="font-weight:900; color: var(--fb-text); letter-spacing:.4px;">
+        <i class="fa-solid fa-list" style="color:var(--fb-blue)"></i> Feed do usuário
       </div>
-      <div style="opacity:.85; font-size:13px;" id="postsCount">0 postagens</div>
+      <div style="opacity:.85; font-size:13px; color: var(--fb-muted);" id="postsCount">0 postagens</div>
     </div>
 
     <div id="feed" style="margin-top:10px;"></div>
@@ -529,7 +570,7 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 const DB = firebase.database();
 
-/* ====================== PARAMS: uid do perfil e back (voltar) ====================== */
+/* ====================== PARAMS: uid do perfil ====================== */
 function getParams(){
   const u = new URLSearchParams(location.search);
   return {
@@ -540,9 +581,10 @@ function getParams(){
 const PARAMS = getParams();
 const TARGET_UID = PARAMS.uid;
 
-/* (REMOVIDO) goBack e botão voltar — não é mais usado */
-
 /* ====================== LOGIN (pra curtir/comentar) ====================== */
+const loginOverlay = document.getElementById("loginOverlay");
+const loginName = document.getElementById("loginName");
+
 function getOrCreateUID(){
   let uid = localStorage.getItem("uid_passageiro");
   if(!uid){
@@ -588,10 +630,13 @@ document.addEventListener("keydown", (e)=>{
 
 /* Helpers */
 function escapeHTML(str){
-  return (str || "")
-    .replaceAll("&","&amp;").replaceAll("<","&lt;")
-    .replaceAll(">","&gt;").replaceAll('"',"&quot;")
-    .replaceAll("'","&#039;");
+  str = (str == null ? "" : String(str));
+  return str
+    .replace(/&/g,"&amp;")
+    .replace(/</g,"&lt;")
+    .replace(/>/g,"&gt;")
+    .replace(/"/g,"&quot;")
+    .replace(/'/g,"&#039;");
 }
 function initials(name){
   const n = (name||"").trim().split(/\s+/).filter(Boolean);
@@ -605,6 +650,19 @@ function fmtDate(ts){
 }
 
 /* ====================== UI: AVATAR / CAPA / STATUS ====================== */
+const coverImg = document.getElementById("coverImg");
+const avatarImg = document.getElementById("avatarImg");
+const avatarInitial = document.getElementById("avatarInitial");
+const profileName = document.getElementById("profileName");
+const bioText = document.getElementById("bioText");
+const cityText = document.getElementById("cityText");
+const statusText = document.getElementById("statusText");
+const statusDot = document.getElementById("statusDot");
+const statusPill = document.getElementById("statusPill");
+const feed = document.getElementById("feed");
+const postsCount = document.getElementById("postsCount");
+const brandTitle = document.getElementById("brandTitle");
+
 function setAvatar(url, name){
   if(url){
     avatarImg.src = url;
@@ -621,24 +679,25 @@ function setCover(url){
     <svg xmlns="http://www.w3.org/2000/svg" width="1200" height="520">
       <defs>
         <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0" stop-color="#0d0d0d"/>
-          <stop offset="1" stop-color="#111"/>
+          <stop offset="0" stop-color="#242526"/>
+          <stop offset="1" stop-color="#18191A"/>
         </linearGradient>
       </defs>
       <rect width="100%" height="100%" fill="url(#g)"/>
-      <text x="50%" y="55%" dominant-baseline="middle" text-anchor="middle"
-            fill="rgba(0,255,140,.35)" font-size="52" font-family="Arial" font-weight="900">
+      <circle cx="170" cy="260" r="120" fill="rgba(8,102,255,.18)"/>
+      <circle cx="1030" cy="150" r="150" fill="rgba(8,102,255,.10)"/>
+      <text x="50%" y="58%" dominant-baseline="middle" text-anchor="middle"
+            fill="rgba(228,230,235,.28)" font-size="52" font-family="Arial" font-weight="900">
         PERFIL
       </text>
     </svg>
   `);
 }
 
-/* ✅ status do perfil que está aberto (TARGET_UID) */
+/* status do perfil aberto */
 let CURRENT_TARGET_ONLINE = false;
-
-/* ✅ status do PRÓPRIO usuário (UID local: uid_passageiro) */
-let CURRENT_SELF_ONLINE = true; // se está navegando aqui, consideramos online (e atualizamos presença)
+/* status do próprio usuário */
+let CURRENT_SELF_ONLINE = true;
 
 function setStatus(isOnline){
   CURRENT_TARGET_ONLINE = !!isOnline;
@@ -647,7 +706,6 @@ function setStatus(isOnline){
     statusDot.classList.remove("offline");
     statusDot.classList.add("online");
     statusPill.classList.remove("offline");
-    statusPill.classList.add("pill");
   }else{
     statusText.textContent = "Offline";
     statusDot.classList.remove("online");
@@ -656,19 +714,24 @@ function setStatus(isOnline){
   }
 }
 
-/* ✅ marca presença do PRÓPRIO usuário na tabela presence/{UID} */
+/* ====================== PRESENÇA DO PRÓPRIO USUÁRIO ====================== */
 function startSelfPresence(){
   const ref = DB.ref("presence/" + UID);
-  function ping(){
+
+  const ping = ()=>{
     ref.update({
+      uid: UID,
+      userName: USER_NAME || "Usuário",
       online: true,
       lastActive: firebase.database.ServerValue.TIMESTAMP
     }).catch(()=>{});
-  }
-  ping();
-  setInterval(ping, 25000);
+  };
 
-  // tenta ficar offline ao sair
+  // só pinga se já tem nome; senão, ele define depois do login
+  if(USER_NAME) ping();
+
+  setInterval(()=>{ if(USER_NAME) ping(); }, 25000);
+
   try{
     window.addEventListener("beforeunload", ()=>{
       ref.update({ online:false, lastActive: Date.now() }).catch(()=>{});
@@ -676,7 +739,6 @@ function startSelfPresence(){
   }catch(e){}
 }
 
-/* ✅ escuta presença do PRÓPRIO usuário */
 function listenSelfPresence(){
   DB.ref("presence/" + UID).on("value", snap=>{
     const u = snap.val() || {};
@@ -686,14 +748,21 @@ function listenSelfPresence(){
   });
 }
 
-/* ✅ mostrar status ao clicar na prévia
-   - se estou vendo meu próprio perfil (TARGET_UID === UID): mostra "VOCÊ está Online/Offline"
-   - se é outro perfil: mostra status do perfil alvo */
+/* ====================== TOAST STATUS ====================== */
+const toastStatus = document.getElementById("toastStatus");
+const toastDot = document.getElementById("toastDot");
+const toastText = document.getElementById("toastText");
+const previewClickableCover = document.getElementById("previewClickableCover");
+const previewClickableAvatar = document.getElementById("previewClickableAvatar");
+const infoBtn = document.getElementById("infoBtn");
+
 let toastTimer = null;
 function showStatusToast(){
   const isSelfProfile = (TARGET_UID && UID && TARGET_UID === UID);
   const on = isSelfProfile ? (CURRENT_SELF_ONLINE === true) : (CURRENT_TARGET_ONLINE === true);
-  const label = isSelfProfile ? (on ? "Você está Online" : "Você está Offline") : (on ? "Online agora" : "Offline agora");
+  const label = isSelfProfile
+    ? (on ? "Você está Online" : "Você está Offline")
+    : (on ? "Online agora" : "Offline agora");
 
   toastDot.classList.toggle("on", on);
   toastDot.classList.toggle("off", !on);
@@ -705,11 +774,13 @@ function showStatusToast(){
 }
 previewClickableCover.addEventListener("click", showStatusToast);
 previewClickableAvatar.addEventListener("click", showStatusToast);
+infoBtn.addEventListener("click", showStatusToast);
 
 /* ====================== CARREGAR PERFIL ====================== */
 async function loadProfile(){
   if(!TARGET_UID){
     profileName.textContent = "Perfil inválido";
+    brandTitle.textContent = "Prévia do Perfil";
     bioText.textContent = "Nenhum UID informado na URL. Use: ?uid=XXXX";
     setCover("");
     setAvatar("", "U");
@@ -725,6 +796,7 @@ async function loadProfile(){
     const bio  = p.bio  || "Sem biografia.";
 
     profileName.textContent = name;
+    brandTitle.textContent = name;
     cityText.textContent = city;
     bioText.textContent = bio;
 
@@ -732,7 +804,6 @@ async function loadProfile(){
     setAvatar(p.avatarDataUrl || p.avatarUrl || "", name);
   });
 
-  // status do perfil alvo
   DB.ref("presence/" + TARGET_UID).on("value", snap=>{
     const u = snap.val() || {};
     const last = u.lastActive || 0;
@@ -742,7 +813,7 @@ async function loadProfile(){
   });
 }
 
-/* ====================== FEED DO USUÁRIO (com curtir e comentar) ====================== */
+/* ====================== FEED DO USUÁRIO (curtir / comentar) ====================== */
 let cachedName = "Usuário";
 let cachedAvatar = "";
 
@@ -769,19 +840,19 @@ function postHTML(postId, d){
   if(d.mediaUrl){
     const isImg = (d.mediaType || "").startsWith("image/");
     midia = isImg
-      ? `<img src="${d.mediaUrl}" loading="lazy" alt="imagem">`
-      : `<video src="${d.mediaUrl}" controls preload="metadata" playsinline></video>`;
+      ? `<img src="${escapeHTML(d.mediaUrl)}" loading="lazy" alt="imagem">`
+      : `<video src="${escapeHTML(d.mediaUrl)}" controls preload="metadata" playsinline></video>`;
   }
 
   const texto = escapeHTML(d.text || "");
   const quando = d.createdAt ? fmtDate(d.createdAt) : "";
 
   const av = cachedAvatar
-    ? `<img src="${cachedAvatar}" alt="avatar">`
+    ? `<img src="${escapeHTML(cachedAvatar)}" alt="avatar">`
     : `<div class="init">${escapeHTML(initials(cachedName))}</div>`;
 
   return `
-    <div class="post" id="${postId}">
+    <div class="post" id="${escapeHTML(postId)}">
       <div class="postHead">
         <div class="postAvatar">${av}</div>
         <div style="min-width:0;">
@@ -798,24 +869,24 @@ function postHTML(postId, d){
 
       <div class="post-actions">
         <div style="text-align:center;">
-          <div class="btn-action" id="btnLike_${postId}" onclick="curtir('${postId}')">👍 Curtir</div>
-          <div class="contador" id="likesCount_${postId}"></div>
+          <div class="btn-action" id="btnLike_${escapeHTML(postId)}" onclick="curtir('${escapeHTML(postId)}')">👍 Curtir</div>
+          <div class="contador" id="likesCount_${escapeHTML(postId)}"></div>
         </div>
 
         <div style="text-align:center;">
-          <div class="btn-action" onclick="toggleComentarios('${postId}')">💬 Comentar</div>
-          <div class="contador" id="commentsCount_${postId}"></div>
+          <div class="btn-action" onclick="toggleComentarios('${escapeHTML(postId)}')">💬 Comentar</div>
+          <div class="contador" id="commentsCount_${escapeHTML(postId)}"></div>
         </div>
       </div>
 
-      <div class="coment-area" id="comentBox_${postId}">
-        <div id="commentsList_${postId}" style="margin-bottom:12px;"></div>
+      <div class="coment-area" id="comentBox_${escapeHTML(postId)}">
+        <div id="commentsList_${escapeHTML(postId)}" style="margin-bottom:12px;"></div>
 
-        <input type="text" id="commentInput_${postId}"
+        <input type="text" id="commentInput_${escapeHTML(postId)}"
           placeholder="Escreva um comentário..."
-          style="width:100%;padding:10px;border-radius:8px;border:1px solid #00ff9d;background:#000;color:#fff;">
+          style="width:100%;padding:10px;border-radius:12px;border:1px solid rgba(255,255,255,.12);background:#3A3B3C;color:var(--fb-text);outline:none;">
 
-        <button class="btn" style="margin-top:10px;width:100%;" onclick="enviarComentario('${postId}')">
+        <button class="login-btn" style="margin-top:10px;width:100%;" onclick="enviarComentario('${escapeHTML(postId)}')">
           Enviar comentário
         </button>
       </div>
@@ -831,9 +902,14 @@ function toggleComentarios(postId){
 
 async function curtir(postId){
   if(precisaLogin()) return;
+
+  // após login, garante ping de presença com nome
+  startSelfPresence();
+
   const likeRef = DB.ref(`likes/${postId}/${UID}`);
   const snap = await likeRef.once("value");
   const cur = snap.val();
+
   if(cur) await likeRef.remove();
   else await likeRef.set({
     type:"like",
@@ -845,6 +921,10 @@ async function curtir(postId){
 
 async function enviarComentario(postId){
   if(precisaLogin()) return;
+
+  // após login, garante ping de presença com nome
+  startSelfPresence();
+
   const input = document.getElementById("commentInput_"+postId);
   if(!input) return;
   const texto = (input.value || "").trim();
@@ -876,9 +956,13 @@ function listenLikes(postId){
     if(mine){
       btn.textContent = "👍 Você curtiu";
       btn.style.opacity = "1";
+      btn.style.borderColor = "rgba(8,102,255,.35)";
+      btn.style.boxShadow = "0 0 0 3px rgba(8,102,255,.12)";
     }else{
       btn.textContent = "👍 Curtir";
       btn.style.opacity = ".95";
+      btn.style.borderColor = "rgba(255,255,255,.10)";
+      btn.style.boxShadow = "none";
     }
 
     cont.textContent = total ? `${total} curtida${total>1?"s":""}` : "";
@@ -911,7 +995,7 @@ function listenComments(postId){
       if(!url && uid) url = await fetchAvatarUrl(uid);
 
       const avatarHTML = url
-        ? `<img src="${url}" alt="foto">`
+        ? `<img src="${escapeHTML(url)}" alt="foto">`
         : `<div class="init">${escapeHTML(initials(nome))}</div>`;
 
       return `
@@ -968,7 +1052,7 @@ function listenFeed(){
   setAvatar("", "U");
   setStatus(false);
 
-  // ✅ presença do próprio usuário + escuta do próprio status
+  // presença do próprio usuário (pinga quando tiver nome)
   startSelfPresence();
   listenSelfPresence();
 
