@@ -12,7 +12,7 @@
   html,body{ width:100%; max-width:100%; overflow-x:hidden; }
   body{
     margin:0;
-    background:#18191A;               /* Facebook dark */
+    background:#18191A;
     color:#E4E6EB;
     font-family: Arial, sans-serif;
     padding-bottom: env(safe-area-inset-bottom);
@@ -26,14 +26,11 @@
     --fb-text:#E4E6EB;
     --fb-muted:rgba(228,230,235,.72);
     --fb-blue:#0866FF;
-    --fb-blue-2:#1877F2;
     --fb-green:#31A24C;
-    --fb-red:#F02849;
     --fb-shadow:0 8px 18px rgba(0,0,0,.35);
     --fb-radius:16px;
   }
 
-  /* TOPBAR (estilo Facebook 2025) */
   .topbar{
     position: sticky; top:0; z-index:9999;
     background: var(--fb-surface);
@@ -45,13 +42,7 @@
     justify-content:space-between;
     gap:12px;
   }
-  .topbar .center{
-    flex:1;
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    min-width:0;
-  }
+  .topbar .center{ flex:1; display:flex; justify-content:center; align-items:center; min-width:0; }
   .brand{
     font-weight:900;
     color: var(--fb-text);
@@ -78,7 +69,6 @@
 
   .wrap{ width:min(980px, 100%); margin:0 auto; }
 
-  /* CAPA */
   .cover{
     position:relative;
     width:100%;
@@ -168,28 +158,11 @@
     font-size:13px;
     user-select:none;
   }
-  .dot{
-    width:10px; height:10px; border-radius:50%;
-    box-shadow:0 0 14px rgba(0,0,0,.35);
-  }
-  .dot.online{
-    background: var(--fb-green);
-    box-shadow:0 0 14px rgba(49,162,76,.6);
-    animation: blinkDot 1.0s infinite;
-  }
-  .dot.offline{
-    background:#F7B928;
-    box-shadow:0 0 14px rgba(247,185,40,.55);
-  }
-  @keyframes blinkDot{
-    0%,100%{ transform:scale(1); opacity:1; }
-    50%{ transform:scale(1.25); opacity:.35; }
-  }
-  .pill.offline{
-    background: rgba(247,185,40,.08);
-    border-color: rgba(247,185,40,.28);
-    color:#F7B928;
-  }
+  .dot{ width:10px; height:10px; border-radius:50%; box-shadow:0 0 14px rgba(0,0,0,.35); }
+  .dot.online{ background: var(--fb-green); box-shadow:0 0 14px rgba(49,162,76,.6); animation: blinkDot 1.0s infinite; }
+  .dot.offline{ background:#F7B928; box-shadow:0 0 14px rgba(247,185,40,.55); }
+  @keyframes blinkDot{ 0%,100%{ transform:scale(1); opacity:1; } 50%{ transform:scale(1.25); opacity:.35; } }
+  .pill.offline{ background: rgba(247,185,40,.08); border-color: rgba(247,185,40,.28); color:#F7B928; }
 
   .card{
     background: var(--fb-surface);
@@ -200,7 +173,6 @@
     margin: 12px;
   }
 
-  /* BIO */
   .bioBox{
     border:1px solid rgba(255,255,255,.06);
     background: rgba(255,255,255,.03);
@@ -225,7 +197,6 @@
     color: rgba(228,230,235,.95);
   }
 
-  /* POSTS (mesmo visual do feed) */
   .post{
     background: var(--fb-surface);
     margin: 12px 0;
@@ -235,11 +206,7 @@
     box-shadow: var(--fb-shadow);
     position:relative;
   }
-  .postHead{
-    display:flex;
-    align-items:center;
-    gap:10px;
-  }
+  .postHead{ display:flex; align-items:center; gap:10px; }
   .postAvatar{
     width:42px; height:42px;
     border-radius:50%;
@@ -247,21 +214,10 @@
     background:#3A3B3C;
     border:1px solid rgba(255,255,255,.08);
     flex:0 0 auto;
-    display:flex;
-    align-items:center;
-    justify-content:center;
+    display:flex; align-items:center; justify-content:center;
   }
-  .postAvatar img{
-    width:100%;
-    height:100%;
-    object-fit:cover;
-    object-position:center;
-    display:block;
-  }
-  .postAvatar .init{
-    font-weight:900;
-    color: var(--fb-text);
-  }
+  .postAvatar img{ width:100%; height:100%; object-fit:cover; object-position:center; display:block; }
+  .postAvatar .init{ font-weight:900; color: var(--fb-text); }
 
   .postName{
     font-weight:900;
@@ -272,17 +228,8 @@
     white-space:nowrap;
     max-width: 62vw;
   }
-  .when{
-    font-size:12px;
-    color: var(--fb-muted);
-    margin-top:3px;
-  }
-  .post p{
-    margin:10px 0 0 0;
-    font-size:14px;
-    line-height:1.35;
-    color: rgba(228,230,235,.95);
-  }
+  .when{ font-size:12px; color: var(--fb-muted); margin-top:3px; }
+  .post p{ margin:10px 0 0 0; font-size:14px; line-height:1.35; color: rgba(228,230,235,.95); }
 
   .mediaWrap img, .mediaWrap video{
     width:100%;
@@ -293,7 +240,41 @@
     border:1px solid rgba(255,255,255,.08);
   }
 
-  /* AÇÕES */
+  /* ✅ overlay “toque para ouvir” */
+  .videoWrap{
+    position:relative;
+    margin-top:10px;
+  }
+  .videoWrap video{
+    width:100%;
+    border-radius: 14px;
+    background:#000;
+    display:block;
+    border:1px solid rgba(255,255,255,.08);
+  }
+  .tapToSound{
+    position:absolute;
+    left: 12px;
+    bottom: 12px;
+    display:inline-flex;
+    gap:10px;
+    align-items:center;
+    padding:10px 12px;
+    border-radius:999px;
+    background: rgba(0,0,0,.55);
+    border:1px solid rgba(255,255,255,.14);
+    color: var(--fb-text);
+    font-weight:900;
+    font-size:13px;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    box-shadow: 0 10px 22px rgba(0,0,0,.35);
+    user-select:none;
+    pointer-events:none; /* clique vai no vídeo */
+  }
+  .tapToSound i{ color: var(--fb-blue); }
+  .tapToSound.hide{ display:none; }
+
   .post-actions{
     display:flex;
     justify-content:space-around;
@@ -336,20 +317,13 @@
   }
 
   .cRow{
-    position:relative;
     background: rgba(255,255,255,.03);
     border:1px solid rgba(255,255,255,.10);
     padding:10px;
     border-radius: 14px;
     margin-bottom:8px;
   }
-  .cHead{
-    display:flex;
-    align-items:center;
-    gap:10px;
-    margin-bottom:6px;
-    min-width:0;
-  }
+  .cHead{ display:flex; align-items:center; gap:10px; margin-bottom:6px; min-width:0; }
   .cAvatar{
     width:30px; height:30px;
     border-radius:50%;
@@ -382,7 +356,6 @@
     color: var(--fb-text);
   }
 
-  /* LOGIN (pra curtir/comentar) */
   .login-overlay{
     position:fixed; inset:0;
     background: rgba(0,0,0,0.94);
@@ -441,7 +414,6 @@
   }
   .login-btn:active{ transform:scale(.99); }
 
-  /* TOAST STATUS (Facebook vibe) */
   .toastStatus{
     position: fixed;
     left: 50%;
@@ -463,14 +435,10 @@
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
   }
-  .toastDot{
-    width:10px; height:10px; border-radius:50%;
-    box-shadow: 0 0 0 3px rgba(0,0,0,.18);
-  }
+  .toastDot{ width:10px; height:10px; border-radius:50%; box-shadow: 0 0 0 3px rgba(0,0,0,.18); }
   .toastDot.on{ background: var(--fb-green); box-shadow:0 0 14px rgba(49,162,76,.55); }
   .toastDot.off{ background:#F7B928; box-shadow:0 0 14px rgba(247,185,40,.45); }
 
-  /* pequenos ajustes mobile */
   @media(max-width:480px){
     .avatar{ width:104px; height:104px; }
   }
@@ -727,9 +695,7 @@ function startSelfPresence(){
     }).catch(()=>{});
   };
 
-  // só pinga se já tem nome; senão, ele define depois do login
   if(USER_NAME) ping();
-
   setInterval(()=>{ if(USER_NAME) ping(); }, 25000);
 
   try{
@@ -775,6 +741,73 @@ function showStatusToast(){
 previewClickableCover.addEventListener("click", showStatusToast);
 previewClickableAvatar.addEventListener("click", showStatusToast);
 infoBtn.addEventListener("click", showStatusToast);
+
+/* ====================== ✅ VÍDEOS: autoplay SEM SOM + som só ao clicar ====================== */
+/* Regras:
+   - vídeos nas postagens ficam: autoplay + loop + muted + playsinline
+   - somente quando clicar no vídeo: desmuta e deixa com som
+   - ao desmutar um, muta todos os outros (pra não virar bagunça)
+*/
+function setupVideoAutoplay(container){
+  const videos = (container || document).querySelectorAll("video[data-autopreview='1']");
+  videos.forEach(v=>{
+    // garantir atributos corretos
+    v.muted = true;
+    v.defaultMuted = true;
+    v.setAttribute("muted", "");
+    v.autoplay = true;
+    v.setAttribute("autoplay", "");
+    v.loop = true;
+    v.setAttribute("loop", "");
+    v.playsInline = true;
+    v.setAttribute("playsinline", "");
+    v.setAttribute("preload", "metadata");
+    // sem controls por padrão (fica estilo preview). pode mudar se quiser:
+    v.controls = false;
+
+    // tentar iniciar automaticamente
+    const tryPlay = ()=>{
+      const p = v.play();
+      if(p && typeof p.catch === "function"){ p.catch(()=>{}); }
+    };
+    tryPlay();
+
+    // overlay “toque para ouvir”
+    const wrap = v.closest(".videoWrap");
+    const badge = wrap ? wrap.querySelector(".tapToSound") : null;
+    if(badge) badge.classList.remove("hide");
+
+    // clicar: ativa som
+    const onClick = ()=>{
+      // muta todos os outros
+      document.querySelectorAll("video[data-autopreview='1']").forEach(other=>{
+        if(other !== v){
+          other.muted = true;
+          other.defaultMuted = true;
+          other.setAttribute("muted","");
+          const w = other.closest(".videoWrap");
+          const b = w ? w.querySelector(".tapToSound") : null;
+          if(b) b.classList.remove("hide");
+        }
+      });
+
+      // desmuta este
+      v.muted = false;
+      v.defaultMuted = false;
+      v.removeAttribute("muted");
+      v.controls = true; // ao ativar som, libera controles
+      tryPlay();
+
+      if(badge) badge.classList.add("hide");
+    };
+
+    // evita múltiplos listeners
+    if(!v.__soundClickBound){
+      v.addEventListener("click", onClick);
+      v.__soundClickBound = true;
+    }
+  });
+}
 
 /* ====================== CARREGAR PERFIL ====================== */
 async function loadProfile(){
@@ -839,9 +872,25 @@ function postHTML(postId, d){
   let midia = "";
   if(d.mediaUrl){
     const isImg = (d.mediaType || "").startsWith("image/");
-    midia = isImg
-      ? `<img src="${escapeHTML(d.mediaUrl)}" loading="lazy" alt="imagem">`
-      : `<video src="${escapeHTML(d.mediaUrl)}" controls preload="metadata" playsinline></video>`;
+    if(isImg){
+      midia = `<img src="${escapeHTML(d.mediaUrl)}" loading="lazy" alt="imagem">`;
+    }else{
+      // ✅ vídeo em autoplay SEM som (muted) e som só no clique
+      midia = `
+        <div class="videoWrap">
+          <video
+            src="${escapeHTML(d.mediaUrl)}"
+            data-autopreview="1"
+            muted
+            autoplay
+            loop
+            playsinline
+            preload="metadata"
+          ></video>
+          <div class="tapToSound"><i class="fa-solid fa-volume-high"></i> Toque para ouvir</div>
+        </div>
+      `;
+    }
   }
 
   const texto = escapeHTML(d.text || "");
@@ -902,8 +951,6 @@ function toggleComentarios(postId){
 
 async function curtir(postId){
   if(precisaLogin()) return;
-
-  // após login, garante ping de presença com nome
   startSelfPresence();
 
   const likeRef = DB.ref(`likes/${postId}/${UID}`);
@@ -921,8 +968,6 @@ async function curtir(postId){
 
 async function enviarComentario(postId){
   if(precisaLogin()) return;
-
-  // após login, garante ping de presença com nome
   startSelfPresence();
 
   const input = document.getElementById("commentInput_"+postId);
@@ -1039,6 +1084,9 @@ function listenFeed(){
 
     feed.innerHTML = entries.slice().reverse().map(p=> postHTML(p.id, p)).join("");
 
+    // ✅ após renderizar, ativa autoplay/mute + clique para som
+    setupVideoAutoplay(feed);
+
     entries.forEach(p=>{
       listenLikes(p.id);
       listenComments(p.id);
@@ -1052,7 +1100,6 @@ function listenFeed(){
   setAvatar("", "U");
   setStatus(false);
 
-  // presença do próprio usuário (pinga quando tiver nome)
   startSelfPresence();
   listenSelfPresence();
 
