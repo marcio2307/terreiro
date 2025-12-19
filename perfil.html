@@ -3,31 +3,51 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-<title>Perfil • estilo Facebook</title>
+<title>Perfil • Facebook 2025 (Escuro)</title>
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
 <style>
+  :root{
+    --bg:#18191a;
+    --surface:#242526;
+    --surface2:#2d2e30;
+    --text:#e4e6eb;
+    --muted:#b0b3b8;
+    --line:#3a3b3c;
+
+    --primary:#0866ff;
+    --primary2:#0b5cff;
+    --primarySoft: rgba(8,102,255,.16);
+
+    --good:#31a24c;
+    --danger:#ff5b5b;
+
+    --shadow:0 10px 22px rgba(0,0,0,.35);
+  }
+
   *{ box-sizing:border-box; }
   html,body{ width:100%; max-width:100%; overflow-x:hidden; }
   body{
     margin:0;
-    background:#000;
-    color:#fff;
+    background: var(--bg);
+    color: var(--text);
     font-family: Arial, sans-serif;
     padding-bottom: env(safe-area-inset-bottom);
   }
 
+  /* ===================== TOPBAR ===================== */
   .topbar{
     position: sticky; top:0; z-index:9999;
-    background:#0d0d0d;
-    border-bottom:2px solid #00ff8c;
-    box-shadow:0 0 15px #00ff8c;
-    padding: 12px 12px;
+    background: var(--surface);
+    border-bottom: 1px solid var(--line);
+    box-shadow: 0 2px 14px rgba(0,0,0,.35);
+    padding: 10px 12px;
     display:flex;
     align-items:center;
     justify-content:space-between;
     gap:12px;
+    padding-top: calc(10px + env(safe-area-inset-top));
   }
   .topbar .left{
     display:flex; align-items:center; gap:10px; min-width:0;
@@ -37,15 +57,16 @@
     display:flex;
     justify-content:center;
     align-items:center;
+    min-width:0;
   }
   .brand{
     font-weight:900;
-    color:#00ff8c;
-    letter-spacing:1px;
-    text-shadow:0 0 10px #00ff8c, 0 0 20px #00ff8c;
+    color: var(--text);
+    letter-spacing:.2px;
     white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
   }
-  .meName{ display:none !important; }
   .topbar .actions{ display:flex; align-items:center; gap:10px; }
 
   .btn{
@@ -54,36 +75,36 @@
     font-weight:900;
     padding:10px 12px;
     border-radius:999px;
-    background:#00ff8c;
-    color:#003b23;
-    box-shadow:0 0 14px rgba(0,255,140,.55);
+    background: var(--primary);
+    color:#fff;
     user-select:none;
     display:inline-flex;
     align-items:center;
     gap:8px;
     justify-content:center;
     text-decoration:none;
+    transition:.15s;
   }
+  .btn:hover{ background: var(--primary2); }
   .btn:active{ transform:scale(.99); }
   .btn.ghost{
-    background:rgba(0,255,140,.10);
-    color:#00ff8c;
-    border:1px solid rgba(0,255,140,.35);
-    box-shadow:0 0 12px rgba(0,255,140,.18);
+    background: rgba(255,255,255,.06);
+    color: var(--text);
+    border:1px solid rgba(255,255,255,.10);
   }
+  .btn.ghost:hover{ background: rgba(255,255,255,.09); }
   .btn.icon{ width:44px; height:44px; padding:0; }
 
   .backLabel{
     font-weight:900;
-    color:#00ff8c;
-    text-shadow:0 0 10px rgba(0,255,140,.35);
+    color: var(--muted);
     white-space:nowrap;
   }
 
-  /* Login overlay */
+  /* ====================== LOGIN ====================== */
   .login-overlay{
     position:fixed; inset:0;
-    background: rgba(0,0,0,0.94);
+    background: rgba(0,0,0,0.72);
     display:none;
     align-items:center;
     justify-content:center;
@@ -92,20 +113,18 @@
   }
   .login-card{
     width: min(520px, 94vw);
-    background:#0d0d0d;
-    border:2px solid #00ff8c;
-    border-radius:22px;
-    box-shadow:0 0 28px rgba(0,255,140,.45);
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 18px;
+    box-shadow: var(--shadow);
     padding: 18px;
     text-align:center;
   }
   .login-title{
-    font-size: clamp(18px, 6vw, 26px);
+    font-size: clamp(18px, 6vw, 24px);
     font-weight: 900;
-    color:#00ff8c;
-    text-transform:uppercase;
-    letter-spacing:1.2px;
-    text-shadow: 0 0 10px #00ff8c, 0 0 22px #00ff8c;
+    color: var(--primary);
+    letter-spacing:.3px;
     margin: 4px 0 14px 0;
     display:flex;
     gap:10px;
@@ -114,29 +133,32 @@
   }
   .login-input{
     width:100%;
-    background:#111;
-    border:1px solid #00ff9d;
+    background: var(--surface2);
+    border:1px solid var(--line);
     border-radius: 999px;
     padding: 14px 18px;
-    color:#fff;
+    color: var(--text);
     outline:none;
     font-size: 16px;
-    box-shadow: inset 0 0 10px rgba(0,255,157,.22);
+  }
+  .login-input:focus{
+    border-color: rgba(8,102,255,.65);
+    box-shadow: 0 0 0 4px var(--primarySoft);
   }
   .login-btn{
     width: 100%;
     margin-top: 12px;
     border:none;
     border-radius: 999px;
-    padding: 16px 12px;
+    padding: 14px 12px;
     font-weight: 900;
     cursor:pointer;
-    font-size: 18px;
+    font-size: 16px;
     transition:.18s;
-    background:#00ff8c;
-    color:#003b23;
-    box-shadow:0 0 18px rgba(0,255,140,.55);
+    background: var(--primary);
+    color:#fff;
   }
+  .login-btn:hover{ background: var(--primary2); }
 
   /* ✅ input file NÃO pode display:none */
   .filePicker{
@@ -150,13 +172,14 @@
 
   .profileWrap{ width:min(980px, 100%); margin: 0 auto; }
 
+  /* ===================== CAPA ===================== */
   .cover{
     position:relative;
     width:100%;
     height: clamp(190px, 36vw, 340px);
-    background:#111;
+    background: var(--surface2);
     overflow:hidden;
-    border-bottom:1px solid rgba(0,255,140,.22);
+    border-bottom:1px solid var(--line);
   }
   .cover img{
     width:100%;
@@ -168,11 +191,12 @@
   }
   .coverShade{
     position:absolute; inset:auto 0 0 0;
-    height:55%;
-    background: linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(0,0,0,.35) 35%, rgba(0,0,0,.85) 100%);
+    height:60%;
+    background: linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(0,0,0,.30) 35%, rgba(0,0,0,.85) 100%);
     pointer-events:none;
   }
 
+  /* ===================== AVATAR + IDENTIDADE ===================== */
   .avatarRow{
     position:relative;
     padding: 0 12px 12px 12px;
@@ -183,23 +207,24 @@
     flex-wrap:wrap;
   }
   .avatar{
-    width: 120px;
-    height: 120px;
+    width: 122px;
+    height: 122px;
     border-radius: 50%;
     overflow:hidden;
-    background:#0d0d0d;
-    border:4px solid #000;
-    box-shadow: 0 0 0 3px rgba(0,255,140,.22), 0 10px 28px rgba(0,0,0,.55);
+    background: var(--surface);
+    border: 4px solid var(--bg);
+    box-shadow: 0 0 0 1px rgba(255,255,255,.12), 0 12px 28px rgba(0,0,0,.55);
     flex:0 0 auto;
     display:flex;
     align-items:center;
     justify-content:center;
+    cursor:pointer;
   }
   .avatar img{ width:100%; height:100%; object-fit:cover; display:block; }
   .avatarInitial{
     font-weight:900; font-size:34px;
-    color:#00ff8c;
-    text-shadow:0 0 14px rgba(0,255,140,.45);
+    color: var(--text);
+    opacity:.95;
   }
 
   .identity{ min-width: 220px; flex:1; }
@@ -208,16 +233,15 @@
     font-size: clamp(22px, 6vw, 34px);
     font-weight: 900;
     letter-spacing:.2px;
-    color:#00ff8c;
-    text-shadow:0 0 10px rgba(0,255,140,.35);
+    color: var(--text);
   }
   .identity .sub{
     margin-top:6px;
-    opacity:.9;
     display:flex;
     flex-wrap:wrap;
     gap:10px;
     align-items:center;
+    color: var(--muted);
   }
   .pill{
     display:inline-flex;
@@ -225,23 +249,24 @@
     align-items:center;
     padding:7px 12px;
     border-radius:999px;
-    background: rgba(0,255,140,.10);
-    border:1px solid rgba(0,255,140,.25);
-    color:#00ff8c;
+    background: rgba(255,255,255,.06);
+    border:1px solid rgba(255,255,255,.10);
+    color: var(--text);
     font-weight:900;
     font-size:13px;
   }
   .onlineDot{
     width:10px; height:10px; border-radius:50%;
-    background:#00ff4c;
-    box-shadow:0 0 14px rgba(0,255,76,.9);
+    background: var(--good);
+    box-shadow: 0 0 0 2px rgba(49,162,76,.18);
     animation: blinkDot .9s infinite;
   }
   @keyframes blinkDot{
     0%,100%{ transform:scale(1); opacity:1; }
-    50%{ transform:scale(1.35); opacity:.25; }
+    50%{ transform:scale(1.25); opacity:.35; }
   }
 
+  /* ===================== TABS ===================== */
   .tabs{
     display:flex;
     gap:10px;
@@ -252,9 +277,9 @@
     cursor:pointer;
     padding:10px 14px;
     border-radius:999px;
-    background:#0d0d0d;
-    border:1px solid rgba(0,255,140,.25);
-    color:#00ff8c;
+    background: rgba(255,255,255,.06);
+    border:1px solid rgba(255,255,255,.10);
+    color: var(--text);
     font-weight:900;
     user-select:none;
     display:flex;
@@ -263,10 +288,10 @@
     gap:8px;
   }
   .tab.active{
-    background:#00ff8c;
-    color:#003b23;
-    box-shadow:0 0 14px rgba(0,255,140,.55);
-    border-color: rgba(0,255,140,.55);
+    background: var(--primary);
+    color:#fff;
+    border-color: rgba(8,102,255,.35);
+    box-shadow: 0 10px 18px rgba(8,102,255,.20);
   }
 
   @media (max-width: 520px){
@@ -282,15 +307,16 @@
     }
   }
 
+  /* ===================== PANELS + CARD ===================== */
   .panel{ padding: 12px; display:none; }
   .panel.active{ display:block; }
 
   .card{
-    background:#0d0d0d;
-    border:1px solid rgba(0,255,140,.25);
-    border-radius:18px;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 16px;
     padding:12px;
-    box-shadow:0 0 14px rgba(0,255,140,.14);
+    box-shadow: 0 6px 18px rgba(0,0,0,.25);
   }
 
   /* SOBRE (somente leitura) */
@@ -299,46 +325,49 @@
     gap:10px;
     padding:10px;
     border-radius:14px;
-    border:1px solid rgba(255,255,255,.06);
-    background: rgba(255,255,255,.03);
+    border:1px solid rgba(255,255,255,.08);
+    background: rgba(255,255,255,.04);
     margin-top:10px;
     align-items:flex-start;
   }
-  .infoRow i{ color:#00ff8c; margin-top:2px; }
-  .infoTitle{ font-weight:900; color:#00ff8c; }
-  .infoText{ opacity:.92; word-break:break-word; }
+  .infoRow i{ color: var(--primary); margin-top:2px; }
+  .infoTitle{ font-weight:900; color: var(--text); }
+  .infoText{ color: var(--muted); word-break:break-word; }
 
   /* PERFIL (edição) */
   .field{ display:flex; flex-direction:column; gap:7px; margin-bottom:10px; }
   .label{
     font-weight:900;
-    color:#00ff8c;
+    color: var(--muted);
     font-size:13px;
-    opacity:.95;
-    letter-spacing:.3px;
+    letter-spacing:.2px;
   }
   .input, .textarea{
     width:100%;
-    background:#111;
-    border:1px solid rgba(0,255,140,.35);
+    background: rgba(255,255,255,.05);
+    border:1px solid rgba(255,255,255,.10);
     border-radius:14px;
     padding: 12px 12px;
-    color:#fff;
+    color: var(--text);
     outline:none;
-    box-shadow: inset 0 0 10px rgba(0,255,157,.15);
     font-size:15px;
+  }
+  .input:focus, .textarea:focus{
+    border-color: rgba(8,102,255,.65);
+    box-shadow: 0 0 0 4px var(--primarySoft);
+    background: rgba(255,255,255,.07);
   }
   .textarea{ min-height: 90px; resize: vertical; }
   .rowBtns{ display:flex; gap:10px; flex-wrap:wrap; }
 
-  /* Feed Post */
+  /* ===================== FEED POST ===================== */
   .post{
-    background:#0d0d0d;
+    background: var(--surface);
     margin: 12px 0;
-    padding: 15px;
-    border-radius:16px;
-    border:1px solid #00ff9d;
-    box-shadow:0 0 10px rgba(0,255,157,.25);
+    padding: 14px;
+    border-radius: 16px;
+    border: 1px solid var(--line);
+    box-shadow: 0 6px 18px rgba(0,0,0,.22);
     position:relative;
   }
   .post .mediaWrap img,
@@ -348,22 +377,23 @@
     margin-top:10px;
     background:#000;
     display:block;
+    border: 1px solid rgba(255,255,255,.10);
   }
 
   .postHead{
     display:flex;
     align-items:center;
     gap:12px;
-    padding-right:44px;
+    padding-right:52px;
   }
   .postAvatar{
     width:52px;
     height:52px;
     border-radius:50%;
     overflow:hidden;
-    background:#000;
-    border:2px solid rgba(0,255,157,.55);
-    box-shadow:0 0 14px rgba(0,255,157,.22);
+    background:#3a3b3c;
+    border: 2px solid var(--surface);
+    box-shadow: 0 1px 10px rgba(0,0,0,.35);
     flex:0 0 auto;
     display:flex;
     align-items:center;
@@ -374,16 +404,14 @@
     width:100%;
     height:100%;
     object-fit:cover;
-    object-position:center;
     display:block;
   }
-  .postAvatar .init{ font-weight:900; color:#00ff9d; }
+  .postAvatar .init{ font-weight:900; color: var(--text); }
   .postHeadText{ min-width:0; }
   .postName{
     font-weight:900;
-    font-size:22px;
-    color:#7bffb5;
-    text-shadow: 0 0 10px rgba(0,255,157,.25);
+    font-size: 18px;
+    color: var(--text);
     overflow:hidden;
     text-overflow:ellipsis;
     white-space:nowrap;
@@ -392,80 +420,100 @@
   }
   .when{
     font-size:12px;
-    color:#00ff9d;
-    opacity:.85;
+    color: var(--muted);
     margin-top:4px;
   }
 
-  .menu-btn {
+  /* 3 pontinhos (post) bem visível */
+  .menu-btn{
     position:absolute;
     top: 10px;
     right: 10px;
-    font-size: 28px;
+    width: 40px;
+    height: 34px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size: 22px;
+    font-weight: 900;
     cursor: pointer;
-    color: #00ff9d;
-    z-index: 10;
+    color: var(--text);
+    background: rgba(0,0,0,.42);
+    border: 1px solid rgba(255,255,255,.18);
+    border-radius: 12px;
+    box-shadow: 0 8px 18px rgba(0,0,0,.35);
     user-select:none;
   }
-  .menu-box {
+  .menu-btn:hover{ background: rgba(0,0,0,.55); }
+  .menu-btn:active{ transform: scale(.96); }
+
+  .menu-box{
     position:absolute;
-    top: 45px;
+    top: 50px;
     right: 10px;
-    background:#00ff9d;
-    color:#000;
-    padding: 10px 15px;
-    border-radius: 10px;
+    background: var(--surface2);
+    color: var(--text);
+    padding: 10px 12px;
+    border-radius: 12px;
     display:none;
     cursor:pointer;
     font-weight:900;
-    box-shadow: 0 0 12px rgba(0,255,157,.55);
+    box-shadow: var(--shadow);
+    border: 1px solid var(--line);
     z-index: 15;
+    min-width: 160px;
   }
+  .menu-box div{
+    display:flex;
+    align-items:center;
+    gap:10px;
+  }
+  .menu-box .danger{ color: var(--danger); }
 
   .post-actions{
     display:flex;
     justify-content:space-around;
-    margin-top:15px;
+    margin-top:12px;
     flex-wrap:wrap;
     gap: 10px;
   }
   .btn-action{
-    color:#00ff9d;
+    color: var(--text);
     padding:10px 12px;
     border-radius:12px;
     font-weight:900;
     cursor:pointer;
     transition:0.2s;
     text-align:center;
-    border: 1px solid rgba(0,255,157,.25);
-    background: rgba(0,0,0,.15);
+    border: 1px solid rgba(255,255,255,.10);
+    background: rgba(255,255,255,.05);
     user-select:none;
     min-width:160px;
   }
+  .btn-action:hover{ background: rgba(255,255,255,.08); }
   .contador{
     margin-top:6px;
     font-size:13px;
-    color:#00ff9d;
+    color: var(--muted);
     text-align:center;
-    opacity:.95;
     line-height:1.35;
     word-break: break-word;
   }
   .coment-area{
-    background:#111;
+    background: rgba(255,255,255,.04);
     padding:10px;
     margin-top:10px;
     border-radius:12px;
     display:none;
-    border:1px solid rgba(0,255,140,.25);
+    border:1px solid rgba(255,255,255,.10);
   }
 
   /* Comentários */
   .cRow{
     position:relative;
-    background:#000;
-    border:1px solid rgba(0,255,140,.35);
-    padding:10px 44px 10px 10px;
+    background: rgba(0,0,0,.22);
+    border:1px solid rgba(255,255,255,.10);
+    padding:10px 56px 10px 10px;
     border-radius:12px;
     margin-bottom:8px;
   }
@@ -474,50 +522,66 @@
     width:34px; height:34px;
     border-radius:50%;
     overflow:hidden;
-    background:#000;
-    border:1px solid rgba(0,255,157,.45);
+    background:#3a3b3c;
+    border:1px solid rgba(255,255,255,.12);
     flex:0 0 auto;
     display:flex; align-items:center; justify-content:center;
     cursor:pointer;
   }
   .cAvatar img{ width:100%; height:100%; object-fit:cover; display:block; }
-  .cAvatar .init{ font-weight:900; color:#00ff9d; }
+  .cAvatar .init{ font-weight:900; color: var(--text); }
   .cName{
     font-weight:900;
-    color:#00ff9d;
+    color: var(--text);
     overflow:hidden;
     text-overflow:ellipsis;
     white-space:nowrap;
     max-width: 62vw;
     cursor:pointer;
   }
-  .cText{ opacity:.95; }
+  .cText{ color: var(--muted); }
 
+  /* 3 pontinhos (coment) bem visível */
   .coment-menu-btn{
     position:absolute;
     top:10px;
     right:10px;
-    font-size:20px;
+    width: 38px;
+    height: 32px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size: 20px;
+    font-weight: 900;
     cursor: pointer;
-    color:#00ff9d;
+    color: var(--text);
+    background: rgba(0,0,0,.42);
+    border: 1px solid rgba(255,255,255,.18);
+    border-radius: 12px;
+    box-shadow: 0 8px 18px rgba(0,0,0,.30);
     user-select:none;
     line-height:1;
   }
+  .coment-menu-btn:hover{ background: rgba(0,0,0,.55); }
+  .coment-menu-btn:active{ transform: scale(.96); }
+
   .coment-menu-box{
     position:absolute;
-    top:34px;
+    top:48px;
     right:10px;
-    background:#00ff9d;
-    color:#000;
-    padding:6px 10px;
-    border-radius:8px;
+    background: var(--surface2);
+    color: var(--text);
+    padding:10px 12px;
+    border-radius:12px;
     display:none;
     font-weight:900;
     cursor:pointer;
-    box-shadow:0 0 10px rgba(0,255,157,.55);
-    z-index:5;
-    line-height:1;
+    box-shadow: var(--shadow);
+    border: 1px solid var(--line);
+    z-index: 5;
+    min-width: 140px;
   }
+  .coment-menu-box span{ color: var(--danger); }
 
   /* Friends (lista) */
   .friendRow{
@@ -527,51 +591,44 @@
     gap:10px;
     padding:10px 10px;
     border-radius:14px;
-    border:1px solid rgba(255,255,255,.06);
-    background: rgba(255,255,255,.03);
+    border:1px solid rgba(255,255,255,.08);
+    background: rgba(255,255,255,.04);
     margin-bottom:8px;
   }
-  .friendRow.centered{
-    justify-content:center;
-    text-align:center;
-  }
+  .friendRow.centered{ justify-content:center; text-align:center; }
   .friendLeft{
     min-width:0;
     display:flex;
     align-items:center;
     gap:10px;
   }
-  .friendRow.centered .friendLeft{
-    flex-direction:column;
-    gap:8px;
-  }
+  .friendRow.centered .friendLeft{ flex-direction:column; gap:8px; }
+
   .friendAvatar{
     width:54px; height:54px;
     border-radius:50%;
     overflow:hidden;
-    background:#0d0d0d;
-    border:2px solid rgba(0,255,140,.25);
+    background:#3a3b3c;
+    border: 2px solid var(--surface);
+    box-shadow: 0 1px 10px rgba(0,0,0,.35);
     display:flex; align-items:center; justify-content:center;
     flex: 0 0 auto;
     position:relative;
   }
-  .friendAvatar img{
-    width:100%; height:100%;
-    object-fit:cover;
-    display:block;
-  }
-  .friendInit{ font-weight:900; color:#00ff8c; }
+  .friendAvatar img{ width:100%; height:100%; object-fit:cover; display:block; }
+  .friendInit{ font-weight:900; color: var(--text); }
   .friendName{
     font-weight:900;
     overflow:hidden;
     text-overflow:ellipsis;
     white-space:nowrap;
     max-width: 80vw;
+    color: var(--text);
   }
   .friendRight{
     display:flex; align-items:center; gap:8px;
     font-size:12px;
-    opacity:.9;
+    color: var(--muted);
     white-space:nowrap;
   }
   .friendRow.centered .friendRight{
@@ -579,6 +636,9 @@
     width:100%;
     margin-top:6px;
   }
+
+  /* util */
+  .tinyBlue{ color: var(--primary); font-weight:900; }
 </style>
 </head>
 
@@ -624,7 +684,7 @@
 
   <!-- FOTO PERFIL + IDENTIDADE -->
   <div class="avatarRow">
-    <div class="avatar" id="avatarBox">
+    <div class="avatar" id="avatarBox" title="Trocar foto" onclick="abrirGaleriaAvatar()">
       <img id="avatarImg" alt="Foto do perfil" style="display:none;">
       <div id="avatarInitial" class="avatarInitial">U</div>
     </div>
@@ -635,10 +695,18 @@
       <h1 id="profileName">—</h1>
       <div class="sub">
         <span class="pill"><span class="onlineDot"></span> Online</span>
-        <span class="pill"><i class="fa-solid fa-location-dot"></i> <span id="cityText">Sem cidade</span></span>
+        <span class="pill"><i class="fa-solid fa-location-dot tinyBlue"></i> <span id="cityText">Sem cidade</span></span>
       </div>
     </div>
+
+    <div style="display:flex; gap:10px; flex-wrap:wrap; margin-left:auto;">
+      <button class="btn ghost" onclick="abrirGaleriaCapa()"><i class="fa-solid fa-image"></i> Capa</button>
+      <button class="btn ghost" onclick="abrirGaleriaAvatar()"><i class="fa-solid fa-camera"></i> Foto</button>
+    </div>
   </div>
+
+  <input id="coverInput2" class="filePicker" type="file" accept="image/*" style="display:none;">
+  <input id="coverInput" class="filePicker" type="file" accept="image/*">
 
   <!-- TABS -->
   <div class="tabs">
@@ -652,10 +720,10 @@
   <div class="panel active" id="panel_posts">
     <div class="card">
       <div style="display:flex; align-items:center; justify-content:space-between; gap:10px;">
-        <div style="font-weight:900; color:#00ff8c; letter-spacing:.4px;">
-          <i class="fa-solid fa-list"></i> Feed do usuário
+        <div style="font-weight:900; color:var(--text); letter-spacing:.2px;">
+          <i class="fa-solid fa-list tinyBlue"></i> Feed do usuário
         </div>
-        <div style="opacity:.85; font-size:13px;" id="postsCount">0 postagens</div>
+        <div style="color:var(--muted); font-size:13px;" id="postsCount">0 postagens</div>
       </div>
       <div id="myFeed" style="margin-top:10px;"></div>
     </div>
@@ -664,8 +732,8 @@
   <!-- SOBRE (somente leitura) -->
   <div class="panel" id="panel_about">
     <div class="card">
-      <div style="font-weight:900; color:#00ff8c; letter-spacing:.4px;">
-        <i class="fa-solid fa-circle-info"></i> Informações
+      <div style="font-weight:900; color:var(--text); letter-spacing:.2px;">
+        <i class="fa-solid fa-circle-info tinyBlue"></i> Informações
       </div>
 
       <div class="infoRow">
@@ -698,14 +766,9 @@
   <div class="panel" id="panel_profile">
     <div class="card">
       <div style="display:flex; align-items:center; justify-content:space-between; gap:10px;">
-        <div style="font-weight:900; color:#00ff8c; letter-spacing:.4px;">
-          <i class="fa-solid fa-user-pen"></i> Editar perfil
+        <div style="font-weight:900; color:var(--text); letter-spacing:.2px;">
+          <i class="fa-solid fa-user-pen tinyBlue"></i> Editar perfil
         </div>
-      </div>
-
-      <div style="margin-top:12px; display:flex; gap:10px; flex-wrap:wrap;">
-        <button class="btn ghost" onclick="abrirGaleriaAvatar()"><i class="fa-solid fa-camera"></i> Trocar foto</button>
-        <button class="btn ghost" onclick="abrirGaleriaCapa()"><i class="fa-solid fa-image"></i> Trocar capa</button>
       </div>
 
       <div style="margin-top:12px;">
@@ -729,7 +792,7 @@
           <button class="btn ghost" onclick="loadProfile()"><i class="fa-solid fa-rotate"></i> Recarregar</button>
         </div>
 
-        <div id="saveInfo" style="margin-top:10px; opacity:.9; font-weight:900; color:#00ff8c; display:none;">
+        <div id="saveInfo" style="margin-top:10px; color:var(--muted); font-weight:900; display:none;">
           Salvo ✅
         </div>
       </div>
@@ -740,10 +803,10 @@
   <div class="panel" id="panel_friends">
     <div class="card">
       <div style="display:flex; align-items:center; justify-content:space-between; gap:10px;">
-        <div style="font-weight:900; color:#00ff8c; letter-spacing:.4px;">
-          <i class="fa-solid fa-users"></i> Quem está online agora
+        <div style="font-weight:900; color:var(--text); letter-spacing:.2px;">
+          <i class="fa-solid fa-users tinyBlue"></i> Quem está online agora
         </div>
-        <div style="opacity:.85; font-size:13px;" id="onlineCount">0 online</div>
+        <div style="color:var(--muted); font-size:13px;" id="onlineCount">0 online</div>
       </div>
 
       <div id="onlineList" style="margin-top:12px;"></div>
@@ -805,6 +868,9 @@ function getNomeSalvo(){
 }
 let USER_NAME = getNomeSalvo();
 
+const loginOverlay = document.getElementById("loginOverlay");
+const loginName = document.getElementById("loginName");
+
 function abrirLogin(){
   loginOverlay.style.display = "flex";
   document.body.style.overflow = "hidden";
@@ -844,17 +910,19 @@ function sairNome(){
   UID = getOrCreateUID();
   abrirLogin();
 }
-
 document.addEventListener("keydown", (e)=>{
   if(loginOverlay.style.display === "flex" && e.key === "Enter"){ confirmarNome(); }
 });
 
 /* Helpers */
 function escapeHTML(str){
-  return (str || "")
-    .replaceAll("&","&amp;").replaceAll("<","&lt;")
-    .replaceAll(">","&gt;").replaceAll('"',"&quot;")
-    .replaceAll("'","&#039;");
+  str = (str == null ? "" : String(str));
+  return str
+    .replace(/&/g,"&amp;")
+    .replace(/</g,"&lt;")
+    .replace(/>/g,"&gt;")
+    .replace(/"/g,"&quot;")
+    .replace(/'/g,"&#039;");
 }
 function initials(name){
   const n = (name||"").trim().split(/\s+/).filter(Boolean);
@@ -866,15 +934,12 @@ function initials(name){
 function fmtDate(ts){
   try{ return new Date(ts).toLocaleString("pt-BR"); }catch(e){ return ""; }
 }
-function safeId(s){
-  return (s||"").toString().replace(/[^a-zA-Z0-9_-]/g, "_");
-}
+function safeId(s){ return (s||"").toString().replace(/[^a-zA-Z0-9_-]/g, "_"); }
 
 /* ====================== PERFIL (profiles/{uid}) ====================== */
 const PROFILE_REF = (uid)=> DB.ref("profiles/" + uid);
 const MY_PROFILE_REF = ()=> DB.ref("profiles/" + UID);
 
-/* Cache perfis */
 const profileCache = new Map();
 async function getProfileForUID(uid, fallbackName){
   if(!uid) return { url:"", name: fallbackName || "Usuário" };
@@ -914,18 +979,14 @@ async function getMyAvatarFromProfiles(){
     const snap = await MY_PROFILE_REF().once("value");
     const p = snap.val() || {};
     return (p.avatarDataUrl || p.avatarUrl || "").toString();
-  }catch(e){
-    return "";
-  }
+  }catch(e){ return ""; }
 }
 async function getMyNameFromProfiles(){
   try{
     const snap = await MY_PROFILE_REF().once("value");
     const p = snap.val() || {};
     return (p.name || USER_NAME || "Usuário").toString();
-  }catch(e){
-    return (USER_NAME || "Usuário").toString();
-  }
+  }catch(e){ return (USER_NAME || "Usuário").toString(); }
 }
 
 function startPresence(){
@@ -955,10 +1016,8 @@ function startPresence(){
 
     presenceTimer = setInterval(async ()=>{
       if(!presenceRef) return;
-
       const avatar = await getMyAvatarFromProfiles();
       const nameNow = await getMyNameFromProfiles();
-
       presenceRef.update({
         online: true,
         lastActive: firebase.database.ServerValue.TIMESTAMP,
@@ -967,9 +1026,7 @@ function startPresence(){
       }).catch(()=>{});
     }, 25000);
 
-    window.addEventListener("beforeunload", ()=>{
-      try{ stopPresence(true); }catch(e){}
-    });
+    window.addEventListener("beforeunload", ()=>{ try{ stopPresence(true); }catch(e){} });
   }catch(e){}
 }
 function stopPresence(){
@@ -981,6 +1038,27 @@ function stopPresence(){
 if(USER_NAME && UID){ startPresence(); }
 
 /* ====================== UI PERFIL ====================== */
+const coverBox = document.getElementById("coverBox");
+const coverImg = document.getElementById("coverImg");
+const coverInput = document.getElementById("coverInput");
+
+const avatarImg = document.getElementById("avatarImg");
+const avatarInitial = document.getElementById("avatarInitial");
+const avatarInput = document.getElementById("avatarInput");
+
+const profileName = document.getElementById("profileName");
+const cityText = document.getElementById("cityText");
+
+const aboutName = document.getElementById("aboutName");
+const aboutCity = document.getElementById("aboutCity");
+const aboutBio  = document.getElementById("aboutBio");
+
+const aboutShowName = document.getElementById("aboutShowName");
+const aboutShowCity = document.getElementById("aboutShowCity");
+const aboutShowBio  = document.getElementById("aboutShowBio");
+
+const saveInfo = document.getElementById("saveInfo");
+
 function attachingAvatar(url, nameForInitial){
   if(url){
     avatarImg.src = url;
@@ -1006,7 +1084,6 @@ function setAboutReadOnly(prof){
   aboutShowCity.textContent = prof.city ? prof.city : "—";
   aboutShowBio.textContent  = prof.bio ? prof.bio : "—";
 }
-
 function applyProfileUI(p){
   const prof = p || {};
   profileName.textContent = prof.name || USER_NAME || "Usuário";
@@ -1164,8 +1241,8 @@ function cropToAvatarDataUrl(img, outSize=420, quality=0.86){
 }
 
 /* UPLOAD CAPA */
-coverInput.addEventListener("change", async (e)=>{
-  const file = e.target.files && e.target.files[0];
+coverInput.addEventListener("change", async ()=>{
+  const file = coverInput.files && coverInput.files[0];
   if(!file) return;
 
   if(!file.type || !file.type.startsWith("image/")){
@@ -1188,7 +1265,6 @@ coverInput.addEventListener("change", async (e)=>{
       coverDataUrl: dataUrl,
       updatedAt: firebase.database.ServerValue.TIMESTAMP
     });
-
   }catch(err){
     console.log("COVER ERROR:", err);
     alert("Erro ao salvar a capa.");
@@ -1198,8 +1274,8 @@ coverInput.addEventListener("change", async (e)=>{
 });
 
 /* UPLOAD AVATAR */
-avatarInput.addEventListener("change", async (e)=>{
-  const file = e.target.files && e.target.files[0];
+avatarInput.addEventListener("change", async ()=>{
+  const file = avatarInput.files && avatarInput.files[0];
   if(!file) return;
 
   if(!file.type || !file.type.startsWith("image/")){
@@ -1223,7 +1299,6 @@ avatarInput.addEventListener("change", async (e)=>{
       userName: USER_NAME,
       avatarDataUrl: dataUrl
     }).catch(()=>{});
-
   }catch(err){
     console.log("AVATAR ERROR:", err);
     alert("Erro ao salvar a foto de perfil.");
@@ -1234,7 +1309,6 @@ avatarInput.addEventListener("change", async (e)=>{
 
 /* ✅ TABS COM TOGGLE */
 let CURRENT_TAB = "posts";
-
 function setTabActive(which){
   ["posts","about","profile","friends"].forEach(k=>{
     document.getElementById("tab_"+k).classList.remove("active");
@@ -1273,12 +1347,11 @@ const postsCache = new Set();
 let postsCountNum = 0;
 
 function toggleMenu(id){
-  let m = document.getElementById("menu_"+id);
+  const m = document.getElementById("menu_"+id);
   if(!m) return;
   m.style.display = (m.style.display==="block" ? "none" : "block");
 }
 
-/* ✅ AGORA: clicar em "Comentar" abre/fecha (toggle) */
 function abrirComentarios(id){
   const box = document.getElementById("comentarios_"+id);
   if(!box) return;
@@ -1326,14 +1399,14 @@ function atualizarCurtidasUI(postId, likesObj){
   if(my){
     if(my.type === "love"){
       btn.textContent = "❤️ Você amou";
-      btn.style.color = "#ff008c";
+      btn.style.color = "#ff4da6";
     }else{
       btn.textContent = "👍 Você curtiu";
-      btn.style.color = "#00ff9d";
+      btn.style.color = "#9cc4ff";
     }
   }else{
     btn.textContent = "👍 Curtir";
-    btn.style.color = "#00ff9d";
+    btn.style.color = "";
   }
 
   if(total === 0){ cont.innerHTML = ""; return; }
@@ -1365,7 +1438,6 @@ function toggleComentMenu(cid){
   if(!menu) return;
   menu.style.display = (menu.style.display==="block" ? "none" : "block");
 }
-
 async function excluirComentario(cid, postId){
   await DB.ref(`comments/${postId}/${cid}`).remove();
 }
@@ -1389,7 +1461,7 @@ async function excluirPost(postId){
   postsCache.delete(postId);
 
   postsCountNum = Math.max(0, postsCountNum - 1);
-  postsCount.textContent = `${postsCountNum} postagens`;
+  document.getElementById("postsCount").textContent = `${postsCountNum} postagens`;
 }
 
 async function postHTML(id, postData){
@@ -1415,9 +1487,9 @@ async function postHTML(id, postData){
 
   return `
   <div class="post" id="${id}">
-    <div class="menu-btn" onclick="toggleMenu('${id}')">⋮</div>
+    <div class="menu-btn" title="Opções" aria-label="Opções" onclick="toggleMenu('${id}')">⋮</div>
     <div class="menu-box" id="menu_${id}">
-      <div onclick="excluirPost('${id}')">Excluir post</div>
+      <div onclick="excluirPost('${id}')"><i class="fa-solid fa-trash"></i> <span class="danger">Excluir post</span></div>
     </div>
 
     <div class="postHead">
@@ -1430,7 +1502,7 @@ async function postHTML(id, postData){
       </div>
     </div>
 
-    <p style="margin:12px 0 0 0;">${texto}</p>
+    <p style="margin:12px 0 0 0; color: var(--text);">${texto}</p>
 
     <div class="mediaWrap" id="mediaWrap_${id}">
       ${midia}
@@ -1451,7 +1523,6 @@ async function postHTML(id, postData){
       </div>
 
       <div style="text-align:center;">
-        <!-- ✅ clique alterna abrir/fechar -->
         <div class="btn-action" onclick="abrirComentarios('${id}')">💬 Comentar</div>
         <div class="contador" id="contadorComentarios_${id}"></div>
       </div>
@@ -1462,7 +1533,7 @@ async function postHTML(id, postData){
 
       <input type="text" id="comentarioInput_${id}"
         placeholder="Escreva um comentário..."
-        style="width:100%;padding:10px;border-radius:10px;border:1px solid rgba(0,255,140,.35);background:#000;color:#fff;">
+        style="width:100%;padding:10px;border-radius:10px;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.05);color:var(--text);outline:none;">
 
       <button class="btn" style="margin-top:10px;" onclick="enviarComentario('${id}')">Enviar</button>
     </div>
@@ -1476,7 +1547,6 @@ function listenLikes(postId){
   });
 }
 
-/* comentários puxam FOTO do profiles/{uid} e clicam pra PRÉVIA */
 function listenComments(postId){
   DB.ref("comments/" + postId).orderByChild("createdAt").on("value", async snap=>{
     const lista = document.getElementById("listaComentarios_"+postId);
@@ -1515,9 +1585,9 @@ function listenComments(postId){
           </div>
           <div class="cText">💬 ${txt}</div>
 
-          <span class="coment-menu-btn" onclick="toggleComentMenu('${escapeHTML(c.cid)}')">⋮</span>
+          <div class="coment-menu-btn" title="Opções" onclick="toggleComentMenu('${escapeHTML(c.cid)}')">⋮</div>
           <div class="coment-menu-box" id="menu_${escapeHTML(c.cid)}" onclick="excluirComentario('${escapeHTML(c.cid)}','${escapeHTML(postId)}')">
-            Excluir
+            <span><i class="fa-solid fa-trash"></i> Excluir</span>
           </div>
         </div>
       `;
@@ -1545,14 +1615,14 @@ async function renderMyPost(postId, data){
   listenComments(postId);
 
   postsCountNum++;
-  postsCount.textContent = `${postsCountNum} postagens`;
+  document.getElementById("postsCount").textContent = `${postsCountNum} postagens`;
 }
 
 function listenMyPosts(){
   postsCache.clear();
   postsCountNum = 0;
-  postsCount.textContent = `0 postagens`;
-  myFeed.innerHTML = `<div style="opacity:.85; padding:12px;">Carregando suas postagens...</div>`;
+  document.getElementById("postsCount").textContent = `0 postagens`;
+  document.getElementById("myFeed").innerHTML = `<div style="color:var(--muted); padding:12px;">Carregando suas postagens...</div>`;
 
   const q = DB.ref("posts").orderByChild("uid").equalTo(UID).limitToLast(200);
   q.on("value", async snap=>{
@@ -1560,13 +1630,13 @@ function listenMyPosts(){
     const entries = Object.keys(obj).map(id=>({ id, ...obj[id] }))
       .sort((a,b)=>(a.createdAt||0)-(b.createdAt||0));
 
-    myFeed.innerHTML = "";
+    document.getElementById("myFeed").innerHTML = "";
     postsCache.clear();
     postsCountNum = 0;
 
     if(entries.length === 0){
-      myFeed.innerHTML = `<div style="opacity:.85; padding:12px;">Você ainda não postou nada.</div>`;
-      postsCount.textContent = `0 postagens`;
+      document.getElementById("myFeed").innerHTML = `<div style="color:var(--muted); padding:12px;">Você ainda não postou nada.</div>`;
+      document.getElementById("postsCount").textContent = `0 postagens`;
       return;
     }
 
@@ -1613,6 +1683,9 @@ async function hydrateOnlineFromProfiles(aliveArr){
 }
 
 function listenOnline(){
+  const onlineCount = document.getElementById("onlineCount");
+  const onlineList  = document.getElementById("onlineList");
+
   const ref = DB.ref("presence");
   ref.on("value", snap=>{
     const obj = snap.val() || {};
@@ -1628,7 +1701,7 @@ function listenOnline(){
     onlineCount.textContent = `${alive.length} online`;
 
     if(alive.length === 0){
-      onlineList.innerHTML = `<div style="opacity:.85; padding:12px;">Ninguém online agora.</div>`;
+      onlineList.innerHTML = `<div style="color:var(--muted); padding:12px;">Ninguém online agora.</div>`;
       return;
     }
 
@@ -1669,16 +1742,6 @@ function listenOnline(){
   avatarInitial.textContent = initials(USER_NAME || "U");
 
   await loadProfile();
-
-  try{
-    const pSnap = await MY_PROFILE_REF().once("value");
-    const p = pSnap.val() || {};
-    const avatar = (p.avatarDataUrl || p.avatarUrl || "").toString();
-    if(avatar){
-      DB.ref("presence/" + UID).update({ avatarDataUrl: avatar, userName: (p.name||USER_NAME||"Usuário") }).catch(()=>{});
-    }
-  }catch(e){}
-
   listenMyPosts();
   listenOnline();
   setTabActive("posts");
