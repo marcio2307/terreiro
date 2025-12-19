@@ -155,7 +155,7 @@
     .top-menu a i{ font-size: 22px; }
   }
 
-  /* ===================== "NO QUE VOCÊ ESTÁ PENSANDO" (AGORA ACIMA DOS STORIES) ===================== */
+  /* ===================== "NO QUE VOCÊ ESTÁ PENSANDO" ===================== */
   .create-post{
     background:#0d0d0d;
     margin:10px 12px 10px 12px;
@@ -223,7 +223,7 @@
     display:none;
   }
 
-  /* ======================== STORIES (ESTILO INSTA) ======================== */
+  /* ======================== STORIES ======================== */
   .stories-wrapper{ padding: 6px 10px 6px 10px; }
   .stories-row{
     display:flex;
@@ -316,7 +316,7 @@
   }
   .createLabel{ font-weight:800; opacity:.95; }
 
-  /* ======================== "CONECTADOS NO FACECUMBA" (APÓS A 1ª PUBLICAÇÃO) ======================== */
+  /* ======================== "CONECTADOS" ======================== */
   .connections{
     background:#0d0d0d;
     margin: 12px 12px 15px 12px;
@@ -587,7 +587,7 @@
     white-space:nowrap;
   }
 
-  /* ===================== ✅ REAÇÕES DO STORY (APENAS PARA STORIES DE OUTROS) ===================== */
+  /* ===================== ✅ REAÇÕES DO STORY ===================== */
   .reactionBar{
     position:absolute;
     right: 14px;
@@ -635,7 +635,6 @@
     transform: translateY(-1px);
   }
 
-  /* ✅✅✅ animação "subir igual facebook" (CORRIGIDA: cada reação sobe na cor certa) */
   .floatReaction{
     position:absolute;
     right: 0;
@@ -649,18 +648,9 @@
     animation: floatUp 900ms ease-out forwards;
     filter: drop-shadow(0 0 14px rgba(0,0,0,.55));
   }
-  .floatReaction.love{
-    color:#ff2a2a;
-    text-shadow: 0 0 18px rgba(255,42,42,.55);
-  }
-  .floatReaction.like{
-    color:#00ff8c;
-    text-shadow: 0 0 20px rgba(0,255,140,.65);
-  }
-  .floatReaction.haha{
-    color:#ffd400;
-    text-shadow: 0 0 18px rgba(255,212,0,.55);
-  }
+  .floatReaction.love{ color:#ff2a2a; text-shadow: 0 0 18px rgba(255,42,42,.55); }
+  .floatReaction.like{ color:#00ff8c; text-shadow: 0 0 20px rgba(0,255,140,.65); }
+  .floatReaction.haha{ color:#ffd400; text-shadow: 0 0 18px rgba(255,212,0,.55); }
   @keyframes floatUp{
     0%   { transform: translate(0, 0) scale(.85); opacity: 0; }
     10%  { opacity: 1; }
@@ -767,10 +757,7 @@
     object-position:center;
     display:block;
   }
-  .postAvatar .init{
-    font-weight:900;
-    color:#00ff9d;
-  }
+  .postAvatar .init{ font-weight:900; color:#00ff9d; }
   .postHeadText{ min-width:0; }
   .postNameLine{
     display:flex;
@@ -979,7 +966,7 @@
     font-weight:900;
   }
 
-  /* ===================== MODAL PRÉVIA PERFIL (SEM SAIR DA PÁGINA) ===================== */
+  /* ===================== MODAL PRÉVIA PERFIL ===================== */
   .profileModal{
     position: fixed;
     inset: 0;
@@ -1080,7 +1067,7 @@
   </button>
 </div>
 
-<!-- MENU (sem botão sair + com ícone perfil) -->
+<!-- MENU -->
 <nav class="top-menu">
   <a href="https://marcio2307.github.io/terreiro/estudo.html" title="Estudo" aria-label="Estudo">
     <i class="fa-solid fa-book"></i>
@@ -1104,7 +1091,7 @@
   </a>
 </nav>
 
-<!-- ✅ AGORA: "NO QUE VOCÊ ESTÁ PENSANDO?" ACIMA DOS STORIES -->
+<!-- ✅ "NO QUE VOCÊ ESTÁ PENSANDO?" -->
 <div class="create-post">
   <input type="text" id="postText" class="input-box" placeholder="No que você está pensando?" oninput="updateButton()">
   <div class="add-btn" id="btnMain" onclick="buttonAction()">+</div>
@@ -1142,7 +1129,7 @@
   <div class="tapRight" id="tapRight"></div>
   <div id="viewerMedia"></div>
 
-  <!-- ✅ REAÇÕES (APENAS NOS STORIES DE OUTROS) - AGORA DO LADO DIREITO -->
+  <!-- ✅ REAÇÕES -->
   <div class="reactionBar" id="reactionBar" aria-label="Reagir ao story">
     <div class="reactBtn love" id="reactLove" title="Coração" onclick="reactToStory('love')">
       <span class="reactIcon">❤</span>
@@ -1200,7 +1187,7 @@ actionSfx.preload = "auto";
 actionSfx.volume = 1.0;
 
 /* ====================== ✅ SOM DO CHAT (SOMM.MP3) ====================== */
-const CHAT_SOUND_URL = "somm.mp3"; // coloque esse arquivo no GitHub na mesma pasta do site.html
+const CHAT_SOUND_URL = "somm.mp3";
 const chatSfx = new Audio(CHAT_SOUND_URL);
 chatSfx.preload = "auto";
 chatSfx.volume = 1.0;
@@ -1331,14 +1318,15 @@ document.addEventListener("keydown", (e)=>{
   if(loginOverlay.style.display === "flex" && e.key === "Enter"){ confirmarNome(); }
 });
 
-/* Helpers */
+/* Helpers (✅ corrigido escapeHTML e mais compatível) */
 function escapeHTML(str){
-  return (str || "")
-    .replaceAll("&","&amp;")
-    .replaceAll("<","&lt;")
-    .replaceAll(">","&gt;")
-    .replaceAll('"',"quot;")
-    .replaceAll("'","&#039;");
+  str = (str == null ? "" : String(str));
+  return str
+    .replace(/&/g,"&amp;")
+    .replace(/</g,"&lt;")
+    .replace(/>/g,"&gt;")
+    .replace(/"/g,"&quot;")
+    .replace(/'/g,"&#039;");
 }
 function initials(name){
   const n = (name||"").trim().split(/\s+/).filter(Boolean);
@@ -1353,8 +1341,6 @@ function fmtDate(ts){
 
 /* ====================== ✅ ABRIR PRÉVIA DO PERFIL ====================== */
 const PREVIEW_URL = "https://marcio2307.github.io/terreiro/previa.html";
-
-/* modal */
 const profileModal = document.getElementById("profileModal");
 const profileFrame = document.getElementById("profileFrame");
 function openProfileModal(uid){
@@ -1372,11 +1358,7 @@ function closeProfileModal(){
 profileModal.addEventListener("click", (e)=>{
   if(e.target === profileModal) closeProfileModal();
 });
-
-/* mantém a função antiga (caso você use em outros lugares) */
-function abrirPrevia(uid){
-  openProfileModal(uid);
-}
+function abrirPrevia(uid){ openProfileModal(uid); }
 
 /* limites */
 const MAX_IMG_MB = 15;
@@ -1395,6 +1377,9 @@ function checkSize(file){
 }
 
 /* Loading */
+const loadingOverlay = document.getElementById("loadingOverlay");
+const loadingText = document.getElementById("loadingText");
+const loadingSub  = document.getElementById("loadingSub");
 function showLoading(title, sub){
   loadingText.textContent = title || "Enviando...";
   loadingSub.textContent = sub || "Aguarde um instante";
@@ -1453,13 +1438,12 @@ if(USER_NAME && UID){ startPresence(); }
 </script>
 
 <script>
-/* ===================== PERFIS (avatar sincroniza com perfil.html) ===================== */
+/* ===================== PERFIS ===================== */
 const profileCache = new Map();
 function PROFILE_REF(uid){ return DB.ref("profiles/" + uid); }
 
 async function getAvatarForUID(uid, fallbackName){
   if(!uid) return { url:"", name: fallbackName || "Usuário" };
-  (function(){})(); // mantém como está
   if(profileCache.has(uid)) return profileCache.get(uid);
 
   try{
@@ -1525,7 +1509,6 @@ function updateViewerAvatarsInDOM(uid, url, name){
   });
 }
 
-/* para o bloco "conectados" */
 function updateConnectionsAvatarsInDOM(uid, url, name){
   document.querySelectorAll(`[data-conn-photo-uid="${uid}"]`).forEach(el=>{
     if(url){
@@ -1613,17 +1596,15 @@ msgBtn.addEventListener("click", ()=>{
 </script>
 
 <script>
-/* ===================== ✅ BLOCO "CONECTADOS NO FACECUMBA" (APÓS A 1ª PUBLICAÇÃO DO FEED) ===================== */
+/* ===================== ✅ BLOCO "CONECTADOS" (APÓS A 1ª PUBLICAÇÃO) ===================== */
 const CONNECTIONS_ID = "connectionsSection";
-let connectionsUsers = []; // [{uid,userName,lastActive,onlineAt}]
+let connectionsUsers = [];
 
 function ensureConnectionsSection(){
   const feed = document.getElementById("feed");
   if(!feed) return;
 
   let sec = document.getElementById(CONNECTIONS_ID);
-
-  // pega a "primeira publicação" (topo do feed)
   const firstPost = feed.querySelector(".post");
 
   if(!firstPost){
@@ -1637,7 +1618,6 @@ function ensureConnectionsSection(){
     sec.className = "connections";
   }
 
-  // coloca sempre depois do primeiro post
   const afterFirst = firstPost.nextSibling;
   if(afterFirst !== sec){
     feed.insertBefore(sec, afterFirst);
@@ -1650,7 +1630,6 @@ async function renderConnections(){
   const sec = document.getElementById(CONNECTIONS_ID);
   if(!sec) return;
 
-  // ordena: mais recentes primeiro
   const list = connectionsUsers
     .filter(u => u && u.uid && u.uid !== UID)
     .sort((a,b)=> (b.lastActive||b.onlineAt||0) - (a.lastActive||a.onlineAt||0))
@@ -1680,7 +1659,6 @@ async function renderConnections(){
       ? `<img src="${prof.url}" alt="avatar">`
       : `<div class="connInit">${escapeHTML(initials(name))}</div>`;
 
-    // quadrado + botão ver perfil
     return `
       <div class="connCard">
         <div class="connPhoto" data-conn-photo-uid="${escapeHTML(u.uid)}">${photo}</div>
@@ -1694,7 +1672,6 @@ async function renderConnections(){
 }
 
 (function listenConnectionsPresence(){
-  // usuários cadastrados e logados = presence/*
   const ref = DB.ref("presence").orderByChild("lastActive").limitToLast(80);
 
   ref.on("value", (snap)=>{
@@ -1708,7 +1685,6 @@ async function renderConnections(){
       onlineAt: x.onlineAt || 0
     }));
 
-    // atualiza posição (sempre depois do 1º post)
     ensureConnectionsSection();
   });
 })();
@@ -1728,6 +1704,17 @@ let viewersPanelOpen = false;
 let viewersRef = null;
 let CAN_SEE_VIEWERS = false;
 
+const viewer = document.getElementById("viewer");
+const viewerMedia = document.getElementById("viewerMedia");
+const bars = document.getElementById("bars");
+const dots = document.getElementById("dots");
+const deleteBtn = document.getElementById("deleteBtn");
+const tapLeft = document.getElementById("tapLeft");
+const tapRight = document.getElementById("tapRight");
+const viewerFooter = document.getElementById("viewerFooter");
+const viewersPanel = document.getElementById("viewersPanel");
+const seenText = document.getElementById("seenText");
+
 const reactionBar = document.getElementById("reactionBar");
 const reactLove = document.getElementById("reactLove");
 const reactLike = document.getElementById("reactLike");
@@ -1737,19 +1724,11 @@ let reactionsRef = null;
 let _latestViewsObj = {};
 let _latestReactsObj = {};
 
-/* ===== helpers de reação ===== */
 function reactionEmoji(type){
-  // ✅ força emoji colorido (coração NÃO fica branco)
   if(type === "love") return "❤️";
   if(type === "like") return "👍";
   if(type === "haha") return "😂";
   return "👍";
-}
-function reactionLabel(type){
-  if(type === "love") return "Coração";
-  if(type === "like") return "Curtir";
-  if(type === "haha") return "Haha";
-  return "Reação";
 }
 function resetReactionButtons(){
   reactLove.classList.remove("selected");
@@ -1768,7 +1747,6 @@ function floatingReactionAnim(type){
     el.className = "floatReaction " + (type || "");
     el.textContent = reactionEmoji(type);
 
-    // nasce próximo do botão correspondente
     const btn = type==="love" ? reactLove : (type==="like" ? reactLike : reactHaha);
     const rect = btn.getBoundingClientRect();
     const vr = viewer.getBoundingClientRect();
@@ -1781,14 +1759,11 @@ function floatingReactionAnim(type){
   }catch(e){}
 }
 
-/* ===================== REAÇÕES: grava no Firebase ===================== */
 async function reactToStory(type){
   try{
     if(precisaLogin()) return;
     const s = activeStories[current];
     if(!s || !s.id) return;
-
-    // só em stories de outros usuários
     if(s.uid === UID) return;
 
     unlockAudioOnce();
@@ -1798,7 +1773,6 @@ async function reactToStory(type){
     const snap = await ref.once("value");
     const cur = snap.val();
 
-    // se clicar na mesma reação, remove (toggle)
     if(cur && cur.type === type){
       await ref.remove();
       resetReactionButtons();
@@ -1825,7 +1799,7 @@ function detachReactionsListener(){
   }catch(e){}
 }
 
-/* ===================== ✅ QUEM VIU (com nome + foto) ===================== */
+/* ✅ QUEM VIU */
 function closeViewersPanel(){
   viewersPanelOpen = false;
   viewersPanel.style.display = "none";
@@ -1848,57 +1822,33 @@ function detachViewersListener(){
   }catch(e){}
 }
 
-/* ✅✅✅ dono: painel UNIFICADO (somente FOTO + NOME + REAÇÃO) */
 async function renderOwnerPanel(viewsObj, reactsObj){
   const views = viewsObj || {};
   const reacts = reactsObj || {};
-
-  // monta mapa único por UID
   const map = new Map();
 
-  // quem viu
   Object.keys(views).forEach(uid=>{
     const v = views[uid];
     if(!v || !uid) return;
-    map.set(uid, {
-      uid,
-      userName: v.userName || "Usuário",
-      viewedAt: v.viewedAt || 0,
-      reactionType: null,
-      reactedAt: 0
-    });
+    map.set(uid, { uid, userName: v.userName || "Usuário", viewedAt: v.viewedAt || 0, reactionType: null, reactedAt: 0 });
   });
 
-  // quem reagiu (pode ter reagido sem "view" registrado)
   Object.keys(reacts).forEach(uid=>{
     const r = reacts[uid];
     if(!r || !uid) return;
-
-    const cur = map.get(uid) || {
-      uid,
-      userName: r.userName || "Usuário",
-      viewedAt: 0,
-      reactionType: null,
-      reactedAt: 0
-    };
-
+    const cur = map.get(uid) || { uid, userName: r.userName || "Usuário", viewedAt: 0, reactionType: null, reactedAt: 0 };
     cur.userName = r.userName || cur.userName || "Usuário";
     cur.reactionType = r.type || null;
     cur.reactedAt = r.createdAt || 0;
-
     map.set(uid, cur);
   });
 
-  const arr = Array.from(map.values());
-
-  // ordena: primeiro os mais recentes (view ou reaction)
-  arr.sort((a,b)=>{
+  const arr = Array.from(map.values()).sort((a,b)=>{
     const ta = Math.max(a.viewedAt||0, a.reactedAt||0);
     const tb = Math.max(b.viewedAt||0, b.reactedAt||0);
     return tb - ta;
   });
 
-  // texto de "quem viu"
   const totalViews = Object.keys(views).length;
   if(totalViews === 0){
     seenText.textContent = "Ninguém viu ainda";
@@ -2033,7 +1983,6 @@ function showStory(){
   if(!s){ closeViewer(); return; }
 
   deleteBtn.style.display = "none";
-
   CAN_SEE_VIEWERS = (s.uid === UID);
 
   if(s.uid !== UID){
@@ -2194,11 +2143,7 @@ function renderUserCard(group){
     mediaHTML = `<img class="storyMedia" src="${cover.url}" alt="story" loading="lazy">`;
   }else{
     mediaHTML = `
-      <video class="storyMedia"
-        src="${cover.url}"
-        autoplay muted loop playsinline
-        preload="metadata">
-      </video>
+      <video class="storyMedia" src="${cover.url}" autoplay muted loop playsinline preload="metadata"></video>
     `;
   }
 
@@ -2302,25 +2247,37 @@ async function addStory(file){
 </script>
 
 <script>
-/* ===================== ✅ FEED: AUTO PLAY AO ROLAR (MUDO) + SOM SÓ AO CLICAR ===================== */
-/* Regras:
-   - Quando o vídeo ficar visível no feed, ele toca automaticamente (muted).
-   - Ao sair da tela, pausa.
-   - Som só libera quando a pessoa clicar/tocar no vídeo.
-   - Se liberar som em um vídeo, os outros ficam mudos. */
+/* ===================== ✅ FEED (CORRIGIDO): LAZY LOAD + AUTO PLAY MUDO + SOM SÓ AO TOCAR ===================== */
+/* Melhorias principais:
+   - Vídeo do feed NÃO baixa nem carrega até aparecer na tela (data-src).
+   - Quando some, pausa (para não travar celular).
+   - Som só ao tocar no vídeo.
+   - Se liberou som em um vídeo, os outros voltam para mudo. */
 
 let __feedObserver = null;
 
 function ensureFeedObserver(){
   if(__feedObserver) return;
 
-  // Toca quando pelo menos 60% estiver visível
   __feedObserver = new IntersectionObserver((entries)=>{
     entries.forEach(entry=>{
       const v = entry.target;
       if(!v || v.tagName !== "VIDEO") return;
 
       if(entry.isIntersecting && entry.intersectionRatio >= 0.60){
+        // ✅ lazy-set src só quando aparecer (evita travar em celulares)
+        try{
+          if(!v.__srcSet){
+            const ds = v.getAttribute("data-src");
+            if(ds){
+              v.src = ds;
+              v.__srcSet = true;
+              // não baixa tudo: só o necessário pra começar
+              try{ v.load(); }catch(e){}
+            }
+          }
+        }catch(e){}
+
         // auto-play permitido porque está mudo
         try{
           if(!v.__userUnmuted){
@@ -2355,46 +2312,52 @@ function setupOneFeedVideo(v){
   ensureFeedObserver();
 
   try{
-    // começa SEMPRE mudo (para permitir autoplay)
     v.__userUnmuted = false;
     v.muted = true;
     v.volume = 1.0;
 
-    // playsinline para iPhone
     v.playsInline = true;
     v.setAttribute("playsinline","");
     v.setAttribute("webkit-playsinline","");
 
-    // deixa loop (tipo feed do insta)
     v.loop = true;
+
+    // ✅ evita baixar vídeo antes de precisar
+    v.preload = "none";
 
     // marca
     v.setAttribute("data-feedvideo","1");
   }catch(e){}
 
-  // se tentar tocar e não foi o usuário que liberou som => mantém mudo
   v.addEventListener("play", ()=>{
     try{
       if(!v.__userUnmuted) v.muted = true;
     }catch(e){}
   });
 
-  // Clique/tap: libera som e toca (e deixa os outros mudos)
   const onUserToggle = ()=>{
     try{
       unlockAudioOnce();
 
-      // se está mudo => libera som
       if(v.muted){
         muteAllFeedVideosExcept(v);
         v.__userUnmuted = true;
         v.muted = false;
         v.volume = 1.0;
 
+        // garante src setado antes de tentar tocar com som
+        if(!v.__srcSet){
+          const ds = v.getAttribute("data-src");
+          if(ds){
+            v.src = ds;
+            v.__srcSet = true;
+            try{ v.load(); }catch(e){}
+          }
+        }
+
         const p = v.play();
         if(p && p.catch) p.catch(()=>{});
       }else{
-        // se já está com som => volta para mudo (mas continua tocando)
         v.__userUnmuted = false;
         v.muted = true;
       }
@@ -2404,7 +2367,6 @@ function setupOneFeedVideo(v){
   v.addEventListener("click", onUserToggle);
   v.addEventListener("touchend", onUserToggle, { passive:true });
 
-  // Observa este vídeo
   try{ __feedObserver.observe(v); }catch(e){}
 }
 
@@ -2423,6 +2385,12 @@ let holdTimer = null;
 const postsCache = new Set();
 let renderQueue = [];
 let pumping = false;
+
+const postText = document.getElementById("postText");
+const btnMain = document.getElementById("btnMain");
+const fileInput = document.getElementById("fileInput");
+const previewBox = document.getElementById("previewBox");
+const previewContent = document.getElementById("previewContent");
 
 function updateButton(){
   let t = postText.value.trim();
@@ -2617,7 +2585,7 @@ function atualizarCurtidasUI(postId, likesObj){
   cont.innerHTML = `Curtidas (${total}): <b>${nomes.map(escapeHTML).join(", ")}</b>`;
 }
 
-/* ✅✅✅ TOGGLE COMENTÁRIOS */
+/* ✅ toggle comentários */
 const commentCloseHandlers = {};
 function fecharComentarios(id){
   const box = document.getElementById("comentarios_"+id);
@@ -2719,12 +2687,13 @@ function postHTML(id, postData, avatarUrl){
     midia = isImg
       ? `<img src="${postData.mediaUrl}" loading="lazy">`
       : `
-        <!-- ✅ FEED: auto-play mudo ao rolar + som só ao clicar -->
-        <video src="${postData.mediaUrl}"
+        <!-- ✅ FEED (PERFORMANCE): video lazy-load via data-src -->
+        <video
+          data-src="${escapeHTML(postData.mediaUrl)}"
           controls
           muted
           loop
-          preload="metadata"
+          preload="none"
           playsinline
           webkit-playsinline></video>
       `;
@@ -2824,7 +2793,6 @@ function criarPostOptimista(id, postData){
     listenComments(id);
     updateAvatarsInDOM(uid, url, name);
 
-    // ✅ aplica regra do vídeo do feed
     setupAllFeedVideos();
   });
 }
@@ -2849,12 +2817,13 @@ function atualizarPostDoServidor(id, data){
       wrap.innerHTML = isImg
         ? `<img src="${data.mediaUrl}" loading="lazy">`
         : `
-          <!-- ✅ FEED: auto-play mudo ao rolar + som só ao clicar -->
-          <video src="${data.mediaUrl}"
+          <!-- ✅ FEED (PERFORMANCE): video lazy-load via data-src -->
+          <video
+            data-src="${escapeHTML(data.mediaUrl)}"
             controls
             muted
             loop
-            preload="metadata"
+            preload="none"
             playsinline
             webkit-playsinline></video>
         `;
@@ -2866,8 +2835,6 @@ function atualizarPostDoServidor(id, data){
   el.removeAttribute("data-pending");
 
   ensureConnectionsSection();
-
-  // ✅ aplica regra do vídeo do feed
   setupAllFeedVideos();
 }
 
@@ -2975,8 +2942,6 @@ function pumpRenderQueue(){
         updateAvatarsInDOM(it.data.uid, prof.url, prof.name);
 
         ensureConnectionsSection();
-
-        // ✅ aplica regra do vídeo do feed
         setupAllFeedVideos();
       }
       n++;
@@ -2993,7 +2958,7 @@ function pumpRenderQueue(){
 }
 
 updateButton();
-setupAllFeedVideos(); // ✅ inicial
+setupAllFeedVideos();
 </script>
 
 </body>
