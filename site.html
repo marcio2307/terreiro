@@ -125,7 +125,6 @@
   }
   .top-menu.hide{ display:none !important; }
 
-  /* ✅ cada item vira "botão" com ícone em cima e nome embaixo */
   .top-menu a{
     width: 66px;
     min-width: 66px;
@@ -151,14 +150,12 @@
   }
   .top-menu a:active{ transform: scale(.98); }
 
-  /* ✅ ícones maiores */
   .top-menu a i{
     font-size: 24px;
     color: var(--fb-text);
     line-height:1;
   }
 
-  /* ✅ texto abaixo do ícone */
   .menuLabel{
     font-size: 11px;
     font-weight: 900;
@@ -173,7 +170,6 @@
     padding: 0 2px;
   }
 
-  /* ✅ bolinha online (fica no canto do botão) */
   .menu-online-dot{
     position:absolute;
     top: 8px;
@@ -190,7 +186,6 @@
     50%{ transform: scale(1.25); opacity: .4; }
   }
 
-  /* ✅ adaptação para telas bem pequenas */
   @media(max-width:380px){
     .top-menu{ gap: 8px; padding: 8px 6px; top: 64px; }
     .top-menu a{ width: 62px; min-width:62px; height: 56px; border-radius: 14px; }
@@ -794,6 +789,42 @@
     border:1px solid rgba(255,255,255,.08);
   }
 
+  /* ✅ BOTÃO CENTRAL (PLAY/PAUSE) NO VÍDEO DO FEED */
+  .feedVideoWrap{
+    position:relative;
+    margin-top:10px;
+  }
+  .feedVideoWrap video{
+    margin-top:0 !important;
+  }
+  .feedVideoBtn{
+    position:absolute;
+    inset:0;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    cursor:pointer;
+    user-select:none;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .feedVideoBtn .icon{
+    width:74px; height:74px;
+    border-radius:50%;
+    background: rgba(0,0,0,.55);
+    border:1px solid rgba(255,255,255,.18);
+    box-shadow: 0 12px 24px rgba(0,0,0,.35);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:34px;
+    font-weight:900;
+    color:#fff;
+    transform: translateZ(0);
+  }
+  .feedVideoBtn.hide{ display:none; }
+
   .post-actions{
     display:flex;
     justify-content:space-around;
@@ -1290,6 +1321,7 @@ function restoreFeedVideoAudioIfPossible(){
   try{
     unlockAudioOnce();
     v.__userUnmuted = true;
+    v.__userPaused = false;
     v.muted = false;
     v.volume = 1.0;
 
@@ -1775,6 +1807,7 @@ async function renderConnections(){
 })();
 </script>
 
+<!-- ============ STORIES (o seu bloco original continua igual) ============ -->
 <script>
 /* ===================== STORIES ===================== */
 const menuTop = document.querySelector('.top-menu');
@@ -2107,7 +2140,6 @@ function showStory(){
     el.src = s.url;
     el.autoplay = true;
 
-    /* ✅ STORIES: AGORA TOCA COM SOM (exceto se rádio estiver tocando) */
     el.muted = radioPlaying ? true : false;
     el.volume = 1.0;
     el.controls = true;
@@ -2125,13 +2157,11 @@ function showStory(){
 
     viewerMedia.appendChild(el);
 
-    /* tenta tocar com som (user gesture já aconteceu ao abrir) */
     try{
       unlockAudioOnce();
       const p = el.play();
       if(p && p.catch){
         p.catch(()=>{
-          /* fallback: se algum navegador bloquear som, toca mutado */
           try{
             el.muted = true;
             el.play().catch(()=>{});
@@ -2243,7 +2273,6 @@ function renderUserCard(group){
   if((cover.type||"").includes("image")){
     mediaHTML = `<img class="storyMedia" src="${cover.url}" alt="story" loading="lazy">`;
   }else{
-    /* preview do card continua sem som (correto) */
     mediaHTML = `<video class="storyMedia" src="${cover.url}" autoplay muted loop playsinline preload="metadata"></video>`;
   }
 
@@ -2344,8 +2373,46 @@ async function addStory(file){
 </script>
 
 <script>
-/* ===================== ✅ FEED (VÍDEOS AUTO / SOM SÓ NO CLIQUE) ===================== */
+/* ===================== ✅ FEED (VÍDEOS AUTO / SOM SÓ NO CLIQUE NO CENTRO) ===================== */
 let __feedObserver = null;
+let __activeAudioFeedVideo = null;
+
+function pauseAndMuteVideo(v){
+  try{
+    v.__userUnmuted = false;
+    v.__userPaused = true;
+    v.muted = true;
+    v.volume = 1.0;
+    v.pause();
+  }catch(e){}
+  updateFeedOverlay(v);
+}
+
+function pauseAllOtherFeedVideos(exceptVideo){
+  document.querySelectorAll("#feed video[data-feedvideo='1']").forEach(v=>{
+    if(v !== exceptVideo){
+      pauseAndMuteVideo(v);
+    }
+  });
+}
+
+function updateFeedOverlay(v){
+  try{
+    const wrap = v.closest(".feedVideoWrap");
+    if(!wrap) return;
+    const btn = wrap.querySelector(".feedVideoBtn");
+    const icon = btn ? btn.querySelector(".icon") : null;
+    if(!btn || !icon) return;
+
+    if(v.paused){
+      btn.classList.remove("hide");
+      icon.textContent = "▶";
+    }else{
+      btn.classList.add("hide"); /* tocando: some o botão */
+      icon.textContent = "⏸";
+    }
+  }catch(e){}
+}
 
 function ensureFeedObserver(){
   if(__feedObserver) return;
@@ -2372,32 +2439,27 @@ function ensureFeedObserver(){
 
         if(entry.intersectionRatio >= 0.25){
           try{
+            /* ✅ se o usuário pausou manualmente, NÃO auto-retomar */
+            if(v.__userPaused) { updateFeedOverlay(v); return; }
+
+            /* ✅ autoplay sempre mutado */
             if(!v.__userUnmuted){
               v.muted = true;
               v.volume = 1.0;
             }
             const p = v.play();
             if(p && p.catch) p.catch(()=>{});
+            updateFeedOverlay(v);
           }catch(e){}
         }
       }else{
         try{ v.pause(); }catch(e){}
+        updateFeedOverlay(v);
       }
     });
   }, {
     threshold: [0, 0.10, 0.25, 0.60, 1],
     rootMargin: "900px 0px 900px 0px"
-  });
-}
-
-function muteAllFeedVideosExcept(exceptVideo){
-  document.querySelectorAll("#feed video[data-feedvideo='1']").forEach(v=>{
-    if(v !== exceptVideo){
-      try{
-        v.__userUnmuted = false;
-        v.muted = true;
-      }catch(e){}
-    }
   });
 }
 
@@ -2409,37 +2471,46 @@ function setupOneFeedVideo(v){
 
   try{
     v.__userUnmuted = false;
+    v.__userPaused = false;
     v.muted = true;
     v.volume = 1.0;
     v.playsInline = true;
     v.setAttribute("playsinline","");
     v.setAttribute("webkit-playsinline","");
     v.loop = true;
+    v.controls = false; /* ✅ sem controles: só centro */
     v.preload = "none";
     v.setAttribute("preload","none");
     v.setAttribute("data-feedvideo","1");
   }catch(e){}
 
-  const onUserToggle = ()=>{
+  const wrap = v.closest(".feedVideoWrap");
+  const btn = wrap ? wrap.querySelector(".feedVideoBtn") : null;
+
+  const onCenterToggle = (ev)=>{
+    try{ if(ev) ev.preventDefault(); }catch(e){}
+    try{ if(ev) ev.stopPropagation(); }catch(e){}
+
     try{
       unlockAudioOnce();
 
-      /* ✅ se rádio está tocando, travar áudio do feed */
+      /* ✅ se rádio está tocando, trava o áudio do feed */
       if(__radioLocksFeedAudio || radioPlaying){
-        v.__userUnmuted = false;
-        v.muted = true;
-        v.volume = 1.0;
-        try{ v.play().catch(()=>{}); }catch(e){}
+        pauseAndMuteVideo(v);
         return;
       }
 
-      if(v.muted){
-        muteAllFeedVideosExcept(v);
+      /* ✅ TOGGLE: se pausado -> toca com som; se tocando -> pausa e não mistura */
+      if(v.paused){
+        /* pausa tudo e garante 1 áudio só */
+        pauseAllOtherFeedVideos(v);
+
+        v.__userPaused = false;
         v.__userUnmuted = true;
         v.muted = false;
         v.volume = 1.0;
 
-        /* memoriza último vídeo com som */
+        __activeAudioFeedVideo = v;
         __lastUnmutedFeedVideo = v;
 
         if(!v.__srcSet){
@@ -2453,19 +2524,31 @@ function setupOneFeedVideo(v){
             try{ v.load(); }catch(e){}
           }
         }
+
         const p = v.play();
         if(p && p.catch) p.catch(()=>{});
       }else{
-        v.__userUnmuted = false;
-        v.muted = true;
+        /* ✅ pausa total no segundo clique */
+        pauseAndMuteVideo(v);
+        if(__activeAudioFeedVideo === v) __activeAudioFeedVideo = null;
       }
+
+      updateFeedOverlay(v);
     }catch(e){}
   };
 
-  v.addEventListener("click", onUserToggle);
-  v.addEventListener("touchend", onUserToggle, { passive:true });
+  if(btn){
+    btn.addEventListener("click", onCenterToggle);
+    btn.addEventListener("touchend", onCenterToggle, { passive:false });
+  }
+
+  /* ✅ se o usuário apertar play/pause via API/observer, manter overlay coerente */
+  v.addEventListener("play", ()=>updateFeedOverlay(v));
+  v.addEventListener("pause", ()=>updateFeedOverlay(v));
+  v.addEventListener("ended", ()=>updateFeedOverlay(v));
 
   try{ __feedObserver.observe(v); }catch(e){}
+  updateFeedOverlay(v);
 }
 
 function setupAllFeedVideos(){
@@ -2785,14 +2868,19 @@ function postHTML(id, postData, avatarUrl){
     midia = isImg
       ? `<img src="${postData.mediaUrl}" loading="lazy">`
       : `
-        <video
-          data-src="${escapeHTML(postData.mediaUrl)}"
-          controls
-          muted
-          loop
-          preload="none"
-          playsinline
-          webkit-playsinline></video>
+        <div class="feedVideoWrap">
+          <video
+            data-src="${escapeHTML(postData.mediaUrl)}"
+            muted
+            loop
+            preload="none"
+            playsinline
+            webkit-playsinline></video>
+          <!-- ✅ clique só no centro -->
+          <div class="feedVideoBtn" aria-label="Tocar/Pausar vídeo">
+            <div class="icon">▶</div>
+          </div>
+        </div>
       `;
   }
 
@@ -2915,14 +3003,18 @@ function atualizarPostDoServidor(id, data){
       wrap.innerHTML = isImg
         ? `<img src="${data.mediaUrl}" loading="lazy">`
         : `
-          <video
-            data-src="${escapeHTML(data.mediaUrl)}"
-            controls
-            muted
-            loop
-            preload="none"
-            playsinline
-            webkit-playsinline></video>
+          <div class="feedVideoWrap">
+            <video
+              data-src="${escapeHTML(data.mediaUrl)}"
+              muted
+              loop
+              preload="none"
+              playsinline
+              webkit-playsinline></video>
+            <div class="feedVideoBtn" aria-label="Tocar/Pausar vídeo">
+              <div class="icon">▶</div>
+            </div>
+          </div>
         `;
     }else{
       wrap.innerHTML = "";
