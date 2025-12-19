@@ -288,16 +288,22 @@
   .msgAvatar img{ width:100%;height:100%;object-fit:cover;display:block; }
   .msgAvatar .init{ font-weight:900; color: var(--text); }
 
+  /* ===================== ✅ WHATSAPP-LIKE: bolha ajusta ao texto ===================== */
   .msgBubble{
     position:relative;
-    min-width:0;
-    max-width: min(78vw, 560px);
-    border-radius: 18px;
+    display:inline-block;         /* faz a bolha "abraçar" o conteúdo */
+    width: fit-content;           /* largura pelo conteúdo */
+    max-width: min(78vw, 560px);  /* limite */
+    min-width: 86px;              /* evita bolha micro para "ok" ficar bonita */
     padding: 10px 44px 10px 12px; /* espaço pro menu */
+    border-radius: 18px;
     box-shadow: 0 3px 14px rgba(0,0,0,.30);
-    overflow: visible;
     border: 1px solid rgba(255,255,255,.06);
     background: var(--surface);
+  }
+  /* se tiver só imagem, deixa usar toda a largura permitida */
+  .msgBubble.mediaOnly{
+    width: min(78vw, 560px);
   }
 
   /* Eu: bolha azul */
@@ -342,6 +348,7 @@
     opacity: .98;
     font-size: 15px;
     line-height: 1.25;
+    display:inline; /* ajuda a bolha ajustar melhor em mensagens curtas */
   }
 
   .msgMedia{ margin-top: 8px; width:100%; }
@@ -360,32 +367,26 @@
     position:absolute;
     top: 8px;
     right: 8px;
-
-    /* botão bem visível */
     width: 36px;
     height: 30px;
     display:flex;
     align-items:center;
     justify-content:center;
-
     font-size: 22px;
     font-weight: 900;
     letter-spacing: 1px;
     cursor:pointer;
     user-select:none;
     line-height:1;
-
     color: rgba(255,255,255,.98);
     background: rgba(0,0,0,.42);
     border: 1px solid rgba(255,255,255,.22);
     border-radius: 12px;
-
     box-shadow: 0 8px 18px rgba(0,0,0,.38);
     backdrop-filter: blur(4px);
     -webkit-backdrop-filter: blur(4px);
   }
   .msgRow.me .msgMenuBtn{
-    /* no azul, mantém alto contraste */
     background: rgba(0,0,0,.38);
     border-color: rgba(255,255,255,.28);
     color: #fff;
@@ -403,7 +404,6 @@
     z-index: 999;
     cursor:pointer;
     user-select:none;
-
     background: var(--surface2);
     color: var(--text);
     padding: 10px 12px;
@@ -412,10 +412,8 @@
     font-size: 14px;
     box-shadow: var(--shadow);
     border: 1px solid var(--line);
-
     white-space: nowrap;
     min-width: 140px;
-
     display:none;
     align-items:center;
     gap: 10px;
@@ -1099,10 +1097,13 @@ function messageHTML(m, avatarUrl, displayName){
     ? `<div class="msgMedia"><img src="${m.mediaUrl}" alt="imagem" loading="lazy"></div>`
     : "";
 
+  // ✅ se não tem texto e tem mídia, aplica classe "mediaOnly"
+  const bubbleClass = (!text && m.mediaUrl) ? "msgBubble mediaOnly" : "msgBubble";
+
   return `
     <div class="msgRow ${isMe ? "me" : ""}" id="${escapeHTML(m.id)}">
       ${avatar}
-      <div class="msgBubble">
+      <div class="${bubbleClass}">
         <div class="msgMenuBtn" title="Opções" aria-label="Opções" onclick="toggleMsgMenu('${escapeHTML(m.id)}')">⋮</div>
         <div class="msgMenuBox" id="menu_${escapeHTML(m.id)}" onclick="deleteMessage('${escapeHTML(m.id)}')">
           <i class="fa-solid fa-trash"></i> Excluir
