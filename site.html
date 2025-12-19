@@ -33,6 +33,22 @@
     --fb-radius: 16px;
   }
 
+  /* ===================== ✅ REMOVE "BOLA PLAY" DOS VÍDEOS ===================== */
+  /* A bola branca aparece principalmente quando o <video> tem controls
+     ou quando o autoplay falha. Então: removemos controls no HTML/JS
+     e forçamos autoplay muted (permitido no mobile). */
+  video{
+    outline:none;
+    -webkit-tap-highlight-color: transparent;
+  }
+  /* Esconde botões/overlays do WebKit (Safari/Chrome iOS) */
+  video::-webkit-media-controls { display:none !important; }
+  video::-webkit-media-controls-panel { display:none !important; }
+  video::-webkit-media-controls-play-button { display:none !important; }
+  video::-webkit-media-controls-start-playback-button { display:none !important; }
+  video::-webkit-media-controls-overlay-play-button { display:none !important; }
+  video::-webkit-media-controls-enclosure { display:none !important; }
+
   /* ======================== LOGO + MESSENGER (TOPO) ======================== */
   .logo-bar{
     width:100%;
@@ -1986,11 +2002,18 @@ function showStory(){
   }else{
     const el = document.createElement("video");
     el.src = s.url;
+
+    /* ✅ para NÃO aparecer o botão play:
+       - sem controls
+       - autoplay + muted (mobile permite)
+       - playsinline */
     el.autoplay = true;
-    el.muted = false;
+    el.muted = true;
     el.volume = 1;
-    el.controls = true;
+    el.controls = false;     // ✅ remove controls (principal causa da bola play)
     el.playsInline = true;
+    el.setAttribute("playsinline","");
+    el.setAttribute("webkit-playsinline","");
     el.preload = "metadata";
 
     el.onloadedmetadata = ()=>{
@@ -1999,6 +2022,15 @@ function showStory(){
       runProgress(dur);
       viewerTimer = setTimeout(()=>nextStory(), dur);
     };
+
+    /* ✅ toque no vídeo: alterna mute e garante play */
+    el.addEventListener("click", ()=>{
+      try{
+        unlockAudioOnce();
+        if(el.paused) el.play().catch(()=>{});
+        el.muted = !el.muted;
+      }catch(e){}
+    }, { passive:true });
 
     viewerMedia.appendChild(el);
     el.play().catch(()=>{});
@@ -2269,6 +2301,10 @@ function setupOneFeedVideo(v){
     v.setAttribute("webkit-playsinline","");
     v.loop = true;
     v.preload = "none";
+    v.controls = false; // ✅ remove controls do feed (tira a bola play)
+    v.removeAttribute("controls");
+    v.setAttribute("controlslist","nodownload noremoteplayback noplaybackrate");
+    v.setAttribute("disablepictureinpicture","");
     v.setAttribute("data-feedvideo","1");
   }catch(e){}
 
@@ -2357,7 +2393,17 @@ fileInput.onchange = e=>{
   previewContent.innerHTML =
     selectedFile.type.startsWith("image/")
       ? `<img src="${url}" style="width:100%;border-radius:14px;display:block;" loading="lazy">`
-      : `<video src="${url}" controls preload="metadata" playsinline style="width:100%;border-radius:14px;background:#000;display:block;"></video>`;
+      : `
+        <video
+          src="${url}"
+          autoplay
+          muted
+          loop
+          playsinline
+          webkit-playsinline
+          preload="metadata"
+          style="width:100%;border-radius:14px;background:#000;display:block;"></video>
+      `;
   previewBox.style.display = "block";
 };
 
@@ -2621,12 +2667,14 @@ function postHTML(id, postData, avatarUrl){
       : `
         <video
           data-src="${escapeHTML(postData.mediaUrl)}"
-          controls
+          autoplay
           muted
           loop
           preload="none"
           playsinline
-          webkit-playsinline></video>
+          webkit-playsinline
+          controlslist="nodownload noremoteplayback noplaybackrate"
+          disablepictureinpicture></video>
       `;
   }
 
@@ -2750,12 +2798,14 @@ function atualizarPostDoServidor(id, data){
         : `
           <video
             data-src="${escapeHTML(data.mediaUrl)}"
-            controls
+            autoplay
             muted
             loop
             preload="none"
             playsinline
-            webkit-playsinline></video>
+            webkit-playsinline
+            controlslist="nodownload noremoteplayback noplaybackrate"
+            disablepictureinpicture></video>
         `;
     }else{
       wrap.innerHTML = "";
