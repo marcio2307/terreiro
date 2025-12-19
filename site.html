@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
 <title>Menu + Stories + Feed (Estilo Facebook 2025)</title>
 
-<!-- ✅ OTIMIZAÇÃO: pré-conexões (deixa Firebase/CDN/Storage mais rápidos) -->
+<!-- ✅ OTIMIZAÇÃO: pré-conexões -->
 <link rel="preconnect" href="https://www.gstatic.com" crossorigin>
 <link rel="preconnect" href="https://firebasestorage.googleapis.com" crossorigin>
 <link rel="preconnect" href="https://coletivo-f34d4-default-rtdb.firebaseio.com" crossorigin>
@@ -109,15 +109,15 @@
     .logo-left img{ max-height: 54px; }
   }
 
-  /* ======================== MENU (estilo Facebook) ======================== */
+  /* ======================== MENU (BARRA COM ÍCONE + TEXTO ABAIXO) ======================== */
   .top-menu{
     width: 100%;
     background: var(--fb-surface);
-    padding: 10px 10px;
+    padding: 8px 8px;
     display: flex;
     justify-content: center;
-    gap: 14px;
-    align-items: center;
+    gap: 10px;
+    align-items: stretch;
     border-bottom: 1px solid var(--fb-border);
     position: sticky;
     top: 66px;
@@ -125,31 +125,59 @@
   }
   .top-menu.hide{ display:none !important; }
 
+  /* ✅ cada item vira "botão" com ícone em cima e nome embaixo */
   .top-menu a{
-    width: 48px;
-    height: 48px;
+    width: 66px;
+    min-width: 66px;
+    height: 58px;
     display:flex;
+    flex-direction:column;
     align-items:center;
     justify-content:center;
-    border-radius: 12px;
+    gap: 6px;
+    border-radius: 14px;
     background: transparent;
     border: 1px solid transparent;
     color: var(--fb-text);
     text-decoration:none;
     transition: .15s ease;
     position: relative;
+    user-select:none;
+    -webkit-tap-highlight-color: transparent;
   }
   .top-menu a:hover{
     background: rgba(255,255,255,.06);
     border-color: rgba(255,255,255,.08);
   }
   .top-menu a:active{ transform: scale(.98); }
-  .top-menu a i{ font-size: 20px; color: var(--fb-text); }
 
+  /* ✅ ícones maiores */
+  .top-menu a i{
+    font-size: 24px;
+    color: var(--fb-text);
+    line-height:1;
+  }
+
+  /* ✅ texto abaixo do ícone */
+  .menuLabel{
+    font-size: 11px;
+    font-weight: 900;
+    color: rgba(228,230,235,.88);
+    line-height:1;
+    letter-spacing:.2px;
+    width: 100%;
+    text-align:center;
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    padding: 0 2px;
+  }
+
+  /* ✅ bolinha online (fica no canto do botão) */
   .menu-online-dot{
     position:absolute;
     top: 8px;
-    right: 8px;
+    right: 10px;
     width: 10px;
     height: 10px;
     border-radius: 50%;
@@ -162,9 +190,17 @@
     50%{ transform: scale(1.25); opacity: .4; }
   }
 
-  @media(max-width:480px){
-    .top-menu{ gap: 10px; padding: 8px 10px; top: 64px; }
-    .top-menu a{ width: 44px; height: 44px; border-radius: 12px; }
+  /* ✅ adaptação para telas bem pequenas */
+  @media(max-width:380px){
+    .top-menu{ gap: 8px; padding: 8px 6px; top: 64px; }
+    .top-menu a{ width: 62px; min-width:62px; height: 56px; border-radius: 14px; }
+    .top-menu a i{ font-size: 23px; }
+    .menuLabel{ font-size: 10.5px; }
+  }
+  @media(max-width:330px){
+    .top-menu a{ width: 58px; min-width:58px; }
+    .top-menu a i{ font-size: 22px; }
+    .menuLabel{ font-size: 10px; }
   }
 
   /* ===================== "NO QUE VOCÊ ESTÁ PENSANDO" ===================== */
@@ -700,8 +736,8 @@
     border:1px solid var(--fb-border);
     box-shadow: var(--fb-shadow);
     position:relative;
-    content-visibility: auto;         /* ✅ OTIMIZAÇÃO: renderiza só quando precisa */
-    contain-intrinsic-size: 700px;    /* ✅ evita "pulos" antes de renderizar */
+    content-visibility: auto;
+    contain-intrinsic-size: 700px;
   }
   .postHead{
     display:flex;
@@ -1050,27 +1086,32 @@
   </button>
 </div>
 
-<!-- MENU -->
-<nav class="top-menu">
+<!-- ✅ MENU (ÍCONE + NOME ABAIXO) -->
+<nav class="top-menu" aria-label="Menu principal">
   <a href="https://marcio2307.github.io/terreiro/estudo.html" title="Estudo" aria-label="Estudo">
     <i class="fa-solid fa-book"></i>
+    <div class="menuLabel">Estudo</div>
   </a>
 
-  <a href="https://marcio2307.github.io/terreiro/chat.html" title="Usuários Online" aria-label="Usuários Online">
+  <a href="https://marcio2307.github.io/terreiro/chat.html" title="Online" aria-label="Online">
     <i class="fa-solid fa-users"></i>
     <span class="menu-online-dot" aria-hidden="true"></span>
+    <div class="menuLabel">Online</div>
   </a>
 
-  <a href="https://marcio2307.github.io/terreiro/sala.html" title="Reunião Online" aria-label="Reunião Online">
+  <a href="https://marcio2307.github.io/terreiro/sala.html" title="Reunião" aria-label="Reunião">
     <i class="fa-solid fa-video"></i>
+    <div class="menuLabel">Reunião</div>
   </a>
 
   <a href="#" id="radioBtn" onclick="toggleRadio(); return false;" title="Rádio" aria-label="Rádio">
-    <i class="fa-solid fa-play" id="radioIcon"></i>
+    <i class="fa-solid fa-radio" id="radioIcon"></i>
+    <div class="menuLabel">Rádio</div>
   </a>
 
   <a href="https://marcio2307.github.io/terreiro/perfil.html" title="Perfil" aria-label="Perfil">
     <i class="fa-solid fa-user"></i>
+    <div class="menuLabel">Perfil</div>
   </a>
 </nav>
 
@@ -1233,7 +1274,9 @@ function setRadioUI(isPlaying){
   radioPlaying = !!isPlaying;
   const icon = document.getElementById("radioIcon");
   if(!icon) return;
-  icon.className = radioPlaying ? "fa-solid fa-pause" : "fa-solid fa-play";
+
+  /* ✅ no menu agora é ícone de rádio quando parado, e pause quando tocando */
+  icon.className = radioPlaying ? "fa-solid fa-pause" : "fa-solid fa-radio";
 }
 function toggleRadio(){
   ensureRadio();
@@ -1992,11 +2035,23 @@ function showStory(){
     const el = document.createElement("video");
     el.src = s.url;
     el.autoplay = true;
-    el.muted = false;
+
+    /* ✅ viewer: som só se clicar (começa mutado e toca automático) */
+    el.muted = true;
     el.volume = 1;
     el.controls = true;
     el.playsInline = true;
     el.preload = "metadata";
+
+    el.addEventListener("click", ()=>{
+      try{
+        unlockAudioOnce();
+        if(el.muted){
+          el.muted = false;
+          el.volume = 1.0;
+        }
+      }catch(e){}
+    });
 
     el.onloadedmetadata = ()=>{
       const realDur = (el.duration||0)*1000;
@@ -2111,7 +2166,6 @@ function renderUserCard(group){
   if((cover.type||"").includes("image")){
     mediaHTML = `<img class="storyMedia" src="${cover.url}" alt="story" loading="lazy">`;
   }else{
-    /* ✅ OTIMIZAÇÃO: story-preview vídeo mais leve */
     mediaHTML = `<video class="storyMedia" src="${cover.url}" autoplay muted loop playsinline preload="metadata"></video>`;
   }
 
@@ -2212,13 +2266,7 @@ async function addStory(file){
 </script>
 
 <script>
-/* ===================== ✅ FEED (VÍDEOS MAIS RÁPIDOS / SEM DELAY) ===================== */
-/*
-  ✅ O que mudou aqui:
-  - Observer com rootMargin grande => pré-carrega o vídeo antes de aparecer
-  - Assim que entra "perto", seta src e preload="metadata" (abre muito mais rápido)
-  - Quando fica bem visível, dá play automático (muted) sem travar o celular
-*/
+/* ===================== ✅ FEED (VÍDEOS AUTO / SOM SÓ NO CLIQUE) ===================== */
 let __feedObserver = null;
 
 function ensureFeedObserver(){
@@ -2229,7 +2277,6 @@ function ensureFeedObserver(){
       const v = entry.target;
       if(!v || v.tagName !== "VIDEO") return;
 
-      // ✅ Pré-carrega quando estiver "perto" do viewport (rootMargin cuida disso)
       if(entry.isIntersecting){
         try{
           if(!v.__srcSet){
@@ -2237,20 +2284,14 @@ function ensureFeedObserver(){
             if(ds){
               v.src = ds;
               v.__srcSet = true;
-
-              // ✅ Faz o metadata vir rápido (tempo/thumbnail/primeiros frames)
               v.preload = "metadata";
               v.setAttribute("preload","metadata");
-
-              // ✅ Dica pro navegador priorizar esse download quando necessário
               v.setAttribute("fetchpriority","high");
-
               try{ v.load(); }catch(e){}
             }
           }
         }catch(e){}
 
-        // ✅ Só tenta tocar quando estiver bem visível (evita stress no aparelho)
         if(entry.intersectionRatio >= 0.25){
           try{
             if(!v.__userUnmuted){
@@ -2262,13 +2303,12 @@ function ensureFeedObserver(){
           }catch(e){}
         }
       }else{
-        // ✅ Saiu da área => pausa (economiza CPU e rede)
         try{ v.pause(); }catch(e){}
       }
     });
   }, {
     threshold: [0, 0.10, 0.25, 0.60, 1],
-    rootMargin: "900px 0px 900px 0px"   /* ✅ pega vídeos antes de aparecer */
+    rootMargin: "900px 0px 900px 0px"
   });
 }
 
@@ -2297,11 +2337,8 @@ function setupOneFeedVideo(v){
     v.setAttribute("playsinline","");
     v.setAttribute("webkit-playsinline","");
     v.loop = true;
-
-    // ✅ Começa leve, mas quando o observer setar src ele muda pra metadata
     v.preload = "none";
     v.setAttribute("preload","none");
-
     v.setAttribute("data-feedvideo","1");
   }catch(e){}
 
@@ -2314,7 +2351,6 @@ function setupOneFeedVideo(v){
         v.muted = false;
         v.volume = 1.0;
 
-        // ✅ Se o usuário clicou, garante que o vídeo já está com src
         if(!v.__srcSet){
           const ds = v.getAttribute("data-src");
           if(ds){
@@ -2326,7 +2362,6 @@ function setupOneFeedVideo(v){
             try{ v.load(); }catch(e){}
           }
         }
-
         const p = v.play();
         if(p && p.catch) p.catch(()=>{});
       }else{
@@ -2496,6 +2531,7 @@ async function criarPostFirebase(texto, fileOrNull, fileTypeOrNull, forcedPostId
   return postId;
 }
 
+/* ======= CURTIR / AMEI ======= */
 function pressionarCurtir(id){
   longPress[id] = false;
   holdTimer = setTimeout(()=>{
@@ -2619,7 +2655,6 @@ function toggleComentMenu(cid){
   if(!menu) return;
   menu.style.display = (menu.style.display==="block" ? "none" : "block");
 }
-
 async function excluirComentario(cid, postId){
   await DB.ref(`comments/${postId}/${cid}`).remove();
   playActionSound();
@@ -2651,6 +2686,7 @@ async function excluirPost(id){
   playActionSound();
 }
 
+/* ===================== HTML DO POST ===================== */
 function postHTML(id, postData, avatarUrl){
   let midia = "";
   if(postData.mediaUrl){
@@ -2744,6 +2780,7 @@ function postHTML(id, postData, avatarUrl){
   `;
 }
 
+/* ===================== RENDER OTIMISTA / LISTENERS ===================== */
 function criarPostOptimista(id, postData){
   if(postsCache.has(id)) return;
   postsCache.add(id);
