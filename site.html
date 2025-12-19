@@ -594,6 +594,22 @@
     white-space:nowrap;
     max-width: 70%;
   }
+  .viewerTime{
+    font-size:12px;
+    opacity:.8;
+    white-space:nowrap;
+  }
+  .viewerMiniAva{
+    width:34px;height:34px;border-radius:50%;
+    overflow:hidden;
+    background:#3A3B3C;
+    border:1px solid rgba(255,255,255,.10);
+    flex:0 0 auto;
+    display:flex;align-items:center;justify-content:center;
+    font-weight:900;
+    color: var(--fb-text);
+  }
+  .viewerMiniAva img{ width:100%; height:100%; object-fit:cover; display:block; }
 
   /* ===================== ✅ REAÇÕES DO STORY ===================== */
   .reactionBar{
@@ -1273,7 +1289,6 @@ function rememberUnmutedFeedVideo(){
     }catch(e){}
   });
 }
-
 function forceMuteAllFeedVideos(){
   document.querySelectorAll("#feed video[data-feedvideo='1']").forEach(v=>{
     try{
@@ -1283,7 +1298,6 @@ function forceMuteAllFeedVideos(){
     }catch(e){}
   });
 }
-
 function restoreFeedVideoAudioIfPossible(){
   if(!__lastUnmutedFeedVideo) return;
   const v = __lastUnmutedFeedVideo;
@@ -1334,7 +1348,6 @@ function ensureRadio(){
   radio.addEventListener("ended", ()=>{ setRadioUI(false); onRadioStateChange(false); });
   radio.addEventListener("error", ()=>{ setRadioUI(false); onRadioStateChange(false); });
 }
-
 function onRadioStateChange(isPlaying){
   radioPlaying = !!isPlaying;
 
@@ -1347,14 +1360,12 @@ function onRadioStateChange(isPlaying){
     restoreFeedVideoAudioIfPossible();
   }
 }
-
 function setRadioUI(isPlaying){
   radioPlaying = !!isPlaying;
   const icon = document.getElementById("radioIcon");
   if(!icon) return;
   icon.className = radioPlaying ? "fa-solid fa-pause" : "fa-solid fa-radio";
 }
-
 function toggleRadio(){
   ensureRadio();
   unlockAudioOnce();
@@ -1413,7 +1424,6 @@ function confirmarNome(){
 (function exigirLogin(){
   if(!USER_NAME) abrirLogin();
 })();
-
 function precisaLogin(){
   if(!USER_NAME){ abrirLogin(); return true; }
   return false;
@@ -1782,10 +1792,12 @@ async function renderConnections(){
 })();
 </script>
 
-<!-- ============ STORIES (mantido) ============ -->
+<!-- ===================== ✅ STORIES COMPLETO (COM VIEWER, QUEM VIU, REAÇÕES, EXCLUIR) ===================== -->
 <script>
 /* ===================== STORIES ===================== */
 const menuTop = document.querySelector('.top-menu');
+
+const storiesRow = document.getElementById("storiesRow");
 
 let allStories = [];
 let groupedStories = [];
@@ -1816,6 +1828,17 @@ const reactHaha = document.getElementById("reactHaha");
 let reactionsRef = null;
 let _latestViewsObj = {};
 let _latestReactsObj = {};
+
+const STORY_MAX_SECONDS_IMG = 6;
+const STORY_MAX_SECONDS_VID = 12;
+const STORY_WINDOW_MS = 24 * 60 * 60 * 1000;
+
+/* input hidden pro story */
+const storyInput = document.createElement("input");
+storyInput.type = "file";
+storyInput.accept = "image/*,video/*";
+storyInput.style.display = "none";
+document.body.appendChild(storyInput);
 
 function reactionEmoji(type){
   if(type === "love") return "❤️";
@@ -1915,10 +1938,530 @@ function detachViewersListener(){
   }catch(e){}
 }
 
-/* ... (seu bloco de stories continua igual daqui pra baixo) ... */
+/* ======= Render cards ======= */
+function sortGroups(){
+  groupedStories.sort((a,b)=>{
+    const at = (a.latestAt||0);
+    const bt = (b.latestAt||0);
+    /* seu story primeiro */
+    if(a.uid === UID && b.uid !== UID) return -1;
+    if(b.uid === UID && a.uid !== UID) return 1;
+    return bt - at;
+  });
+}
 
-/* Para economizar espaço aqui, mantive TODO o bloco de stories igual ao seu.
-   (Ele não tem relação com o play/pause do feed.) */
+function storyCardHTML(group){
+  const uid = group.uid || "";
+  const name = group.name || "Usuário";
+  const first = group.items[ group.items.length - 1 ] || group.items[0];
+  const isVideo = (first.mediaType||"").startsWith("video/");
+  const thumb = first.mediaUrl || "";
+
+  const avatarHolder = `
+    <div class="avatarCircle" data-story-avatar-uid="${escapeHTML(uid)}">
+      <div class="avatarInitials">${escapeHTML(initials(name))}</div>
+    </div>
+  `;
+
+  const media = isVideo
+    ? `<video class="storyMedia" src="${escapeHTML(thumb)}" muted playsinline webkit-playsinline preload="metadata"></video>`
+    : `<img class="storyMedia" src="${escapeHTML(thumb)}" alt="story" loading="lazy">`;
+
+  return `
+    <div class="storyCard" onclick="openStoryGroup('${escapeHTML(uid)}')">
+      ${media}
+      <div class="storyShade"></div>
+      ${avatarHolder}
+      <div class="storyName" data-story-name-uid="${escapeHTML(uid)}">${escapeHTML(name)}</div>
+    </div>
+  `;
+}
+
+function createCardHTML(){
+  return `
+    <div class="storyCard createCard" onclick="createStory()">
+      <div class="plusBtn">+</div>
+      <div class="createLabel">Criar story</div>
+    </div>
+  `;
+}
+
+async function renderStories(){
+  if(!storiesRow) return;
+
+  sortGroups();
+
+  let html = createCardHTML();
+
+  const cards = await Promise.all(groupedStories.map(async g=>{
+    const prof = await getAvatarForUID(g.uid, g.name || "Usuário");
+    g.name = prof.name || g.name || "Usuário";
+    g.avatarUrl = prof.url || "";
+    return storyCardHTML(g);
+  }));
+
+  html += cards.join("");
+  storiesRow.innerHTML = html;
+
+  /* aplica avatar real no círculo (se tiver) */
+  groupedStories.forEach(async g=>{
+    const prof = await getAvatarForUID(g.uid, g.name);
+    updateStoryAvatarsInDOM(g.uid, prof.url, prof.name);
+  });
+
+  /* pausa mini vídeos das capas (só visual) */
+  storiesRow.querySelectorAll("video.storyMedia").forEach(v=>{
+    try{ v.play().catch(()=>{}); }catch(e){}
+  });
+}
+
+/* ======= Create story ======= */
+async function createStory(){
+  if(precisaLogin()) return;
+  storyInput.value = "";
+  storyInput.click();
+}
+
+storyInput.addEventListener("change", async (e)=>{
+  if(precisaLogin()) return;
+  const file = e.target.files && e.target.files[0];
+  if(!file) return;
+  if(!checkSize(file)) return;
+
+  const isVid = file.type.startsWith("video/");
+  showLoading("Enviando story...", isVid ? "Vídeo pode demorar um pouco" : "Aguarde um instante");
+  try{
+    const storyId = "story_" + Date.now() + "_" + Math.random().toString(36).slice(2);
+    const storagePath = `stories/${UID}/${storyId}`;
+    const ref = ST.ref().child(storagePath);
+    await ref.put(file, { contentType: file.type });
+    const url = await ref.getDownloadURL();
+
+    await DB.ref("stories/" + storyId).set({
+      id: storyId,
+      uid: UID,
+      userName: USER_NAME,
+      mediaUrl: url,
+      mediaType: file.type,
+      createdAt: firebase.database.ServerValue.TIMESTAMP,
+      storagePath
+    });
+
+    playActionSound();
+  }catch(err){
+    console.log(err);
+    alert("Erro ao enviar story.");
+  }finally{
+    hideLoading();
+  }
+});
+
+/* ======= Load stories do Firebase (últimas 24h) ======= */
+function groupStoriesFromList(list){
+  const now = Date.now();
+  const valid = list
+    .filter(s=>s && s.id && s.mediaUrl && s.createdAt)
+    .filter(s=> (now - (s.createdAt||0)) <= STORY_WINDOW_MS)
+    .sort((a,b)=> (a.createdAt||0) - (b.createdAt||0));
+
+  const map = new Map();
+  valid.forEach(s=>{
+    const key = s.uid || "x";
+    if(!map.has(key)){
+      map.set(key, { uid: key, name: s.userName || "Usuário", items: [], latestAt: 0 });
+    }
+    const g = map.get(key);
+    g.items.push(s);
+    g.latestAt = Math.max(g.latestAt, s.createdAt||0);
+    g.name = s.userName || g.name;
+  });
+
+  groupedStories = Array.from(map.values());
+}
+
+(function listenStories(){
+  const ref = DB.ref("stories").orderByChild("createdAt").limitToLast(200);
+  ref.on("value", (snap)=>{
+    const obj = snap.val() || {};
+    allStories = Object.keys(obj).map(k => obj[k]).filter(Boolean);
+
+    groupStoriesFromList(allStories);
+    renderStories().catch(()=>{});
+  });
+})();
+
+/* ======= Viewer open/close ======= */
+function stopViewerTimer(){
+  if(viewerTimer){
+    clearTimeout(viewerTimer);
+    viewerTimer = null;
+  }
+}
+function buildBars(count){
+  bars.innerHTML = "";
+  for(let i=0;i<count;i++){
+    const b = document.createElement("div");
+    b.className = "bar";
+    const f = document.createElement("div");
+    f.className = "barFill";
+    b.appendChild(f);
+    bars.appendChild(b);
+  }
+}
+function setBarProgress(index, pct){
+  const el = bars.children[index];
+  if(!el) return;
+  const fill = el.querySelector(".barFill");
+  if(fill) fill.style.width = (pct||0) + "%";
+}
+function fillPreviousBars(idx){
+  for(let i=0;i<idx;i++) setBarProgress(i, 100);
+  for(let i=idx+1;i<bars.children.length;i++) setBarProgress(i, 0);
+}
+
+function openViewer(){
+  viewer.style.display = "flex";
+  document.body.style.overflow = "hidden";
+  if(menuTop) menuTop.classList.add("hide");
+}
+function closeViewer(){
+  stopViewerTimer();
+  detachViewersListener();
+  detachReactionsListener();
+  closeViewersPanel();
+
+  /* para vídeos do viewer */
+  try{
+    const v = viewerMedia.querySelector("video");
+    if(v){ v.pause(); v.src = ""; }
+  }catch(e){}
+
+  viewerMedia.innerHTML = "";
+  viewer.style.display = "none";
+  document.body.style.overflow = "";
+  if(menuTop) menuTop.classList.remove("hide");
+
+  deleteBtn.style.display = "none";
+  reactionBar.style.display = "none";
+  viewerFooter.style.display = "none";
+  dots.style.display = "block";
+  resetReactionButtons();
+}
+
+viewer.addEventListener("click", (e)=>{
+  /* clique fora da mídia fecha */
+  const inside = viewerMedia.contains(e.target) || bars.contains(e.target) || reactionBar.contains(e.target) || viewerFooter.contains(e.target) || e.target === tapLeft || e.target === tapRight || e.target === dots || e.target === deleteBtn;
+  if(!inside) closeViewer();
+});
+
+document.addEventListener("keydown", (e)=>{
+  if(viewer.style.display === "flex" && e.key === "Escape") closeViewer();
+});
+
+/* ======= dots / delete ======= */
+dots.addEventListener("click", (e)=>{
+  e.stopPropagation();
+  const s = activeStories[current];
+  if(!s) return;
+  if(s.uid !== UID){
+    deleteBtn.style.display = "none";
+    return;
+  }
+  deleteBtn.style.display = (deleteBtn.style.display === "block" ? "none" : "block");
+});
+
+deleteBtn.addEventListener("click", async (e)=>{
+  e.stopPropagation();
+  const s = activeStories[current];
+  if(!s || s.uid !== UID) return;
+
+  if(!confirm("Excluir este story?")) return;
+
+  showLoading("Excluindo...", "Removendo story");
+  try{
+    await DB.ref("stories/" + s.id).remove();
+    await DB.ref("storyViews/" + s.id).remove().catch(()=>{});
+    await DB.ref("storyReactions/" + s.id).remove().catch(()=>{});
+    if(s.storagePath){
+      await ST.ref().child(s.storagePath).delete().catch(()=>{});
+    }
+    playActionSound();
+    hideLoading();
+
+    /* se não tiver mais stories no grupo, fecha */
+    const g = groupedStories.find(x=>x.uid === s.uid);
+    if(!g || !g.items || g.items.length <= 1){
+      closeViewer();
+    }else{
+      /* tenta seguir pro próximo */
+      nextStory();
+    }
+  }catch(err){
+    console.log(err);
+    hideLoading();
+    alert("Erro ao excluir.");
+  }
+});
+
+/* ======= Views + Reactions listeners ======= */
+async function markViewed(story){
+  try{
+    if(!story || !story.id) return;
+    if(precisaLogin()) return;
+
+    await DB.ref(`storyViews/${story.id}/${UID}`).set({
+      uid: UID,
+      userName: USER_NAME,
+      createdAt: firebase.database.ServerValue.TIMESTAMP
+    });
+  }catch(e){}
+}
+
+function updateSeenUIForOwner(storyId, viewsObj){
+  const entries = Object.values(viewsObj || {});
+  const total = entries.length;
+  if(total <= 0){
+    seenText.textContent = "Ninguém viu ainda";
+    viewersPanel.innerHTML = "";
+    return;
+  }
+  const names = entries
+    .sort((a,b)=>(b.createdAt||0)-(a.createdAt||0))
+    .slice(0, 3)
+    .map(v=>v.uid === UID ? "Você" : (v.userName || "Usuário"));
+
+  seenText.textContent = total === 1 ? `Visto por ${names[0]}` : `Visto por ${names.join(", ")} (+${Math.max(0,total-3)})`;
+}
+
+async function renderViewersPanel(storyId, viewsObj){
+  const entries = Object.values(viewsObj || {})
+    .sort((a,b)=>(b.createdAt||0)-(a.createdAt||0));
+
+  if(!entries.length){
+    viewersPanel.innerHTML = "";
+    return;
+  }
+
+  const rows = await Promise.all(entries.map(async v=>{
+    const prof = await getAvatarForUID(v.uid, v.userName || "Usuário");
+    const name = prof.name || v.userName || "Usuário";
+    const time = v.createdAt ? fmtDate(v.createdAt) : "";
+
+    const ava = prof.url
+      ? `<div class="viewerMiniAva" data-viewer-avatar-uid="${escapeHTML(v.uid)}"><img src="${prof.url}" alt="avatar" loading="lazy"></div>`
+      : `<div class="viewerMiniAva" data-viewer-avatar-uid="${escapeHTML(v.uid)}">${escapeHTML(initials(name))}</div>`;
+
+    return `
+      <div class="viewerRow">
+        <div style="display:flex;align-items:center;gap:10px;min-width:0;">
+          ${ava}
+          <div class="viewerName" style="min-width:0;">${escapeHTML(name)}</div>
+        </div>
+        <div class="viewerTime">${escapeHTML(time)}</div>
+      </div>
+    `;
+  }));
+
+  viewersPanel.innerHTML = rows.join("");
+}
+
+function attachViewersListener(story){
+  detachViewersListener();
+  if(!story || !story.id) return;
+
+  CAN_SEE_VIEWERS = (story.uid === UID);
+  viewerFooter.style.display = CAN_SEE_VIEWERS ? "block" : "none";
+  if(!CAN_SEE_VIEWERS) return;
+
+  viewersRef = DB.ref("storyViews/" + story.id);
+  viewersRef.on("value", async (snap)=>{
+    _latestViewsObj = snap.val() || {};
+    updateSeenUIForOwner(story.id, _latestViewsObj);
+    if(viewersPanelOpen){
+      await renderViewersPanel(story.id, _latestViewsObj);
+    }else{
+      /* atualiza lista pronta mas escondida */
+      await renderViewersPanel(story.id, _latestViewsObj);
+    }
+  });
+}
+
+function attachReactionsListener(story){
+  detachReactionsListener();
+  if(!story || !story.id) return;
+
+  if(story.uid === UID){
+    reactionBar.style.display = "none";
+    resetReactionButtons();
+    return;
+  }else{
+    reactionBar.style.display = "flex";
+  }
+
+  reactionsRef = DB.ref("storyReactions/" + story.id);
+  reactionsRef.on("value", (snap)=>{
+    _latestReactsObj = snap.val() || {};
+    const my = _latestReactsObj[UID];
+    if(my && my.type) selectReactionButton(my.type);
+    else resetReactionButtons();
+  });
+}
+
+/* ======= Play story item ======= */
+function clearMedia(){
+  stopViewerTimer();
+  try{
+    const v = viewerMedia.querySelector("video");
+    if(v){ v.pause(); }
+  }catch(e){}
+  viewerMedia.innerHTML = "";
+}
+function startProgress(durationMs){
+  const fill = bars.children[current]?.querySelector(".barFill");
+  if(!fill) return;
+
+  fill.style.transition = "none";
+  fill.style.width = "0%";
+  void fill.offsetWidth;
+  fill.style.transition = `width ${durationMs}ms linear`;
+  fill.style.width = "100%";
+
+  stopViewerTimer();
+  viewerTimer = setTimeout(()=>{
+    nextStory();
+  }, durationMs);
+}
+
+function playCurrentStory(){
+  const s = activeStories[current];
+  if(!s) return;
+
+  /* UI */
+  fillPreviousBars(current);
+  setBarProgress(current, 0);
+
+  deleteBtn.style.display = "none";
+  dots.style.display = "block";
+
+  /* views / reactions */
+  markViewed(s);
+  attachViewersListener(s);
+  attachReactionsListener(s);
+
+  clearMedia();
+
+  const isVid = (s.mediaType || "").startsWith("video/");
+  if(isVid){
+    const v = document.createElement("video");
+    v.src = s.mediaUrl;
+    v.playsInline = true;
+    v.setAttribute("playsinline","");
+    v.setAttribute("webkit-playsinline","");
+    v.autoplay = true;
+    v.muted = true; /* mantém mudo automático (igual FB) */
+    v.controls = false;
+
+    /* toque para ligar/desligar som no story (opcional) */
+    v.addEventListener("click", ()=>{
+      unlockAudioOnce();
+      if(v.muted){ v.muted = false; }
+      else{ v.muted = true; }
+    });
+
+    viewerMedia.appendChild(v);
+
+    /* duração: pega metadata (limita) */
+    const fallback = STORY_MAX_SECONDS_VID * 1000;
+
+    const begin = ()=>{
+      const dur = (v.duration && isFinite(v.duration)) ? Math.min(v.duration, STORY_MAX_SECONDS_VID) : STORY_MAX_SECONDS_VID;
+      startProgress(dur * 1000);
+    };
+
+    v.addEventListener("loadedmetadata", begin, { once:true });
+    v.addEventListener("ended", ()=> nextStory());
+
+    v.play().catch(()=>{});
+    setTimeout(()=>{ /* se metadata não vier, fallback */
+      if(!viewerTimer) startProgress(fallback);
+    }, 600);
+  }else{
+    const img = document.createElement("img");
+    img.src = s.mediaUrl;
+    img.alt = "story";
+    viewerMedia.appendChild(img);
+    startProgress(STORY_MAX_SECONDS_IMG * 1000);
+  }
+
+  /* delete só no seu */
+  if(s.uid === UID){
+    // dots abre o botão
+  }
+}
+
+/* ======= Navegação ======= */
+function prevStory(){
+  if(current > 0){
+    current--;
+    playCurrentStory();
+  }else{
+    /* volta grupo anterior */
+    const g = groupedStories.findIndex(x=> x.uid === (activeStories[0]?.uid || ""));
+    if(g > 0){
+      openStoryGroup(groupedStories[g-1].uid, true);
+    }else{
+      closeViewer();
+    }
+  }
+}
+function nextStory(){
+  if(current < activeStories.length - 1){
+    current++;
+    playCurrentStory();
+  }else{
+    /* próximo grupo */
+    const uid = activeStories[0]?.uid || "";
+    const g = groupedStories.findIndex(x=> x.uid === uid);
+    if(g >= 0 && g < groupedStories.length - 1){
+      openStoryGroup(groupedStories[g+1].uid, true);
+    }else{
+      closeViewer();
+    }
+  }
+}
+
+/* cliques esquerda/direita */
+tapLeft.addEventListener("click", (e)=>{ e.stopPropagation(); prevStory(); });
+tapRight.addEventListener("click", (e)=>{ e.stopPropagation(); nextStory(); });
+
+/* toque (mobile) */
+tapLeft.addEventListener("touchend", (e)=>{ try{ e.preventDefault(); }catch(_){} prevStory(); }, { passive:false });
+tapRight.addEventListener("touchend", (e)=>{ try{ e.preventDefault(); }catch(_){} nextStory(); }, { passive:false });
+
+/* ======= Abrir grupo ======= */
+async function openStoryGroup(uid, fromNav){
+  if(!uid) return;
+  const g = groupedStories.find(x=>x.uid === uid);
+  if(!g || !g.items || !g.items.length) return;
+
+  activeStories = g.items.slice().sort((a,b)=>(a.createdAt||0)-(b.createdAt||0));
+  current = 0;
+
+  openViewer();
+  buildBars(activeStories.length);
+  closeViewersPanel();
+
+  /* se abriu por navegação, começa no primeiro não-visto (se for seu, sempre do último?) */
+  if(fromNav){
+    // mantém como padrão (primeiro)
+  }
+
+  playCurrentStory();
+}
+
+/* expõe pra onclick inline */
+window.openStoryGroup = openStoryGroup;
+window.createStory = createStory;
 </script>
 
 <script>
