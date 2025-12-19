@@ -720,31 +720,35 @@
   }
   .login-btn:active{ transform: scale(.99); }
 
-  /* ===================== FEED ===================== */
+  /* ===================== FEED (AJUSTADO: MENOR + ESTILO FACEBOOK NO CELULAR) ===================== */
   .post{
-    background:#0d0d0d;
-    margin:15px 12px;
-    padding:15px;
-    border-radius:16px;
-    border:1px solid #00ff9d;
-    box-shadow:0 0 10px rgba(0,255,157,.45);
+    background:#0b0b0b;
+    margin:10px 10px;
+    padding:12px;
+    border-radius:14px;
+
+    /* ✅ remove moldura neon/verde */
+    border:1px solid rgba(255,255,255,.10);
+    box-shadow: 0 10px 22px rgba(0,0,0,.32);
     position:relative;
   }
 
   .postHead{
     display:flex;
     align-items:center;
-    gap:12px;
+    gap:10px;
     padding-right:44px;
   }
+
+  /* ✅ avatar menor e SEM moldura circular verde */
   .postAvatar{
-    width:56px;
-    height:56px;
+    width:44px;
+    height:44px;
     border-radius:50%;
     overflow:hidden;
-    background:#000;
-    border:2px solid rgba(0,255,157,.55);
-    box-shadow:0 0 14px rgba(0,255,157,.22);
+    background:#111;
+    border:none;
+    box-shadow:none;
     flex:0 0 auto;
     display:flex;
     align-items:center;
@@ -757,7 +761,8 @@
     object-position:center;
     display:block;
   }
-  .postAvatar .init{ font-weight:900; color:#00ff9d; }
+  .postAvatar .init{ font-weight:900; color:#e6e6e6; }
+
   .postHeadText{ min-width:0; }
   .postNameLine{
     display:flex;
@@ -765,11 +770,13 @@
     gap:8px;
     flex-wrap:wrap;
   }
+
+  /* ✅ nome menor estilo facebook */
   .postName{
     font-weight:900;
-    font-size:22px;
-    color:#7bffb5;
-    text-shadow: 0 0 10px rgba(0,255,157,.25);
+    font-size:16px;
+    color:#ffffff;
+    text-shadow:none;
     overflow:hidden;
     text-overflow:ellipsis;
     white-space:nowrap;
@@ -778,9 +785,9 @@
   }
   .postWhen{
     font-size:12px;
-    color:#00ff9d;
-    opacity:.85;
-    margin-top:4px;
+    color: rgba(255,255,255,.70);
+    opacity:1;
+    margin-top:3px;
   }
 
   .post .mediaWrap img,
@@ -795,50 +802,53 @@
   .post-actions{
     display:flex;
     justify-content:space-around;
-    margin-top:15px;
+    margin-top:12px;
     flex-wrap: wrap;
-    gap: 10px;
+    gap: 8px;
   }
 
+  /* ✅ botões menores e mais “facebook” */
   .btn-action{
-    color:#00ff9d;
-    padding:10px 12px;
-    border-radius:12px;
-    font-weight:bold;
+    color:#eaeaea;
+    padding:8px 10px;
+    border-radius:10px;
+    font-weight:800;
     cursor:pointer;
     transition:0.2s;
     text-align:center;
-    border: 1px solid rgba(0,255,157,.25);
-    background: rgba(0,0,0,.15);
+    border: 1px solid rgba(255,255,255,.10);
+    background: rgba(255,255,255,.06);
     user-select:none;
+    font-size:14px;
   }
+  .btn-action:active{ transform: scale(.99); }
 
   .contador{
     margin-top:6px;
-    font-size:13px;
-    color:#00ff9d;
+    font-size:12px;
+    color: rgba(255,255,255,.78);
     text-align:center;
-    opacity:.95;
+    opacity:1;
     line-height:1.35;
     word-break: break-word;
   }
 
   .coment-area{
-    background:#111;
+    background:#0f0f0f;
     padding:10px;
     margin-top:10px;
     border-radius:12px;
     display:none;
-    border:1px solid rgba(0,255,140,.22);
+    border:1px solid rgba(255,255,255,.10);
   }
 
   .menu-btn {
     position: absolute;
     top: 10px;
     right: 10px;
-    font-size: 28px;
+    font-size: 26px;
     cursor: pointer;
-    color: #00ff9d;
+    color: rgba(255,255,255,.85);
     z-index: 10;
     user-select:none;
   }
@@ -846,21 +856,21 @@
     position: absolute;
     top: 45px;
     right: 10px;
-    background: #00ff9d;
+    background: #ffffff;
     color: #000;
     padding: 10px 15px;
     border-radius: 10px;
     display: none;
     cursor: pointer;
     font-weight: bold;
-    box-shadow: 0 0 12px rgba(0,255,157,.55);
+    box-shadow: 0 12px 24px rgba(0,0,0,.35);
     z-index: 15;
   }
 
   .cRow{
     position:relative;
-    background:#000;
-    border:1px solid #00ff9d;
+    background:#0a0a0a;
+    border:1px solid rgba(255,255,255,.10);
     padding:10px 44px 10px 10px;
     border-radius:10px;
     margin-bottom:8px;
@@ -872,15 +882,18 @@
     margin-bottom:6px;
     min-width:0;
   }
+
+  /* ✅ avatar do comentário menor e SEM borda verde */
   .cAvatar{
-    width:34px; height:34px;
+    width:30px; height:30px;
     border-radius:50%;
     overflow:hidden;
-    background:#000;
-    border:1px solid rgba(0,255,157,.45);
+    background:#111;
+    border:none;
     flex:0 0 auto;
     display:flex; align-items:center; justify-content:center;
     cursor:pointer;
+    box-shadow:none;
   }
   .cAvatar img{
     width:100%; height:100%;
@@ -889,14 +902,15 @@
   }
   .cName{
     font-weight:900;
-    color:#00ff9d;
+    color:#ffffff;
     overflow:hidden;
     text-overflow:ellipsis;
     white-space:nowrap;
     max-width: 62vw;
     cursor:pointer;
+    font-size:14px;
   }
-  .cText{ opacity:.95; }
+  .cText{ opacity:.95; font-size:13px; color: rgba(255,255,255,.88); }
 
   .coment-menu-btn{
     position:absolute;
@@ -904,7 +918,7 @@
     right:10px;
     font-size:20px;
     cursor:pointer;
-    color:#00ff9d;
+    color: rgba(255,255,255,.85);
     user-select:none;
     line-height:1;
   }
@@ -912,17 +926,20 @@
     position:absolute;
     top:34px;
     right:10px;
-    background:#00ff9d;
+    background: #ffffff;
     color:#000;
     padding:6px 10px;
     border-radius:8px;
     display:none;
     font-weight:900;
     cursor:pointer;
-    box-shadow: 0 0 10px rgba(0,255,157,.55);
+    box-shadow: 0 12px 24px rgba(0,0,0,.35);
     z-index:5;
     line-height:1;
   }
+
+  /* ✅ texto do post mais compacto no celular */
+  .post p{ margin:10px 0 0 0; font-size:14px; line-height:1.35; color: rgba(255,255,255,.92); }
 
   /* ===================== LOADING ===================== */
   .loadingOverlay{
@@ -959,9 +976,9 @@
     margin-left:8px;
     padding:4px 10px;
     border-radius:999px;
-    background: rgba(0,255,140,.18);
-    border:1px solid rgba(0,255,140,.35);
-    color:#00ff8c;
+    background: rgba(255,255,255,.10);
+    border:1px solid rgba(255,255,255,.12);
+    color:#fff;
     font-size:12px;
     font-weight:900;
   }
@@ -2568,14 +2585,14 @@ function atualizarCurtidasUI(postId, likesObj){
   if(my){
     if(my.type === "love"){
       btn.textContent = "❤️ Você amou";
-      btn.style.color = "#ff008c";
+      btn.style.color = "#ff6aa7";
     }else{
       btn.textContent = "👍 Você curtiu";
-      btn.style.color = "#00ff9d";
+      btn.style.color = "#eaeaea";
     }
   }else{
     btn.textContent = "👍 Curtir";
-    btn.style.color = "#00ff9d";
+    btn.style.color = "#eaeaea";
   }
 
   if(total === 0){ cont.innerHTML = ""; return; }
@@ -2732,7 +2749,7 @@ function postHTML(id, postData, avatarUrl){
       </div>
     </div>
 
-    <p style="margin:12px 0 0 0;">${texto}</p>
+    <p>${texto}</p>
 
     <div class="mediaWrap" id="mediaWrap_${id}">
       ${midia}
@@ -2763,10 +2780,10 @@ function postHTML(id, postData, avatarUrl){
 
       <input type="text" id="comentarioInput_${id}"
         placeholder="Escreva um comentário..."
-        style="width:100%;padding:10px;border-radius:8px;border:1px solid #00ff9d;background:#000;color:#fff;">
+        style="width:100%;padding:10px;border-radius:8px;border:1px solid rgba(255,255,255,.14);background:#000;color:#fff;">
 
       <button onclick="enviarComentario('${id}')"
-        style="margin-top:8px;background:#00ff9d;border:none;padding:8px 15px;border-radius:8px;cursor:pointer;">
+        style="margin-top:8px;background:#fff;border:none;padding:8px 15px;border-radius:8px;cursor:pointer;font-weight:900;">
         Enviar
       </button>
     </div>
