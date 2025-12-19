@@ -1459,6 +1459,7 @@ function PROFILE_REF(uid){ return DB.ref("profiles/" + uid); }
 
 async function getAvatarForUID(uid, fallbackName){
   if(!uid) return { url:"", name: fallbackName || "Usuário" };
+  (function(){})(); // mantém como está
   if(profileCache.has(uid)) return profileCache.get(uid);
 
   try{
@@ -2301,46 +2302,110 @@ async function addStory(file){
 </script>
 
 <script>
-/* ===================== ✅ FEED: VÍDEO SEM SOM AUTOMÁTICO (SÓ SOM AO CLICAR) ===================== */
+/* ===================== ✅ FEED: AUTO PLAY AO ROLAR (MUDO) + SOM SÓ AO CLICAR ===================== */
+/* Regras:
+   - Quando o vídeo ficar visível no feed, ele toca automaticamente (muted).
+   - Ao sair da tela, pausa.
+   - Som só libera quando a pessoa clicar/tocar no vídeo.
+   - Se liberar som em um vídeo, os outros ficam mudos. */
+
+let __feedObserver = null;
+
+function ensureFeedObserver(){
+  if(__feedObserver) return;
+
+  // Toca quando pelo menos 60% estiver visível
+  __feedObserver = new IntersectionObserver((entries)=>{
+    entries.forEach(entry=>{
+      const v = entry.target;
+      if(!v || v.tagName !== "VIDEO") return;
+
+      if(entry.isIntersecting && entry.intersectionRatio >= 0.60){
+        // auto-play permitido porque está mudo
+        try{
+          if(!v.__userUnmuted){
+            v.muted = true;
+            v.volume = 1.0;
+          }
+          const p = v.play();
+          if(p && p.catch) p.catch(()=>{});
+        }catch(e){}
+      }else{
+        try{ v.pause(); }catch(e){}
+      }
+    });
+  }, { threshold: [0, 0.25, 0.60, 0.85, 1] });
+}
+
+function muteAllFeedVideosExcept(exceptVideo){
+  document.querySelectorAll("#feed video[data-feedvideo='1']").forEach(v=>{
+    if(v !== exceptVideo){
+      try{
+        v.__userUnmuted = false;
+        v.muted = true;
+      }catch(e){}
+    }
+  });
+}
+
 function setupOneFeedVideo(v){
   if(!v || v.__feedHooked) return;
   v.__feedHooked = true;
 
-  // impede qualquer auto-play com som
+  ensureFeedObserver();
+
   try{
-    v.autoplay = false;
-    v.loop = false;
-    v.muted = true;       // ✅ sempre começa mudo
+    // começa SEMPRE mudo (para permitir autoplay)
+    v.__userUnmuted = false;
+    v.muted = true;
     v.volume = 1.0;
+
+    // playsinline para iPhone
     v.playsInline = true;
     v.setAttribute("playsinline","");
     v.setAttribute("webkit-playsinline","");
+
+    // deixa loop (tipo feed do insta)
+    v.loop = true;
+
+    // marca
     v.setAttribute("data-feedvideo","1");
   }catch(e){}
 
-  // se o navegador tentar tocar sozinho, força mudo
+  // se tentar tocar e não foi o usuário que liberou som => mantém mudo
   v.addEventListener("play", ()=>{
-    try{ v.muted = true; }catch(e){}
+    try{
+      if(!v.__userUnmuted) v.muted = true;
+    }catch(e){}
   });
 
-  // clique/tap: libera som e toca
-  const onUserToggle = (e)=>{
+  // Clique/tap: libera som e toca (e deixa os outros mudos)
+  const onUserToggle = ()=>{
     try{
       unlockAudioOnce();
-      // primeiro clique: desmuta e dá play
+
+      // se está mudo => libera som
       if(v.muted){
+        muteAllFeedVideosExcept(v);
+        v.__userUnmuted = true;
         v.muted = false;
         v.volume = 1.0;
-        v.play().catch(()=>{});
+
+        const p = v.play();
+        if(p && p.catch) p.catch(()=>{});
       }else{
-        // se já está com som, alterna mudo (opcional)
+        // se já está com som => volta para mudo (mas continua tocando)
+        v.__userUnmuted = false;
         v.muted = true;
       }
-    }catch(err){}
+    }catch(e){}
   };
 
   v.addEventListener("click", onUserToggle);
   v.addEventListener("touchend", onUserToggle, { passive:true });
+
+  // Observa este vídeo
+  try{ __feedObserver.observe(v); }catch(e){}
 }
 
 function setupAllFeedVideos(){
@@ -2654,10 +2719,11 @@ function postHTML(id, postData, avatarUrl){
     midia = isImg
       ? `<img src="${postData.mediaUrl}" loading="lazy">`
       : `
-        <!-- ✅ FEED: começa MUDO e só sai do mudo ao clicar -->
+        <!-- ✅ FEED: auto-play mudo ao rolar + som só ao clicar -->
         <video src="${postData.mediaUrl}"
           controls
           muted
+          loop
           preload="metadata"
           playsinline
           webkit-playsinline></video>
@@ -2783,10 +2849,11 @@ function atualizarPostDoServidor(id, data){
       wrap.innerHTML = isImg
         ? `<img src="${data.mediaUrl}" loading="lazy">`
         : `
-          <!-- ✅ FEED: começa MUDO e só sai do mudo ao clicar -->
+          <!-- ✅ FEED: auto-play mudo ao rolar + som só ao clicar -->
           <video src="${data.mediaUrl}"
             controls
             muted
+            loop
             preload="metadata"
             playsinline
             webkit-playsinline></video>
