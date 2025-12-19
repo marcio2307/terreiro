@@ -12,9 +12,9 @@
   html, body{ width:100%; max-width:100%; overflow-x:hidden; }
   body{
     margin:0;
-    background:#18191A;               /* ✅ Facebook dark */
+    background:#18191A;
     font-family: Arial, sans-serif;
-    color:#E4E6EB;                     /* ✅ texto Facebook */
+    color:#E4E6EB;
     padding-bottom: env(safe-area-inset-bottom);
   }
 
@@ -25,7 +25,7 @@
     --fb-border: rgba(255,255,255,.10);
     --fb-text: #E4E6EB;
     --fb-muted: rgba(228,230,235,.72);
-    --fb-blue: #0866FF;               /* ✅ azul Facebook */
+    --fb-blue: #0866FF;
     --fb-blue-2:#1877F2;
     --fb-green:#31A24C;
     --fb-red:#F02849;
@@ -34,14 +34,10 @@
   }
 
   /* ===================== ✅ REMOVE "BOLA PLAY" DOS VÍDEOS ===================== */
-  /* A bola branca aparece principalmente quando o <video> tem controls
-     ou quando o autoplay falha. Então: removemos controls no HTML/JS
-     e forçamos autoplay muted (permitido no mobile). */
   video{
     outline:none;
     -webkit-tap-highlight-color: transparent;
   }
-  /* Esconde botões/overlays do WebKit (Safari/Chrome iOS) */
   video::-webkit-media-controls { display:none !important; }
   video::-webkit-media-controls-panel { display:none !important; }
   video::-webkit-media-controls-play-button { display:none !important; }
@@ -72,7 +68,6 @@
     display:block;
   }
 
-  /* Ícone Messenger (estilo Facebook) */
   .msgBtn{
     position:relative;
     display:flex;
@@ -95,7 +90,6 @@
     line-height:1;
   }
 
-  /* Bolinha vermelha com número */
   .msgBadge{
     position:absolute;
     top: -6px;
@@ -129,7 +123,7 @@
     align-items: center;
     border-bottom: 1px solid var(--fb-border);
     position: sticky;
-    top: 66px; /* fica abaixo da logo-bar (sticky também) */
+    top: 66px;
     z-index: 9998;
   }
   .top-menu.hide{ display:none !important; }
@@ -1015,6 +1009,91 @@
     display:block;
     background:#000;
   }
+
+  /* ===================== ✅ MODAL VÍDEO COMPLETO (CONTROLS / TELA CHEIA / VOLUME / VOLTAR) ===================== */
+  #videoModal{
+    position:fixed;
+    inset:0;
+    background: rgba(0,0,0,.95);
+    display:none;
+    align-items:center;
+    justify-content:center;
+    z-index: 9999999999;
+    padding: 10px;
+  }
+  .videoModalCard{
+    width: min(980px, 96vw);
+    height: min(92vh, 860px);
+    background: rgba(36,37,38,.92);
+    border: 1px solid rgba(255,255,255,.10);
+    border-radius: 18px;
+    overflow:hidden;
+    box-shadow: 0 18px 40px rgba(0,0,0,.45);
+    position:relative;
+    display:flex;
+    flex-direction:column;
+  }
+  .videoModalTop{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:10px;
+    padding: 10px 10px;
+    border-bottom: 1px solid rgba(255,255,255,.10);
+    background: rgba(0,0,0,.15);
+  }
+  .videoModalTitle{
+    font-weight: 900;
+    color: var(--fb-text);
+    display:flex;
+    align-items:center;
+    gap:10px;
+    letter-spacing:.3px;
+    min-width:0;
+  }
+  .videoModalTitle span{
+    overflow:hidden;
+    text-overflow:ellipsis;
+    white-space:nowrap;
+    max-width: 70vw;
+  }
+  .videoModalClose{
+    border:none;
+    border-radius: 12px;
+    padding: 10px 12px;
+    font-weight: 900;
+    cursor:pointer;
+    background: var(--fb-blue);
+    color:#fff;
+    box-shadow: 0 10px 20px rgba(0,0,0,.22);
+    display:flex;
+    align-items:center;
+    gap:8px;
+  }
+  .videoModalBody{
+    flex:1;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding: 10px;
+    background:#000;
+  }
+  /* ✅ aqui a gente QUER controls (volume / tela cheia / tempo etc) */
+  #videoModalVideo{
+    width: 100%;
+    height: 100%;
+    max-height: 100%;
+    object-fit: contain;
+    background:#000;
+    border-radius: 14px;
+  }
+  /* NÃO esconder os controls no modal */
+  #videoModalVideo::-webkit-media-controls { display:flex !important; }
+  #videoModalVideo::-webkit-media-controls-panel { display:flex !important; }
+  #videoModalVideo::-webkit-media-controls-play-button { display:flex !important; }
+  #videoModalVideo::-webkit-media-controls-start-playback-button { display:flex !important; }
+  #videoModalVideo::-webkit-media-controls-overlay-play-button { display:flex !important; }
+  #videoModalVideo::-webkit-media-controls-enclosure { display:flex !important; }
 </style>
 </head>
 
@@ -1046,6 +1125,24 @@
       <button class="profileModalClose" onclick="closeProfileModal()">Fechar</button>
     </div>
     <iframe class="profileModalFrame" id="profileFrame" src="about:blank"></iframe>
+  </div>
+</div>
+
+<!-- ✅ MODAL DE VÍDEO COMPLETO -->
+<div id="videoModal" aria-hidden="true">
+  <div class="videoModalCard">
+    <div class="videoModalTop">
+      <div class="videoModalTitle">
+        <i class="fa-solid fa-film" style="color: var(--fb-blue);"></i>
+        <span id="videoModalTitle">Vídeo</span>
+      </div>
+      <button class="videoModalClose" onclick="closeVideoModal()">
+        <i class="fa-solid fa-arrow-left"></i> Voltar
+      </button>
+    </div>
+    <div class="videoModalBody">
+      <video id="videoModalVideo" controls playsinline webkit-playsinline></video>
+    </div>
   </div>
 </div>
 
@@ -1222,6 +1319,75 @@ function playChatSound(){
     chatSfx.play().catch(()=>{});
   }catch(e){}
 }
+
+/* ====================== ✅ MODAL VÍDEO COMPLETO ====================== */
+const videoModal = document.getElementById("videoModal");
+const videoModalVideo = document.getElementById("videoModalVideo");
+const videoModalTitle = document.getElementById("videoModalTitle");
+
+let __prevBodyOverflow = "";
+function openVideoModal(url, titleText){
+  try{
+    if(!url) return;
+    unlockAudioOnce();
+
+    __prevBodyOverflow = document.body.style.overflow || "";
+    document.body.style.overflow = "hidden";
+
+    videoModalTitle.textContent = titleText || "Vídeo";
+    videoModal.style.display = "flex";
+    videoModal.setAttribute("aria-hidden","false");
+
+    try{ videoModalVideo.pause(); }catch(e){}
+    try{ videoModalVideo.currentTime = 0; }catch(e){}
+    try{ videoModalVideo.removeAttribute("src"); }catch(e){}
+    videoModalVideo.src = url;
+
+    videoModalVideo.controls = true;
+    videoModalVideo.muted = false;
+    videoModalVideo.volume = 1.0;
+    videoModalVideo.playsInline = true;
+    videoModalVideo.setAttribute("playsinline","");
+    videoModalVideo.setAttribute("webkit-playsinline","");
+
+    const p = videoModalVideo.play();
+    if(p && p.catch) p.catch(()=>{});
+
+    // tenta entrar em fullscreen (Android/desktop). No iPhone, o player já abre bem completo.
+    setTimeout(()=>{
+      try{
+        if(videoModalVideo.requestFullscreen) videoModalVideo.requestFullscreen().catch(()=>{});
+        else if(videoModalVideo.webkitRequestFullscreen) videoModalVideo.webkitRequestFullscreen();
+        else if(videoModalVideo.webkitEnterFullscreen) videoModalVideo.webkitEnterFullscreen();
+      }catch(e){}
+    }, 180);
+  }catch(e){}
+}
+function closeVideoModal(){
+  try{
+    try{
+      if(document.fullscreenElement) document.exitFullscreen().catch(()=>{});
+      if(document.webkitFullscreenElement) document.webkitExitFullscreen();
+    }catch(e){}
+
+    try{ videoModalVideo.pause(); }catch(e){}
+    try{ videoModalVideo.currentTime = 0; }catch(e){}
+    try{ videoModalVideo.removeAttribute("src"); }catch(e){}
+    try{ videoModalVideo.load(); }catch(e){}
+
+    videoModal.style.display = "none";
+    videoModal.setAttribute("aria-hidden","true");
+    document.body.style.overflow = __prevBodyOverflow;
+  }catch(e){}
+}
+videoModal.addEventListener("click", (e)=>{
+  if(e.target === videoModal) closeVideoModal();
+});
+document.addEventListener("keydown", (e)=>{
+  if(e.key === "Escape" && videoModal.style.display === "flex"){
+    closeVideoModal();
+  }
+});
 
 /* ====================== RADIO PLAYER (MENU) ====================== */
 const RADIO_URL = "https://stream.zeno.fm/l8ocj9i6ka2uv";
@@ -2003,14 +2169,12 @@ function showStory(){
     const el = document.createElement("video");
     el.src = s.url;
 
-    /* ✅ para NÃO aparecer o botão play:
-       - sem controls
-       - autoplay + muted (mobile permite)
-       - playsinline */
+    /* ✅ sem controls no story (pra não aparecer bola play),
+       mas ao clicar, abre o player completo com controles no modal */
     el.autoplay = true;
     el.muted = true;
     el.volume = 1;
-    el.controls = false;     // ✅ remove controls (principal causa da bola play)
+    el.controls = false;
     el.playsInline = true;
     el.setAttribute("playsinline","");
     el.setAttribute("webkit-playsinline","");
@@ -2023,14 +2187,12 @@ function showStory(){
       viewerTimer = setTimeout(()=>nextStory(), dur);
     };
 
-    /* ✅ toque no vídeo: alterna mute e garante play */
-    el.addEventListener("click", ()=>{
-      try{
-        unlockAudioOnce();
-        if(el.paused) el.play().catch(()=>{});
-        el.muted = !el.muted;
-      }catch(e){}
-    }, { passive:true });
+    /* ✅ clique abre o vídeo completo com controls */
+    el.addEventListener("click", (ev)=>{
+      ev.preventDefault();
+      ev.stopPropagation();
+      openVideoModal(s.url, "Story • Vídeo");
+    }, { passive:false });
 
     viewerMedia.appendChild(el);
     el.play().catch(()=>{});
@@ -2262,10 +2424,9 @@ function ensureFeedObserver(){
         }catch(e){}
 
         try{
-          if(!v.__userUnmuted){
-            v.muted = true;
-            v.volume = 1.0;
-          }
+          // feed sempre mutado (pra não aparecer a bola play); clique abre modal completo
+          v.muted = true;
+          v.volume = 1.0;
           const p = v.play();
           if(p && p.catch) p.catch(()=>{});
         }catch(e){}
@@ -2276,16 +2437,6 @@ function ensureFeedObserver(){
   }, { threshold: [0, 0.25, 0.60, 0.85, 1] });
 }
 
-function muteAllFeedVideosExcept(exceptVideo){
-  document.querySelectorAll("#feed video[data-feedvideo='1']").forEach(v=>{
-    if(v !== exceptVideo){
-      try{
-        v.__userUnmuted = false;
-        v.muted = true;
-      }catch(e){}
-    }
-  });
-}
 function setupOneFeedVideo(v){
   if(!v || v.__feedHooked) return;
   v.__feedHooked = true;
@@ -2293,7 +2444,6 @@ function setupOneFeedVideo(v){
   ensureFeedObserver();
 
   try{
-    v.__userUnmuted = false;
     v.muted = true;
     v.volume = 1.0;
     v.playsInline = true;
@@ -2301,41 +2451,29 @@ function setupOneFeedVideo(v){
     v.setAttribute("webkit-playsinline","");
     v.loop = true;
     v.preload = "none";
-    v.controls = false; // ✅ remove controls do feed (tira a bola play)
+    v.controls = false;
     v.removeAttribute("controls");
     v.setAttribute("controlslist","nodownload noremoteplayback noplaybackrate");
     v.setAttribute("disablepictureinpicture","");
     v.setAttribute("data-feedvideo","1");
   }catch(e){}
 
-  const onUserToggle = ()=>{
+  // ✅ clique abre o vídeo completo com controls (volume, tela cheia, etc)
+  const onOpenFull = (ev)=>{
     try{
-      unlockAudioOnce();
-      if(v.muted){
-        muteAllFeedVideosExcept(v);
-        v.__userUnmuted = true;
-        v.muted = false;
-        v.volume = 1.0;
+      ev.preventDefault();
+      ev.stopPropagation();
 
-        if(!v.__srcSet){
-          const ds = v.getAttribute("data-src");
-          if(ds){
-            v.src = ds;
-            v.__srcSet = true;
-            try{ v.load(); }catch(e){}
-          }
-        }
-        const p = v.play();
-        if(p && p.catch) p.catch(()=>{});
-      }else{
-        v.__userUnmuted = false;
-        v.muted = true;
-      }
+      const ds = v.getAttribute("data-src");
+      const src = (v.currentSrc || v.src || ds || "").trim();
+      if(!src) return;
+
+      openVideoModal(src, "Feed • Vídeo");
     }catch(e){}
   };
 
-  v.addEventListener("click", onUserToggle);
-  v.addEventListener("touchend", onUserToggle, { passive:true });
+  v.addEventListener("click", onOpenFull, { passive:false });
+  v.addEventListener("touchend", onOpenFull, { passive:false });
 
   try{ __feedObserver.observe(v); }catch(e){}
 }
