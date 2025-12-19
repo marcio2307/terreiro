@@ -1253,6 +1253,63 @@ function playChatSound(){
   }catch(e){}
 }
 
+/* ====================== ✅ CONTROLE: RÁDIO x VÍDEOS DO FEED ====================== */
+let __lastUnmutedFeedVideo = null;
+let __radioLocksFeedAudio = false;
+
+function rememberUnmutedFeedVideo(){
+  __lastUnmutedFeedVideo = null;
+  document.querySelectorAll("#feed video[data-feedvideo='1']").forEach(v=>{
+    try{
+      if(v.__userUnmuted && !v.muted){
+        __lastUnmutedFeedVideo = v;
+      }
+    }catch(e){}
+  });
+}
+
+function forceMuteAllFeedVideos(){
+  document.querySelectorAll("#feed video[data-feedvideo='1']").forEach(v=>{
+    try{
+      v.__userUnmuted = false;
+      v.muted = true;
+      v.volume = 1.0;
+    }catch(e){}
+  });
+}
+
+function restoreFeedVideoAudioIfPossible(){
+  if(!__lastUnmutedFeedVideo) return;
+  const v = __lastUnmutedFeedVideo;
+  if(!document.body.contains(v)) return;
+
+  const rect = v.getBoundingClientRect();
+  const visible = rect.bottom > 0 && rect.top < (window.innerHeight || 0);
+  if(!visible) return;
+
+  try{
+    unlockAudioOnce();
+    v.__userUnmuted = true;
+    v.muted = false;
+    v.volume = 1.0;
+
+    if(!v.__srcSet){
+      const ds = v.getAttribute("data-src");
+      if(ds){
+        v.src = ds;
+        v.__srcSet = true;
+        v.preload = "metadata";
+        v.setAttribute("preload","metadata");
+        v.setAttribute("fetchpriority","high");
+        try{ v.load(); }catch(e){}
+      }
+    }
+
+    const p = v.play();
+    if(p && p.catch) p.catch(()=>{});
+  }catch(e){}
+}
+
 /* ====================== RADIO PLAYER (MENU) ====================== */
 const RADIO_URL = "https://stream.zeno.fm/l8ocj9i6ka2uv";
 let radio = null;
@@ -1265,27 +1322,41 @@ function ensureRadio(){
   radio.crossOrigin = "anonymous";
   radio.volume = 1.0;
 
-  radio.addEventListener("playing", ()=>{ setRadioUI(true); });
-  radio.addEventListener("pause", ()=>{ setRadioUI(false); });
-  radio.addEventListener("ended", ()=>{ setRadioUI(false); });
-  radio.addEventListener("error", ()=>{ setRadioUI(false); });
+  radio.addEventListener("playing", ()=>{ setRadioUI(true); onRadioStateChange(true); });
+  radio.addEventListener("pause", ()=>{ setRadioUI(false); onRadioStateChange(false); });
+  radio.addEventListener("ended", ()=>{ setRadioUI(false); onRadioStateChange(false); });
+  radio.addEventListener("error", ()=>{ setRadioUI(false); onRadioStateChange(false); });
 }
+
+function onRadioStateChange(isPlaying){
+  radioPlaying = !!isPlaying;
+
+  if(radioPlaying){
+    __radioLocksFeedAudio = true;
+    rememberUnmutedFeedVideo();
+    forceMuteAllFeedVideos();
+  }else{
+    __radioLocksFeedAudio = false;
+    restoreFeedVideoAudioIfPossible();
+  }
+}
+
 function setRadioUI(isPlaying){
   radioPlaying = !!isPlaying;
   const icon = document.getElementById("radioIcon");
   if(!icon) return;
-
-  /* ✅ no menu agora é ícone de rádio quando parado, e pause quando tocando */
   icon.className = radioPlaying ? "fa-solid fa-pause" : "fa-solid fa-radio";
 }
+
 function toggleRadio(){
   ensureRadio();
   unlockAudioOnce();
   if(!radioPlaying){
-    radio.play().then(()=>setRadioUI(true)).catch(()=>setRadioUI(false));
+    radio.play().then(()=>{ setRadioUI(true); onRadioStateChange(true); }).catch(()=>{ setRadioUI(false); onRadioStateChange(false); });
   }else{
     try{ radio.pause(); }catch(e){}
     setRadioUI(false);
+    onRadioStateChange(false);
   }
 }
 
@@ -2036,22 +2107,14 @@ function showStory(){
     el.src = s.url;
     el.autoplay = true;
 
-    /* ✅ viewer: som só se clicar (começa mutado e toca automático) */
-    el.muted = true;
-    el.volume = 1;
+    /* ✅ STORIES: AGORA TOCA COM SOM (exceto se rádio estiver tocando) */
+    el.muted = radioPlaying ? true : false;
+    el.volume = 1.0;
     el.controls = true;
     el.playsInline = true;
+    el.setAttribute("playsinline","");
+    el.setAttribute("webkit-playsinline","");
     el.preload = "metadata";
-
-    el.addEventListener("click", ()=>{
-      try{
-        unlockAudioOnce();
-        if(el.muted){
-          el.muted = false;
-          el.volume = 1.0;
-        }
-      }catch(e){}
-    });
 
     el.onloadedmetadata = ()=>{
       const realDur = (el.duration||0)*1000;
@@ -2061,7 +2124,21 @@ function showStory(){
     };
 
     viewerMedia.appendChild(el);
-    el.play().catch(()=>{});
+
+    /* tenta tocar com som (user gesture já aconteceu ao abrir) */
+    try{
+      unlockAudioOnce();
+      const p = el.play();
+      if(p && p.catch){
+        p.catch(()=>{
+          /* fallback: se algum navegador bloquear som, toca mutado */
+          try{
+            el.muted = true;
+            el.play().catch(()=>{});
+          }catch(e){}
+        });
+      }
+    }catch(e){}
   }
 }
 function runProgress(ms){
@@ -2166,6 +2243,7 @@ function renderUserCard(group){
   if((cover.type||"").includes("image")){
     mediaHTML = `<img class="storyMedia" src="${cover.url}" alt="story" loading="lazy">`;
   }else{
+    /* preview do card continua sem som (correto) */
     mediaHTML = `<video class="storyMedia" src="${cover.url}" autoplay muted loop playsinline preload="metadata"></video>`;
   }
 
@@ -2345,11 +2423,24 @@ function setupOneFeedVideo(v){
   const onUserToggle = ()=>{
     try{
       unlockAudioOnce();
+
+      /* ✅ se rádio está tocando, travar áudio do feed */
+      if(__radioLocksFeedAudio || radioPlaying){
+        v.__userUnmuted = false;
+        v.muted = true;
+        v.volume = 1.0;
+        try{ v.play().catch(()=>{}); }catch(e){}
+        return;
+      }
+
       if(v.muted){
         muteAllFeedVideosExcept(v);
         v.__userUnmuted = true;
         v.muted = false;
         v.volume = 1.0;
+
+        /* memoriza último vídeo com som */
+        __lastUnmutedFeedVideo = v;
 
         if(!v.__srcSet){
           const ds = v.getAttribute("data-src");
@@ -2963,6 +3054,13 @@ function pumpRenderQueue(){
 
 updateButton();
 setupAllFeedVideos();
+
+/* ✅ se rádio desligar e o usuário rolar, tenta restaurar áudio do vídeo que estava com som */
+window.addEventListener("scroll", ()=>{
+  if(!radioPlaying && !__radioLocksFeedAudio){
+    restoreFeedVideoAudioIfPossible();
+  }
+}, { passive:true });
 </script>
 
 </body>
