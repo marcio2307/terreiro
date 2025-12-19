@@ -3,40 +3,60 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-<title>Menu + Stories estilo Insta + Feed Completo</title>
+<title>Menu + Stories + Feed (Estilo Facebook 2025)</title>
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
 <style>
   *{ box-sizing: border-box; }
   html, body{ width:100%; max-width:100%; overflow-x:hidden; }
-  body{ margin:0; background:#000; font-family: Arial, sans-serif; color:#fff; padding-bottom: env(safe-area-inset-bottom); }
+  body{
+    margin:0;
+    background:#18191A;               /* ✅ Facebook dark */
+    font-family: Arial, sans-serif;
+    color:#E4E6EB;                     /* ✅ texto Facebook */
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+
+  :root{
+    --fb-bg: #18191A;
+    --fb-surface: #242526;
+    --fb-surface-2: #2D2E30;
+    --fb-border: rgba(255,255,255,.10);
+    --fb-text: #E4E6EB;
+    --fb-muted: rgba(228,230,235,.72);
+    --fb-blue: #0866FF;               /* ✅ azul Facebook */
+    --fb-blue-2:#1877F2;
+    --fb-green:#31A24C;
+    --fb-red:#F02849;
+    --fb-shadow: 0 8px 18px rgba(0,0,0,.35);
+    --fb-radius: 16px;
+  }
 
   /* ======================== LOGO + MESSENGER (TOPO) ======================== */
   .logo-bar{
     width:100%;
-    background:#000;
+    background: var(--fb-surface);
     display:flex;
     align-items:center;
     justify-content:space-between;
     gap:12px;
-    padding: 10px 12px 6px 12px;
+    padding: 10px 12px;
+    border-bottom: 1px solid var(--fb-border);
+    position: sticky;
+    top: 0;
+    z-index: 9999;
   }
-  .logo-left{
-    display:flex;
-    align-items:center;
-    gap:12px;
-    min-width:0;
-  }
+  .logo-left{ display:flex; align-items:center; gap:12px; min-width:0; }
   .logo-left img{
     width: clamp(160px, 52vw, 360px);
     height:auto;
-    max-height: 110px;
+    max-height: 60px;
     object-fit: contain;
     display:block;
   }
 
-  /* Ícone Messenger SEM círculo */
+  /* Ícone Messenger (estilo Facebook) */
   .msgBtn{
     position:relative;
     display:flex;
@@ -44,223 +64,210 @@
     justify-content:center;
     cursor:pointer;
     user-select:none;
-
-    width:52px;
-    height:52px;
-
-    background: transparent;
-    border:none;
+    width:44px;
+    height:44px;
+    background: var(--fb-surface-2);
+    border: 1px solid var(--fb-border);
+    border-radius: 999px;
     outline:none;
     padding:0;
+    box-shadow: 0 6px 14px rgba(0,0,0,.25);
   }
   .msgBtn i{
-    font-size: 34px;
-    color:#00ff8c;
-    text-shadow: 0 0 10px #00ff8c, 0 0 20px #00ff8c, 0 0 35px #00ff8c;
+    font-size: 20px;
+    color: var(--fb-text);
     line-height:1;
   }
 
   /* Bolinha vermelha com número */
   .msgBadge{
     position:absolute;
-    top: 2px;
-    right: 2px;
+    top: -6px;
+    right: -6px;
     min-width: 20px;
     height: 20px;
     padding: 0 6px;
     border-radius: 999px;
-    background: #ff2a2a;
+    background: var(--fb-red);
     color: #fff;
     font-weight: 900;
     font-size: 12px;
     display:none;
     align-items:center;
     justify-content:center;
-    box-shadow: 0 0 14px rgba(255,42,42,.65);
-    border: 2px solid #000;
+    border: 2px solid var(--fb-surface);
   }
 
   @media(max-width:480px){
-    .logo-bar{ padding: 10px 10px 6px 10px; }
-    .logo-left img{ max-height: 86px; }
-    .msgBtn{ width:46px; height:46px; }
-    .msgBtn i{ font-size: 32px; }
+    .logo-left img{ max-height: 54px; }
   }
 
-  /* ======================== MENU NEON ======================== */
-  .top-menu {
+  /* ======================== MENU (estilo Facebook) ======================== */
+  .top-menu{
     width: 100%;
-    background: #0d0d0d;
-    padding: 18px 10px;
+    background: var(--fb-surface);
+    padding: 10px 10px;
     display: flex;
     justify-content: center;
-    gap: 50px;
+    gap: 14px;
     align-items: center;
-    border-bottom: 2px solid #00ff8c;
-    box-shadow: 0 0 15px #00ff8c;
+    border-bottom: 1px solid var(--fb-border);
     position: sticky;
-    top: 0;
-    z-index: 9999;
+    top: 66px; /* fica abaixo da logo-bar (sticky também) */
+    z-index: 9998;
   }
-  .top-menu.hide { display:none !important; }
-  .top-menu a {
-    color: #00ff8c;
-    text-decoration: none;
-    font-size: 22px;
-    font-weight: bold;
-    text-transform: uppercase;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    transition: 0.3s;
-    letter-spacing: 1.2px;
-    text-shadow: 0 0 10px #00ff8c, 0 0 20px #00ff8c, 0 0 35px #00ff8c;
-    white-space: nowrap;
-    padding: 10px 12px;
-    border-radius: 16px;
+  .top-menu.hide{ display:none !important; }
+
+  .top-menu a{
+    width: 48px;
+    height: 48px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    border-radius: 12px;
+    background: transparent;
+    border: 1px solid transparent;
+    color: var(--fb-text);
+    text-decoration:none;
+    transition: .15s ease;
     position: relative;
   }
-  .top-menu a:hover { transform: scale(1.06); }
-  .top-menu a i {
-    font-size: 26px;
-    text-shadow: 0 0 10px #00ff8c, 0 0 20px #00ff8c, 0 0 40px #00ff8c;
+  .top-menu a:hover{
+    background: rgba(255,255,255,.06);
+    border-color: rgba(255,255,255,.08);
   }
+  .top-menu a:active{ transform: scale(.98); }
+  .top-menu a i{ font-size: 20px; color: var(--fb-text); }
 
   .menu-online-dot{
     position:absolute;
-    top: 6px;
-    right: 6px;
+    top: 8px;
+    right: 8px;
     width: 10px;
     height: 10px;
     border-radius: 50%;
-    background: #00ff4c;
-    box-shadow: 0 0 14px rgba(0,255,76,.9);
-    animation: blinkDot 0.9s infinite;
+    background: var(--fb-green);
+    box-shadow: 0 0 0 3px rgba(49,162,76,.18);
+    animation: blinkDot 1.2s infinite;
   }
   @keyframes blinkDot{
     0%, 100%{ transform: scale(1); opacity: 1; }
-    50%{ transform: scale(1.35); opacity: .25; }
+    50%{ transform: scale(1.25); opacity: .4; }
   }
 
   @media(max-width:480px){
-    .top-menu { gap: 26px; padding: 14px 10px; }
-    .top-menu a { font-size: 14px; letter-spacing:.8px; padding: 12px 14px; }
-    .top-menu a i { font-size: 24px; }
-    .menu-online-dot{ top: 7px; right: 7px; }
-  }
-  @media (max-width:360px){
-    .top-menu{ gap: 20px; }
-    .btn-action{ font-size:12px; padding:9px 10px; }
-    .menu-btn{ font-size:26px; }
-    .top-menu a i{ font-size: 22px; }
+    .top-menu{ gap: 10px; padding: 8px 10px; top: 64px; }
+    .top-menu a{ width: 44px; height: 44px; border-radius: 12px; }
   }
 
-  /* ===================== "NO QUE VOCÊ ESTÁ PENSANDO" ===================== */
+  /* ===================== "NO QUE VOCÊ ESTÁ PENSANDO" (Facebook) ===================== */
   .create-post{
-    background:#0d0d0d;
-    margin:10px 12px 10px 12px;
-    padding:14px;
-    border-radius:22px;
-    border:1px solid #00ff9d;
+    background: var(--fb-surface);
+    margin: 12px 12px 10px 12px;
+    padding: 12px;
+    border-radius: var(--fb-radius);
+    border: 1px solid var(--fb-border);
     display:flex;
     gap:10px;
     align-items:center;
-    box-shadow:0 0 10px rgba(0,255,157,.45);
+    box-shadow: var(--fb-shadow);
   }
   .input-box{
     flex:1;
     min-width: 0;
-    background:#111;
-    padding:12px 18px;
-    border-radius:999px;
-    border:1px solid #00ff9d;
-    color:#fff;
-    font-size:16px;
+    background: #3A3B3C;
+    padding: 12px 14px;
+    border-radius: 999px;
+    border: 1px solid rgba(255,255,255,.08);
+    color: var(--fb-text);
+    font-size: 15px;
     outline:none;
-    box-shadow:inset 0 0 8px rgba(0,255,157,.35);
   }
+  .input-box::placeholder{ color: rgba(228,230,235,.65); }
+
   .add-btn{
-    background:#111;
-    border:2px solid #00ff9d;
-    color:#00ff9d;
-    width:46px;
-    height:46px;
-    border-radius:50%;
+    background: #3A3B3C;
+    border: 1px solid rgba(255,255,255,.10);
+    color: var(--fb-text);
+    width:44px;
+    height:44px;
+    border-radius: 999px;
     font-size:22px;
     font-weight:bold;
     display:flex;
     align-items:center;
     justify-content:center;
     cursor:pointer;
-    box-shadow:0 0 10px rgba(0,255,157,.45);
-    transition:.2s;
+    transition:.15s;
     flex: 0 0 auto;
   }
+  .add-btn:hover{ background: rgba(255,255,255,.08); }
+
   .whatsapp-send{
-    width:46px; height:46px;
-    background:#00ff9d;
-    border-radius:50%;
+    width:44px; height:44px;
+    background: var(--fb-blue);
+    border-radius: 999px;
     display:flex;
     align-items:center;
     justify-content:center;
-    font-size:26px;
-    color:#003b23;
+    font-size:20px;
+    color:#fff;
     cursor:pointer;
-    box-shadow:0 0 15px rgba(0,255,157,.55);
-    transition:.2s;
-    border:2px solid #003b23;
+    transition:.15s;
+    border: 1px solid rgba(255,255,255,.08);
     flex: 0 0 auto;
   }
+  .whatsapp-send:hover{ filter: brightness(1.03); }
+
   #fileInput{display:none;}
 
   .preview{
     margin:0 12px 10px 12px;
-    padding:15px;
-    background:#0d0d0d;
-    border:1px solid #00ff9d;
-    border-radius:15px;
-    box-shadow:0 0 10px rgba(0,255,157,.45);
+    padding: 12px;
+    background: var(--fb-surface);
+    border: 1px solid var(--fb-border);
+    border-radius: var(--fb-radius);
+    box-shadow: var(--fb-shadow);
     display:none;
   }
 
-  /* ======================== STORIES ======================== */
-  .stories-wrapper{ padding: 6px 10px 6px 10px; }
+  /* ======================== STORIES (Facebook) ======================== */
+  .stories-wrapper{ padding: 2px 10px 6px 10px; }
   .stories-row{
     display:flex;
-    gap: 14px;
+    gap: 12px;
     overflow-x:auto;
-    padding: 8px 4px 12px 4px;
+    padding: 8px 2px 10px 2px;
     -webkit-overflow-scrolling: touch;
     align-items: stretch;
   }
   .stories-row::-webkit-scrollbar{ height:6px; }
-  .stories-row::-webkit-scrollbar-thumb{ background:#00ff8c; border-radius:999px; }
+  .stories-row::-webkit-scrollbar-thumb{ background: rgba(255,255,255,.18); border-radius:999px; }
 
   .storyCard{
     width: clamp(120px, 42vw, 160px);
     height: clamp(220px, 70vw, 290px);
-    border-radius: 22px;
+    border-radius: 16px;
     overflow:hidden;
     position:relative;
     flex-shrink:0;
     cursor:pointer;
-    background:#121314;
-    box-shadow: 0 10px 28px rgba(0,0,0,.45);
-    border: 1px solid rgba(255,255,255,.08);
-    transition: transform .15s ease, box-shadow .15s ease;
+    background: var(--fb-surface);
+    box-shadow: var(--fb-shadow);
+    border: 1px solid var(--fb-border);
+    transition: transform .12s ease, filter .12s ease;
   }
-  .storyCard:hover{ transform: translateY(-2px); box-shadow: 0 14px 32px rgba(0,0,0,.55); }
-
+  .storyCard:hover{ transform: translateY(-1px); }
   .storyMedia{
     position:absolute; inset:0;
     width:100%; height:100%;
     object-fit:cover; display:block;
-    filter: contrast(1.05) saturate(1.05);
     background:#000;
+    filter: contrast(1.02) saturate(1.03);
   }
   .storyShade{
     position:absolute; inset:auto 0 0 0;
-    height: 48%;
+    height: 50%;
     background: linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(0,0,0,.35) 35%, rgba(0,0,0,.78) 100%);
     pointer-events:none;
   }
@@ -274,27 +281,24 @@
     border-radius:999px; overflow:hidden;
   }
   .avatarCircle{
-    position:absolute; top:14px; left:14px;
-    width:42px; height:42px;
+    position:absolute; top:12px; left:12px;
+    width:40px; height:40px;
     border-radius:50%;
-    background:#0f1112;
-    border:3px solid #2f6bff;
-    box-shadow: 0 0 0 3px rgba(0,0,0,.25);
+    background:#111;
+    border: 3px solid var(--fb-blue);
+    box-shadow: 0 0 0 3px rgba(0,0,0,.22);
     overflow:hidden;
     z-index:6;
     display:flex; align-items:center; justify-content:center;
   }
   .avatarCircle img{ width:100%; height:100%; object-fit:cover; display:block; }
-  .avatarInitials{
-    font-weight:900; font-size:14px; color:#fff;
-    text-shadow: 0 0 10px rgba(0,0,0,.6);
-  }
+  .avatarInitials{ font-weight:900; font-size:14px; color:#fff; text-shadow: 0 0 10px rgba(0,0,0,.6); }
   .storyName{
-    position:absolute; left:14px; right:14px; bottom:14px;
+    position:absolute; left:12px; right:12px; bottom:12px;
     z-index:6;
-    font-size:18px;
+    font-size:16px;
     font-weight:900;
-    line-height:1.05;
+    line-height:1.08;
     text-shadow: 0 2px 10px rgba(0,0,0,.75);
     display:-webkit-box;
     -webkit-line-clamp: 2;
@@ -304,43 +308,40 @@
   .createCard{
     display:flex; align-items:center; justify-content:center;
     flex-direction:column; gap:10px;
-    background: linear-gradient(180deg, #0f1112 0%, #0b0c0d 100%);
+    background: linear-gradient(180deg, #242526 0%, #1f2021 100%);
   }
   .plusBtn{
-    width: 68px; height: 68px; border-radius: 50%;
-    background:#00ff8c;
-    border: 6px solid rgba(0,0,0,.55);
+    width: 64px; height: 64px; border-radius: 50%;
+    background: var(--fb-blue);
+    border: 6px solid rgba(0,0,0,.45);
     display:flex; align-items:center; justify-content:center;
-    color:#003b23; font-weight:900; font-size:42px;
-    box-shadow:0 0 24px rgba(0,255,140,.55);
+    color:#fff; font-weight:900; font-size:38px;
+    box-shadow: 0 10px 22px rgba(0,0,0,.25);
   }
-  .createLabel{ font-weight:800; opacity:.95; }
+  .createLabel{ font-weight:900; opacity:.95; }
 
-  /* ======================== "CONECTADOS" ======================== */
+  /* ======================== "CONECTADOS" (Facebook) ======================== */
   .connections{
-    background:#0d0d0d;
+    background: var(--fb-surface);
     margin: 12px 12px 15px 12px;
     padding: 14px;
-    border-radius: 18px;
-    border: 1px solid rgba(0,255,157,.55);
-    box-shadow: 0 0 10px rgba(0,255,157,.25);
+    border-radius: var(--fb-radius);
+    border: 1px solid var(--fb-border);
+    box-shadow: var(--fb-shadow);
     position:relative;
   }
   .connectionsTitle{
     font-weight: 900;
-    color:#00ff9d;
-    letter-spacing: .8px;
+    color: var(--fb-text);
+    letter-spacing: .4px;
     text-transform: uppercase;
-    text-shadow: 0 0 10px rgba(0,255,157,.25);
     display:flex;
     align-items:center;
     gap:10px;
     margin-bottom: 12px;
+    opacity:.95;
   }
-  .connectionsTitle i{
-    color:#00ff9d;
-    text-shadow: 0 0 12px rgba(0,255,157,.35);
-  }
+  .connectionsTitle i{ color: var(--fb-blue); }
   .connGrid{
     display:grid;
     grid-template-columns: repeat(3, 1fr);
@@ -354,7 +355,7 @@
     overflow:hidden;
     border: 1px solid rgba(255,255,255,.08);
     background: rgba(255,255,255,.03);
-    box-shadow: 0 10px 24px rgba(0,0,0,.28);
+    box-shadow: 0 8px 16px rgba(0,0,0,.22);
     display:flex;
     flex-direction:column;
     min-width:0;
@@ -366,25 +367,19 @@
     display:flex;
     align-items:center;
     justify-content:center;
-    border-bottom: 1px solid rgba(0,255,157,.15);
+    border-bottom: 1px solid rgba(255,255,255,.08);
     overflow:hidden;
   }
-  .connPhoto img{
-    width:100%;
-    height:100%;
-    object-fit: cover;
-    display:block;
-  }
+  .connPhoto img{ width:100%; height:100%; object-fit: cover; display:block; }
   .connInit{
     font-weight: 900;
-    color:#00ff9d;
+    color: var(--fb-text);
     font-size: 18px;
-    text-shadow: 0 0 12px rgba(0,255,157,.25);
   }
   .connName{
     padding: 10px 10px 8px 10px;
     font-weight: 900;
-    color:#fff;
+    color: var(--fb-text);
     font-size: 13px;
     line-height: 1.1;
     overflow:hidden;
@@ -398,15 +393,12 @@
     padding: 10px 8px;
     font-weight: 900;
     cursor:pointer;
-    background:#00ff9d;
-    color:#003b23;
-    box-shadow: 0 0 14px rgba(0,255,157,.35);
+    background: var(--fb-blue);
+    color: #fff;
+    box-shadow: 0 10px 20px rgba(0,0,0,.22);
   }
-  .connEmpty{
-    padding: 10px;
-    opacity: .85;
-    font-weight: 700;
-  }
+  .connBtn:active{ transform: scale(.99); }
+  .connEmpty{ padding: 10px; opacity: .85; font-weight: 700; }
 
   /* ======================== VIEWER ======================== */
   #viewer{
@@ -418,7 +410,6 @@
     align-items:center;
     z-index:99999;
   }
-
   #viewerMedia{
     width:100%;
     height:100%;
@@ -428,7 +419,6 @@
     padding-top: 56px;
     padding-bottom: calc(96px + env(safe-area-inset-bottom));
   }
-
   #viewerMedia img, #viewerMedia video{
     width: min(100vw, 980px);
     max-width: 100vw;
@@ -437,7 +427,6 @@
     border-radius: 16px;
     background:#000;
   }
-
   .topBars{
     position:absolute; top: 14px; left:0;
     width:100%;
@@ -448,15 +437,14 @@
   }
   .bar{
     flex:1; height:4px;
-    background: rgba(255,255,255,.3);
+    background: rgba(255,255,255,.25);
     border-radius:999px;
     overflow:hidden;
   }
   .barFill{
     width:0%;
     height:100%;
-    background:#00ff8c;
-    box-shadow:0 0 15px #00ff8c;
+    background: var(--fb-blue);
     transition: width linear;
   }
   .tapLeft,.tapRight{
@@ -468,23 +456,24 @@
   .tapRight{ right:0; }
 
   .dots{
-    position:absolute; top: 10px; right: 20px;
-    font-size: 35px;
+    position:absolute; top: 10px; right: 18px;
+    font-size: 28px;
     cursor:pointer;
     z-index:20;
     user-select:none;
+    color: rgba(255,255,255,.9);
   }
   .deleteBtn{
-    position:absolute; top: 55px; right: 20px;
-    background:#00ff8c;
-    color:#000;
-    padding:10px 15px;
-    border-radius:10px;
+    position:absolute; top: 50px; right: 18px;
+    background: var(--fb-blue);
+    color:#fff;
+    padding:10px 14px;
+    border-radius:12px;
     cursor:pointer;
     display:none;
     font-weight:900;
     z-index:20;
-    box-shadow:0 0 14px rgba(0,255,140,.6);
+    box-shadow: 0 10px 20px rgba(0,0,0,.25);
     user-select:none;
   }
 
@@ -500,9 +489,9 @@
     pointer-events:auto;
     width: min(560px, 96vw);
     margin: 0 auto;
-    background: rgba(0,0,0,.55);
-    border: 1px solid rgba(0,255,140,.25);
-    box-shadow: 0 0 18px rgba(0,255,140,.12);
+    background: rgba(36,37,38,.75);
+    border: 1px solid rgba(255,255,255,.08);
+    box-shadow: 0 10px 20px rgba(0,0,0,.25);
     border-radius: 16px;
     padding: 10px 12px;
     display:flex;
@@ -519,32 +508,22 @@
     align-items:center;
     gap: 10px;
     font-weight: 900;
-    color:#fff;
+    color: var(--fb-text);
     font-size: 14px;
     line-height:1.2;
     min-width:0;
   }
-  .seenText i{
-    color:#00ff8c;
-    text-shadow: 0 0 12px rgba(0,255,140,.6);
-    font-size: 16px;
-    flex:0 0 auto;
-  }
-  .seenText span{
-    display:block;
-    overflow:hidden;
-    text-overflow:ellipsis;
-    white-space:nowrap;
-  }
+  .seenText i{ color: var(--fb-blue); font-size: 16px; flex:0 0 auto; }
+  .seenText span{ display:block; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
   .seenArrow{
     width:36px; height:36px;
     border-radius: 12px;
     display:flex;
     align-items:center;
     justify-content:center;
-    background: rgba(0,255,140,.12);
-    border: 1px solid rgba(0,255,140,.25);
-    color:#00ff8c;
+    background: rgba(255,255,255,.06);
+    border: 1px solid rgba(255,255,255,.10);
+    color: var(--fb-text);
     flex: 0 0 auto;
   }
 
@@ -552,14 +531,14 @@
     pointer-events:auto;
     width: min(560px, 96vw);
     margin: 10px auto 0 auto;
-    background: rgba(0,0,0,.82);
-    border: 1px solid rgba(0,255,140,.25);
+    background: rgba(36,37,38,.92);
+    border: 1px solid rgba(255,255,255,.08);
     border-radius: 16px;
     padding: 10px 10px;
     max-height: 38vh;
     overflow:auto;
     display:none;
-    box-shadow: 0 0 22px rgba(0,255,140,.18);
+    box-shadow: 0 10px 20px rgba(0,0,0,.25);
   }
   .viewerRow{
     display:flex;
@@ -568,26 +547,21 @@
     gap: 10px;
     padding: 10px 10px;
     border-radius: 12px;
-    border: 1px solid rgba(255,255,255,.06);
-    background: rgba(255,255,255,.03);
+    border: 1px solid rgba(255,255,255,.08);
+    background: rgba(255,255,255,.04);
     margin-bottom: 8px;
   }
   .viewerRow:last-child{ margin-bottom:0; }
   .viewerName{
     font-weight: 900;
-    color:#00ff8c;
+    color: var(--fb-text);
     overflow:hidden;
     text-overflow:ellipsis;
     white-space:nowrap;
     max-width: 70%;
   }
-  .viewerTime{
-    font-size: 12px;
-    opacity:.85;
-    white-space:nowrap;
-  }
 
-  /* ===================== ✅ REAÇÕES DO STORY ===================== */
+  /* ===================== ✅ REAÇÕES DO STORY (Facebook vibe) ===================== */
   .reactionBar{
     position:absolute;
     right: 14px;
@@ -598,40 +572,36 @@
     align-items:center;
     padding: 10px 10px;
     border-radius: 999px;
-    background: rgba(0,0,0,.55);
+    background: rgba(36,37,38,.70);
     border: 1px solid rgba(255,255,255,.10);
     backdrop-filter: blur(10px);
     -webkit-backdrop-filter: blur(10px);
-    box-shadow: 0 0 22px rgba(0,0,0,.35);
+    box-shadow: 0 10px 20px rgba(0,0,0,.25);
     user-select:none;
     pointer-events:auto;
   }
   .reactBtn{
-    width: 46px;
-    height: 46px;
+    width: 44px;
+    height: 44px;
     border-radius: 50%;
     display:flex;
     align-items:center;
     justify-content:center;
     cursor:pointer;
-    border: 1px solid rgba(255,255,255,.12);
+    border: 1px solid rgba(255,255,255,.10);
     background: rgba(255,255,255,.06);
-    transition: transform .12s ease, box-shadow .12s ease, filter .12s ease;
+    transition: transform .12s ease, box-shadow .12s ease;
     position:relative;
   }
   .reactBtn:active{ transform: scale(.92); }
-  .reactIcon{
-    font-size: 22px;
-    line-height: 1;
-    filter: drop-shadow(0 0 10px rgba(0,0,0,.35));
-  }
-  .reactBtn.love .reactIcon{ color:#ff2a2a; text-shadow: 0 0 18px rgba(255,42,42,.55); }
-  .reactBtn.like .reactIcon{ color:#00ff8c; text-shadow: 0 0 20px rgba(0,255,140,.65); }
-  .reactBtn.haha .reactIcon{ color:#ffd400; text-shadow: 0 0 18px rgba(255,212,0,.55); }
+  .reactIcon{ font-size: 22px; line-height: 1; }
+  .reactBtn.love .reactIcon{ color: var(--fb-red); }
+  .reactBtn.like .reactIcon{ color: var(--fb-blue); }
+  .reactBtn.haha .reactIcon{ color:#F7B928; }
 
   .reactBtn.selected{
-    box-shadow: 0 0 18px rgba(255,255,255,.10), 0 0 28px rgba(0,255,140,.18);
-    border-color: rgba(0,255,140,.28);
+    box-shadow: 0 0 0 3px rgba(8,102,255,.22);
+    border-color: rgba(8,102,255,.30);
     transform: translateY(-1px);
   }
 
@@ -648,9 +618,9 @@
     animation: floatUp 900ms ease-out forwards;
     filter: drop-shadow(0 0 14px rgba(0,0,0,.55));
   }
-  .floatReaction.love{ color:#ff2a2a; text-shadow: 0 0 18px rgba(255,42,42,.55); }
-  .floatReaction.like{ color:#00ff8c; text-shadow: 0 0 20px rgba(0,255,140,.65); }
-  .floatReaction.haha{ color:#ffd400; text-shadow: 0 0 18px rgba(255,212,0,.55); }
+  .floatReaction.love{ color: var(--fb-red); }
+  .floatReaction.like{ color: var(--fb-blue); }
+  .floatReaction.haha{ color:#F7B928; }
   @keyframes floatUp{
     0%   { transform: translate(0, 0) scale(.85); opacity: 0; }
     10%  { opacity: 1; }
@@ -671,112 +641,89 @@
   .login-card{
     width: min(520px, 94vw);
     max-width: 94vw;
-    background:#0d0d0d;
-    border:2px solid #00ff8c;
-    border-radius:22px;
-    box-shadow:0 0 28px rgba(0,255,140,.45);
+    background: var(--fb-surface);
+    border:1px solid var(--fb-border);
+    border-radius: 18px;
+    box-shadow: var(--fb-shadow);
     padding: 18px;
     text-align:center;
   }
   .login-title{
-    font-size: clamp(18px, 6vw, 26px);
+    font-size: clamp(18px, 6vw, 24px);
     font-weight: 900;
-    color:#00ff8c;
-    text-transform:uppercase;
-    letter-spacing:1.2px;
-    text-shadow: 0 0 10px #00ff8c, 0 0 22px #00ff8c;
+    color: var(--fb-text);
+    letter-spacing:.5px;
     margin: 4px 0 14px 0;
     display:flex;
     gap:10px;
     align-items:center;
     justify-content:center;
   }
+  .login-title i{ color: var(--fb-blue); }
   .login-input{
     width: 100%;
     max-width: 100%;
     display:block;
-    background:#111;
-    border:1px solid #00ff9d;
+    background:#3A3B3C;
+    border:1px solid rgba(255,255,255,.10);
     border-radius: 999px;
     padding: 14px 18px;
-    color:#fff;
+    color: var(--fb-text);
     outline:none;
     font-size: 16px;
-    box-shadow: inset 0 0 10px rgba(0,255,157,.22);
   }
   .login-btn{
     width: 100%;
     margin-top: 12px;
     border:none;
     border-radius: 999px;
-    padding: 16px 12px;
+    padding: 14px 12px;
     font-weight: 900;
     cursor:pointer;
-    font-size: 18px;
-    transition:.18s;
-    background:#00ff8c;
-    color:#003b23;
-    box-shadow:0 0 18px rgba(0,255,140,.55);
+    font-size: 16px;
+    transition:.15s;
+    background: var(--fb-blue);
+    color:#fff;
+    box-shadow: 0 10px 20px rgba(0,0,0,.22);
   }
   .login-btn:active{ transform: scale(.99); }
 
-  /* ===================== FEED (AJUSTADO: MENOR + ESTILO FACEBOOK NO CELULAR) ===================== */
+  /* ===================== FEED (Facebook) ===================== */
   .post{
-    background:#0b0b0b;
-    margin:10px 10px;
-    padding:12px;
-    border-radius:14px;
-
-    /* ✅ remove moldura neon/verde */
-    border:1px solid rgba(255,255,255,.10);
-    box-shadow: 0 10px 22px rgba(0,0,0,.32);
+    background: var(--fb-surface);
+    margin: 10px 12px;
+    padding: 12px;
+    border-radius: var(--fb-radius);
+    border:1px solid var(--fb-border);
+    box-shadow: var(--fb-shadow);
     position:relative;
   }
-
   .postHead{
     display:flex;
     align-items:center;
     gap:10px;
     padding-right:44px;
   }
-
-  /* ✅ avatar menor e SEM moldura circular verde */
   .postAvatar{
-    width:44px;
-    height:44px;
+    width:42px; height:42px;
     border-radius:50%;
     overflow:hidden;
-    background:#111;
-    border:none;
-    box-shadow:none;
+    background:#3A3B3C;
+    border: 1px solid rgba(255,255,255,.08);
     flex:0 0 auto;
     display:flex;
     align-items:center;
     justify-content:center;
   }
-  .postAvatar img{
-    width:100%;
-    height:100%;
-    object-fit: cover;
-    object-position:center;
-    display:block;
-  }
-  .postAvatar .init{ font-weight:900; color:#e6e6e6; }
+  .postAvatar img{ width:100%; height:100%; object-fit: cover; display:block; }
+  .postAvatar .init{ font-weight:900; color: var(--fb-text); }
 
   .postHeadText{ min-width:0; }
-  .postNameLine{
-    display:flex;
-    align-items:center;
-    gap:8px;
-    flex-wrap:wrap;
-  }
-
-  /* ✅ nome menor estilo facebook */
+  .postNameLine{ display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
   .postName{
     font-weight:900;
-    font-size:16px;
-    color:#ffffff;
-    text-shadow:none;
+    font-size:15px;
+    color: var(--fb-text);
     overflow:hidden;
     text-overflow:ellipsis;
     white-space:nowrap;
@@ -785,18 +732,25 @@
   }
   .postWhen{
     font-size:12px;
-    color: rgba(255,255,255,.70);
-    opacity:1;
+    color: var(--fb-muted);
     margin-top:3px;
+  }
+
+  .post p{
+    margin:10px 0 0 0;
+    font-size:14px;
+    line-height:1.35;
+    color: rgba(228,230,235,.95);
   }
 
   .post .mediaWrap img,
   .post .mediaWrap video{
     width:100%;
-    border-radius:12px;
+    border-radius: 14px;
     margin-top:10px;
     background:#000;
     display:block;
+    border:1px solid rgba(255,255,255,.08);
   }
 
   .post-actions{
@@ -806,73 +760,82 @@
     flex-wrap: wrap;
     gap: 8px;
   }
-
-  /* ✅ botões menores e mais “facebook” */
   .btn-action{
-    color:#eaeaea;
-    padding:8px 10px;
-    border-radius:10px;
-    font-weight:800;
+    color: var(--fb-text);
+    padding: 10px 12px;
+    border-radius: 10px;
+    font-weight:900;
     cursor:pointer;
-    transition:0.2s;
+    transition:0.15s;
     text-align:center;
     border: 1px solid rgba(255,255,255,.10);
     background: rgba(255,255,255,.06);
     user-select:none;
     font-size:14px;
+    min-width: 150px;
   }
+  .btn-action:hover{ background: rgba(255,255,255,.08); }
   .btn-action:active{ transform: scale(.99); }
 
   .contador{
     margin-top:6px;
     font-size:12px;
-    color: rgba(255,255,255,.78);
+    color: var(--fb-muted);
     text-align:center;
-    opacity:1;
     line-height:1.35;
     word-break: break-word;
   }
 
   .coment-area{
-    background:#0f0f0f;
+    background: rgba(255,255,255,.04);
     padding:10px;
     margin-top:10px;
-    border-radius:12px;
+    border-radius: 14px;
     display:none;
     border:1px solid rgba(255,255,255,.10);
   }
 
-  .menu-btn {
+  .menu-btn{
     position: absolute;
     top: 10px;
     right: 10px;
-    font-size: 26px;
-    cursor: pointer;
-    color: rgba(255,255,255,.85);
-    z-index: 10;
-    user-select:none;
-  }
-  .menu-box {
-    position: absolute;
-    top: 45px;
-    right: 10px;
-    background: #ffffff;
-    color: #000;
-    padding: 10px 15px;
+    width: 36px; height: 36px;
     border-radius: 10px;
+    display:flex; align-items:center; justify-content:center;
+    font-size: 18px;
+    cursor: pointer;
+    color: rgba(255,255,255,.90);
+    background: rgba(255,255,255,.06);
+    border: 1px solid rgba(255,255,255,.08);
+    user-select:none;
+    z-index: 10;
+  }
+  .menu-btn:hover{ background: rgba(255,255,255,.08); }
+
+  .menu-box{
+    position: absolute;
+    top: 52px;
+    right: 10px;
+    background: #FFFFFF;
+    color: #111;
+    padding: 8px 10px;
+    border-radius: 12px;
     display: none;
     cursor: pointer;
-    font-weight: bold;
+    font-weight: 900;
     box-shadow: 0 12px 24px rgba(0,0,0,.35);
     z-index: 15;
+    min-width: 120px;
   }
+  .menu-box div{ padding: 8px 6px; border-radius: 10px; }
+  .menu-box div:hover{ background: rgba(0,0,0,.06); }
 
   .cRow{
     position:relative;
-    background:#0a0a0a;
+    background: rgba(255,255,255,.03);
     border:1px solid rgba(255,255,255,.10);
     padding:10px 44px 10px 10px;
-    border-radius:10px;
+    border-radius: 14px;
     margin-bottom:8px;
   }
   .cHead{
@@ -882,27 +845,20 @@
     margin-bottom:6px;
     min-width:0;
   }
-
-  /* ✅ avatar do comentário menor e SEM borda verde */
   .cAvatar{
     width:30px; height:30px;
     border-radius:50%;
     overflow:hidden;
-    background:#111;
-    border:none;
+    background:#3A3B3C;
+    border:1px solid rgba(255,255,255,.08);
     flex:0 0 auto;
     display:flex; align-items:center; justify-content:center;
     cursor:pointer;
-    box-shadow:none;
   }
-  .cAvatar img{
-    width:100%; height:100%;
-    object-fit: cover;
-    display:block;
-  }
+  .cAvatar img{ width:100%; height:100%; object-fit: cover; display:block; }
   .cName{
     font-weight:900;
-    color:#ffffff;
+    color: var(--fb-text);
     overflow:hidden;
     text-overflow:ellipsis;
     white-space:nowrap;
@@ -910,36 +866,40 @@
     cursor:pointer;
     font-size:14px;
   }
-  .cText{ opacity:.95; font-size:13px; color: rgba(255,255,255,.88); }
+  .cText{ opacity:.95; font-size:13px; color: rgba(228,230,235,.92); }
 
   .coment-menu-btn{
     position:absolute;
     top:10px;
     right:10px;
-    font-size:20px;
+    width: 34px; height: 34px;
+    border-radius: 10px;
+    display:flex; align-items:center; justify-content:center;
+    font-size:18px;
     cursor:pointer;
-    color: rgba(255,255,255,.85);
+    color: rgba(255,255,255,.90);
+    background: rgba(255,255,255,.06);
+    border: 1px solid rgba(255,255,255,.08);
     user-select:none;
     line-height:1;
   }
   .coment-menu-box{
     position:absolute;
-    top:34px;
+    top:46px;
     right:10px;
     background: #ffffff;
-    color:#000;
-    padding:6px 10px;
-    border-radius:8px;
+    color:#111;
+    padding:8px 10px;
+    border-radius:12px;
     display:none;
     font-weight:900;
     cursor:pointer;
     box-shadow: 0 12px 24px rgba(0,0,0,.35);
     z-index:5;
     line-height:1;
+    min-width: 120px;
   }
-
-  /* ✅ texto do post mais compacto no celular */
-  .post p{ margin:10px 0 0 0; font-size:14px; line-height:1.35; color: rgba(255,255,255,.92); }
+  .coment-menu-box:hover{ background: rgba(0,0,0,.06); }
 
   /* ===================== LOADING ===================== */
   .loadingOverlay{
@@ -953,23 +913,23 @@
   }
   .loadingCard{
     width: min(520px, 92vw);
-    background:#0d0d0d;
-    border:2px solid #00ff8c;
-    border-radius:18px;
-    box-shadow:0 0 25px rgba(0,255,140,.45);
+    background: var(--fb-surface);
+    border:1px solid var(--fb-border);
+    border-radius: 18px;
+    box-shadow: var(--fb-shadow);
     padding:18px;
     text-align:center;
   }
   .spinner{
     width:46px;height:46px;border-radius:50%;
-    border:4px solid rgba(0,255,140,.25);
-    border-top-color:#00ff8c;
+    border:4px solid rgba(255,255,255,.14);
+    border-top-color: var(--fb-blue);
     margin:0 auto 10px auto;
     animation: spin 0.9s linear infinite;
   }
   @keyframes spin{ to{ transform: rotate(360deg);} }
-  .loadingText{ color:#00ff8c; font-weight:900; letter-spacing:.6px; }
-  .loadingSub{ margin-top:6px; color:#fff; opacity:.85; font-size:14px; }
+  .loadingText{ color: var(--fb-text); font-weight:900; letter-spacing:.4px; }
+  .loadingSub{ margin-top:6px; color: var(--fb-text); opacity:.85; font-size:14px; }
 
   .pendingBadge{
     display:inline-block;
@@ -978,7 +938,7 @@
     border-radius:999px;
     background: rgba(255,255,255,.10);
     border:1px solid rgba(255,255,255,.12);
-    color:#fff;
+    color: var(--fb-text);
     font-size:12px;
     font-weight:900;
   }
@@ -997,9 +957,9 @@
   .profileModalCard{
     width: min(820px, 96vw);
     height: min(86vh, 720px);
-    background:#0d0d0d;
-    border: 2px solid rgba(0,255,157,.55);
-    box-shadow: 0 0 22px rgba(0,255,157,.25);
+    background: var(--fb-surface);
+    border: 1px solid rgba(255,255,255,.10);
+    box-shadow: var(--fb-shadow);
     border-radius: 18px;
     overflow:hidden;
     position:relative;
@@ -1011,25 +971,26 @@
     gap:12px;
     padding: 12px 12px;
     border-bottom: 1px solid rgba(255,255,255,.08);
-    background: rgba(0,0,0,.35);
+    background: rgba(0,0,0,.15);
   }
   .profileModalTitle{
     font-weight: 900;
-    color:#00ff9d;
+    color: var(--fb-text);
     display:flex;
     align-items:center;
     gap:10px;
-    letter-spacing:.6px;
+    letter-spacing:.4px;
   }
+  .profileModalTitle i{ color: var(--fb-blue); }
   .profileModalClose{
     border:none;
     border-radius: 12px;
     padding: 10px 12px;
     font-weight: 900;
     cursor:pointer;
-    background:#00ff9d;
-    color:#003b23;
-    box-shadow: 0 0 14px rgba(0,255,157,.25);
+    background: var(--fb-blue);
+    color:#fff;
+    box-shadow: 0 10px 20px rgba(0,0,0,.22);
   }
   .profileModalFrame{
     width:100%;
@@ -1116,18 +1077,18 @@
 </div>
 
 <div class="preview" id="previewBox">
-  <h3>Prévia da mídia</h3>
+  <h3 style="margin:0 0 10px 0;">Prévia da mídia</h3>
   <div id="previewContent"></div>
 
-  <div style="margin-top:15px; display:flex; flex-direction:column; gap:12px;">
+  <div style="margin-top:12px; display:flex; flex-direction:column; gap:10px;">
     <button onclick="removerPreview()"
-      style="width:100%;padding:15px;font-size:20px;font-weight:bold;border:none;border-radius:18px;background:#ff6b6b;color:#fff;cursor:pointer;">
-      Excluir imagem
+      style="width:100%;padding:14px;font-size:16px;font-weight:900;border:none;border-radius:14px;background:var(--fb-red);color:#fff;cursor:pointer;">
+      Excluir mídia
     </button>
 
     <button onclick="postar()"
-      style="width:100%;padding:15px;font-size:22px;font-weight:bold;border:none;border-radius:18px;background:#7bffb5;color:#000;cursor:pointer;">
-      Postar
+      style="width:100%;padding:14px;font-size:16px;font-weight:900;border:none;border-radius:14px;background:var(--fb-blue);color:#fff;cursor:pointer;">
+      Publicar
     </button>
   </div>
 </div>
@@ -1335,7 +1296,7 @@ document.addEventListener("keydown", (e)=>{
   if(loginOverlay.style.display === "flex" && e.key === "Enter"){ confirmarNome(); }
 });
 
-/* Helpers (✅ corrigido escapeHTML e mais compatível) */
+/* Helpers */
 function escapeHTML(str){
   str = (str == null ? "" : String(str));
   return str
@@ -1375,7 +1336,6 @@ function closeProfileModal(){
 profileModal.addEventListener("click", (e)=>{
   if(e.target === profileModal) closeProfileModal();
 });
-function abrirPrevia(uid){ openProfileModal(uid); }
 
 /* limites */
 const MAX_IMG_MB = 15;
@@ -1402,9 +1362,7 @@ function showLoading(title, sub){
   loadingSub.textContent = sub || "Aguarde um instante";
   loadingOverlay.style.display = "flex";
 }
-function hideLoading(){
-  loadingOverlay.style.display = "none";
-}
+function hideLoading(){ loadingOverlay.style.display = "none"; }
 
 /* ====================== ✅ PRESENÇA ONLINE ====================== */
 let presenceRef = null;
@@ -1502,7 +1460,6 @@ function updateAvatarsInDOM(uid, url, name){
     el.textContent = name || "Usuário";
   });
 }
-
 function updateStoryAvatarsInDOM(uid, url, name){
   document.querySelectorAll(`[data-story-avatar-uid="${uid}"]`).forEach(el=>{
     if(url){
@@ -1515,7 +1472,6 @@ function updateStoryAvatarsInDOM(uid, url, name){
     el.textContent = name || "Usuário";
   });
 }
-
 function updateViewerAvatarsInDOM(uid, url, name){
   document.querySelectorAll(`[data-viewer-avatar-uid="${uid}"]`).forEach(el=>{
     if(url){
@@ -1525,7 +1481,6 @@ function updateViewerAvatarsInDOM(uid, url, name){
     }
   });
 }
-
 function updateConnectionsAvatarsInDOM(uid, url, name){
   document.querySelectorAll(`[data-conn-photo-uid="${uid}"]`).forEach(el=>{
     if(url){
@@ -1562,19 +1517,16 @@ function renderBadge(){
   msgBadge.style.display = "inline-flex";
   msgBadge.textContent = unread > 99 ? "99+" : String(unread);
 }
-
 function clearUnread(){
   unread = 0;
   renderBadge();
   try{ localStorage.setItem("chat_unread_count", "0"); }catch(e){}
 }
-
 function incUnread(){
   unread++;
   renderBadge();
   try{ localStorage.setItem("chat_unread_count", String(unread)); }catch(e){}
 }
-
 (function loadUnread(){
   try{
     const v = parseInt(localStorage.getItem("chat_unread_count")||"0", 10);
@@ -1582,7 +1534,6 @@ function incUnread(){
     renderBadge();
   }catch(e){}
 })();
-
 msgBtn.addEventListener("click", ()=>{
   unlockAudioOnce();
   clearUnread();
@@ -1591,7 +1542,6 @@ msgBtn.addEventListener("click", ()=>{
 
 (function listenChatNotifications(){
   const ref = DB.ref(CHAT_MSG_PATH).orderByChild("createdAt").limitToLast(200);
-
   ref.on("child_added", (snap)=>{
     const m = snap.val() || {};
     const id = m.id || snap.key;
@@ -1655,7 +1605,7 @@ async function renderConnections(){
   sec.innerHTML = `
     <div class="connectionsTitle">
       <i class="fa-solid fa-users"></i>
-      <span>CONECTADOS NO FACECUMBA</span>
+      <span>CONECTADOS</span>
     </div>
     <div class="connGrid" id="connGrid"></div>
     <div id="connEmpty" class="connEmpty" style="display:none;">Ninguém online agora. Volte já já 🙂</div>
@@ -1690,7 +1640,6 @@ async function renderConnections(){
 
 (function listenConnectionsPresence(){
   const ref = DB.ref("presence").orderByChild("lastActive").limitToLast(80);
-
   ref.on("value", (snap)=>{
     const obj = snap.val() || {};
     const arr = Object.keys(obj).map(k => obj[k]).filter(Boolean);
@@ -1708,7 +1657,7 @@ async function renderConnections(){
 </script>
 
 <script>
-/* ===================== STORIES estilo Insta ===================== */
+/* ===================== STORIES ===================== */
 const menuTop = document.querySelector('.top-menu');
 
 let allStories = [];
@@ -1886,18 +1835,18 @@ async function renderOwnerPanel(viewsObj, reactsObj){
     const prof = await getAvatarForUID(u.uid, nome);
 
     const ava = prof.url
-      ? `<div style="width:36px;height:36px;border-radius:50%;overflow:hidden;border:1px solid rgba(0,255,140,.25);flex:0 0 auto;cursor:pointer;"
+      ? `<div style="width:36px;height:36px;border-radius:50%;overflow:hidden;border:1px solid rgba(255,255,255,.10);flex:0 0 auto;cursor:pointer;"
               onclick="openProfileModal('${escapeHTML(u.uid)}')">
            <img src="${prof.url}" style="width:100%;height:100%;object-fit:cover;display:block;" alt="avatar">
          </div>`
-      : `<div style="width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;border:1px solid rgba(0,255,140,.25);color:#00ff8c;font-weight:900;flex:0 0 auto;cursor:pointer;"
+      : `<div style="width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;border:1px solid rgba(255,255,255,.10);color:var(--fb-text);font-weight:900;flex:0 0 auto;cursor:pointer;"
               onclick="openProfileModal('${escapeHTML(u.uid)}')">
            ${escapeHTML(initials(nome))}
          </div>`;
 
     const type = u.reactionType;
     const icon = type ? reactionEmoji(type) : "";
-    const color = type==="love" ? "#ff2a2a" : (type==="like" ? "#00ff8c" : (type==="haha" ? "#ffd400" : "#fff"));
+    const color = type==="love" ? "var(--fb-red)" : (type==="like" ? "var(--fb-blue)" : (type==="haha" ? "#F7B928" : "var(--fb-text)"));
 
     return `
       <div class="viewerRow" style="justify-content:space-between;">
@@ -1907,7 +1856,7 @@ async function renderOwnerPanel(viewsObj, reactsObj){
         </div>
 
         <div style="min-width:40px;display:flex;align-items:center;justify-content:flex-end;">
-          ${type ? `<div style="font-size:20px;color:${color};text-shadow:0 0 12px rgba(0,0,0,.4);">${icon}</div>` : `<div style="width:20px;height:20px;opacity:.15;">&nbsp;</div>`}
+          ${type ? `<div style="font-size:20px;color:${color};">${icon}</div>` : `<div style="width:20px;height:20px;opacity:.15;">&nbsp;</div>`}
         </div>
       </div>
     `;
@@ -2116,7 +2065,7 @@ function renderCreateCard(){
   const inputId = "uploadStoryInput";
   card.innerHTML = `
     <div class="plusBtn">+</div>
-    <div class="createLabel">Criar História</div>
+    <div class="createLabel">Criar story</div>
     <input id="${inputId}" type="file" accept="image/*,video/*" style="display:none;">
   `;
   card.onclick = ()=>{
@@ -2136,7 +2085,6 @@ function renderCreateCard(){
   }, 0);
   return card;
 }
-
 function buildSegRow(count){
   const max = Math.min(count, 12);
   return `
@@ -2145,7 +2093,6 @@ function buildSegRow(count){
     </div>
   `;
 }
-
 function renderUserCard(group){
   const card = document.createElement("div");
   card.className = "storyCard";
@@ -2159,9 +2106,7 @@ function renderUserCard(group){
   if((cover.type||"").includes("image")){
     mediaHTML = `<img class="storyMedia" src="${cover.url}" alt="story" loading="lazy">`;
   }else{
-    mediaHTML = `
-      <video class="storyMedia" src="${cover.url}" autoplay muted loop playsinline preload="metadata"></video>
-    `;
+    mediaHTML = `<video class="storyMedia" src="${cover.url}" autoplay muted loop playsinline preload="metadata"></video>`;
   }
 
   const avatarHTML = `
@@ -2192,7 +2137,6 @@ function renderUserCard(group){
 
   return card;
 }
-
 function renderStoriesRow(){
   const row = document.getElementById("storiesRow");
   row.innerHTML = "";
@@ -2207,7 +2151,6 @@ function renderStoriesRow(){
     .sort((a,b)=>(b.last?.createdAt||0)-(a.last?.createdAt||0))
     .forEach(g => row.appendChild(renderUserCard(g)));
 }
-
 async function addStory(file){
   if(precisaLogin()) return;
   try{
@@ -2237,7 +2180,6 @@ async function addStory(file){
     hideLoading();
   }
 }
-
 (function listenStories(){
   const ref = DB.ref("stories").orderByChild("createdAt").limitToLast(500);
   ref.on("value", snap=>{
@@ -2264,13 +2206,7 @@ async function addStory(file){
 </script>
 
 <script>
-/* ===================== ✅ FEED (CORRIGIDO): LAZY LOAD + AUTO PLAY MUDO + SOM SÓ AO TOCAR ===================== */
-/* Melhorias principais:
-   - Vídeo do feed NÃO baixa nem carrega até aparecer na tela (data-src).
-   - Quando some, pausa (para não travar celular).
-   - Som só ao tocar no vídeo.
-   - Se liberou som em um vídeo, os outros voltam para mudo. */
-
+/* ===================== ✅ FEED (PERFORMANCE) ===================== */
 let __feedObserver = null;
 
 function ensureFeedObserver(){
@@ -2282,20 +2218,17 @@ function ensureFeedObserver(){
       if(!v || v.tagName !== "VIDEO") return;
 
       if(entry.isIntersecting && entry.intersectionRatio >= 0.60){
-        // ✅ lazy-set src só quando aparecer (evita travar em celulares)
         try{
           if(!v.__srcSet){
             const ds = v.getAttribute("data-src");
             if(ds){
               v.src = ds;
               v.__srcSet = true;
-              // não baixa tudo: só o necessário pra começar
               try{ v.load(); }catch(e){}
             }
           }
         }catch(e){}
 
-        // auto-play permitido porque está mudo
         try{
           if(!v.__userUnmuted){
             v.muted = true;
@@ -2321,7 +2254,6 @@ function muteAllFeedVideosExcept(exceptVideo){
     }
   });
 }
-
 function setupOneFeedVideo(v){
   if(!v || v.__feedHooked) return;
   v.__feedHooked = true;
@@ -2332,37 +2264,23 @@ function setupOneFeedVideo(v){
     v.__userUnmuted = false;
     v.muted = true;
     v.volume = 1.0;
-
     v.playsInline = true;
     v.setAttribute("playsinline","");
     v.setAttribute("webkit-playsinline","");
-
     v.loop = true;
-
-    // ✅ evita baixar vídeo antes de precisar
     v.preload = "none";
-
-    // marca
     v.setAttribute("data-feedvideo","1");
   }catch(e){}
-
-  v.addEventListener("play", ()=>{
-    try{
-      if(!v.__userUnmuted) v.muted = true;
-    }catch(e){}
-  });
 
   const onUserToggle = ()=>{
     try{
       unlockAudioOnce();
-
       if(v.muted){
         muteAllFeedVideosExcept(v);
         v.__userUnmuted = true;
         v.muted = false;
         v.volume = 1.0;
 
-        // garante src setado antes de tentar tocar com som
         if(!v.__srcSet){
           const ds = v.getAttribute("data-src");
           if(ds){
@@ -2371,7 +2289,6 @@ function setupOneFeedVideo(v){
             try{ v.load(); }catch(e){}
           }
         }
-
         const p = v.play();
         if(p && p.catch) p.catch(()=>{});
       }else{
@@ -2386,7 +2303,6 @@ function setupOneFeedVideo(v){
 
   try{ __feedObserver.observe(v); }catch(e){}
 }
-
 function setupAllFeedVideos(){
   document.querySelectorAll("#feed video").forEach(setupOneFeedVideo);
 }
@@ -2440,8 +2356,8 @@ fileInput.onchange = e=>{
 
   previewContent.innerHTML =
     selectedFile.type.startsWith("image/")
-      ? `<img src="${url}" style="width:100%;border-radius:10px;display:block;" loading="lazy">`
-      : `<video src="${url}" controls preload="metadata" playsinline style="width:100%;border-radius:10px;background:#000;display:block;"></video>`;
+      ? `<img src="${url}" style="width:100%;border-radius:14px;display:block;" loading="lazy">`
+      : `<video src="${url}" controls preload="metadata" playsinline style="width:100%;border-radius:14px;background:#000;display:block;"></video>`;
   previewBox.style.display = "block";
 };
 
@@ -2449,7 +2365,7 @@ async function postarTexto(){
   if(precisaLogin()) return;
   const t = postText.value.trim();
   if(!t) return;
-  showLoading("Postando...", "Publicando no mural");
+  showLoading("Publicando...", "Enviando para o mural");
   try{
     await criarPostFirebase(t, null, null, null);
     playActionSound();
@@ -2483,7 +2399,7 @@ async function postar(){
     _pending: true
   });
 
-  showLoading("Enviando mídia...", "No celular pode demorar um pouco dependendo da internet");
+  showLoading("Enviando mídia...", "No celular pode demorar dependendo da internet");
 
   try{
     await criarPostFirebase(texto, file, file.type, postId);
@@ -2585,14 +2501,14 @@ function atualizarCurtidasUI(postId, likesObj){
   if(my){
     if(my.type === "love"){
       btn.textContent = "❤️ Você amou";
-      btn.style.color = "#ff6aa7";
+      btn.style.color = "var(--fb-red)";
     }else{
       btn.textContent = "👍 Você curtiu";
-      btn.style.color = "#eaeaea";
+      btn.style.color = "var(--fb-text)";
     }
   }else{
     btn.textContent = "👍 Curtir";
-    btn.style.color = "#eaeaea";
+    btn.style.color = "var(--fb-text)";
   }
 
   if(total === 0){ cont.innerHTML = ""; return; }
@@ -2638,7 +2554,6 @@ function abrirComentarios(id){
     }
   };
   commentCloseHandlers[id] = handler;
-
   setTimeout(()=> document.addEventListener("click", handler), 50);
 }
 
@@ -2704,7 +2619,6 @@ function postHTML(id, postData, avatarUrl){
     midia = isImg
       ? `<img src="${postData.mediaUrl}" loading="lazy">`
       : `
-        <!-- ✅ FEED (PERFORMANCE): video lazy-load via data-src -->
         <video
           data-src="${escapeHTML(postData.mediaUrl)}"
           controls
@@ -2776,14 +2690,14 @@ function postHTML(id, postData, avatarUrl){
     </div>
 
     <div class="coment-area" id="comentarios_${id}">
-      <div id="listaComentarios_${id}" style="margin-bottom:15px;"></div>
+      <div id="listaComentarios_${id}" style="margin-bottom:12px;"></div>
 
       <input type="text" id="comentarioInput_${id}"
         placeholder="Escreva um comentário..."
-        style="width:100%;padding:10px;border-radius:8px;border:1px solid rgba(255,255,255,.14);background:#000;color:#fff;">
+        style="width:100%;padding:10px;border-radius:12px;border:1px solid rgba(255,255,255,.12);background:#3A3B3C;color:var(--fb-text);outline:none;">
 
       <button onclick="enviarComentario('${id}')"
-        style="margin-top:8px;background:#fff;border:none;padding:8px 15px;border-radius:8px;cursor:pointer;font-weight:900;">
+        style="margin-top:8px;background:var(--fb-blue);color:#fff;border:none;padding:10px 14px;border-radius:12px;cursor:pointer;font-weight:900;">
         Enviar
       </button>
     </div>
@@ -2834,7 +2748,6 @@ function atualizarPostDoServidor(id, data){
       wrap.innerHTML = isImg
         ? `<img src="${data.mediaUrl}" loading="lazy">`
         : `
-          <!-- ✅ FEED (PERFORMANCE): video lazy-load via data-src -->
           <video
             data-src="${escapeHTML(data.mediaUrl)}"
             controls
@@ -2850,7 +2763,6 @@ function atualizarPostDoServidor(id, data){
   }
 
   el.removeAttribute("data-pending");
-
   ensureConnectionsSection();
   setupAllFeedVideos();
 }
@@ -2860,7 +2772,6 @@ function listenLikes(postId){
     atualizarCurtidasUI(postId, snap.val() || {});
   });
 }
-
 function listenComments(postId){
   DB.ref("comments/" + postId).orderByChild("createdAt").on("value", async snap=>{
     const lista = document.getElementById("listaComentarios_"+postId);
