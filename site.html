@@ -109,7 +109,7 @@
     .logo-left img{ max-height: 54px; }
   }
 
-  /* ======================== MENU ======================== */
+  /* ======================== MENU (BARRA COM ÍCONE + TEXTO ABAIXO) ======================== */
   .top-menu{
     width: 100%;
     background: var(--fb-surface);
@@ -125,6 +125,7 @@
   }
   .top-menu.hide{ display:none !important; }
 
+  /* ✅ cada item vira "botão" com ícone em cima e nome embaixo */
   .top-menu a{
     width: 66px;
     min-width: 66px;
@@ -150,12 +151,14 @@
   }
   .top-menu a:active{ transform: scale(.98); }
 
+  /* ✅ ícones maiores */
   .top-menu a i{
     font-size: 24px;
     color: var(--fb-text);
     line-height:1;
   }
 
+  /* ✅ texto abaixo do ícone */
   .menuLabel{
     font-size: 11px;
     font-weight: 900;
@@ -170,6 +173,7 @@
     padding: 0 2px;
   }
 
+  /* ✅ bolinha online (fica no canto do botão) */
   .menu-online-dot{
     position:absolute;
     top: 8px;
@@ -186,6 +190,7 @@
     50%{ transform: scale(1.25); opacity: .4; }
   }
 
+  /* ✅ adaptação para telas bem pequenas */
   @media(max-width:380px){
     .top-menu{ gap: 8px; padding: 8px 6px; top: 64px; }
     .top-menu a{ width: 62px; min-width:62px; height: 56px; border-radius: 14px; }
@@ -594,22 +599,6 @@
     white-space:nowrap;
     max-width: 70%;
   }
-  .viewerTime{
-    font-size:12px;
-    opacity:.8;
-    white-space:nowrap;
-  }
-  .viewerMiniAva{
-    width:34px;height:34px;border-radius:50%;
-    overflow:hidden;
-    background:#3A3B3C;
-    border:1px solid rgba(255,255,255,.10);
-    flex:0 0 auto;
-    display:flex;align-items:center;justify-content:center;
-    font-weight:900;
-    color: var(--fb-text);
-  }
-  .viewerMiniAva img{ width:100%; height:100%; object-fit:cover; display:block; }
 
   /* ===================== ✅ REAÇÕES DO STORY ===================== */
   .reactionBar{
@@ -803,17 +792,6 @@
     background:#000;
     display:block;
     border:1px solid rgba(255,255,255,.08);
-  }
-
-  /* ✅ vídeo clicável (play/pause invisível) */
-  .feedVideoWrap{
-    position:relative;
-    margin-top:10px;
-  }
-  .feedVideoWrap video{
-    margin-top:0 !important;
-    cursor: pointer;
-    -webkit-tap-highlight-color: transparent;
   }
 
   .post-actions{
@@ -1096,7 +1074,7 @@
   </div>
 </div>
 
-<!-- ✅ TOPO -->
+<!-- ✅ TOPO: LOGO À ESQUERDA + MESSENGER À DIREITA -->
 <div class="logo-bar">
   <div class="logo-left">
     <img src="https://i.ibb.co/h1RmgKSX/Chat-GPT-Image-17-12-2025-21-32-09.png" alt="Logo" loading="eager" fetchpriority="high">
@@ -1108,7 +1086,7 @@
   </button>
 </div>
 
-<!-- ✅ MENU -->
+<!-- ✅ MENU (ÍCONE + NOME ABAIXO) -->
 <nav class="top-menu" aria-label="Menu principal">
   <a href="https://marcio2307.github.io/terreiro/estudo.html" title="Estudo" aria-label="Estudo">
     <i class="fa-solid fa-book"></i>
@@ -1289,6 +1267,7 @@ function rememberUnmutedFeedVideo(){
     }catch(e){}
   });
 }
+
 function forceMuteAllFeedVideos(){
   document.querySelectorAll("#feed video[data-feedvideo='1']").forEach(v=>{
     try{
@@ -1298,6 +1277,7 @@ function forceMuteAllFeedVideos(){
     }catch(e){}
   });
 }
+
 function restoreFeedVideoAudioIfPossible(){
   if(!__lastUnmutedFeedVideo) return;
   const v = __lastUnmutedFeedVideo;
@@ -1310,7 +1290,6 @@ function restoreFeedVideoAudioIfPossible(){
   try{
     unlockAudioOnce();
     v.__userUnmuted = true;
-    v.__userPaused = false;
     v.muted = false;
     v.volume = 1.0;
 
@@ -1348,6 +1327,7 @@ function ensureRadio(){
   radio.addEventListener("ended", ()=>{ setRadioUI(false); onRadioStateChange(false); });
   radio.addEventListener("error", ()=>{ setRadioUI(false); onRadioStateChange(false); });
 }
+
 function onRadioStateChange(isPlaying){
   radioPlaying = !!isPlaying;
 
@@ -1360,12 +1340,14 @@ function onRadioStateChange(isPlaying){
     restoreFeedVideoAudioIfPossible();
   }
 }
+
 function setRadioUI(isPlaying){
   radioPlaying = !!isPlaying;
   const icon = document.getElementById("radioIcon");
   if(!icon) return;
   icon.className = radioPlaying ? "fa-solid fa-pause" : "fa-solid fa-radio";
 }
+
 function toggleRadio(){
   ensureRadio();
   unlockAudioOnce();
@@ -1424,6 +1406,7 @@ function confirmarNome(){
 (function exigirLogin(){
   if(!USER_NAME) abrirLogin();
 })();
+
 function precisaLogin(){
   if(!USER_NAME){ abrirLogin(); return true; }
   return false;
@@ -1792,12 +1775,9 @@ async function renderConnections(){
 })();
 </script>
 
-<!-- ===================== ✅ STORIES COMPLETO (COM VIEWER, QUEM VIU, REAÇÕES, EXCLUIR) ===================== -->
 <script>
 /* ===================== STORIES ===================== */
 const menuTop = document.querySelector('.top-menu');
-
-const storiesRow = document.getElementById("storiesRow");
 
 let allStories = [];
 let groupedStories = [];
@@ -1828,17 +1808,6 @@ const reactHaha = document.getElementById("reactHaha");
 let reactionsRef = null;
 let _latestViewsObj = {};
 let _latestReactsObj = {};
-
-const STORY_MAX_SECONDS_IMG = 6;
-const STORY_MAX_SECONDS_VID = 12;
-const STORY_WINDOW_MS = 24 * 60 * 60 * 1000;
-
-/* input hidden pro story */
-const storyInput = document.createElement("input");
-storyInput.type = "file";
-storyInput.accept = "image/*,video/*";
-storyInput.style.display = "none";
-document.body.appendChild(storyInput);
 
 function reactionEmoji(type){
   if(type === "love") return "❤️";
@@ -1938,326 +1907,76 @@ function detachViewersListener(){
   }catch(e){}
 }
 
-/* ======= Render cards ======= */
-function sortGroups(){
-  groupedStories.sort((a,b)=>{
-    const at = (a.latestAt||0);
-    const bt = (b.latestAt||0);
-    /* seu story primeiro */
-    if(a.uid === UID && b.uid !== UID) return -1;
-    if(b.uid === UID && a.uid !== UID) return 1;
-    return bt - at;
-  });
-}
-
-function storyCardHTML(group){
-  const uid = group.uid || "";
-  const name = group.name || "Usuário";
-  const first = group.items[ group.items.length - 1 ] || group.items[0];
-  const isVideo = (first.mediaType||"").startsWith("video/");
-  const thumb = first.mediaUrl || "";
-
-  const avatarHolder = `
-    <div class="avatarCircle" data-story-avatar-uid="${escapeHTML(uid)}">
-      <div class="avatarInitials">${escapeHTML(initials(name))}</div>
-    </div>
-  `;
-
-  const media = isVideo
-    ? `<video class="storyMedia" src="${escapeHTML(thumb)}" muted playsinline webkit-playsinline preload="metadata"></video>`
-    : `<img class="storyMedia" src="${escapeHTML(thumb)}" alt="story" loading="lazy">`;
-
-  return `
-    <div class="storyCard" onclick="openStoryGroup('${escapeHTML(uid)}')">
-      ${media}
-      <div class="storyShade"></div>
-      ${avatarHolder}
-      <div class="storyName" data-story-name-uid="${escapeHTML(uid)}">${escapeHTML(name)}</div>
-    </div>
-  `;
-}
-
-function createCardHTML(){
-  return `
-    <div class="storyCard createCard" onclick="createStory()">
-      <div class="plusBtn">+</div>
-      <div class="createLabel">Criar story</div>
-    </div>
-  `;
-}
-
-async function renderStories(){
-  if(!storiesRow) return;
-
-  sortGroups();
-
-  let html = createCardHTML();
-
-  const cards = await Promise.all(groupedStories.map(async g=>{
-    const prof = await getAvatarForUID(g.uid, g.name || "Usuário");
-    g.name = prof.name || g.name || "Usuário";
-    g.avatarUrl = prof.url || "";
-    return storyCardHTML(g);
-  }));
-
-  html += cards.join("");
-  storiesRow.innerHTML = html;
-
-  /* aplica avatar real no círculo (se tiver) */
-  groupedStories.forEach(async g=>{
-    const prof = await getAvatarForUID(g.uid, g.name);
-    updateStoryAvatarsInDOM(g.uid, prof.url, prof.name);
-  });
-
-  /* pausa mini vídeos das capas (só visual) */
-  storiesRow.querySelectorAll("video.storyMedia").forEach(v=>{
-    try{ v.play().catch(()=>{}); }catch(e){}
-  });
-}
-
-/* ======= Create story ======= */
-async function createStory(){
-  if(precisaLogin()) return;
-  storyInput.value = "";
-  storyInput.click();
-}
-
-storyInput.addEventListener("change", async (e)=>{
-  if(precisaLogin()) return;
-  const file = e.target.files && e.target.files[0];
-  if(!file) return;
-  if(!checkSize(file)) return;
-
-  const isVid = file.type.startsWith("video/");
-  showLoading("Enviando story...", isVid ? "Vídeo pode demorar um pouco" : "Aguarde um instante");
-  try{
-    const storyId = "story_" + Date.now() + "_" + Math.random().toString(36).slice(2);
-    const storagePath = `stories/${UID}/${storyId}`;
-    const ref = ST.ref().child(storagePath);
-    await ref.put(file, { contentType: file.type });
-    const url = await ref.getDownloadURL();
-
-    await DB.ref("stories/" + storyId).set({
-      id: storyId,
-      uid: UID,
-      userName: USER_NAME,
-      mediaUrl: url,
-      mediaType: file.type,
-      createdAt: firebase.database.ServerValue.TIMESTAMP,
-      storagePath
-    });
-
-    playActionSound();
-  }catch(err){
-    console.log(err);
-    alert("Erro ao enviar story.");
-  }finally{
-    hideLoading();
-  }
-});
-
-/* ======= Load stories do Firebase (últimas 24h) ======= */
-function groupStoriesFromList(list){
-  const now = Date.now();
-  const valid = list
-    .filter(s=>s && s.id && s.mediaUrl && s.createdAt)
-    .filter(s=> (now - (s.createdAt||0)) <= STORY_WINDOW_MS)
-    .sort((a,b)=> (a.createdAt||0) - (b.createdAt||0));
-
+async function renderOwnerPanel(viewsObj, reactsObj){
+  const views = viewsObj || {};
+  const reacts = reactsObj || {};
   const map = new Map();
-  valid.forEach(s=>{
-    const key = s.uid || "x";
-    if(!map.has(key)){
-      map.set(key, { uid: key, name: s.userName || "Usuário", items: [], latestAt: 0 });
-    }
-    const g = map.get(key);
-    g.items.push(s);
-    g.latestAt = Math.max(g.latestAt, s.createdAt||0);
-    g.name = s.userName || g.name;
+
+  Object.keys(views).forEach(uid=>{
+    const v = views[uid];
+    if(!v || !uid) return;
+    map.set(uid, { uid, userName: v.userName || "Usuário", viewedAt: v.viewedAt || 0, reactionType: null, reactedAt: 0 });
   });
 
-  groupedStories = Array.from(map.values());
-}
-
-(function listenStories(){
-  const ref = DB.ref("stories").orderByChild("createdAt").limitToLast(200);
-  ref.on("value", (snap)=>{
-    const obj = snap.val() || {};
-    allStories = Object.keys(obj).map(k => obj[k]).filter(Boolean);
-
-    groupStoriesFromList(allStories);
-    renderStories().catch(()=>{});
+  Object.keys(reacts).forEach(uid=>{
+    const r = reacts[uid];
+    if(!r || !uid) return;
+    const cur = map.get(uid) || { uid, userName: r.userName || "Usuário", viewedAt: 0, reactionType: null, reactedAt: 0 };
+    cur.userName = r.userName || cur.userName || "Usuário";
+    cur.reactionType = r.type || null;
+    cur.reactedAt = r.createdAt || 0;
+    map.set(uid, cur);
   });
-})();
 
-/* ======= Viewer open/close ======= */
-function stopViewerTimer(){
-  if(viewerTimer){
-    clearTimeout(viewerTimer);
-    viewerTimer = null;
-  }
-}
-function buildBars(count){
-  bars.innerHTML = "";
-  for(let i=0;i<count;i++){
-    const b = document.createElement("div");
-    b.className = "bar";
-    const f = document.createElement("div");
-    f.className = "barFill";
-    b.appendChild(f);
-    bars.appendChild(b);
-  }
-}
-function setBarProgress(index, pct){
-  const el = bars.children[index];
-  if(!el) return;
-  const fill = el.querySelector(".barFill");
-  if(fill) fill.style.width = (pct||0) + "%";
-}
-function fillPreviousBars(idx){
-  for(let i=0;i<idx;i++) setBarProgress(i, 100);
-  for(let i=idx+1;i<bars.children.length;i++) setBarProgress(i, 0);
-}
+  const arr = Array.from(map.values()).sort((a,b)=>{
+    const ta = Math.max(a.viewedAt||0, a.reactedAt||0);
+    const tb = Math.max(b.viewedAt||0, b.reactedAt||0);
+    return tb - ta;
+  });
 
-function openViewer(){
-  viewer.style.display = "flex";
-  document.body.style.overflow = "hidden";
-  if(menuTop) menuTop.classList.add("hide");
-}
-function closeViewer(){
-  stopViewerTimer();
-  detachViewersListener();
-  detachReactionsListener();
-  closeViewersPanel();
-
-  /* para vídeos do viewer */
-  try{
-    const v = viewerMedia.querySelector("video");
-    if(v){ v.pause(); v.src = ""; }
-  }catch(e){}
-
-  viewerMedia.innerHTML = "";
-  viewer.style.display = "none";
-  document.body.style.overflow = "";
-  if(menuTop) menuTop.classList.remove("hide");
-
-  deleteBtn.style.display = "none";
-  reactionBar.style.display = "none";
-  viewerFooter.style.display = "none";
-  dots.style.display = "block";
-  resetReactionButtons();
-}
-
-viewer.addEventListener("click", (e)=>{
-  /* clique fora da mídia fecha */
-  const inside = viewerMedia.contains(e.target) || bars.contains(e.target) || reactionBar.contains(e.target) || viewerFooter.contains(e.target) || e.target === tapLeft || e.target === tapRight || e.target === dots || e.target === deleteBtn;
-  if(!inside) closeViewer();
-});
-
-document.addEventListener("keydown", (e)=>{
-  if(viewer.style.display === "flex" && e.key === "Escape") closeViewer();
-});
-
-/* ======= dots / delete ======= */
-dots.addEventListener("click", (e)=>{
-  e.stopPropagation();
-  const s = activeStories[current];
-  if(!s) return;
-  if(s.uid !== UID){
-    deleteBtn.style.display = "none";
-    return;
-  }
-  deleteBtn.style.display = (deleteBtn.style.display === "block" ? "none" : "block");
-});
-
-deleteBtn.addEventListener("click", async (e)=>{
-  e.stopPropagation();
-  const s = activeStories[current];
-  if(!s || s.uid !== UID) return;
-
-  if(!confirm("Excluir este story?")) return;
-
-  showLoading("Excluindo...", "Removendo story");
-  try{
-    await DB.ref("stories/" + s.id).remove();
-    await DB.ref("storyViews/" + s.id).remove().catch(()=>{});
-    await DB.ref("storyReactions/" + s.id).remove().catch(()=>{});
-    if(s.storagePath){
-      await ST.ref().child(s.storagePath).delete().catch(()=>{});
-    }
-    playActionSound();
-    hideLoading();
-
-    /* se não tiver mais stories no grupo, fecha */
-    const g = groupedStories.find(x=>x.uid === s.uid);
-    if(!g || !g.items || g.items.length <= 1){
-      closeViewer();
-    }else{
-      /* tenta seguir pro próximo */
-      nextStory();
-    }
-  }catch(err){
-    console.log(err);
-    hideLoading();
-    alert("Erro ao excluir.");
-  }
-});
-
-/* ======= Views + Reactions listeners ======= */
-async function markViewed(story){
-  try{
-    if(!story || !story.id) return;
-    if(precisaLogin()) return;
-
-    await DB.ref(`storyViews/${story.id}/${UID}`).set({
-      uid: UID,
-      userName: USER_NAME,
-      createdAt: firebase.database.ServerValue.TIMESTAMP
-    });
-  }catch(e){}
-}
-
-function updateSeenUIForOwner(storyId, viewsObj){
-  const entries = Object.values(viewsObj || {});
-  const total = entries.length;
-  if(total <= 0){
+  const totalViews = Object.keys(views).length;
+  if(totalViews === 0){
     seenText.textContent = "Ninguém viu ainda";
-    viewersPanel.innerHTML = "";
-    return;
+  }else{
+    const viewArr = Object.keys(views).map(uid=>views[uid]).filter(Boolean).sort((a,b)=>(a.viewedAt||0)-(b.viewedAt||0));
+    const first = viewArr[0]?.userName || "Alguém";
+    if(totalViews === 1) seenText.textContent = `${first} viu este story`;
+    else seenText.textContent = `${first} e mais ${totalViews-1} viram este story`;
   }
-  const names = entries
-    .sort((a,b)=>(b.createdAt||0)-(a.createdAt||0))
-    .slice(0, 3)
-    .map(v=>v.uid === UID ? "Você" : (v.userName || "Usuário"));
 
-  seenText.textContent = total === 1 ? `Visto por ${names[0]}` : `Visto por ${names.join(", ")} (+${Math.max(0,total-3)})`;
-}
-
-async function renderViewersPanel(storyId, viewsObj){
-  const entries = Object.values(viewsObj || {})
-    .sort((a,b)=>(b.createdAt||0)-(a.createdAt||0));
-
-  if(!entries.length){
-    viewersPanel.innerHTML = "";
+  if(!arr.length){
+    viewersPanel.innerHTML = `<div style="padding:10px;opacity:.9;">Ninguém ainda.</div>`;
     return;
   }
 
-  const rows = await Promise.all(entries.map(async v=>{
-    const prof = await getAvatarForUID(v.uid, v.userName || "Usuário");
-    const name = prof.name || v.userName || "Usuário";
-    const time = v.createdAt ? fmtDate(v.createdAt) : "";
+  const rows = await Promise.all(arr.map(async u=>{
+    const nome = (u.userName || "Usuário");
+    const prof = await getAvatarForUID(u.uid, nome);
 
     const ava = prof.url
-      ? `<div class="viewerMiniAva" data-viewer-avatar-uid="${escapeHTML(v.uid)}"><img src="${prof.url}" alt="avatar" loading="lazy"></div>`
-      : `<div class="viewerMiniAva" data-viewer-avatar-uid="${escapeHTML(v.uid)}">${escapeHTML(initials(name))}</div>`;
+      ? `<div style="width:36px;height:36px;border-radius:50%;overflow:hidden;border:1px solid rgba(255,255,255,.10);flex:0 0 auto;cursor:pointer;"
+              onclick="openProfileModal('${escapeHTML(u.uid)}')">
+           <img src="${prof.url}" style="width:100%;height:100%;object-fit:cover;display:block;" alt="avatar" loading="lazy">
+         </div>`
+      : `<div style="width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;border:1px solid rgba(255,255,255,.10);color:var(--fb-text);font-weight:900;flex:0 0 auto;cursor:pointer;"
+              onclick="openProfileModal('${escapeHTML(u.uid)}')">
+           ${escapeHTML(initials(nome))}
+         </div>`;
+
+    const type = u.reactionType;
+    const icon = type ? reactionEmoji(type) : "";
+    const color = type==="love" ? "var(--fb-red)" : (type==="like" ? "var(--fb-blue)" : (type==="haha" ? "#F7B928" : "var(--fb-text)"));
 
     return `
-      <div class="viewerRow">
+      <div class="viewerRow" style="justify-content:space-between;">
         <div style="display:flex;align-items:center;gap:10px;min-width:0;">
           ${ava}
-          <div class="viewerName" style="min-width:0;">${escapeHTML(name)}</div>
+          <div class="viewerName" style="max-width: 64vw;" onclick="openProfileModal('${escapeHTML(u.uid)}')">${escapeHTML(nome)}</div>
         </div>
-        <div class="viewerTime">${escapeHTML(time)}</div>
+
+        <div style="min-width:40px;display:flex;align-items:center;justify-content:flex-end;">
+          ${type ? `<div style="font-size:20px;color:${color};">${icon}</div>` : `<div style="width:20px;height:20px;opacity:.15;">&nbsp;</div>`}
+        </div>
       </div>
     `;
   }));
@@ -2265,227 +1984,368 @@ async function renderViewersPanel(storyId, viewsObj){
   viewersPanel.innerHTML = rows.join("");
 }
 
-function attachViewersListener(story){
+async function markStoryView(story){
+  try{
+    if(!story || !story.id) return;
+    if(precisaLogin()) return;
+    if(story.uid === UID) return;
+    await DB.ref(`storyViews/${story.id}/${UID}`).set({
+      uid: UID,
+      userName: USER_NAME,
+      viewedAt: firebase.database.ServerValue.TIMESTAMP
+    });
+  }catch(e){}
+}
+
+function attachOwnerListeners(story){
   detachViewersListener();
+  detachReactionsListener();
+  closeViewersPanel();
+
+  viewersPanel.innerHTML = `<div style="padding:10px;opacity:.9;">Carregando...</div>`;
+  seenText.textContent = "Carregando visualizações...";
+
   if(!story || !story.id) return;
 
-  CAN_SEE_VIEWERS = (story.uid === UID);
-  viewerFooter.style.display = CAN_SEE_VIEWERS ? "block" : "none";
-  if(!CAN_SEE_VIEWERS) return;
+  _latestViewsObj = {};
+  _latestReactsObj = {};
 
-  viewersRef = DB.ref("storyViews/" + story.id);
-  viewersRef.on("value", async (snap)=>{
+  viewersRef = DB.ref(`storyViews/${story.id}`);
+  viewersRef.on("value", snap=>{
     _latestViewsObj = snap.val() || {};
-    updateSeenUIForOwner(story.id, _latestViewsObj);
-    if(viewersPanelOpen){
-      await renderViewersPanel(story.id, _latestViewsObj);
-    }else{
-      /* atualiza lista pronta mas escondida */
-      await renderViewersPanel(story.id, _latestViewsObj);
-    }
+    renderOwnerPanel(_latestViewsObj, _latestReactsObj);
+  });
+
+  reactionsRef = DB.ref(`storyReactions/${story.id}`);
+  reactionsRef.on("value", snap=>{
+    _latestReactsObj = snap.val() || {};
+    renderOwnerPanel(_latestViewsObj, _latestReactsObj);
   });
 }
 
-function attachReactionsListener(story){
-  detachReactionsListener();
-  if(!story || !story.id) return;
+/* VIEWER */
+function openViewer(idx){
+  current = idx;
+  viewer.style.display = "flex";
+  menuTop.classList.add("hide");
+  showStory();
+}
+function closeViewer(){
+  stopVideo();
+  viewer.style.display = "none";
+  deleteBtn.style.display = "none";
+  menuTop.classList.remove("hide");
+  clearTimeout(viewerTimer);
+  viewerTimer = null;
 
-  if(story.uid === UID){
-    reactionBar.style.display = "none";
-    resetReactionButtons();
-    return;
-  }else{
-    reactionBar.style.display = "flex";
+  detachViewersListener();
+  detachReactionsListener();
+  closeViewersPanel();
+
+  reactionBar.style.display = "none";
+  resetReactionButtons();
+}
+function showStory(){
+  clearTimeout(viewerTimer);
+  viewerTimer = null;
+
+  viewerMedia.innerHTML = "";
+  bars.innerHTML = "";
+
+  const total = activeStories.length;
+  for(let i=0;i<total;i++){
+    const bar = document.createElement("div");
+    bar.className = "bar";
+    const fill = document.createElement("div");
+    fill.className = "barFill";
+    bar.appendChild(fill);
+    bars.appendChild(bar);
+    if(i<current) fill.style.width="100%";
+    if(i===current) fill.id="currentFill";
   }
 
-  reactionsRef = DB.ref("storyReactions/" + story.id);
-  reactionsRef.on("value", (snap)=>{
-    _latestReactsObj = snap.val() || {};
-    const my = _latestReactsObj[UID];
-    if(my && my.type) selectReactionButton(my.type);
-    else resetReactionButtons();
-  });
-}
-
-/* ======= Play story item ======= */
-function clearMedia(){
-  stopViewerTimer();
-  try{
-    const v = viewerMedia.querySelector("video");
-    if(v){ v.pause(); }
-  }catch(e){}
-  viewerMedia.innerHTML = "";
-}
-function startProgress(durationMs){
-  const fill = bars.children[current]?.querySelector(".barFill");
-  if(!fill) return;
-
-  fill.style.transition = "none";
-  fill.style.width = "0%";
-  void fill.offsetWidth;
-  fill.style.transition = `width ${durationMs}ms linear`;
-  fill.style.width = "100%";
-
-  stopViewerTimer();
-  viewerTimer = setTimeout(()=>{
-    nextStory();
-  }, durationMs);
-}
-
-function playCurrentStory(){
   const s = activeStories[current];
-  if(!s) return;
-
-  /* UI */
-  fillPreviousBars(current);
-  setBarProgress(current, 0);
+  if(!s){ closeViewer(); return; }
 
   deleteBtn.style.display = "none";
-  dots.style.display = "block";
+  CAN_SEE_VIEWERS = (s.uid === UID);
 
-  /* views / reactions */
-  markViewed(s);
-  attachViewersListener(s);
-  attachReactionsListener(s);
+  if(s.uid !== UID){
+    reactionBar.style.display = "flex";
+    resetReactionButtons();
 
-  clearMedia();
+    markStoryView(s);
 
-  const isVid = (s.mediaType || "").startsWith("video/");
-  if(isVid){
-    const v = document.createElement("video");
-    v.src = s.mediaUrl;
-    v.playsInline = true;
-    v.setAttribute("playsinline","");
-    v.setAttribute("webkit-playsinline","");
-    v.autoplay = true;
-    v.muted = true; /* mantém mudo automático (igual FB) */
-    v.controls = false;
+    DB.ref(`storyReactions/${s.id}/${UID}`).once("value").then(sn=>{
+      const v = sn.val();
+      if(v && v.type) selectReactionButton(v.type);
+      else resetReactionButtons();
+    }).catch(()=>{});
+  }else{
+    reactionBar.style.display = "none";
+    resetReactionButtons();
+  }
 
-    /* toque para ligar/desligar som no story (opcional) */
-    v.addEventListener("click", ()=>{
-      unlockAudioOnce();
-      if(v.muted){ v.muted = false; }
-      else{ v.muted = true; }
-    });
+  if(CAN_SEE_VIEWERS){
+    viewerFooter.style.display = "block";
+    attachOwnerListeners(s);
+  }else{
+    viewerFooter.style.display = "none";
+    detachViewersListener();
+    detachReactionsListener();
+    closeViewersPanel();
+  }
 
-    viewerMedia.appendChild(v);
+  if((s.type||"").includes("image")){
+    const el = document.createElement("img");
+    el.src = s.url;
+    viewerMedia.appendChild(el);
+    runProgress(120000);
+    viewerTimer = setTimeout(()=>nextStory(), 120000);
+  }else{
+    const el = document.createElement("video");
+    el.src = s.url;
+    el.autoplay = true;
 
-    /* duração: pega metadata (limita) */
-    const fallback = STORY_MAX_SECONDS_VID * 1000;
+    /* ✅ STORIES: AGORA TOCA COM SOM (exceto se rádio estiver tocando) */
+    el.muted = radioPlaying ? true : false;
+    el.volume = 1.0;
+    el.controls = true;
+    el.playsInline = true;
+    el.setAttribute("playsinline","");
+    el.setAttribute("webkit-playsinline","");
+    el.preload = "metadata";
 
-    const begin = ()=>{
-      const dur = (v.duration && isFinite(v.duration)) ? Math.min(v.duration, STORY_MAX_SECONDS_VID) : STORY_MAX_SECONDS_VID;
-      startProgress(dur * 1000);
+    el.onloadedmetadata = ()=>{
+      const realDur = (el.duration||0)*1000;
+      const dur = Math.min(realDur||6000, 120000);
+      runProgress(dur);
+      viewerTimer = setTimeout(()=>nextStory(), dur);
     };
 
-    v.addEventListener("loadedmetadata", begin, { once:true });
-    v.addEventListener("ended", ()=> nextStory());
+    viewerMedia.appendChild(el);
 
-    v.play().catch(()=>{});
-    setTimeout(()=>{ /* se metadata não vier, fallback */
-      if(!viewerTimer) startProgress(fallback);
-    }, 600);
-  }else{
-    const img = document.createElement("img");
-    img.src = s.mediaUrl;
-    img.alt = "story";
-    viewerMedia.appendChild(img);
-    startProgress(STORY_MAX_SECONDS_IMG * 1000);
-  }
-
-  /* delete só no seu */
-  if(s.uid === UID){
-    // dots abre o botão
+    /* tenta tocar com som (user gesture já aconteceu ao abrir) */
+    try{
+      unlockAudioOnce();
+      const p = el.play();
+      if(p && p.catch){
+        p.catch(()=>{
+          /* fallback: se algum navegador bloquear som, toca mutado */
+          try{
+            el.muted = true;
+            el.play().catch(()=>{});
+          }catch(e){}
+        });
+      }
+    }catch(e){}
   }
 }
-
-/* ======= Navegação ======= */
-function prevStory(){
-  if(current > 0){
-    current--;
-    playCurrentStory();
-  }else{
-    /* volta grupo anterior */
-    const g = groupedStories.findIndex(x=> x.uid === (activeStories[0]?.uid || ""));
-    if(g > 0){
-      openStoryGroup(groupedStories[g-1].uid, true);
-    }else{
-      closeViewer();
-    }
+function runProgress(ms){
+  const fill = document.getElementById("currentFill");
+  if(!fill) return;
+  fill.style.transition="none";
+  fill.style.width="0";
+  setTimeout(()=>{
+    fill.style.transition = `width ${ms}ms linear`;
+    fill.style.width="100%";
+  }, 40);
+}
+function stopVideo(){
+  const vid = viewerMedia.querySelector("video");
+  if(vid){
+    try{ vid.pause(); }catch(e){}
+    try{ vid.currentTime = 0; }catch(e){}
+    try{ vid.src = ""; }catch(e){}
   }
 }
 function nextStory(){
-  if(current < activeStories.length - 1){
-    current++;
-    playCurrentStory();
-  }else{
-    /* próximo grupo */
-    const uid = activeStories[0]?.uid || "";
-    const g = groupedStories.findIndex(x=> x.uid === uid);
-    if(g >= 0 && g < groupedStories.length - 1){
-      openStoryGroup(groupedStories[g+1].uid, true);
-    }else{
-      closeViewer();
+  stopVideo();
+  current++;
+  if(current >= activeStories.length) closeViewer();
+  else showStory();
+}
+function prevStory(){
+  if(current<=0) return;
+  stopVideo();
+  current--;
+  showStory();
+}
+tapRight.onclick = nextStory;
+tapLeft.onclick = prevStory;
+
+dots.onclick = ()=>{ deleteBtn.style.display = (deleteBtn.style.display==="block" ? "none" : "block"); };
+deleteBtn.onclick = async ()=>{
+  const s = activeStories[current];
+  if(!s) return;
+  try{
+    stopVideo();
+    await DB.ref("stories/" + s.id).remove();
+    await DB.ref("storyViews/" + s.id).remove().catch(()=>{});
+    await DB.ref("storyReactions/" + s.id).remove().catch(()=>{});
+    if(s.storagePath){
+      await ST.ref().child(s.storagePath).delete().catch(()=>{});
     }
+    playActionSound();
+    if(current>0) current--;
+    closeViewer();
+  }catch(err){
+    console.log(err);
+    alert("Erro ao excluir story.");
+  }
+};
+
+/* cards */
+function renderCreateCard(){
+  const card = document.createElement("div");
+  card.className = "storyCard createCard";
+  const inputId = "uploadStoryInput";
+  card.innerHTML = `
+    <div class="plusBtn">+</div>
+    <div class="createLabel">Criar story</div>
+    <input id="${inputId}" type="file" accept="image/*,video/*" style="display:none;">
+  `;
+  card.onclick = ()=>{
+    if(precisaLogin()) return;
+    document.getElementById(inputId).click();
+  };
+  setTimeout(()=>{
+    const upload = document.getElementById(inputId);
+    upload.onchange = e=>{
+      if(precisaLogin()) return;
+      const file = e.target.files[0];
+      if(!file) return;
+      if(!checkSize(file)) { upload.value=""; return; }
+      addStory(file);
+      upload.value = "";
+    };
+  }, 0);
+  return card;
+}
+function buildSegRow(count){
+  const max = Math.min(count, 12);
+  return `
+    <div class="segRow">
+      ${Array.from({length:max}).map(()=>`<div class="seg"></div>`).join("")}
+    </div>
+  `;
+}
+function renderUserCard(group){
+  const card = document.createElement("div");
+  card.className = "storyCard";
+  card.dataset.uid = group.uid;
+
+  const cover = group.last;
+  const uname = group.userName || "Usuário";
+  const segs = buildSegRow(group.items.length);
+
+  let mediaHTML = "";
+  if((cover.type||"").includes("image")){
+    mediaHTML = `<img class="storyMedia" src="${cover.url}" alt="story" loading="lazy">`;
+  }else{
+    /* preview do card continua sem som (correto) */
+    mediaHTML = `<video class="storyMedia" src="${cover.url}" autoplay muted loop playsinline preload="metadata"></video>`;
+  }
+
+  const avatarHTML = `
+    <div class="avatarCircle"
+         data-story-avatar-uid="${escapeHTML(group.uid)}"
+         onclick="event.stopPropagation(); openProfileModal('${escapeHTML(group.uid)}')">
+      <div class="avatarInitials">${escapeHTML(initials(uname))}</div>
+    </div>
+  `;
+
+  card.innerHTML = `
+    ${mediaHTML}
+    <div class="storyShade"></div>
+    ${segs}
+    ${avatarHTML}
+    <div class="storyName" data-story-name-uid="${escapeHTML(group.uid)}">${escapeHTML(uname)}</div>
+  `;
+
+  getAvatarForUID(group.uid, uname).then(({url, name})=>{
+    updateStoryAvatarsInDOM(group.uid, url, name);
+  });
+
+  card.onclick = ()=>{
+    if(group.items.length === 0) return;
+    activeStories = group.items.slice().sort((a,b)=>(a.createdAt||0)-(b.createdAt||0));
+    openViewer(0);
+  };
+
+  return card;
+}
+function renderStoriesRow(){
+  const row = document.getElementById("storiesRow");
+  row.innerHTML = "";
+
+  row.appendChild(renderCreateCard());
+
+  const myGroup = groupedStories.find(g => g.uid === UID);
+  if(myGroup) row.appendChild(renderUserCard(myGroup));
+
+  groupedStories
+    .filter(g => g.uid !== UID)
+    .sort((a,b)=>(b.last?.createdAt||0)-(a.last?.createdAt||0))
+    .forEach(g => row.appendChild(renderUserCard(g)));
+}
+async function addStory(file){
+  if(precisaLogin()) return;
+  try{
+    showLoading("Enviando story...", "Seu vídeo/foto vai aparecer já já");
+    const storyId = "story_" + Date.now() + "_" + Math.random().toString(36).slice(2);
+    const path = `stories/${UID}/${storyId}`;
+    const ref = ST.ref().child(path);
+
+    await ref.put(file, { contentType: file.type });
+    const url = await ref.getDownloadURL();
+
+    const data = {
+      url,
+      type: file.type,
+      uid: UID,
+      userName: USER_NAME,
+      createdAt: firebase.database.ServerValue.TIMESTAMP,
+      storagePath: path
+    };
+
+    await DB.ref("stories/" + storyId).set(data);
+    playActionSound();
+  }catch(err){
+    console.log(err);
+    alert("Erro ao enviar story.");
+  }finally{
+    hideLoading();
   }
 }
+(function listenStories(){
+  const ref = DB.ref("stories").orderByChild("createdAt").limitToLast(500);
+  ref.on("value", snap=>{
+    const obj = snap.val() || {};
+    allStories = Object.keys(obj).map(id=>({id, ...obj[id]}))
+      .sort((a,b)=>(a.createdAt||0)-(b.createdAt||0));
 
-/* cliques esquerda/direita */
-tapLeft.addEventListener("click", (e)=>{ e.stopPropagation(); prevStory(); });
-tapRight.addEventListener("click", (e)=>{ e.stopPropagation(); nextStory(); });
+    const map = {};
+    allStories.forEach(s=>{
+      if(!s.uid) return;
+      if(!map[s.uid]) map[s.uid] = { uid:s.uid, userName:s.userName||"Usuário", items:[] };
+      map[s.uid].items.push(s);
+      map[s.uid].userName = s.userName || map[s.uid].userName;
+    });
 
-/* toque (mobile) */
-tapLeft.addEventListener("touchend", (e)=>{ try{ e.preventDefault(); }catch(_){} prevStory(); }, { passive:false });
-tapRight.addEventListener("touchend", (e)=>{ try{ e.preventDefault(); }catch(_){} nextStory(); }, { passive:false });
+    groupedStories = Object.values(map).map(g=>{
+      const items = g.items.slice().sort((a,b)=>(a.createdAt||0)-(b.createdAt||0));
+      return { uid:g.uid, userName:g.userName, items, last: items[items.length-1] };
+    });
 
-/* ======= Abrir grupo ======= */
-async function openStoryGroup(uid, fromNav){
-  if(!uid) return;
-  const g = groupedStories.find(x=>x.uid === uid);
-  if(!g || !g.items || !g.items.length) return;
-
-  activeStories = g.items.slice().sort((a,b)=>(a.createdAt||0)-(b.createdAt||0));
-  current = 0;
-
-  openViewer();
-  buildBars(activeStories.length);
-  closeViewersPanel();
-
-  /* se abriu por navegação, começa no primeiro não-visto (se for seu, sempre do último?) */
-  if(fromNav){
-    // mantém como padrão (primeiro)
-  }
-
-  playCurrentStory();
-}
-
-/* expõe pra onclick inline */
-window.openStoryGroup = openStoryGroup;
-window.createStory = createStory;
+    renderStoriesRow();
+  });
+})();
 </script>
 
 <script>
-/* ===================== ✅ FEED (AUTO MUTADO / CLIQUE NO VÍDEO: PLAY/PAUSE + SOM) ===================== */
+/* ===================== ✅ FEED (VÍDEOS AUTO / SOM SÓ NO CLIQUE) ===================== */
 let __feedObserver = null;
-let __activeAudioFeedVideo = null;
-
-function pauseAndMuteVideo(v){
-  try{
-    v.__userUnmuted = false;
-    v.__userPaused = true;
-    v.muted = true;
-    v.volume = 1.0;
-    v.pause();
-  }catch(e){}
-}
-
-function pauseAllOtherFeedVideos(exceptVideo){
-  document.querySelectorAll("#feed video[data-feedvideo='1']").forEach(v=>{
-    if(v !== exceptVideo){
-      pauseAndMuteVideo(v);
-    }
-  });
-}
 
 function ensureFeedObserver(){
   if(__feedObserver) return;
@@ -2512,10 +2372,6 @@ function ensureFeedObserver(){
 
         if(entry.intersectionRatio >= 0.25){
           try{
-            /* ✅ se o usuário pausou manualmente, NÃO auto-retomar */
-            if(v.__userPaused) return;
-
-            /* ✅ autoplay sempre mutado */
             if(!v.__userUnmuted){
               v.muted = true;
               v.volume = 1.0;
@@ -2534,6 +2390,17 @@ function ensureFeedObserver(){
   });
 }
 
+function muteAllFeedVideosExcept(exceptVideo){
+  document.querySelectorAll("#feed video[data-feedvideo='1']").forEach(v=>{
+    if(v !== exceptVideo){
+      try{
+        v.__userUnmuted = false;
+        v.muted = true;
+      }catch(e){}
+    }
+  });
+}
+
 function setupOneFeedVideo(v){
   if(!v || v.__feedHooked) return;
   v.__feedHooked = true;
@@ -2542,42 +2409,37 @@ function setupOneFeedVideo(v){
 
   try{
     v.__userUnmuted = false;
-    v.__userPaused = false;
     v.muted = true;
     v.volume = 1.0;
     v.playsInline = true;
     v.setAttribute("playsinline","");
     v.setAttribute("webkit-playsinline","");
     v.loop = true;
-    v.controls = false; /* ✅ sem controles */
     v.preload = "none";
     v.setAttribute("preload","none");
     v.setAttribute("data-feedvideo","1");
   }catch(e){}
 
-  const onVideoToggle = (ev)=>{
-    try{ if(ev) ev.preventDefault(); }catch(e){}
-    try{ if(ev) ev.stopPropagation(); }catch(e){}
-
+  const onUserToggle = ()=>{
     try{
       unlockAudioOnce();
 
-      /* ✅ se rádio está tocando, trava o áudio do feed */
+      /* ✅ se rádio está tocando, travar áudio do feed */
       if(__radioLocksFeedAudio || radioPlaying){
-        pauseAndMuteVideo(v);
+        v.__userUnmuted = false;
+        v.muted = true;
+        v.volume = 1.0;
+        try{ v.play().catch(()=>{}); }catch(e){}
         return;
       }
 
-      /* ✅ toggle invisível: clique no vídeo */
-      if(v.paused){
-        pauseAllOtherFeedVideos(v);
-
-        v.__userPaused = false;
+      if(v.muted){
+        muteAllFeedVideosExcept(v);
         v.__userUnmuted = true;
         v.muted = false;
         v.volume = 1.0;
 
-        __activeAudioFeedVideo = v;
+        /* memoriza último vídeo com som */
         __lastUnmutedFeedVideo = v;
 
         if(!v.__srcSet){
@@ -2591,19 +2453,17 @@ function setupOneFeedVideo(v){
             try{ v.load(); }catch(e){}
           }
         }
-
         const p = v.play();
         if(p && p.catch) p.catch(()=>{});
       }else{
-        pauseAndMuteVideo(v);
-        if(__activeAudioFeedVideo === v) __activeAudioFeedVideo = null;
+        v.__userUnmuted = false;
+        v.muted = true;
       }
     }catch(e){}
   };
 
-  /* ✅ clique direto no vídeo */
-  v.addEventListener("click", onVideoToggle);
-  v.addEventListener("touchend", onVideoToggle, { passive:false });
+  v.addEventListener("click", onUserToggle);
+  v.addEventListener("touchend", onUserToggle, { passive:true });
 
   try{ __feedObserver.observe(v); }catch(e){}
 }
@@ -2762,7 +2622,7 @@ async function criarPostFirebase(texto, fileOrNull, fileTypeOrNull, forcedPostId
   return postId;
 }
 
-/* ======= CURTIR / AMEI (mantido igual) ======= */
+/* ======= CURTIR / AMEI ======= */
 function pressionarCurtir(id){
   longPress[id] = false;
   holdTimer = setTimeout(()=>{
@@ -2824,7 +2684,7 @@ function atualizarCurtidasUI(postId, likesObj){
   cont.innerHTML = `Curtidas (${total}): <b>${nomes.map(escapeHTML).join(", ")}</b>`;
 }
 
-/* ✅ toggle comentários (mantido igual) */
+/* ✅ toggle comentários */
 const commentCloseHandlers = {};
 function fecharComentarios(id){
   const box = document.getElementById("comentarios_"+id);
@@ -2917,7 +2777,7 @@ async function excluirPost(id){
   playActionSound();
 }
 
-/* ===================== HTML DO POST (✅ SEM OVERLAY) ===================== */
+/* ===================== HTML DO POST ===================== */
 function postHTML(id, postData, avatarUrl){
   let midia = "";
   if(postData.mediaUrl){
@@ -2925,15 +2785,14 @@ function postHTML(id, postData, avatarUrl){
     midia = isImg
       ? `<img src="${postData.mediaUrl}" loading="lazy">`
       : `
-        <div class="feedVideoWrap">
-          <video
-            data-src="${escapeHTML(postData.mediaUrl)}"
-            muted
-            loop
-            preload="none"
-            playsinline
-            webkit-playsinline></video>
-        </div>
+        <video
+          data-src="${escapeHTML(postData.mediaUrl)}"
+          controls
+          muted
+          loop
+          preload="none"
+          playsinline
+          webkit-playsinline></video>
       `;
   }
 
@@ -3012,7 +2871,7 @@ function postHTML(id, postData, avatarUrl){
   `;
 }
 
-/* ===================== RENDER OTIMISTA / LISTENERS (mantido) ===================== */
+/* ===================== RENDER OTIMISTA / LISTENERS ===================== */
 function criarPostOptimista(id, postData){
   if(postsCache.has(id)) return;
   postsCache.add(id);
@@ -3032,7 +2891,7 @@ function criarPostOptimista(id, postData){
     listenComments(id);
     updateAvatarsInDOM(uid, url, name);
 
-    setupAllFeedVideos(); /* ✅ importantíssimo */
+    setupAllFeedVideos();
   });
 }
 
@@ -3056,15 +2915,14 @@ function atualizarPostDoServidor(id, data){
       wrap.innerHTML = isImg
         ? `<img src="${data.mediaUrl}" loading="lazy">`
         : `
-          <div class="feedVideoWrap">
-            <video
-              data-src="${escapeHTML(data.mediaUrl)}"
-              muted
-              loop
-              preload="none"
-              playsinline
-              webkit-playsinline></video>
-          </div>
+          <video
+            data-src="${escapeHTML(data.mediaUrl)}"
+            controls
+            muted
+            loop
+            preload="none"
+            playsinline
+            webkit-playsinline></video>
         `;
     }else{
       wrap.innerHTML = "";
@@ -3207,3 +3065,4 @@ window.addEventListener("scroll", ()=>{
 
 </body>
 </html>
+
