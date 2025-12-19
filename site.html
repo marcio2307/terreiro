@@ -1902,7 +1902,6 @@ async function renderOwnerPanel(viewsObj, reactsObj){
   if(totalViews === 0){
     seenText.textContent = "Ninguém viu ainda";
   }else{
-    // tenta pegar um nome legal do primeiro viewer (mais antigo) só pra frase
     const viewArr = Object.keys(views).map(uid=>views[uid]).filter(Boolean).sort((a,b)=>(a.viewedAt||0)-(b.viewedAt||0));
     const first = viewArr[0]?.userName || "Alguém";
     if(totalViews === 1) seenText.textContent = `${first} viu este story`;
@@ -1963,7 +1962,6 @@ async function markStoryView(story){
 }
 
 function attachOwnerListeners(story){
-  // dono do story: escuta views + reacts e renderiza junto no painel
   detachViewersListener();
   detachReactionsListener();
   closeViewersPanel();
@@ -2008,7 +2006,6 @@ function closeViewer(){
   detachReactionsListener();
   closeViewersPanel();
 
-  // esconde barra de reação
   reactionBar.style.display = "none";
   resetReactionButtons();
 }
@@ -2038,15 +2035,12 @@ function showStory(){
 
   CAN_SEE_VIEWERS = (s.uid === UID);
 
-  // ✅ barra de reações: só aparece quando for story de OUTRO usuário
   if(s.uid !== UID){
     reactionBar.style.display = "flex";
     resetReactionButtons();
 
-    // marca visualização
     markStoryView(s);
 
-    // pega minha reação atual para destacar (sem listener pesado)
     DB.ref(`storyReactions/${s.id}/${UID}`).once("value").then(sn=>{
       const v = sn.val();
       if(v && v.type) selectReactionButton(v.type);
@@ -2057,7 +2051,6 @@ function showStory(){
     resetReactionButtons();
   }
 
-  // ✅ dono: vê painel (foto + nome + reação)
   if(CAN_SEE_VIEWERS){
     viewerFooter.style.display = "block";
     attachOwnerListeners(s);
@@ -2068,7 +2061,6 @@ function showStory(){
     closeViewersPanel();
   }
 
-  // mídia
   if((s.type||"").includes("image")){
     const el = document.createElement("img");
     el.src = s.url;
@@ -2306,6 +2298,54 @@ async function addStory(file){
     renderStoriesRow();
   });
 })();
+</script>
+
+<script>
+/* ===================== ✅ FEED: VÍDEO SEM SOM AUTOMÁTICO (SÓ SOM AO CLICAR) ===================== */
+function setupOneFeedVideo(v){
+  if(!v || v.__feedHooked) return;
+  v.__feedHooked = true;
+
+  // impede qualquer auto-play com som
+  try{
+    v.autoplay = false;
+    v.loop = false;
+    v.muted = true;       // ✅ sempre começa mudo
+    v.volume = 1.0;
+    v.playsInline = true;
+    v.setAttribute("playsinline","");
+    v.setAttribute("webkit-playsinline","");
+    v.setAttribute("data-feedvideo","1");
+  }catch(e){}
+
+  // se o navegador tentar tocar sozinho, força mudo
+  v.addEventListener("play", ()=>{
+    try{ v.muted = true; }catch(e){}
+  });
+
+  // clique/tap: libera som e toca
+  const onUserToggle = (e)=>{
+    try{
+      unlockAudioOnce();
+      // primeiro clique: desmuta e dá play
+      if(v.muted){
+        v.muted = false;
+        v.volume = 1.0;
+        v.play().catch(()=>{});
+      }else{
+        // se já está com som, alterna mudo (opcional)
+        v.muted = true;
+      }
+    }catch(err){}
+  };
+
+  v.addEventListener("click", onUserToggle);
+  v.addEventListener("touchend", onUserToggle, { passive:true });
+}
+
+function setupAllFeedVideos(){
+  document.querySelectorAll("#feed video").forEach(setupOneFeedVideo);
+}
 </script>
 
 <script>
@@ -2613,7 +2653,15 @@ function postHTML(id, postData, avatarUrl){
     const isImg = (postData.mediaType || "").startsWith("image/");
     midia = isImg
       ? `<img src="${postData.mediaUrl}" loading="lazy">`
-      : `<video src="${postData.mediaUrl}" controls preload="metadata" playsinline></video>`;
+      : `
+        <!-- ✅ FEED: começa MUDO e só sai do mudo ao clicar -->
+        <video src="${postData.mediaUrl}"
+          controls
+          muted
+          preload="metadata"
+          playsinline
+          webkit-playsinline></video>
+      `;
   }
 
   const texto = escapeHTML(postData.text || "");
@@ -2709,6 +2757,9 @@ function criarPostOptimista(id, postData){
     listenLikes(id);
     listenComments(id);
     updateAvatarsInDOM(uid, url, name);
+
+    // ✅ aplica regra do vídeo do feed
+    setupAllFeedVideos();
   });
 }
 
@@ -2731,7 +2782,15 @@ function atualizarPostDoServidor(id, data){
       const isImg = (data.mediaType||"").startsWith("image/");
       wrap.innerHTML = isImg
         ? `<img src="${data.mediaUrl}" loading="lazy">`
-        : `<video src="${data.mediaUrl}" controls preload="metadata" playsinline></video>`;
+        : `
+          <!-- ✅ FEED: começa MUDO e só sai do mudo ao clicar -->
+          <video src="${data.mediaUrl}"
+            controls
+            muted
+            preload="metadata"
+            playsinline
+            webkit-playsinline></video>
+        `;
     }else{
       wrap.innerHTML = "";
     }
@@ -2740,6 +2799,9 @@ function atualizarPostDoServidor(id, data){
   el.removeAttribute("data-pending");
 
   ensureConnectionsSection();
+
+  // ✅ aplica regra do vídeo do feed
+  setupAllFeedVideos();
 }
 
 function listenLikes(postId){
@@ -2846,6 +2908,9 @@ function pumpRenderQueue(){
         updateAvatarsInDOM(it.data.uid, prof.url, prof.name);
 
         ensureConnectionsSection();
+
+        // ✅ aplica regra do vídeo do feed
+        setupAllFeedVideos();
       }
       n++;
     }
@@ -2854,12 +2919,14 @@ function pumpRenderQueue(){
     }else{
       pumping = false;
       ensureConnectionsSection();
+      setupAllFeedVideos();
     }
   };
   requestAnimationFrame(()=>step());
 }
 
 updateButton();
+setupAllFeedVideos(); // ✅ inicial
 </script>
 
 </body>
