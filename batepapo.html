@@ -3,17 +3,34 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-<title>Chat Aberto (Grupo)</title>
+<title>Bate-papo (Grupo) • Facebook 2025 (Escuro)</title>
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
 <style>
+  :root{
+    --bg:#18191a;
+    --surface:#242526;
+    --surface2:#2d2e30;
+    --text:#e4e6eb;
+    --muted:#b0b3b8;
+    --line:#3a3b3c;
+
+    --primary:#0866ff;
+    --primary2:#0b5cff;
+    --primarySoft: rgba(8,102,255,.16);
+
+    --good:#31a24c;
+
+    --shadow:0 10px 22px rgba(0,0,0,.35);
+  }
+
   *{ box-sizing:border-box; }
   html,body{ width:100%; height:100%; margin:0; overflow-x:hidden; }
   body{
-    background:#000;
+    background: var(--bg);
     font-family: Arial, sans-serif;
-    color:#fff;
+    color: var(--text);
     padding-bottom: env(safe-area-inset-bottom);
     overscroll-behavior: none;
   }
@@ -21,7 +38,7 @@
   /* ====================== LOGIN ====================== */
   .login-overlay{
     position:fixed; inset:0;
-    background: rgba(0,0,0,0.94);
+    background: rgba(0,0,0,0.72);
     display:none;
     align-items:center;
     justify-content:center;
@@ -30,21 +47,18 @@
   }
   .login-card{
     width: min(520px, 94vw);
-    max-width: 94vw;
-    background:#0d0d0d;
-    border:2px solid #00ff8c;
-    border-radius:22px;
-    box-shadow:0 0 28px rgba(0,255,140,.45);
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 18px;
+    box-shadow: var(--shadow);
     padding: 18px;
     text-align:center;
   }
   .login-title{
-    font-size: clamp(18px, 6vw, 26px);
+    font-size: clamp(18px, 6vw, 24px);
     font-weight: 900;
-    color:#00ff8c;
-    text-transform:uppercase;
-    letter-spacing:1.2px;
-    text-shadow: 0 0 10px #00ff8c, 0 0 22px #00ff8c;
+    color: var(--primary);
+    letter-spacing:.3px;
     margin: 4px 0 14px 0;
     display:flex;
     gap:10px;
@@ -53,35 +67,38 @@
   }
   .login-input{
     width: 100%;
-    background:#111;
-    border:1px solid #00ff9d;
+    background: var(--surface2);
+    border:1px solid var(--line);
     border-radius: 999px;
     padding: 14px 18px;
-    color:#fff;
+    color: var(--text);
     outline:none;
     font-size: 16px;
-    box-shadow: inset 0 0 10px rgba(0,255,157,.22);
+  }
+  .login-input:focus{
+    border-color: rgba(8,102,255,.65);
+    box-shadow: 0 0 0 4px var(--primarySoft);
   }
   .login-btn{
     width: 100%;
     margin-top: 12px;
     border:none;
     border-radius: 999px;
-    padding: 16px 12px;
+    padding: 14px 12px;
     font-weight: 900;
     cursor:pointer;
-    font-size: 18px;
+    font-size: 16px;
     transition:.18s;
-    background:#00ff8c;
-    color:#003b23;
-    box-shadow:0 0 18px rgba(0,255,140,.55);
+    background: var(--primary);
+    color:#fff;
   }
+  .login-btn:hover{ background: var(--primary2); }
   .login-btn:active{ transform: scale(.99); }
 
   /* ===================== LOADING ===================== */
   .loadingOverlay{
     position:fixed; inset:0;
-    background: rgba(0,0,0,.78);
+    background: rgba(0,0,0,.55);
     display:none;
     align-items:center;
     justify-content:center;
@@ -90,25 +107,25 @@
   }
   .loadingCard{
     width: min(520px, 92vw);
-    background:#0d0d0d;
-    border:2px solid #00ff8c;
-    border-radius:18px;
-    box-shadow:0 0 25px rgba(0,255,140,.45);
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 18px;
+    box-shadow: var(--shadow);
     padding:18px;
     text-align:center;
   }
   .spinner{
-    width:46px;height:46px;border-radius:50%;
-    border:4px solid rgba(0,255,140,.25);
-    border-top-color:#00ff8c;
+    width:42px;height:42px;border-radius:50%;
+    border:4px solid rgba(8,102,255,.22);
+    border-top-color: var(--primary);
     margin:0 auto 10px auto;
     animation: spin 0.9s linear infinite;
   }
   @keyframes spin{ to{ transform: rotate(360deg);} }
-  .loadingText{ color:#00ff8c; font-weight:900; letter-spacing:.6px; }
-  .loadingSub{ margin-top:6px; color:#fff; opacity:.85; font-size:14px; }
+  .loadingText{ color: var(--primary); font-weight:900; letter-spacing:.2px; }
+  .loadingSub{ margin-top:6px; color: var(--muted); font-size:14px; }
 
-  /* ===================== LAYOUT CHAT (MOBILE FIRST) ===================== */
+  /* ===================== APP ===================== */
   .app{
     height: 100vh;
     height: 100dvh;
@@ -118,18 +135,17 @@
     overflow:hidden;
   }
 
-  /* Topo */
+  /* ===================== TOPBAR ===================== */
   .topbar{
     position: sticky;
     top:0;
     z-index: 9999;
-    background:#0d0d0d;
-    border-bottom: 2px solid rgba(0,255,157,.55);
-    box-shadow: 0 0 14px rgba(0,255,157,.22);
+    background: var(--surface);
+    border-bottom: 1px solid var(--line);
+    box-shadow: 0 2px 14px rgba(0,0,0,.35);
     padding-top: env(safe-area-inset-top);
   }
   .topbarInner{
-    min-height: 56px;
     display:flex;
     flex-direction:column;
     justify-content:center;
@@ -144,7 +160,6 @@
     justify-content:center;
     position:relative;
   }
-
   .backBtn{
     position:absolute;
     left: 0px;
@@ -153,29 +168,34 @@
     display:flex;
     align-items:center;
     gap:10px;
-    border:1px solid rgba(0,255,157,.35);
-    background: rgba(0,0,0,.25);
-    color:#00ff9d;
+    border:1px solid var(--line);
+    background: rgba(255,255,255,.03);
+    color: var(--text);
     padding: 10px 12px;
-    border-radius: 14px;
+    border-radius: 12px;
     cursor:pointer;
     user-select:none;
     text-decoration:none;
     font-weight:900;
-    box-shadow: 0 0 10px rgba(0,255,157,.12);
   }
-  .backBtn i{ font-size:18px; }
+  .backBtn i{ font-size:16px; color: var(--primary); }
 
   .title{
     font-weight:900;
-    color:#00ff9d;
-    text-shadow: 0 0 12px rgba(0,255,157,.22);
-    letter-spacing:.4px;
+    color: var(--text);
+    letter-spacing:.2px;
     font-size: 18px;
     text-align:center;
   }
+  .subtitle{
+    text-align:center;
+    margin-top:-6px;
+    color: var(--muted);
+    font-size: 12px;
+    font-weight: 800;
+  }
 
-  /* ===================== ONLINE STORIES ===================== */
+  /* ===================== ONLINE BAR ===================== */
   .onlineBar{
     width:100%;
     overflow-x:auto;
@@ -186,11 +206,11 @@
     padding: 0 2px 2px 2px;
   }
   .onlineBar::-webkit-scrollbar{ height:6px; }
-  .onlineBar::-webkit-scrollbar-thumb{ background:#00ff9d; border-radius:999px; }
+  .onlineBar::-webkit-scrollbar-thumb{ background: rgba(255,255,255,.18); border-radius:999px; }
 
   .oItem{
     flex:0 0 auto;
-    width: 54px;
+    width: 56px;
     display:flex;
     flex-direction:column;
     align-items:center;
@@ -202,93 +222,91 @@
     height: 52px;
     border-radius: 50%;
     overflow:hidden;
-    background:#000;
-    border: 2px solid rgba(0,255,157,.55);
-    box-shadow: 0 0 12px rgba(0,255,157,.20);
+    background:#3a3b3c;
+    border: 2px solid var(--surface);
+    box-shadow: 0 1px 10px rgba(0,0,0,.35);
     position:relative;
     display:flex;
     align-items:center;
     justify-content:center;
   }
   .oAvatar img{ width:100%; height:100%; object-fit:cover; display:block; }
-  .oAvatar .init{
-    font-weight:900;
-    color:#00ff9d;
-    font-size: 14px;
-  }
-
-  /* bolinha verde piscando */
+  .oAvatar .init{ font-weight:900; color: var(--text); font-size: 14px; }
   .oDot{
     position:absolute;
-    right: 2px;
-    bottom: 2px;
+    right: 3px;
+    bottom: 3px;
     width: 12px;
     height: 12px;
     border-radius: 50%;
-    background: #00ff4c;
-    border: 2px solid #0d0d0d;
-    box-shadow: 0 0 14px rgba(0,255,76,.9);
-    animation: blinkDot 0.9s infinite;
+    background: var(--good);
+    border: 2px solid var(--surface);
+    box-shadow: 0 0 0 2px rgba(49,162,76,.18);
   }
-  @keyframes blinkDot{
-    0%, 100%{ transform: scale(1); opacity: 1; }
-    50%{ transform: scale(1.35); opacity: .25; }
-  }
-
   .oName{
     font-size: 10px;
-    opacity:.9;
-    color:#7bffb5;
-    max-width: 54px;
+    color: var(--muted);
+    max-width: 56px;
     overflow:hidden;
     text-overflow:ellipsis;
     white-space:nowrap;
     text-align:center;
+    font-weight: 800;
   }
 
-  /* Área de mensagens (rola só aqui) */
+  /* ===================== MESSAGES AREA ===================== */
   .messages{
     flex:1;
     overflow-y:auto;
     overflow-x:hidden;
     padding: 12px 12px;
-    background: #000;
+    background: var(--bg);
     -webkit-overflow-scrolling: touch;
     overscroll-behavior: contain;
   }
 
-  /* Mensagens estilo WhatsApp */
+  /* ===================== MESSAGE ROWS ===================== */
   .msgRow{
     display:flex;
     gap:10px;
-    align-items:flex-start;
+    align-items:flex-end;
     margin-bottom: 12px;
     max-width: 100%;
   }
+  .msgRow.me{ flex-direction: row-reverse; }
+
   .msgAvatar{
-    width:42px;height:42px;border-radius:50%;
+    width:38px;height:38px;border-radius:50%;
     overflow:hidden;
-    background:#000;
-    border:1px solid rgba(0,255,157,.55);
-    box-shadow: 0 0 10px rgba(0,255,157,.18);
+    background:#3a3b3c;
+    border: 2px solid var(--surface);
+    box-shadow: 0 1px 10px rgba(0,0,0,.35);
     flex:0 0 auto;
     display:flex;align-items:center;justify-content:center;
+    cursor:pointer;
   }
   .msgAvatar img{ width:100%;height:100%;object-fit:cover;display:block; }
-  .msgAvatar .init{ font-weight:900; color:#00ff9d; }
+  .msgAvatar .init{ font-weight:900; color: var(--text); }
 
   .msgBubble{
     position:relative;
-    flex:1;
     min-width:0;
-    max-width: 100%;
-    background: #0d0d0d;
-    border: 1px solid rgba(0,255,157,.35);
-    border-radius: 16px;
-    padding: 10px 44px 10px 12px;
-    box-shadow: 0 0 10px rgba(0,255,157,.12);
+    max-width: min(78vw, 560px);
+    border-radius: 18px;
+    padding: 10px 44px 10px 12px; /* espaço pro menu */
+    box-shadow: 0 3px 14px rgba(0,0,0,.30);
     overflow: visible;
+    border: 1px solid rgba(255,255,255,.06);
+    background: var(--surface);
   }
+
+  /* Eu: bolha azul */
+  .msgRow.me .msgBubble{
+    background: var(--primary);
+    color:#fff;
+    border-color: rgba(8,102,255,.25);
+  }
+
   .msgTop{
     display:flex;
     align-items:center;
@@ -299,25 +317,33 @@
   }
   .msgName{
     font-weight:900;
-    color:#7bffb5;
+    color: var(--muted);
     overflow:hidden;
     text-overflow:ellipsis;
     white-space:nowrap;
-    max-width: 62vw;
+    max-width: 55vw;
+    font-size: 13px;
   }
+  .msgRow.me .msgName{ color: rgba(255,255,255,.92); }
+
   .msgTime{
-    font-size:12px;
-    color:#00ff9d;
-    opacity:.85;
+    font-size:11px;
+    color: var(--muted);
     white-space:nowrap;
     flex:0 0 auto;
+    opacity:.95;
   }
+  .msgRow.me .msgTime{ color: rgba(255,255,255,.90); }
+
   .msgText{
     white-space: pre-wrap;
     word-break: break-word;
     overflow-wrap:anywhere;
-    opacity:.98;
+    opacity: .98;
+    font-size: 15px;
+    line-height: 1.25;
   }
+
   .msgMedia{ margin-top: 8px; width:100%; }
   .msgMedia img{
     width: 100%;
@@ -325,62 +351,93 @@
     border-radius: 12px;
     display:block;
     background:#000;
-    border: 1px solid rgba(0,255,157,.25);
+    border: 1px solid rgba(255,255,255,.18);
   }
+  .msgRow.me .msgMedia img{ border-color: rgba(255,255,255,.22); }
 
+  /* ===================== ✅ 3 PONTINHOS MAIS VISÍVEIS ===================== */
   .msgMenuBtn{
     position:absolute;
-    top: 10px;
-    right: 10px;
+    top: 8px;
+    right: 8px;
+
+    /* botão bem visível */
+    width: 36px;
+    height: 30px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
     font-size: 22px;
+    font-weight: 900;
+    letter-spacing: 1px;
     cursor:pointer;
-    color:#00ff9d;
     user-select:none;
     line-height:1;
+
+    color: rgba(255,255,255,.98);
+    background: rgba(0,0,0,.42);
+    border: 1px solid rgba(255,255,255,.22);
+    border-radius: 12px;
+
+    box-shadow: 0 8px 18px rgba(0,0,0,.38);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
   }
+  .msgRow.me .msgMenuBtn{
+    /* no azul, mantém alto contraste */
+    background: rgba(0,0,0,.38);
+    border-color: rgba(255,255,255,.28);
+    color: #fff;
+  }
+  .msgMenuBtn:hover{
+    background: rgba(0,0,0,.58);
+    border-color: rgba(255,255,255,.35);
+  }
+  .msgMenuBtn:active{ transform: scale(.96); }
+
   .msgMenuBox{
     position:absolute;
-    top: 38px;
+    top: 44px;
     right: 10px;
     z-index: 999;
     cursor:pointer;
     user-select:none;
 
-    background: linear-gradient(180deg, #00ff9d 0%, #7bffb5 100%);
-    color:#003b23;
-    padding: 10px 14px;
-    border-radius: 14px;
+    background: var(--surface2);
+    color: var(--text);
+    padding: 10px 12px;
+    border-radius: 12px;
     font-weight: 900;
     font-size: 14px;
-    letter-spacing: .2px;
-    box-shadow: 0 0 18px rgba(0,255,157,.55);
-    border: 1px solid rgba(0,0,0,.25);
+    box-shadow: var(--shadow);
+    border: 1px solid var(--line);
 
     white-space: nowrap;
-    min-width: 120px;
+    min-width: 140px;
 
     display:none;
     align-items:center;
     gap: 10px;
     justify-content:center;
   }
-  .msgMenuBox i{ font-size: 16px; }
+  .msgMenuBox i{ font-size: 16px; color: #ff5b5b; }
 
-  /* Composer */
+  /* ===================== COMPOSER ===================== */
   .composer{
     position: sticky;
     bottom: 0;
     z-index: 9998;
-    background: #000;
+    background: var(--bg);
     padding: 10px 12px calc(10px + env(safe-area-inset-bottom)) 12px;
-    border-top: 1px solid rgba(0,255,157,.2);
+    border-top: 1px solid var(--line);
   }
   .composerInner{
     width: 100%;
     margin: 0 auto;
-    background:#0d0d0d;
-    border:1px solid rgba(0,255,157,.55);
-    box-shadow: 0 0 12px rgba(0,255,157,.28);
+    background: var(--surface);
+    border: 1px solid var(--line);
+    box-shadow: 0 3px 14px rgba(0,0,0,.35);
     border-radius: 18px;
     padding: 10px;
     display:flex;
@@ -388,63 +445,71 @@
     align-items:flex-end;
   }
   .btnCircle{
-    width:46px;height:46px;border-radius:50%;
+    width:44px;height:44px;border-radius:50%;
     display:flex;align-items:center;justify-content:center;
     cursor:pointer;
     flex:0 0 auto;
-    border:2px solid #00ff9d;
-    background:#111;
-    color:#00ff9d;
-    box-shadow: 0 0 10px rgba(0,255,157,.25);
-    font-size:20px;
+    border:1px solid var(--line);
+    background: rgba(255,255,255,.04);
+    color: var(--primary);
+    font-size:18px;
     user-select:none;
   }
+  .btnCircle:active{ transform: scale(.98); }
+
   .btnSend{
-    width:46px;height:46px;border-radius:50%;
+    width:44px;height:44px;border-radius:50%;
     display:flex;align-items:center;justify-content:center;
     cursor:pointer;
     flex:0 0 auto;
-    border:2px solid #003b23;
-    background:#00ff9d;
-    color:#003b23;
-    box-shadow: 0 0 14px rgba(0,255,157,.45);
-    font-size:22px;
+    border: 0;
+    background: var(--primary);
+    color:#fff;
+    box-shadow: 0 10px 18px rgba(8,102,255,.28);
+    font-size:18px;
     user-select:none;
   }
+  .btnSend:hover{ background: var(--primary2); }
+  .btnSend:active{ transform: scale(.98); }
+
   textarea{
     flex:1;
     min-width:0;
     resize:none;
     border:none;
     outline:none;
-    background:#111;
-    color:#fff;
+    background: rgba(255,255,255,.05);
+    color: var(--text);
     border-radius: 16px;
     padding: 12px 12px;
     font-size: 16px;
-    border:1px solid rgba(0,255,157,.45);
-    box-shadow: inset 0 0 10px rgba(0,255,157,.18);
+    border:1px solid rgba(255,255,255,.10);
     max-height: 140px;
     line-height: 1.25;
   }
+  textarea:focus{
+    border-color: rgba(8,102,255,.65);
+    box-shadow: 0 0 0 4px var(--primarySoft);
+    background: rgba(255,255,255,.07);
+  }
   input[type="file"]{ display:none; }
 
-  /* Emoji panel */
+  /* ===================== EMOJI PANEL ===================== */
   .emojiPanel{
     position: fixed;
     left: 50%;
     transform: translateX(-50%);
     bottom: calc(86px + env(safe-area-inset-bottom));
     width: min(520px, 94vw);
-    background: rgba(0,0,0,.92);
-    border:1px solid rgba(0,255,157,.45);
-    box-shadow: 0 0 16px rgba(0,255,157,.22);
+    background: var(--surface);
+    border:1px solid var(--line);
+    box-shadow: var(--shadow);
     border-radius: 16px;
     padding: 10px;
     display:none;
     z-index: 999999;
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
   }
   .emojiGrid{
     display:grid;
@@ -455,12 +520,13 @@
     font-size: 22px;
     padding: 8px 0;
     border-radius: 12px;
-    background: rgba(255,255,255,.04);
-    border: 1px solid rgba(255,255,255,.06);
+    background: rgba(255,255,255,.05);
+    border: 1px solid rgba(255,255,255,.08);
     cursor:pointer;
     user-select:none;
     text-align:center;
   }
+  .emojiBtn:active{ transform: scale(.98); }
   .emojiTop{
     display:flex;
     align-items:center;
@@ -468,16 +534,13 @@
     gap:10px;
     margin-bottom: 8px;
   }
-  .emojiTop .ttl{
-    color:#00ff9d;
-    font-weight:900;
-  }
+  .emojiTop .ttl{ color: var(--text); font-weight: 900; }
   .emojiClose{
     width:36px;height:36px;border-radius: 12px;
     display:flex;align-items:center;justify-content:center;
-    background: rgba(0,255,157,.12);
-    border:1px solid rgba(0,255,157,.25);
-    color:#00ff9d;
+    background: rgba(255,255,255,.05);
+    border:1px solid rgba(255,255,255,.10);
+    color: var(--muted);
     cursor:pointer;
     user-select:none;
   }
@@ -509,7 +572,6 @@
   <!-- TOPO -->
   <div class="topbar">
     <div class="topbarInner">
-
       <div class="topRow">
         <a class="backBtn" href="#" onclick="goBackSite(event)">
           <i class="fa-solid fa-arrow-left"></i>
@@ -518,9 +580,9 @@
         <div class="title">Grupo do terreiro</div>
       </div>
 
-      <!-- ✅ ONLINE AVATARS (STORIES) -->
-      <div class="onlineBar" id="onlineBar" aria-label="Usuários online"></div>
+      <div class="subtitle">Online agora</div>
 
+      <div class="onlineBar" id="onlineBar" aria-label="Usuários online"></div>
     </div>
   </div>
 
@@ -587,7 +649,7 @@ const DB = firebase.database();
 const ST = firebase.storage();
 
 /* ====================== SOM (ENVIAR E RECEBER) ====================== */
-const CHAT_SOUND_URL = "somm.mp3"; // coloque esse arquivo no GitHub na mesma pasta do HTML
+const CHAT_SOUND_URL = "somm.mp3";
 const chatSfx = new Audio(CHAT_SOUND_URL);
 chatSfx.preload = "auto";
 chatSfx.volume = 1.0;
@@ -676,12 +738,13 @@ document.addEventListener("keydown", (e)=>{
 
 /* Helpers */
 function escapeHTML(str){
-  return (str || "")
-    .replaceAll("&","&amp;")
-    .replaceAll("<","&lt;")
-    .replaceAll(">","&gt;")
-    .replaceAll('"',"&quot;")
-    .replaceAll("'","&#039;");
+  str = (str == null ? "" : String(str));
+  return str
+    .replace(/&/g,"&amp;")
+    .replace(/</g,"&lt;")
+    .replace(/>/g,"&gt;")
+    .replace(/"/g,"&quot;")
+    .replace(/'/g,"&#039;");
 }
 function initials(name){
   const n = (name||"").trim().split(/\s+/).filter(Boolean);
@@ -743,12 +806,11 @@ function startPresence(){
     });
   }catch(e){}
 }
-function stopPresence(silent){
+function stopPresence(){
   try{
     if(presenceTimer){ clearInterval(presenceTimer); presenceTimer = null; }
     if(presenceRef){ presenceRef.remove().catch(()=>{}); presenceRef = null; }
   }catch(e){}
-  if(!silent){}
 }
 if(USER_NAME && UID){ startPresence(); }
 </script>
@@ -776,7 +838,6 @@ async function getAvatarForUID(uid, fallbackName){
       const uu = px.avatarDataUrl || px.avatarUrl || "";
       profileCache.set(uid, { url: uu, name: nn });
 
-      // Atualiza avatars nas mensagens
       document.querySelectorAll(`[data-avatar-uid="${uid}"]`).forEach(el=>{
         if(uu) el.innerHTML = `<img src="${uu}" alt="avatar">`;
         else el.innerHTML = `<div class="init">${escapeHTML(initials(nn||"U"))}</div>`;
@@ -785,11 +846,10 @@ async function getAvatarForUID(uid, fallbackName){
         el.textContent = nn || "Usuário";
       });
 
-      // Atualiza online bar (se existir)
       const oAva = document.querySelector(`[data-online-avatar-uid="${uid}"]`);
       if(oAva){
-        if(uu) oAva.innerHTML = `<img src="${uu}" alt="avatar">`;
-        else oAva.innerHTML = `<div class="init">${escapeHTML(initials(nn||"U"))}</div>`;
+        if(uu) oAva.innerHTML = `<img src="${uu}" alt="avatar"><span class="oDot"></span>`;
+        else oAva.innerHTML = `<div class="init">${escapeHTML(initials(nn||"U"))}</div><span class="oDot"></span>`;
       }
       const oName = document.querySelector(`[data-online-name-uid="${uid}"]`);
       if(oName) oName.textContent = nn || "Usuário";
@@ -805,7 +865,7 @@ async function getAvatarForUID(uid, fallbackName){
 </script>
 
 <script>
-/* ===================== ONLINE BAR (STORIES) ===================== */
+/* ===================== ONLINE BAR ===================== */
 const onlineBar = document.getElementById("onlineBar");
 
 function onlineItemHTML(uid, name, avatarUrl){
@@ -823,8 +883,7 @@ function onlineItemHTML(uid, name, avatarUrl){
 
 DB.ref("presence").on("value", async (snap)=>{
   const obj = snap.val() || {};
-  const users = Object.values(obj)
-    .filter(Boolean)
+  const users = Object.values(obj).filter(Boolean)
     .sort((a,b)=>(b.lastActive||0)-(a.lastActive||0));
 
   const first = users.slice(0, 80);
@@ -857,7 +916,7 @@ const EMOJIS = ["😀","😁","😂","🤣","😊","😍","😘","😎",
                 "👍","👎","👏","🙌","🤝","💬","🎉","💥",
                 "🌙","⭐","🌟","🌈","🍀","🧿","🔮","🕯️",
                 "❤️","💛","💚","💙","💜","🤍","🖤","💗"];
-emojiGrid.innerHTML = EMOJIS.map(e=>`<div class="emojiBtn" onclick="insertEmoji('${e.replaceAll("'","\\'")}')">${e}</div>`).join("");
+emojiGrid.innerHTML = EMOJIS.map(e=>`<div class="emojiBtn" onclick="insertEmoji('${e.replace(/'/g,"\\'")}')">${e}</div>`).join("");
 
 function toggleEmojiPanel(force){
   const show = (typeof force === "boolean") ? force : (emojiPanel.style.display !== "block");
@@ -903,9 +962,9 @@ function openFile(){
   if(precisaLogin()) return;
   imgInput.click();
 }
-imgInput.addEventListener("change", async (e)=>{
+imgInput.addEventListener("change", async ()=>{
   if(precisaLogin()) return;
-  const file = e.target.files && e.target.files[0];
+  const file = imgInput.files && imgInput.files[0];
   if(!file) return;
 
   if(!file.type.startsWith("image/")){
@@ -1030,20 +1089,21 @@ function messageHTML(m, avatarUrl, displayName){
   const name = displayName || m.userName || "Usuário";
   const when = m.createdAt ? fmtDate(m.createdAt) : "";
   const text = escapeHTML(m.text || "");
+  const isMe = uid === UID;
 
   const avatar = avatarUrl
-    ? `<div class="msgAvatar" data-avatar-uid="${escapeHTML(uid)}"><img src="${avatarUrl}" alt="avatar"></div>`
-    : `<div class="msgAvatar" data-avatar-uid="${escapeHTML(uid)}"><div class="init">${escapeHTML(initials(name))}</div></div>`;
+    ? `<div class="msgAvatar" data-avatar-uid="${escapeHTML(uid)}" title="${escapeHTML(name)}"><img src="${avatarUrl}" alt="avatar"></div>`
+    : `<div class="msgAvatar" data-avatar-uid="${escapeHTML(uid)}" title="${escapeHTML(name)}"><div class="init">${escapeHTML(initials(name))}</div></div>`;
 
   const media = m.mediaUrl
     ? `<div class="msgMedia"><img src="${m.mediaUrl}" alt="imagem" loading="lazy"></div>`
     : "";
 
   return `
-    <div class="msgRow" id="${escapeHTML(m.id)}">
+    <div class="msgRow ${isMe ? "me" : ""}" id="${escapeHTML(m.id)}">
       ${avatar}
       <div class="msgBubble">
-        <div class="msgMenuBtn" onclick="toggleMsgMenu('${escapeHTML(m.id)}')">⋮</div>
+        <div class="msgMenuBtn" title="Opções" aria-label="Opções" onclick="toggleMsgMenu('${escapeHTML(m.id)}')">⋮</div>
         <div class="msgMenuBox" id="menu_${escapeHTML(m.id)}" onclick="deleteMessage('${escapeHTML(m.id)}')">
           <i class="fa-solid fa-trash"></i> Excluir
         </div>
@@ -1081,7 +1141,7 @@ DB.ref(MSG_PATH).orderByChild("createdAt").limitToLast(200).on("child_added", as
   wrapper.innerHTML = messageHTML(m, prof.url, prof.name).trim();
   messagesEl.appendChild(wrapper.firstChild);
 
-  if(firstLoadDone) playChatSound();
+  if(firstLoadDone && m.uid && m.uid !== UID) playChatSound();
 
   setTimeout(()=>{ scrollToBottom(); }, 20);
 
