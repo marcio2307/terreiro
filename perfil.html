@@ -380,6 +380,11 @@
     border: 1px solid rgba(255,255,255,.10);
   }
 
+  /* ✅ autoplay silencioso (sem áudio) */
+  .post .mediaWrap video{
+    object-fit: cover;
+  }
+
   .postHead{
     display:flex;
     align-items:center;
@@ -1317,6 +1322,9 @@ function setTabActive(which){
   document.getElementById("tab_"+which).classList.add("active");
   document.getElementById("panel_"+which).classList.add("active");
   CURRENT_TAB = which;
+
+  // ✅ garante que vídeos novos/visíveis fiquem tocando em mudo
+  setTimeout(()=>{ ensureAutoplayMutedVideos(); }, 80);
 }
 function closeAllTabs(){
   ["posts","about","profile","friends"].forEach(k=>{
@@ -1341,6 +1349,50 @@ function updatePostAvatarsInDOM(uid, url, name){
     el.textContent = name || "Usuário";
   });
 }
+
+/* ====================== ✅ VÍDEO: autoplay em mudo + áudio só ao clicar ====================== */
+function ensureAutoplayMutedVideos(){
+  const videos = document.querySelectorAll(".post .mediaWrap video");
+  videos.forEach(v=>{
+    try{
+      v.setAttribute("playsinline", "");
+      v.setAttribute("autoplay", "");
+      v.setAttribute("loop", "");
+      v.setAttribute("muted", "");
+      v.muted = true;
+
+      // evita fullscreen automático no iPhone
+      v.playsInline = true;
+
+      // se não tem controles, mantém (você pediu só tocar áudio ao clicar)
+      // controles continuam pra pausar/seek se quiser.
+      // importante: autoplay só funciona se estiver muted.
+      const p = v.play();
+      if(p && p.catch) p.catch(()=>{});
+    }catch(e){}
+  });
+}
+
+// ✅ ao clicar no vídeo: liga/desliga o áudio (sem parar o vídeo)
+document.addEventListener("click", (ev)=>{
+  const v = ev.target && ev.target.closest && ev.target.closest(".post .mediaWrap video");
+  if(!v) return;
+
+  // se estava mudo, liga o som
+  if(v.muted){
+    v.muted = false;
+    v.removeAttribute("muted");
+    // tenta reproduzir (alguns navegadores exigem user gesture — o clique já é)
+    try{
+      const p = v.play();
+      if(p && p.catch) p.catch(()=>{});
+    }catch(e){}
+  }else{
+    // se já tinha som, volta pro mudo ao clicar de novo (opcional e útil)
+    v.muted = true;
+    v.setAttribute("muted","");
+  }
+}, true);
 
 /* ====================== FEED só do usuário ====================== */
 const postsCache = new Set();
@@ -1470,7 +1522,16 @@ async function postHTML(id, postData){
     const isImg = (postData.mediaType || "").startsWith("image/");
     midia = isImg
       ? `<img src="${postData.mediaUrl}" loading="lazy">`
-      : `<video src="${postData.mediaUrl}" controls preload="metadata" playsinline></video>`;
+      : `
+        <video
+          src="${postData.mediaUrl}"
+          controls
+          preload="metadata"
+          playsinline
+          autoplay
+          loop
+          muted
+        ></video>`;
   }
 
   const uid = postData.uid || "";
@@ -1611,6 +1672,9 @@ async function renderMyPost(postId, data){
   temp.innerHTML = (await postHTML(postId, data)).trim();
   feed.prepend(temp.firstChild);
 
+  // ✅ depois de inserir o post, garante autoplay mudo
+  ensureAutoplayMutedVideos();
+
   listenLikes(postId);
   listenComments(postId);
 
@@ -1643,6 +1707,9 @@ function listenMyPosts(){
     for(const p of entries.slice().reverse()){
       await renderMyPost(p.id, p);
     }
+
+    // ✅ garante autoplay mudo após renderizar tudo
+    ensureAutoplayMutedVideos();
   });
 }
 
@@ -1745,6 +1812,9 @@ function listenOnline(){
   listenMyPosts();
   listenOnline();
   setTabActive("posts");
+
+  // ✅ garante autoplay mudo logo ao iniciar
+  setTimeout(()=>{ ensureAutoplayMutedVideos(); }, 200);
 })();
 </script>
 
