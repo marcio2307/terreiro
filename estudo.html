@@ -1,112 +1,194 @@
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Estudo da Umbanda</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<title>Estudo</title>
+
+<link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+<link rel="dns-prefetch" href="//cdnjs.cloudflare.com">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
 <style>
+*{ box-sizing:border-box; }
+html,body{ width:100%; max-width:100%; overflow-x:hidden; }
 
-    body {
-        margin: 0;
-        padding: 0;
-        font-family: Arial, sans-serif;
-        background: url("https://i.ibb.co/nyXRYnS/Chat-GPT-Image-20-11-2025-22-26-59.png") no-repeat center center fixed;
-        background-size: cover;
-    }
+:root{
+  --fb-bg:#18191A;
+  --fb-surface:#242526;
+  --fb-surface2:#2D2E30;
+  --fb-border:rgba(255,255,255,.10);
+  --fb-text:#E4E6EB;
+  --fb-muted:rgba(228,230,235,.72);
+  --fb-icon:#B0B3B8;
+}
 
-    .container {
-        max-width: 1100px;
-        margin: auto;
-        padding: 20px;
-        text-align: center;
-    }
+body{
+  margin:0;
+  background:var(--fb-bg);
+  font-family:Arial, sans-serif;
+  color:var(--fb-text);
+  padding-bottom:env(safe-area-inset-bottom);
+}
 
-    h1 {
-        color: #00ff99;
-        text-shadow: 0 0 10px black;
-        margin-bottom: 25px;
-        font-size: 28px;
-        font-weight: bold;
-    }
+/* TOPO */
+.topbar{
+  position:sticky;
+  top:0;
+  z-index:9999;
+  background:var(--fb-surface);
+  border-bottom:1px solid var(--fb-border);
+  padding:10px 12px;
+  min-height:56px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
 
-    .menu-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-        gap: 20px;
-    }
+.topLeft{
+  position:absolute;
+  left:12px;
+}
 
-    .card {
-        background: rgba(0, 0, 0, 0.7);
-        border-radius: 12px;
-        padding: 15px;
-        transition: 0.3s;
-        cursor: pointer;
-        border: 2px solid #00ff99;
-    }
+.backBtn{
+  width:44px;
+  height:44px;
+  border-radius:999px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background:var(--fb-surface2);
+  border:1px solid var(--fb-border);
+  color:var(--fb-icon);
+  text-decoration:none;
+}
 
-    .card:hover {
-        transform: scale(1.05);
-        box-shadow: 0 0 15px #00ff99;
-    }
+.backBtn i{ font-size:18px; }
 
-    .card img {
-        width: 100%;
-        height: 150px;
-        object-fit: contain;
-        margin-bottom: 10px;
-    }
+.title{
+  font-weight:900;
+  font-size:16px;
+  letter-spacing:.3px;
+  color:var(--fb-text);
+}
 
-    .card-title {
-        color: #00ff99;
-        font-size: 18px;
-        font-weight: bold;
-        text-shadow: 0 0 5px black;
-    }
+/* CONTEÚDO */
+.wrap{
+  max-width:980px;
+  margin:0 auto;
+  padding:12px;
+}
 
+/* GRID */
+.grid{
+  display:grid;
+  grid-template-columns:repeat(2,1fr);
+  gap:10px;
+}
+
+@media(min-width:560px){
+  .grid{ grid-template-columns:repeat(3,1fr); }
+}
+@media(min-width:860px){
+  .grid{ grid-template-columns:repeat(5,1fr); }
+}
+
+/* CARD */
+.card{
+  background:var(--fb-surface);
+  border:1px solid var(--fb-border);
+  border-radius:16px;
+  padding:14px 12px;
+  box-shadow:0 10px 18px rgba(0,0,0,.22);
+  cursor:pointer;
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  justify-content:center;
+  gap:10px;
+  min-height:120px;
+  text-align:center;
+  transition:transform .12s ease;
+}
+.card:active{ transform:scale(.99); }
+
+/* ÍCONE */
+.iconBox{
+  width:62px;
+  height:62px;
+  border-radius:20px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background:rgba(255,255,255,.06);
+  border:1px solid var(--fb-border);
+}
+.iconBox i{
+  font-size:30px;
+  color:var(--fb-icon);
+}
+
+/* TEXTO */
+.label{
+  font-weight:900;
+  font-size:13px;
+  color:var(--fb-text);
+}
+.label small{
+  display:block;
+  margin-top:4px;
+  font-weight:700;
+  font-size:12px;
+  color:var(--fb-muted);
+}
 </style>
-
 </head>
+
 <body>
 
-<div class="container">
+<header class="topbar">
+  <div class="topLeft">
+    <a class="backBtn"
+       href="https://marcio2307.github.io/terreiro/site.html"
+       title="Voltar">
+      <i class="fa-solid fa-arrow-left"></i>
+    </a>
+  </div>
+  <div class="title">Estudo</div>
+</header>
 
-    <h1>ESTUDO DA UMBANDA</h1>
+<main class="wrap">
 
-    <div class="menu-grid">
+  <section class="grid">
 
-        <!-- Apostila -->
-        <div class="card" onclick="window.location.href='https://drive.google.com/file/d/1kKAL9yGVrU-c8Y9ecBApVUHG2qbuoHFV/view?usp=sharing'">
-            <img src="https://i.ibb.co/xtNkCQ1C/Chat-GPT-Image-20-11-2025-22-20-45.png">
-            <div class="card-title">Apostila</div>
-        </div>
-
-        <!-- Banhos -->
-        <div class="card" onclick="window.location.href='https://drive.google.com/file/d/1-gQvm5UyiCnP2ldptVAgwI5GAasupd4P/view?usp=sharing'">
-            <img src="https://i.ibb.co/vvzPfZZ3/Chat-GPT-Image-20-11-2025-22-21-46.png">
-            <div class="card-title">Banhos</div>
-        </div>
-
-        <!-- Noções do Baralho Cigano -->
-        <div class="card" onclick="window.location.href='https://drive.google.com/file/d/1-X-vCFH_LbymUyLMESntPfqBGduIUc-R/view?usp=sharing'">
-            <img src="https://i.ibb.co/hJ5LQdLw/Chat-GPT-Image-20-11-2025-22-23-17.png">
-            <div class="card-title">Noções do Baralho Cigano</div>
-        </div>
-
-        <!-- Pontos Riscados (AGORA COM O LINK CORRETO) -->
-        <div class="card" onclick="window.location.href='https://marcio2307.github.io/terreiro/ponto.html'">
-            <img src="https://i.ibb.co/WWjc9rHS/Chat-GPT-Image-20-11-2025-22-24-17.png">
-            <div class="card-title">Pontos Riscados</div>
-        </div>
-
-        <!-- Provas -->
-        <div class="card" onclick="window.location.href='https://marcio2307.github.io/prova/index.html'">
-            <img src="https://i.ibb.co/SDZNrKf3/Chat-GPT-Image-20-11-2025-22-26-01.png">
-            <div class="card-title">Provas</div>
-        </div>
-
+    <div class="card" onclick="location.href='https://drive.google.com/file/d/1kKAL9yGVrU-c8Y9ecBApVUHG2qbuoHFV/view?usp=sharing'">
+      <div class="iconBox"><i class="fa-solid fa-book"></i></div>
+      <div class="label">Apostila <small>PDF</small></div>
     </div>
-</div>
+
+    <div class="card" onclick="location.href='https://drive.google.com/file/d/1-gQvm5UyiCnP2ldptVAgwI5GAasupd4P/view?usp=sharing'">
+      <div class="iconBox"><i class="fa-solid fa-leaf"></i></div>
+      <div class="label">Banhos <small>PDF</small></div>
+    </div>
+
+    <div class="card" onclick="location.href='https://drive.google.com/file/d/1-X-vCFH_LbymUyLMESntPfqBGduIUc-R/view?usp=sharing'">
+      <div class="iconBox"><i class="fa-solid fa-clone"></i></div>
+      <div class="label">Baralho Cigano <small>PDF</small></div>
+    </div>
+
+    <div class="card" onclick="location.href='https://marcio2307.github.io/terreiro/ponto.html'">
+      <div class="iconBox"><i class="fa-solid fa-pen-nib"></i></div>
+      <div class="label">Pontos Riscados <small>Página</small></div>
+    </div>
+
+    <div class="card" onclick="location.href='https://marcio2307.github.io/prova/index.html'">
+      <div class="iconBox"><i class="fa-solid fa-clipboard-check"></i></div>
+      <div class="label">Provas <small>Página</small></div>
+    </div>
+
+  </section>
+
+</main>
 
 </body>
 </html>
