@@ -123,9 +123,18 @@ body{
   background:rgba(255,255,255,.06);
   border:1px solid var(--fb-border);
 }
-.iconBox i{
-  font-size:30px;
-  color:var(--fb-icon);
+
+.iconSvg{
+  width:34px;
+  height:34px;
+}
+
+.iconStroke{
+  fill:none;
+  stroke:var(--fb-icon);
+  stroke-width:2.6;
+  stroke-linejoin:round;
+  stroke-linecap:round;
 }
 
 /* TEXTO */
@@ -159,34 +168,49 @@ body{
 
 <main class="wrap">
 
-  <section class="grid">
+<section class="grid">
 
-    <div class="card" onclick="location.href='https://drive.google.com/file/d/1kKAL9yGVrU-c8Y9ecBApVUHG2qbuoHFV/view?usp=sharing'">
-      <div class="iconBox"><i class="fa-solid fa-book"></i></div>
-      <div class="label">Apostila <small>PDF</small></div>
+  <div class="card" onclick="location.href='https://drive.google.com/file/d/1kKAL9yGVrU-c8Y9ecBApVUHG2qbuoHFV/view?usp=sharing'">
+    <div class="iconBox"><i class="fa-solid fa-book" style="color:var(--fb-icon);font-size:30px"></i></div>
+    <div class="label">Apostila <small>PDF</small></div>
+  </div>
+
+  <div class="card" onclick="location.href='https://drive.google.com/file/d/1-gQvm5UyiCnP2ldptVAgwI5GAasupd4P/view?usp=sharing'">
+    <div class="iconBox"><i class="fa-solid fa-leaf" style="color:var(--fb-icon);font-size:30px"></i></div>
+    <div class="label">Banhos <small>PDF</small></div>
+  </div>
+
+  <!-- Carta de Tarô -->
+  <div class="card" onclick="location.href='https://drive.google.com/file/d/1-X-vCFH_LbymUyLMESntPfqBGduIUc-R/view?usp=sharing'">
+    <div class="iconBox">
+      <svg class="iconSvg" viewBox="0 0 64 64">
+        <rect x="16" y="10" width="32" height="44" rx="6" class="iconStroke"/>
+        <rect x="20" y="14" width="24" height="36" rx="4" class="iconStroke" opacity=".5"/>
+        <circle cx="32" cy="32" r="6" class="iconStroke"/>
+      </svg>
     </div>
+    <div class="label">Baralho Cigano <small>PDF</small></div>
+  </div>
 
-    <div class="card" onclick="location.href='https://drive.google.com/file/d/1-gQvm5UyiCnP2ldptVAgwI5GAasupd4P/view?usp=sharing'">
-      <div class="iconBox"><i class="fa-solid fa-leaf"></i></div>
-      <div class="label">Banhos <small>PDF</small></div>
+  <!-- Pontos Riscados – Estrela de Davi -->
+  <div class="card" onclick="location.href='https://marcio2307.github.io/terreiro/ponto.html'">
+    <div class="iconBox">
+      <svg class="iconSvg" viewBox="0 0 64 64">
+        <!-- Triângulo para cima -->
+        <polygon points="32 8, 56 48, 8 48" class="iconStroke"/>
+        <!-- Triângulo para baixo -->
+        <polygon points="32 56, 56 16, 8 16" class="iconStroke"/>
+      </svg>
     </div>
+    <div class="label">Pontos Riscados <small>Página</small></div>
+  </div>
 
-    <div class="card" onclick="location.href='https://drive.google.com/file/d/1-X-vCFH_LbymUyLMESntPfqBGduIUc-R/view?usp=sharing'">
-      <div class="iconBox"><i class="fa-solid fa-clone"></i></div>
-      <div class="label">Baralho Cigano <small>PDF</small></div>
-    </div>
+  <div class="card" onclick="location.href='https://marcio2307.github.io/prova/index.html'">
+    <div class="iconBox"><i class="fa-solid fa-clipboard-check" style="color:var(--fb-icon);font-size:30px"></i></div>
+    <div class="label">Provas <small>Página</small></div>
+  </div>
 
-    <div class="card" onclick="location.href='https://marcio2307.github.io/terreiro/ponto.html'">
-      <div class="iconBox"><i class="fa-solid fa-pen-nib"></i></div>
-      <div class="label">Pontos Riscados <small>Página</small></div>
-    </div>
-
-    <div class="card" onclick="location.href='https://marcio2307.github.io/prova/index.html'">
-      <div class="iconBox"><i class="fa-solid fa-clipboard-check"></i></div>
-      <div class="label">Provas <small>Página</small></div>
-    </div>
-
-  </section>
+</section>
 
 </main>
 
