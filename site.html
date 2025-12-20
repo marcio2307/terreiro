@@ -43,44 +43,60 @@
     --fb-radius: 16px;
   }
 
-  /* ======================== LOGO + MESSENGER (TOPO) ======================== */
+  /* ======================== LOGO (MAIOR, CENTRALIZADA, DESTACADA) ======================== */
   .logo-bar{
     width:100%;
     background: var(--fb-surface);
     display:flex;
     align-items:center;
-    justify-content:space-between;
-    gap:12px;
-    padding: 10px 12px;
+    justify-content:center;        /* ✅ centro */
+    padding: 14px 12px;            /* ✅ mais altura */
     border-bottom: 1px solid var(--fb-border);
     position: sticky;
     top: 0;
     z-index: 9999;
   }
-  .logo-left{ display:flex; align-items:center; gap:12px; min-width:0; }
-  .logo-left img{
-    width: clamp(160px, 52vw, 360px);
-    height:auto;
-    max-height: 60px;
-    object-fit: contain;
-    display:block;
+
+  .logo-left{
+    width: 100%;
+    display:flex;
+    align-items:center;
+    justify-content:center;        /* ✅ centro */
   }
 
+  .logo-left img{
+    width: min(92vw, 520px);       /* ✅ bem grande no celular */
+    height:auto;
+    max-height: 92px;              /* ✅ mais alto */
+    object-fit: contain;
+    display:block;
+    padding: 8px 10px;             /* ✅ “respiro” */
+    border-radius: 16px;           /* ✅ destaque */
+    background: rgba(255,255,255,.04);
+    border: 1px solid rgba(255,255,255,.10);
+    box-shadow: 0 10px 22px rgba(0,0,0,.32);
+  }
+
+  /* ✅ Messenger vira botão flutuante (não some, não atrapalha a logo) */
   .msgBtn{
-    position:relative;
+    position: fixed;
+    right: 14px;
+    top: calc(14px + env(safe-area-inset-top));
+    z-index: 10000;
+
     display:flex;
     align-items:center;
     justify-content:center;
     cursor:pointer;
     user-select:none;
-    width:44px;
-    height:44px;
+    width:46px;
+    height:46px;
     background: var(--fb-surface-2);
     border: 1px solid var(--fb-border);
     border-radius: 999px;
     outline:none;
     padding:0;
-    box-shadow: 0 6px 14px rgba(0,0,0,.25);
+    box-shadow: 0 10px 22px rgba(0,0,0,.35);
   }
   .msgBtn i{
     font-size: 20px;
@@ -106,7 +122,10 @@
   }
 
   @media(max-width:480px){
-    .logo-left img{ max-height: 54px; }
+    .logo-left img{ max-height: 96px; }
+  }
+  @media(min-width:700px){
+    .logo-left img{ max-height: 100px; }
   }
 
   /* ======================== MENU (BARRA COM ÍCONE + TEXTO ABAIXO) ======================== */
@@ -120,7 +139,7 @@
     align-items: stretch;
     border-bottom: 1px solid var(--fb-border);
     position: sticky;
-    top: 66px;
+    top: 132px; /* ✅ ajustado: logo maior */
     z-index: 9998;
   }
   .top-menu.hide{ display:none !important; }
@@ -187,7 +206,7 @@
   }
 
   @media(max-width:380px){
-    .top-menu{ gap: 8px; padding: 8px 6px; top: 64px; }
+    .top-menu{ gap: 8px; padding: 8px 6px; top: 128px; }
     .top-menu a{ width: 62px; min-width:62px; height: 56px; border-radius: 14px; }
     .top-menu a i{ font-size: 23px; }
     .menuLabel{ font-size: 10.5px; }
@@ -1069,17 +1088,21 @@
   </div>
 </div>
 
-<!-- ✅ TOPO: LOGO À ESQUERDA + MESSENGER À DIREITA -->
+<!-- ✅ TOPO: LOGO CENTRAL GRANDE + MESSENGER FLUTUANTE -->
 <div class="logo-bar">
   <div class="logo-left">
-    <img src="https://i.ibb.co/h1RmgKSX/Chat-GPT-Image-17-12-2025-21-32-09.png" alt="Logo" loading="eager" fetchpriority="high">
+    <img
+      src="https://i.ibb.co/S4fRqST4/Chat-GPT-Image-19-12-2025-21-49-46-removebg-preview.png"
+      alt="Logo"
+      loading="eager"
+      fetchpriority="high">
   </div>
-
-  <button class="msgBtn" id="msgBtn" title="Bate-papo" aria-label="Bate-papo">
-    <i class="fa-brands fa-facebook-messenger"></i>
-    <span class="msgBadge" id="msgBadge">0</span>
-  </button>
 </div>
+
+<button class="msgBtn" id="msgBtn" title="Bate-papo" aria-label="Bate-papo">
+  <i class="fa-brands fa-facebook-messenger"></i>
+  <span class="msgBadge" id="msgBadge">0</span>
+</button>
 
 <!-- ✅ MENU (ÍCONE + NOME ABAIXO) -->
 <nav class="top-menu" aria-label="Menu principal">
@@ -1253,11 +1276,6 @@ function playChatSound(){
 }
 
 /* ====================== ✅ CONTROLE: RÁDIO x VÍDEOS DO FEED ====================== */
-/* ✅ ALTERAÇÃO PEDIDA:
-   - Se o usuário silenciar um vídeo do feed, ele NÃO volta sozinho ao rolar.
-   - Só volta a ter som se o usuário clicar para "ouvir de novo".
-   - Rádio tocando trava feed no mudo.
-*/
 let __radioLocksFeedAudio = false;
 
 function forceMuteAllFeedVideos(){
@@ -1295,7 +1313,6 @@ function onRadioStateChange(isPlaying){
     __radioLocksFeedAudio = true;
     forceMuteAllFeedVideos();
   }else{
-    /* ✅ NÃO RESTAURA SOM AUTOMATICAMENTE. Só volta se o usuário clicar no vídeo. */
     __radioLocksFeedAudio = false;
   }
 }
@@ -2067,7 +2084,6 @@ function showStory(){
     el.src = s.url;
     el.autoplay = true;
 
-    /* ✅ STORIES: TOCA COM SOM (exceto se rádio estiver tocando) */
     el.muted = radioPlaying ? true : false;
     el.volume = 1.0;
     el.controls = true;
@@ -2329,11 +2345,6 @@ function ensureFeedObserver(){
 
         if(entry.intersectionRatio >= 0.25){
           try{
-            /* ✅ REGRA:
-               - NUNCA ativa som sozinho ao rolar.
-               - Mantém o estado atual (muted / unmuted) do próprio vídeo.
-               - Se rádio estiver tocando, força mudo.
-            */
             if(__radioLocksFeedAudio || radioPlaying){
               v.__userUnmuted = false;
               v.muted = true;
@@ -2437,7 +2448,6 @@ function setupOneFeedVideo(v){
       }
 
       if(v.muted){
-        /* ✅ usuário clicou em "ouvir" -> libera som */
         muteAllFeedVideosExcept(v);
         v.__userUnmuted = true;
         v.muted = false;
@@ -2458,7 +2468,6 @@ function setupOneFeedVideo(v){
         const p = v.play();
         if(p && p.catch) p.catch(()=>{});
       }else{
-        /* ✅ usuário silenciou -> fica silencioso e NÃO volta sozinho ao rolar */
         v.__userUnmuted = false;
         v.muted = true;
         v.volume = 1.0;
@@ -2466,10 +2475,8 @@ function setupOneFeedVideo(v){
     }catch(e){}
   };
 
-  /* ✅ Clique/toque alterna SOM (igual Facebook: tocar no vídeo para ouvir/silenciar) */
   v.addEventListener("click", onUserToggleSound);
   v.addEventListener("touchend", (ev)=>{
-    /* se foi double tap, o handler de restart já deu preventDefault; aqui evita conflito */
     if(ev.defaultPrevented) return;
     onUserToggleSound(ev);
   }, { passive:false });
