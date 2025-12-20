@@ -61,6 +61,7 @@ body{
   border:1px solid var(--fb-border);
   color:var(--fb-icon);
   text-decoration:none;
+  -webkit-tap-highlight-color: transparent;
 }
 
 .backBtn i{ font-size:18px; }
@@ -79,18 +80,22 @@ body{
   padding:12px;
 }
 
-/* GRID */
+/* GRID (mobile-first) */
 .grid{
   display:grid;
-  grid-template-columns:repeat(2,1fr);
+  grid-template-columns:repeat(2, minmax(0,1fr));
   gap:10px;
 }
 
-@media(min-width:560px){
-  .grid{ grid-template-columns:repeat(3,1fr); }
+/* 3 colunas em telas médias */
+@media (min-width:560px){
+  .wrap{ padding:14px; }
+  .grid{ grid-template-columns:repeat(3, minmax(0,1fr)); }
 }
-@media(min-width:860px){
-  .grid{ grid-template-columns:repeat(5,1fr); }
+
+/* 5 colunas em telas grandes */
+@media (min-width:860px){
+  .grid{ grid-template-columns:repeat(5, minmax(0,1fr)); }
 }
 
 /* CARD */
@@ -109,8 +114,21 @@ body{
   min-height:120px;
   text-align:center;
   transition:transform .12s ease;
+  -webkit-tap-highlight-color: transparent;
+  user-select:none;
 }
 .card:active{ transform:scale(.99); }
+
+/* melhora toque no celular */
+@media (max-width:420px){
+  .wrap{ padding:10px; }
+  .grid{ gap:9px; }
+  .card{
+    min-height:116px;
+    padding:12px 10px;
+    border-radius:14px;
+  }
+}
 
 /* ÍCONE */
 .iconBox{
@@ -122,11 +140,19 @@ body{
   justify-content:center;
   background:rgba(255,255,255,.06);
   border:1px solid var(--fb-border);
+  flex:0 0 auto;
 }
 
+.iconBox i{
+  font-size:30px;
+  color:var(--fb-icon);
+}
+
+/* ÍCONES SVG (mesma cor/estilo do Font Awesome) */
 .iconSvg{
   width:34px;
   height:34px;
+  display:block;
 }
 
 .iconStroke{
@@ -137,11 +163,23 @@ body{
   stroke-linecap:round;
 }
 
+/* Ajustes extras para telas bem pequenas */
+@media (max-width:360px){
+  .iconBox{
+    width:58px;
+    height:58px;
+    border-radius:18px;
+  }
+  .iconBox i{ font-size:28px; }
+  .iconSvg{ width:32px; height:32px; }
+}
+
 /* TEXTO */
 .label{
   font-weight:900;
   font-size:13px;
   color:var(--fb-text);
+  line-height:1.15;
 }
 .label small{
   display:block;
@@ -149,6 +187,11 @@ body{
   font-weight:700;
   font-size:12px;
   color:var(--fb-muted);
+}
+
+/* evita quebra feia em telas pequenas */
+.label, .label small{
+  word-break:break-word;
 }
 </style>
 </head>
@@ -168,49 +211,48 @@ body{
 
 <main class="wrap">
 
-<section class="grid">
+  <section class="grid">
 
-  <div class="card" onclick="location.href='https://drive.google.com/file/d/1kKAL9yGVrU-c8Y9ecBApVUHG2qbuoHFV/view?usp=sharing'">
-    <div class="iconBox"><i class="fa-solid fa-book" style="color:var(--fb-icon);font-size:30px"></i></div>
-    <div class="label">Apostila <small>PDF</small></div>
-  </div>
-
-  <div class="card" onclick="location.href='https://drive.google.com/file/d/1-gQvm5UyiCnP2ldptVAgwI5GAasupd4P/view?usp=sharing'">
-    <div class="iconBox"><i class="fa-solid fa-leaf" style="color:var(--fb-icon);font-size:30px"></i></div>
-    <div class="label">Banhos <small>PDF</small></div>
-  </div>
-
-  <!-- Carta de Tarô -->
-  <div class="card" onclick="location.href='https://drive.google.com/file/d/1-X-vCFH_LbymUyLMESntPfqBGduIUc-R/view?usp=sharing'">
-    <div class="iconBox">
-      <svg class="iconSvg" viewBox="0 0 64 64">
-        <rect x="16" y="10" width="32" height="44" rx="6" class="iconStroke"/>
-        <rect x="20" y="14" width="24" height="36" rx="4" class="iconStroke" opacity=".5"/>
-        <circle cx="32" cy="32" r="6" class="iconStroke"/>
-      </svg>
+    <div class="card" onclick="location.href='https://drive.google.com/file/d/1kKAL9yGVrU-c8Y9ecBApVUHG2qbuoHFV/view?usp=sharing'">
+      <div class="iconBox"><i class="fa-solid fa-book"></i></div>
+      <div class="label">Apostila <small>PDF</small></div>
     </div>
-    <div class="label">Baralho Cigano <small>PDF</small></div>
-  </div>
 
-  <!-- Pontos Riscados – Estrela de Davi -->
-  <div class="card" onclick="location.href='https://marcio2307.github.io/terreiro/ponto.html'">
-    <div class="iconBox">
-      <svg class="iconSvg" viewBox="0 0 64 64">
-        <!-- Triângulo para cima -->
-        <polygon points="32 8, 56 48, 8 48" class="iconStroke"/>
-        <!-- Triângulo para baixo -->
-        <polygon points="32 56, 56 16, 8 16" class="iconStroke"/>
-      </svg>
+    <div class="card" onclick="location.href='https://drive.google.com/file/d/1-gQvm5UyiCnP2ldptVAgwI5GAasupd4P/view?usp=sharing'">
+      <div class="iconBox"><i class="fa-solid fa-leaf"></i></div>
+      <div class="label">Banhos <small>PDF</small></div>
     </div>
-    <div class="label">Pontos Riscados <small>Página</small></div>
-  </div>
 
-  <div class="card" onclick="location.href='https://marcio2307.github.io/prova/index.html'">
-    <div class="iconBox"><i class="fa-solid fa-clipboard-check" style="color:var(--fb-icon);font-size:30px"></i></div>
-    <div class="label">Provas <small>Página</small></div>
-  </div>
+    <!-- Baralho Cigano: Ícone carta de tarô (SVG) -->
+    <div class="card" onclick="location.href='https://drive.google.com/file/d/1-X-vCFH_LbymUyLMESntPfqBGduIUc-R/view?usp=sharing'">
+      <div class="iconBox" aria-hidden="true">
+        <svg class="iconSvg" viewBox="0 0 64 64" role="img" aria-label="Carta de tarô">
+          <rect x="16" y="10" width="32" height="44" rx="6" class="iconStroke"></rect>
+          <rect x="20" y="14" width="24" height="36" rx="4" class="iconStroke" opacity=".55"></rect>
+          <circle cx="32" cy="32" r="6" class="iconStroke"></circle>
+          <path d="M32 24v16" class="iconStroke" opacity=".55"></path>
+        </svg>
+      </div>
+      <div class="label">Baralho Cigano <small>PDF</small></div>
+    </div>
 
-</section>
+    <!-- Pontos Riscados: Estrela de Davi (SVG) -->
+    <div class="card" onclick="location.href='https://marcio2307.github.io/terreiro/ponto.html'">
+      <div class="iconBox" aria-hidden="true">
+        <svg class="iconSvg" viewBox="0 0 64 64" role="img" aria-label="Estrela de Davi">
+          <polygon points="32 8, 56 48, 8 48" class="iconStroke"></polygon>
+          <polygon points="32 56, 56 16, 8 16" class="iconStroke"></polygon>
+        </svg>
+      </div>
+      <div class="label">Pontos Riscados <small>Página</small></div>
+    </div>
+
+    <div class="card" onclick="location.href='https://marcio2307.github.io/prova/index.html'">
+      <div class="iconBox"><i class="fa-solid fa-clipboard-check"></i></div>
+      <div class="label">Provas <small>Página</small></div>
+    </div>
+
+  </section>
 
 </main>
 
