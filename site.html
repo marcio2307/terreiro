@@ -779,7 +779,8 @@
     color: rgba(228,230,235,.95);
   }
 
-  .post .mediaWrap img{
+  .post .mediaWrap img,
+  .post .mediaWrap video{
     width:100%;
     border-radius: 14px;
     margin-top:10px;
@@ -788,96 +789,6 @@
     border:1px solid rgba(255,255,255,.08);
   }
 
-  /* ===================== ✅ VÍDEOS DO FEED (ESTILO FACEBOOK) ===================== */
-  .fbVideoShell{
-    margin-top:10px;
-    border-radius: 14px;
-    overflow:hidden;
-    background:#000;
-    border:1px solid rgba(255,255,255,.08);
-    position:relative;
-  }
-  video.fbFeedVideo{
-    width:100%;
-    display:block;
-    background:#000;
-    /* Facebook-like: ocupa o card e corta “bonito” */
-    aspect-ratio: 4 / 5;
-    object-fit: cover;
-  }
-  /* remove controles nativos em alguns browsers */
-  video.fbFeedVideo::-webkit-media-controls{ display:none !important; }
-  video.fbFeedVideo::-webkit-media-controls-enclosure{ display:none !important; }
-
-  .fbVidUI{
-    position:absolute;
-    inset:0;
-    pointer-events:none;
-  }
-
-  .fbVidSoundBtn{
-    position:absolute;
-    right:10px;
-    bottom:10px;
-    width:38px;
-    height:38px;
-    border-radius:999px;
-    background: rgba(0,0,0,.55);
-    border: 1px solid rgba(255,255,255,.22);
-    color:#fff;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    font-size:18px;
-    box-shadow: 0 10px 18px rgba(0,0,0,.25);
-    pointer-events:auto;
-    cursor:pointer;
-    user-select:none;
-    -webkit-tap-highlight-color: transparent;
-  }
-  .fbVidSoundBtn:active{ transform: scale(.96); }
-
-  .fbVidPlayBtn{
-    position:absolute;
-    left:50%;
-    top:50%;
-    transform: translate(-50%,-50%);
-    width:62px;
-    height:62px;
-    border-radius:999px;
-    background: rgba(0,0,0,.55);
-    border: 1px solid rgba(255,255,255,.22);
-    color:#fff;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    font-size:22px;
-    box-shadow: 0 10px 18px rgba(0,0,0,.25);
-    pointer-events:auto;
-    cursor:pointer;
-    user-select:none;
-    opacity:0;
-    transition: opacity .15s ease;
-    -webkit-tap-highlight-color: transparent;
-  }
-  .fbVidPlayBtn.show{ opacity:1; }
-  .fbVidPlayBtn:active{ transform: translate(-50%,-50%) scale(.96); }
-
-  .fbVidProgress{
-    position:absolute;
-    left:0; right:0; bottom:0;
-    height:3px;
-    background: rgba(255,255,255,.25);
-    pointer-events:none;
-  }
-  .fbVidProgressFill{
-    height:100%;
-    width:0%;
-    background: var(--fb-blue);
-    transition: width .08s linear;
-  }
-
-  /* ===================== AÇÕES ===================== */
   .post-actions{
     display:flex;
     justify-content:space-around;
@@ -1342,19 +1253,12 @@ function playChatSound(){
 }
 
 /* ====================== ✅ CONTROLE: RÁDIO x VÍDEOS DO FEED ====================== */
-let __lastUnmutedFeedVideo = null;
+/* ✅ ALTERAÇÃO PEDIDA:
+   - Se o usuário silenciar um vídeo do feed, ele NÃO volta sozinho ao rolar.
+   - Só volta a ter som se o usuário clicar para "ouvir de novo".
+   - Rádio tocando trava feed no mudo.
+*/
 let __radioLocksFeedAudio = false;
-
-function rememberUnmutedFeedVideo(){
-  __lastUnmutedFeedVideo = null;
-  document.querySelectorAll("#feed video[data-feedvideo='1']").forEach(v=>{
-    try{
-      if(v.__userUnmuted && !v.muted){
-        __lastUnmutedFeedVideo = v;
-      }
-    }catch(e){}
-  });
-}
 
 function forceMuteAllFeedVideos(){
   document.querySelectorAll("#feed video[data-feedvideo='1']").forEach(v=>{
@@ -1362,55 +1266,8 @@ function forceMuteAllFeedVideos(){
       v.__userUnmuted = false;
       v.muted = true;
       v.volume = 1.0;
-      if(v.__ui && v.__ui.soundIcon){
-        v.__ui.soundIcon.className = "fa-solid fa-volume-xmark";
-      }
     }catch(e){}
   });
-}
-
-function restoreFeedVideoAudioIfPossible(){
-  if(!__lastUnmutedFeedVideo) return;
-  const v = __lastUnmutedFeedVideo;
-  if(!document.body.contains(v)) return;
-
-  const rect = v.getBoundingClientRect();
-  const visible = rect.bottom > 0 && rect.top < (window.innerHeight || 0);
-  if(!visible) return;
-
-  try{
-    unlockAudioOnce();
-    if(__radioLocksFeedAudio || radioPlaying){
-      v.__userUnmuted = false;
-      v.muted = true;
-      v.volume = 1.0;
-      if(v.__ui && v.__ui.soundIcon){
-        v.__ui.soundIcon.className = "fa-solid fa-volume-xmark";
-      }
-      return;
-    }
-    v.__userUnmuted = true;
-    v.muted = false;
-    v.volume = 1.0;
-    if(v.__ui && v.__ui.soundIcon){
-      v.__ui.soundIcon.className = "fa-solid fa-volume-high";
-    }
-
-    if(!v.__srcSet){
-      const ds = v.getAttribute("data-src");
-      if(ds){
-        v.src = ds;
-        v.__srcSet = true;
-        v.preload = "metadata";
-        v.setAttribute("preload","metadata");
-        v.setAttribute("fetchpriority","high");
-        try{ v.load(); }catch(e){}
-      }
-    }
-
-    const p = v.play();
-    if(p && p.catch) p.catch(()=>{});
-  }catch(e){}
 }
 
 /* ====================== RADIO PLAYER (MENU) ====================== */
@@ -1436,11 +1293,10 @@ function onRadioStateChange(isPlaying){
 
   if(radioPlaying){
     __radioLocksFeedAudio = true;
-    rememberUnmutedFeedVideo();
     forceMuteAllFeedVideos();
   }else{
+    /* ✅ NÃO RESTAURA SOM AUTOMATICAMENTE. Só volta se o usuário clicar no vídeo. */
     __radioLocksFeedAudio = false;
-    restoreFeedVideoAudioIfPossible();
   }
 }
 
@@ -1878,7 +1734,7 @@ async function renderConnections(){
 })();
 </script>
 
-<!-- ===================== STORIES (SEU CÓDIGO ORIGINAL INTACTO) ===================== -->
+<!-- ===================== STORIES (SEM ALTERAÇÃO) ===================== -->
 <script>
 /* ===================== STORIES ===================== */
 const menuTop = document.querySelector('.top-menu');
@@ -2445,7 +2301,7 @@ async function addStory(file){
 </script>
 
 <script>
-/* ===================== ✅ FEED (AUTO PLAY + VÍDEO ESTILO FACEBOOK) ===================== */
+/* ===================== ✅ FEED (AUTO PLAY + SILÊNCIO NÃO "VOLTA" AO ROLAR) ===================== */
 let __feedObserver = null;
 
 function ensureFeedObserver(){
@@ -2473,19 +2329,15 @@ function ensureFeedObserver(){
 
         if(entry.intersectionRatio >= 0.25){
           try{
-            if(v.__userUnmuted && audioUnlocked && !__radioLocksFeedAudio && !radioPlaying){
-              v.muted = false;
-              v.volume = 1.0;
-              __lastUnmutedFeedVideo = v;
-              if(v.__ui && v.__ui.soundIcon){
-                v.__ui.soundIcon.className = "fa-solid fa-volume-high";
-              }
-            }else{
+            /* ✅ REGRA:
+               - NUNCA ativa som sozinho ao rolar.
+               - Mantém o estado atual (muted / unmuted) do próprio vídeo.
+               - Se rádio estiver tocando, força mudo.
+            */
+            if(__radioLocksFeedAudio || radioPlaying){
+              v.__userUnmuted = false;
               v.muted = true;
               v.volume = 1.0;
-              if(v.__ui && v.__ui.soundIcon){
-                v.__ui.soundIcon.className = "fa-solid fa-volume-xmark";
-              }
             }
 
             const p = v.play();
@@ -2493,23 +2345,13 @@ function ensureFeedObserver(){
               try{
                 v.muted = true;
                 v.__userUnmuted = false;
-                if(v.__ui && v.__ui.soundIcon){
-                  v.__ui.soundIcon.className = "fa-solid fa-volume-xmark";
-                }
                 v.play().catch(()=>{});
               }catch(e){}
             });
-
-            if(v.__ui && v.__ui.playBtn){
-              v.__ui.playBtn.classList.toggle("show", v.paused);
-            }
           }catch(e){}
         }
       }else{
         try{ v.pause(); }catch(e){}
-        if(v.__ui && v.__ui.playBtn){
-          v.__ui.playBtn.classList.add("show");
-        }
       }
     });
   }, {
@@ -2524,137 +2366,41 @@ function muteAllFeedVideosExcept(exceptVideo){
       try{
         v.__userUnmuted = false;
         v.muted = true;
-        if(v.__ui && v.__ui.soundIcon){
-          v.__ui.soundIcon.className = "fa-solid fa-volume-xmark";
-        }
       }catch(e){}
     }
   });
 }
 
-/* ✅ cria UI estilo Facebook em cima do vídeo */
-function ensureFacebookVideoUI(v){
-  try{
-    if(!v) return;
-    if(v.__uiCreated) return;
-    v.__uiCreated = true;
+/* ✅ DOUBLE TAP / DOUBLE CLICK PARA RECOMEÇAR DO INÍCIO */
+function attachRestartGesture(v){
+  if(v.__restartHooked) return;
+  v.__restartHooked = true;
 
-    const shell = v.closest(".fbVideoShell");
-    if(!shell) return;
+  let lastTap = 0;
 
-    const ui = shell.querySelector(".fbVidUI");
-    const soundBtn = shell.querySelector(".fbVidSoundBtn");
-    const soundIcon = soundBtn ? soundBtn.querySelector("i") : null;
-    const playBtn = shell.querySelector(".fbVidPlayBtn");
-    const playIcon = playBtn ? playBtn.querySelector("i") : null;
-    const progFill = shell.querySelector(".fbVidProgressFill");
+  const restartNow = ()=>{
+    try{
+      v.currentTime = 0;
+      const p = v.play();
+      if(p && p.catch) p.catch(()=>{});
+    }catch(e){}
+  };
 
-    v.__ui = { ui, soundBtn, soundIcon, playBtn, playIcon, progFill };
+  v.addEventListener("dblclick", (e)=>{
+    e.preventDefault();
+    restartNow();
+  });
 
-    // estado inicial
-    v.muted = true;
-    v.__userUnmuted = false;
-    if(soundIcon) soundIcon.className = "fa-solid fa-volume-xmark";
-    if(playBtn) playBtn.classList.add("show");
-
-    // click no vídeo = play/pause (igual Facebook)
-    v.addEventListener("click", ()=>{
-      try{
-        if(v.paused){
-          const p = v.play();
-          if(p && p.catch) p.catch(()=>{});
-        }else{
-          v.pause();
-        }
-        if(playBtn) playBtn.classList.toggle("show", v.paused);
-      }catch(e){}
-    });
-
-    // botão central play/pause
-    if(playBtn){
-      playBtn.addEventListener("click", (e)=>{
-        e.stopPropagation();
-        try{
-          if(v.paused){
-            const p = v.play();
-            if(p && p.catch) p.catch(()=>{});
-          }else{
-            v.pause();
-          }
-          playBtn.classList.toggle("show", v.paused);
-        }catch(err){}
-      });
+  v.addEventListener("touchend", (e)=>{
+    const now = Date.now();
+    if(now - lastTap < 320){
+      e.preventDefault();
+      restartNow();
+      lastTap = 0;
+      return;
     }
-
-    // botão som = mute/unmute (igual Facebook)
-    if(soundBtn){
-      soundBtn.addEventListener("click", (e)=>{
-        e.stopPropagation();
-        try{
-          unlockAudioOnce();
-
-          if(__radioLocksFeedAudio || radioPlaying){
-            v.__userUnmuted = false;
-            v.muted = true;
-            v.volume = 1.0;
-            if(soundIcon) soundIcon.className = "fa-solid fa-volume-xmark";
-            return;
-          }
-
-          if(v.muted){
-            muteAllFeedVideosExcept(v);
-            v.__userUnmuted = true;
-            v.muted = false;
-            v.volume = 1.0;
-            __lastUnmutedFeedVideo = v;
-            if(soundIcon) soundIcon.className = "fa-solid fa-volume-high";
-
-            if(!v.__srcSet){
-              const ds = v.getAttribute("data-src");
-              if(ds){
-                v.src = ds;
-                v.__srcSet = true;
-                v.preload = "metadata";
-                v.setAttribute("preload","metadata");
-                v.setAttribute("fetchpriority","high");
-                try{ v.load(); }catch(e){}
-              }
-            }
-            const p = v.play();
-            if(p && p.catch) p.catch(()=>{});
-          }else{
-            v.__userUnmuted = false;
-            v.muted = true;
-            if(soundIcon) soundIcon.className = "fa-solid fa-volume-xmark";
-          }
-        }catch(err){}
-      });
-    }
-
-    // progresso
-    v.addEventListener("timeupdate", ()=>{
-      try{
-        if(!progFill) return;
-        const d = v.duration || 0;
-        if(!d || !isFinite(d)) { progFill.style.width = "0%"; return; }
-        const pct = Math.max(0, Math.min(100, (v.currentTime / d) * 100));
-        progFill.style.width = pct.toFixed(2) + "%";
-      }catch(e){}
-    });
-
-    v.addEventListener("play", ()=>{
-      if(playBtn) playBtn.classList.remove("show");
-    });
-    v.addEventListener("pause", ()=>{
-      if(playBtn) playBtn.classList.add("show");
-    });
-    v.addEventListener("ended", ()=>{
-      try{
-        if(progFill) progFill.style.width = "0%";
-        if(playBtn) playBtn.classList.add("show");
-      }catch(e){}
-    });
-  }catch(e){}
+    lastTap = now;
+  }, { passive:false });
 }
 
 function setupOneFeedVideo(v){
@@ -2674,14 +2420,59 @@ function setupOneFeedVideo(v){
     v.preload = "none";
     v.setAttribute("preload","none");
     v.setAttribute("data-feedvideo","1");
-
-    // ✅ Facebook-like: sem controls nativos
-    v.controls = false;
-    v.removeAttribute("controls");
   }catch(e){}
 
-  // ✅ garante UI overlay estilo Facebook
-  ensureFacebookVideoUI(v);
+  attachRestartGesture(v);
+
+  const onUserToggleSound = (e)=>{
+    try{
+      unlockAudioOnce();
+
+      if(__radioLocksFeedAudio || radioPlaying){
+        v.__userUnmuted = false;
+        v.muted = true;
+        v.volume = 1.0;
+        try{ v.play().catch(()=>{}); }catch(e){}
+        return;
+      }
+
+      if(v.muted){
+        /* ✅ usuário clicou em "ouvir" -> libera som */
+        muteAllFeedVideosExcept(v);
+        v.__userUnmuted = true;
+        v.muted = false;
+        v.volume = 1.0;
+
+        if(!v.__srcSet){
+          const ds = v.getAttribute("data-src");
+          if(ds){
+            v.src = ds;
+            v.__srcSet = true;
+            v.preload = "metadata";
+            v.setAttribute("preload","metadata");
+            v.setAttribute("fetchpriority","high");
+            try{ v.load(); }catch(e){}
+          }
+        }
+
+        const p = v.play();
+        if(p && p.catch) p.catch(()=>{});
+      }else{
+        /* ✅ usuário silenciou -> fica silencioso e NÃO volta sozinho ao rolar */
+        v.__userUnmuted = false;
+        v.muted = true;
+        v.volume = 1.0;
+      }
+    }catch(e){}
+  };
+
+  /* ✅ Clique/toque alterna SOM (igual Facebook: tocar no vídeo para ouvir/silenciar) */
+  v.addEventListener("click", onUserToggleSound);
+  v.addEventListener("touchend", (ev)=>{
+    /* se foi double tap, o handler de restart já deu preventDefault; aqui evita conflito */
+    if(ev.defaultPrevented) return;
+    onUserToggleSound(ev);
+  }, { passive:false });
 
   try{ __feedObserver.observe(v); }catch(e){}
 }
@@ -3003,26 +2794,14 @@ function postHTML(id, postData, avatarUrl){
     midia = isImg
       ? `<img src="${postData.mediaUrl}" loading="lazy">`
       : `
-        <div class="fbVideoShell">
-          <video
-            class="fbFeedVideo"
-            data-src="${escapeHTML(postData.mediaUrl)}"
-            muted
-            loop
-            preload="none"
-            playsinline
-            webkit-playsinline></video>
-
-          <div class="fbVidUI">
-            <div class="fbVidProgress"><div class="fbVidProgressFill"></div></div>
-            <button class="fbVidSoundBtn" type="button" aria-label="Som">
-              <i class="fa-solid fa-volume-xmark"></i>
-            </button>
-            <button class="fbVidPlayBtn show" type="button" aria-label="Play/Pause">
-              <i class="fa-solid fa-play"></i>
-            </button>
-          </div>
-        </div>
+        <video
+          data-src="${escapeHTML(postData.mediaUrl)}"
+          controls
+          muted
+          loop
+          preload="none"
+          playsinline
+          webkit-playsinline></video>
       `;
   }
 
@@ -3145,26 +2924,14 @@ function atualizarPostDoServidor(id, data){
       wrap.innerHTML = isImg
         ? `<img src="${data.mediaUrl}" loading="lazy">`
         : `
-          <div class="fbVideoShell">
-            <video
-              class="fbFeedVideo"
-              data-src="${escapeHTML(data.mediaUrl)}"
-              muted
-              loop
-              preload="none"
-              playsinline
-              webkit-playsinline></video>
-
-            <div class="fbVidUI">
-              <div class="fbVidProgress"><div class="fbVidProgressFill"></div></div>
-              <button class="fbVidSoundBtn" type="button" aria-label="Som">
-                <i class="fa-solid fa-volume-xmark"></i>
-              </button>
-              <button class="fbVidPlayBtn show" type="button" aria-label="Play/Pause">
-                <i class="fa-solid fa-play"></i>
-              </button>
-            </div>
-          </div>
+          <video
+            data-src="${escapeHTML(data.mediaUrl)}"
+            controls
+            muted
+            loop
+            preload="none"
+            playsinline
+            webkit-playsinline></video>
         `;
     }else{
       wrap.innerHTML = "";
@@ -3296,13 +3063,6 @@ function pumpRenderQueue(){
 
 updateButton();
 setupAllFeedVideos();
-
-/* ✅ se rádio desligar e o usuário rolar, tenta restaurar áudio do vídeo que estava com som */
-window.addEventListener("scroll", ()=>{
-  if(!radioPlaying && !__radioLocksFeedAudio){
-    restoreFeedVideoAudioIfPossible();
-  }
-}, { passive:true });
 </script>
 
 </body>
