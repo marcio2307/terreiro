@@ -125,7 +125,6 @@
   }
   .top-menu.hide{ display:none !important; }
 
-  /* ✅ cada item vira "botão" com ícone em cima e nome embaixo */
   .top-menu a{
     width: 66px;
     min-width: 66px;
@@ -151,14 +150,12 @@
   }
   .top-menu a:active{ transform: scale(.98); }
 
-  /* ✅ ícones maiores */
   .top-menu a i{
     font-size: 24px;
     color: var(--fb-text);
     line-height:1;
   }
 
-  /* ✅ texto abaixo do ícone */
   .menuLabel{
     font-size: 11px;
     font-weight: 900;
@@ -173,7 +170,6 @@
     padding: 0 2px;
   }
 
-  /* ✅ bolinha online (fica no canto do botão) */
   .menu-online-dot{
     position:absolute;
     top: 8px;
@@ -190,7 +186,6 @@
     50%{ transform: scale(1.25); opacity: .4; }
   }
 
-  /* ✅ adaptação para telas bem pequenas */
   @media(max-width:380px){
     .top-menu{ gap: 8px; padding: 8px 6px; top: 64px; }
     .top-menu a{ width: 62px; min-width:62px; height: 56px; border-radius: 14px; }
@@ -1217,6 +1212,8 @@ chatSfx.preload = "auto";
 chatSfx.volume = 1.0;
 
 let audioUnlocked = false;
+
+/* ✅ AJUSTE: desbloqueia áudio com QUALQUER interação (inclui pointerdown/keydown) */
 function unlockAudioOnce(){
   if(audioUnlocked) return;
   audioUnlocked = true;
@@ -1235,6 +1232,8 @@ function unlockAudioOnce(){
 }
 document.addEventListener("touchstart", unlockAudioOnce, { once:true, passive:true });
 document.addEventListener("click", unlockAudioOnce, { once:true });
+document.addEventListener("pointerdown", unlockAudioOnce, { once:true, passive:true });
+document.addEventListener("keydown", unlockAudioOnce, { once:true });
 
 function playActionSound(){
   if(!ACTION_SOUND_URL || ACTION_SOUND_URL.includes("COLE_AQUI")) return;
@@ -1289,6 +1288,12 @@ function restoreFeedVideoAudioIfPossible(){
 
   try{
     unlockAudioOnce();
+    if(__radioLocksFeedAudio || radioPlaying){
+      v.__userUnmuted = false;
+      v.muted = true;
+      v.volume = 1.0;
+      return;
+    }
     v.__userUnmuted = true;
     v.muted = false;
     v.volume = 1.0;
@@ -2107,7 +2112,7 @@ function showStory(){
     el.src = s.url;
     el.autoplay = true;
 
-    /* ✅ STORIES: AGORA TOCA COM SOM (exceto se rádio estiver tocando) */
+    /* ✅ STORIES: TOCA COM SOM (exceto se rádio estiver tocando) */
     el.muted = radioPlaying ? true : false;
     el.volume = 1.0;
     el.controls = true;
@@ -2125,13 +2130,11 @@ function showStory(){
 
     viewerMedia.appendChild(el);
 
-    /* tenta tocar com som (user gesture já aconteceu ao abrir) */
     try{
       unlockAudioOnce();
       const p = el.play();
       if(p && p.catch){
         p.catch(()=>{
-          /* fallback: se algum navegador bloquear som, toca mutado */
           try{
             el.muted = true;
             el.play().catch(()=>{});
@@ -2243,7 +2246,6 @@ function renderUserCard(group){
   if((cover.type||"").includes("image")){
     mediaHTML = `<img class="storyMedia" src="${cover.url}" alt="story" loading="lazy">`;
   }else{
-    /* preview do card continua sem som (correto) */
     mediaHTML = `<video class="storyMedia" src="${cover.url}" autoplay muted loop playsinline preload="metadata"></video>`;
   }
 
@@ -2344,7 +2346,7 @@ async function addStory(file){
 </script>
 
 <script>
-/* ===================== ✅ FEED (VÍDEOS AUTO / SOM SÓ NO CLIQUE) ===================== */
+/* ===================== ✅ FEED (AUTO PLAY + SOM PERSISTENTE APÓS DESBLOQUEAR) ===================== */
 let __feedObserver = null;
 
 function ensureFeedObserver(){
@@ -2372,12 +2374,34 @@ function ensureFeedObserver(){
 
         if(entry.intersectionRatio >= 0.25){
           try{
-            if(!v.__userUnmuted){
-              v.muted = true;
+            /* ✅ AJUSTE PRINCIPAL:
+               - Se o usuário já liberou o som UMA VEZ e marcou esse vídeo como "com som" (__userUnmuted),
+                 então quando ele voltar para a tela o vídeo continua com som mesmo sem clicar de novo.
+               - Se rádio estiver tocando, trava o feed no mudo.
+            */
+            if(v.__userUnmuted && audioUnlocked && !__radioLocksFeedAudio && !radioPlaying){
+              v.muted = false;
               v.volume = 1.0;
+              __lastUnmutedFeedVideo = v;
+            }else{
+              if(!v.__userUnmuted){
+                v.muted = true;
+                v.volume = 1.0;
+              }else if(__radioLocksFeedAudio || radioPlaying){
+                v.muted = true;
+                v.volume = 1.0;
+              }
             }
+
             const p = v.play();
-            if(p && p.catch) p.catch(()=>{});
+            if(p && p.catch) p.catch(()=>{
+              /* fallback se o navegador bloquear som em autoplay */
+              try{
+                v.muted = true;
+                v.__userUnmuted = false;
+                v.play().catch(()=>{});
+              }catch(e){}
+            });
           }catch(e){}
         }
       }else{
@@ -2424,7 +2448,6 @@ function setupOneFeedVideo(v){
     try{
       unlockAudioOnce();
 
-      /* ✅ se rádio está tocando, travar áudio do feed */
       if(__radioLocksFeedAudio || radioPlaying){
         v.__userUnmuted = false;
         v.muted = true;
@@ -2439,7 +2462,6 @@ function setupOneFeedVideo(v){
         v.muted = false;
         v.volume = 1.0;
 
-        /* memoriza último vídeo com som */
         __lastUnmutedFeedVideo = v;
 
         if(!v.__srcSet){
@@ -3065,4 +3087,3 @@ window.addEventListener("scroll", ()=>{
 
 </body>
 </html>
-
