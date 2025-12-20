@@ -779,8 +779,7 @@
     color: rgba(228,230,235,.95);
   }
 
-  .post .mediaWrap img,
-  .post .mediaWrap video{
+  .post .mediaWrap img{
     width:100%;
     border-radius: 14px;
     margin-top:10px;
@@ -789,6 +788,96 @@
     border:1px solid rgba(255,255,255,.08);
   }
 
+  /* ===================== ✅ VÍDEOS DO FEED (ESTILO FACEBOOK) ===================== */
+  .fbVideoShell{
+    margin-top:10px;
+    border-radius: 14px;
+    overflow:hidden;
+    background:#000;
+    border:1px solid rgba(255,255,255,.08);
+    position:relative;
+  }
+  video.fbFeedVideo{
+    width:100%;
+    display:block;
+    background:#000;
+    /* Facebook-like: ocupa o card e corta “bonito” */
+    aspect-ratio: 4 / 5;
+    object-fit: cover;
+  }
+  /* remove controles nativos em alguns browsers */
+  video.fbFeedVideo::-webkit-media-controls{ display:none !important; }
+  video.fbFeedVideo::-webkit-media-controls-enclosure{ display:none !important; }
+
+  .fbVidUI{
+    position:absolute;
+    inset:0;
+    pointer-events:none;
+  }
+
+  .fbVidSoundBtn{
+    position:absolute;
+    right:10px;
+    bottom:10px;
+    width:38px;
+    height:38px;
+    border-radius:999px;
+    background: rgba(0,0,0,.55);
+    border: 1px solid rgba(255,255,255,.22);
+    color:#fff;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:18px;
+    box-shadow: 0 10px 18px rgba(0,0,0,.25);
+    pointer-events:auto;
+    cursor:pointer;
+    user-select:none;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .fbVidSoundBtn:active{ transform: scale(.96); }
+
+  .fbVidPlayBtn{
+    position:absolute;
+    left:50%;
+    top:50%;
+    transform: translate(-50%,-50%);
+    width:62px;
+    height:62px;
+    border-radius:999px;
+    background: rgba(0,0,0,.55);
+    border: 1px solid rgba(255,255,255,.22);
+    color:#fff;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:22px;
+    box-shadow: 0 10px 18px rgba(0,0,0,.25);
+    pointer-events:auto;
+    cursor:pointer;
+    user-select:none;
+    opacity:0;
+    transition: opacity .15s ease;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .fbVidPlayBtn.show{ opacity:1; }
+  .fbVidPlayBtn:active{ transform: translate(-50%,-50%) scale(.96); }
+
+  .fbVidProgress{
+    position:absolute;
+    left:0; right:0; bottom:0;
+    height:3px;
+    background: rgba(255,255,255,.25);
+    pointer-events:none;
+  }
+  .fbVidProgressFill{
+    height:100%;
+    width:0%;
+    background: var(--fb-blue);
+    transition: width .08s linear;
+  }
+
+  /* ===================== AÇÕES ===================== */
   .post-actions{
     display:flex;
     justify-content:space-around;
@@ -1273,6 +1362,9 @@ function forceMuteAllFeedVideos(){
       v.__userUnmuted = false;
       v.muted = true;
       v.volume = 1.0;
+      if(v.__ui && v.__ui.soundIcon){
+        v.__ui.soundIcon.className = "fa-solid fa-volume-xmark";
+      }
     }catch(e){}
   });
 }
@@ -1292,11 +1384,17 @@ function restoreFeedVideoAudioIfPossible(){
       v.__userUnmuted = false;
       v.muted = true;
       v.volume = 1.0;
+      if(v.__ui && v.__ui.soundIcon){
+        v.__ui.soundIcon.className = "fa-solid fa-volume-xmark";
+      }
       return;
     }
     v.__userUnmuted = true;
     v.muted = false;
     v.volume = 1.0;
+    if(v.__ui && v.__ui.soundIcon){
+      v.__ui.soundIcon.className = "fa-solid fa-volume-high";
+    }
 
     if(!v.__srcSet){
       const ds = v.getAttribute("data-src");
@@ -1780,6 +1878,7 @@ async function renderConnections(){
 })();
 </script>
 
+<!-- ===================== STORIES (SEU CÓDIGO ORIGINAL INTACTO) ===================== -->
 <script>
 /* ===================== STORIES ===================== */
 const menuTop = document.querySelector('.top-menu');
@@ -2346,7 +2445,7 @@ async function addStory(file){
 </script>
 
 <script>
-/* ===================== ✅ FEED (AUTO PLAY + SOM PERSISTENTE APÓS DESBLOQUEAR) ===================== */
+/* ===================== ✅ FEED (AUTO PLAY + VÍDEO ESTILO FACEBOOK) ===================== */
 let __feedObserver = null;
 
 function ensureFeedObserver(){
@@ -2374,38 +2473,43 @@ function ensureFeedObserver(){
 
         if(entry.intersectionRatio >= 0.25){
           try{
-            /* ✅ AJUSTE PRINCIPAL:
-               - Se o usuário já liberou o som UMA VEZ e marcou esse vídeo como "com som" (__userUnmuted),
-                 então quando ele voltar para a tela o vídeo continua com som mesmo sem clicar de novo.
-               - Se rádio estiver tocando, trava o feed no mudo.
-            */
             if(v.__userUnmuted && audioUnlocked && !__radioLocksFeedAudio && !radioPlaying){
               v.muted = false;
               v.volume = 1.0;
               __lastUnmutedFeedVideo = v;
+              if(v.__ui && v.__ui.soundIcon){
+                v.__ui.soundIcon.className = "fa-solid fa-volume-high";
+              }
             }else{
-              if(!v.__userUnmuted){
-                v.muted = true;
-                v.volume = 1.0;
-              }else if(__radioLocksFeedAudio || radioPlaying){
-                v.muted = true;
-                v.volume = 1.0;
+              v.muted = true;
+              v.volume = 1.0;
+              if(v.__ui && v.__ui.soundIcon){
+                v.__ui.soundIcon.className = "fa-solid fa-volume-xmark";
               }
             }
 
             const p = v.play();
             if(p && p.catch) p.catch(()=>{
-              /* fallback se o navegador bloquear som em autoplay */
               try{
                 v.muted = true;
                 v.__userUnmuted = false;
+                if(v.__ui && v.__ui.soundIcon){
+                  v.__ui.soundIcon.className = "fa-solid fa-volume-xmark";
+                }
                 v.play().catch(()=>{});
               }catch(e){}
             });
+
+            if(v.__ui && v.__ui.playBtn){
+              v.__ui.playBtn.classList.toggle("show", v.paused);
+            }
           }catch(e){}
         }
       }else{
         try{ v.pause(); }catch(e){}
+        if(v.__ui && v.__ui.playBtn){
+          v.__ui.playBtn.classList.add("show");
+        }
       }
     });
   }, {
@@ -2420,9 +2524,137 @@ function muteAllFeedVideosExcept(exceptVideo){
       try{
         v.__userUnmuted = false;
         v.muted = true;
+        if(v.__ui && v.__ui.soundIcon){
+          v.__ui.soundIcon.className = "fa-solid fa-volume-xmark";
+        }
       }catch(e){}
     }
   });
+}
+
+/* ✅ cria UI estilo Facebook em cima do vídeo */
+function ensureFacebookVideoUI(v){
+  try{
+    if(!v) return;
+    if(v.__uiCreated) return;
+    v.__uiCreated = true;
+
+    const shell = v.closest(".fbVideoShell");
+    if(!shell) return;
+
+    const ui = shell.querySelector(".fbVidUI");
+    const soundBtn = shell.querySelector(".fbVidSoundBtn");
+    const soundIcon = soundBtn ? soundBtn.querySelector("i") : null;
+    const playBtn = shell.querySelector(".fbVidPlayBtn");
+    const playIcon = playBtn ? playBtn.querySelector("i") : null;
+    const progFill = shell.querySelector(".fbVidProgressFill");
+
+    v.__ui = { ui, soundBtn, soundIcon, playBtn, playIcon, progFill };
+
+    // estado inicial
+    v.muted = true;
+    v.__userUnmuted = false;
+    if(soundIcon) soundIcon.className = "fa-solid fa-volume-xmark";
+    if(playBtn) playBtn.classList.add("show");
+
+    // click no vídeo = play/pause (igual Facebook)
+    v.addEventListener("click", ()=>{
+      try{
+        if(v.paused){
+          const p = v.play();
+          if(p && p.catch) p.catch(()=>{});
+        }else{
+          v.pause();
+        }
+        if(playBtn) playBtn.classList.toggle("show", v.paused);
+      }catch(e){}
+    });
+
+    // botão central play/pause
+    if(playBtn){
+      playBtn.addEventListener("click", (e)=>{
+        e.stopPropagation();
+        try{
+          if(v.paused){
+            const p = v.play();
+            if(p && p.catch) p.catch(()=>{});
+          }else{
+            v.pause();
+          }
+          playBtn.classList.toggle("show", v.paused);
+        }catch(err){}
+      });
+    }
+
+    // botão som = mute/unmute (igual Facebook)
+    if(soundBtn){
+      soundBtn.addEventListener("click", (e)=>{
+        e.stopPropagation();
+        try{
+          unlockAudioOnce();
+
+          if(__radioLocksFeedAudio || radioPlaying){
+            v.__userUnmuted = false;
+            v.muted = true;
+            v.volume = 1.0;
+            if(soundIcon) soundIcon.className = "fa-solid fa-volume-xmark";
+            return;
+          }
+
+          if(v.muted){
+            muteAllFeedVideosExcept(v);
+            v.__userUnmuted = true;
+            v.muted = false;
+            v.volume = 1.0;
+            __lastUnmutedFeedVideo = v;
+            if(soundIcon) soundIcon.className = "fa-solid fa-volume-high";
+
+            if(!v.__srcSet){
+              const ds = v.getAttribute("data-src");
+              if(ds){
+                v.src = ds;
+                v.__srcSet = true;
+                v.preload = "metadata";
+                v.setAttribute("preload","metadata");
+                v.setAttribute("fetchpriority","high");
+                try{ v.load(); }catch(e){}
+              }
+            }
+            const p = v.play();
+            if(p && p.catch) p.catch(()=>{});
+          }else{
+            v.__userUnmuted = false;
+            v.muted = true;
+            if(soundIcon) soundIcon.className = "fa-solid fa-volume-xmark";
+          }
+        }catch(err){}
+      });
+    }
+
+    // progresso
+    v.addEventListener("timeupdate", ()=>{
+      try{
+        if(!progFill) return;
+        const d = v.duration || 0;
+        if(!d || !isFinite(d)) { progFill.style.width = "0%"; return; }
+        const pct = Math.max(0, Math.min(100, (v.currentTime / d) * 100));
+        progFill.style.width = pct.toFixed(2) + "%";
+      }catch(e){}
+    });
+
+    v.addEventListener("play", ()=>{
+      if(playBtn) playBtn.classList.remove("show");
+    });
+    v.addEventListener("pause", ()=>{
+      if(playBtn) playBtn.classList.add("show");
+    });
+    v.addEventListener("ended", ()=>{
+      try{
+        if(progFill) progFill.style.width = "0%";
+        if(playBtn) playBtn.classList.add("show");
+      }catch(e){}
+    });
+  }catch(e){}
 }
 
 function setupOneFeedVideo(v){
@@ -2442,50 +2674,14 @@ function setupOneFeedVideo(v){
     v.preload = "none";
     v.setAttribute("preload","none");
     v.setAttribute("data-feedvideo","1");
+
+    // ✅ Facebook-like: sem controls nativos
+    v.controls = false;
+    v.removeAttribute("controls");
   }catch(e){}
 
-  const onUserToggle = ()=>{
-    try{
-      unlockAudioOnce();
-
-      if(__radioLocksFeedAudio || radioPlaying){
-        v.__userUnmuted = false;
-        v.muted = true;
-        v.volume = 1.0;
-        try{ v.play().catch(()=>{}); }catch(e){}
-        return;
-      }
-
-      if(v.muted){
-        muteAllFeedVideosExcept(v);
-        v.__userUnmuted = true;
-        v.muted = false;
-        v.volume = 1.0;
-
-        __lastUnmutedFeedVideo = v;
-
-        if(!v.__srcSet){
-          const ds = v.getAttribute("data-src");
-          if(ds){
-            v.src = ds;
-            v.__srcSet = true;
-            v.preload = "metadata";
-            v.setAttribute("preload","metadata");
-            v.setAttribute("fetchpriority","high");
-            try{ v.load(); }catch(e){}
-          }
-        }
-        const p = v.play();
-        if(p && p.catch) p.catch(()=>{});
-      }else{
-        v.__userUnmuted = false;
-        v.muted = true;
-      }
-    }catch(e){}
-  };
-
-  v.addEventListener("click", onUserToggle);
-  v.addEventListener("touchend", onUserToggle, { passive:true });
+  // ✅ garante UI overlay estilo Facebook
+  ensureFacebookVideoUI(v);
 
   try{ __feedObserver.observe(v); }catch(e){}
 }
@@ -2807,14 +3003,26 @@ function postHTML(id, postData, avatarUrl){
     midia = isImg
       ? `<img src="${postData.mediaUrl}" loading="lazy">`
       : `
-        <video
-          data-src="${escapeHTML(postData.mediaUrl)}"
-          controls
-          muted
-          loop
-          preload="none"
-          playsinline
-          webkit-playsinline></video>
+        <div class="fbVideoShell">
+          <video
+            class="fbFeedVideo"
+            data-src="${escapeHTML(postData.mediaUrl)}"
+            muted
+            loop
+            preload="none"
+            playsinline
+            webkit-playsinline></video>
+
+          <div class="fbVidUI">
+            <div class="fbVidProgress"><div class="fbVidProgressFill"></div></div>
+            <button class="fbVidSoundBtn" type="button" aria-label="Som">
+              <i class="fa-solid fa-volume-xmark"></i>
+            </button>
+            <button class="fbVidPlayBtn show" type="button" aria-label="Play/Pause">
+              <i class="fa-solid fa-play"></i>
+            </button>
+          </div>
+        </div>
       `;
   }
 
@@ -2937,14 +3145,26 @@ function atualizarPostDoServidor(id, data){
       wrap.innerHTML = isImg
         ? `<img src="${data.mediaUrl}" loading="lazy">`
         : `
-          <video
-            data-src="${escapeHTML(data.mediaUrl)}"
-            controls
-            muted
-            loop
-            preload="none"
-            playsinline
-            webkit-playsinline></video>
+          <div class="fbVideoShell">
+            <video
+              class="fbFeedVideo"
+              data-src="${escapeHTML(data.mediaUrl)}"
+              muted
+              loop
+              preload="none"
+              playsinline
+              webkit-playsinline></video>
+
+            <div class="fbVidUI">
+              <div class="fbVidProgress"><div class="fbVidProgressFill"></div></div>
+              <button class="fbVidSoundBtn" type="button" aria-label="Som">
+                <i class="fa-solid fa-volume-xmark"></i>
+              </button>
+              <button class="fbVidPlayBtn show" type="button" aria-label="Play/Pause">
+                <i class="fa-solid fa-play"></i>
+              </button>
+            </div>
+          </div>
         `;
     }else{
       wrap.innerHTML = "";
