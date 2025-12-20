@@ -1,83 +1,159 @@
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Pontos Riscados na Umbanda</title>
 
 <style>
-    body {
-        margin: 0;
-        padding: 0;
-        background: #000;
-        font-family: Arial, sans-serif;
-        text-align: center;
-        color: #00ff66;
+  :root{
+    --bg: #33363A;
+    --text: #ffffff;
+    --card: rgba(255,255,255,0.06);
+    --border: rgba(255,255,255,0.25);
+    --shadow: rgba(0,0,0,0.35);
+  }
+
+  *{ box-sizing: border-box; }
+
+  body{
+    margin: 0;
+    padding: 0;
+    background: var(--bg);
+    font-family: Arial, sans-serif;
+    text-align: center;
+    color: var(--text);
+  }
+
+  /* Container central */
+  .wrap{
+    max-width: 1050px;
+    margin: 0 auto;
+    padding: 18px 14px 40px;
+  }
+
+  h1{
+    margin: 10px auto 14px;
+    padding: 14px 14px;
+    color: var(--text);
+    font-size: 26px;
+    line-height: 1.35;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    box-shadow: 0 10px 24px var(--shadow);
+  }
+
+  p{
+    max-width: 900px;
+    margin: 0 auto 22px;
+    padding: 14px 16px;
+    font-size: 18px;
+    line-height: 1.55;
+    color: var(--text);
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    box-shadow: 0 10px 24px var(--shadow);
+  }
+
+  .img-container{
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    padding: 0;
+    margin-top: 10px;
+  }
+
+  /* “Card” da imagem (melhor no mobile) */
+  .img-card{
+    background: rgba(255,255,255,0.04);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 10px;
+    box-shadow: 0 12px 26px var(--shadow);
+  }
+
+  .img-card img{
+    width: 100%;
+    height: auto;
+    display: block;
+    border-radius: 12px;
+    border: 2px solid rgba(255,255,255,0.18);
+  }
+
+  /* Responsivo para celular */
+  @media (max-width: 768px){
+    .wrap{ padding: 14px 12px 34px; }
+
+    h1{
+      font-size: 20px;
+      padding: 12px 12px;
+      border-radius: 12px;
     }
 
-    h1 {
-        margin-top: 25px;
-        margin-bottom: 15px;
-        padding: 0 15px;
-        color: #00ff66;
-        font-size: 26px;
-        line-height: 1.4;
-        text-shadow: 0 0 10px #00ff66;
+    p{
+      font-size: 15.5px;
+      padding: 12px 12px;
+      border-radius: 12px;
     }
 
-    p {
-        max-width: 900px;
-        margin: auto;
-        margin-bottom: 30px;
-        padding: 0 20px;
-        font-size: 18px;
-        line-height: 1.5;
-        color: #00ff66;
-        text-shadow: 0 0 6px #00ff66;
+    .img-container{ gap: 14px; }
+
+    .img-card{
+      padding: 8px;
+      border-radius: 14px;
     }
 
-    .img-container {
-        max-width: 1000px;
-        margin: auto;
-        display: flex;
-        flex-direction: column;
-        gap: 35px;
-        padding: 0 15px 40px 15px;
+    .img-card img{
+      border-radius: 10px;
     }
+  }
 
-    .img-container img {
-        width: 100%;
-        border: 2px solid #00ff66;
-        border-radius: 10px;
-        box-shadow: 0 0 15px #00ff66;
-    }
-
+  /* Melhor leitura em telas bem pequenas */
+  @media (max-width: 380px){
+    h1{ font-size: 18px; }
+    p{ font-size: 15px; }
+  }
 </style>
 
 </head>
 <body>
 
-<h1>
-Os pontos riscados na Umbanda são símbolos místicos e sagrados que funcionam como "assinaturas" das entidades espirituais, como os orixás e guias.
-</h1>
+  <div class="wrap">
 
-<p>
-Eles servem para identificar a entidade, representar sua história e sua linha de atuação, 
-mobilizar energias, criar portais de proteção ou, por meio de magias, 
-descarregar energias negativas e cortar demandas.
-</p>
+    <h1>
+      Os pontos riscados na Umbanda são símbolos místicos e sagrados que funcionam como "assinaturas"
+      das entidades espirituais, como os orixás e guias.
+    </h1>
 
-<div class="img-container">
+    <p>
+      Eles servem para identificar a entidade, representar sua história e sua linha de atuação,
+      mobilizar energias, criar portais de proteção ou, por meio de magias,
+      descarregar energias negativas e cortar demandas.
+    </p>
 
-    <img src="https://i.ibb.co/V0thh31T/Chat-GPT-Image-20-11-2025-22-57-15.png" alt="Pontos Riscados 1">
+    <div class="img-container">
 
-    <img src="https://i.ibb.co/PZyD3Z1q/Chat-GPT-Image-20-11-2025-22-54-23.png" alt="Pontos Riscados 2">
+      <div class="img-card">
+        <img src="https://i.ibb.co/rRdYfqMj/Chat-GPT-Image-20-12-2025-02-35-55.png" alt="Pontos Riscados 1" loading="lazy">
+      </div>
 
-    <img src="https://i.ibb.co/n8M7yN4P/Chat-GPT-Image-20-11-2025-22-51-18.png" alt="Pontos Riscados 3">
+      <div class="img-card">
+        <img src="https://i.ibb.co/ccH5Tb2h/Chat-GPT-Image-20-12-2025-02-34-42.png" alt="Pontos Riscados 2" loading="lazy">
+      </div>
 
-    <img src="https://i.ibb.co/5gkdZPkT/Chat-GPT-Image-20-11-2025-22-48-49.png" alt="Pontos Riscados 4">
+      <div class="img-card">
+        <img src="https://i.ibb.co/7xjm8FrN/Chat-GPT-Image-20-12-2025-02-33-32.png" alt="Pontos Riscados 3" loading="lazy">
+      </div>
 
-</div>
+      <div class="img-card">
+        <img src="https://i.ibb.co/Y7VJLcjG/Chat-GPT-Image-20-12-2025-02-32-28.png" alt="Pontos Riscados 4" loading="lazy">
+      </div>
+
+    </div>
+
+  </div>
 
 </body>
 </html>
