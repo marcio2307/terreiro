@@ -417,7 +417,6 @@
   }
   .connectionsTitle i{ color: var(--fb-blue); }
 
-  /* ✅ NOVO BOTÃO "VER TODOS" (no lugar do Arraste →) */
   .connSeeAllBtn{
     display:inline-flex;
     align-items:center;
@@ -440,7 +439,6 @@
   .connSeeAllBtn:active{ transform: scale(.99); }
   .connSeeAllBtn i{ color:#fff; }
 
-  /* Carrossel horizontal estilo "Pessoas que você talvez conheça" */
   .connCarousel{
     display:flex;
     gap: 10px;
@@ -865,6 +863,10 @@
     color: rgba(228,230,235,.95);
   }
 
+  .post .mediaWrap{
+    position:relative;
+  }
+
   .post .mediaWrap img,
   .post .mediaWrap video{
     width:100%;
@@ -873,6 +875,90 @@
     background:#000;
     display:block;
     border:1px solid rgba(255,255,255,.08);
+  }
+
+  /* ===================== ✅ BOTÃO SOM (FACEBOOK 2025) ===================== */
+  .vidSoundBtn{
+    position:absolute;
+    right: 14px;
+    bottom: 14px;
+    width: 58px;
+    height: 58px;
+    border-radius: 18px;
+    border: 1px solid rgba(255,255,255,.14);
+    cursor:pointer;
+    z-index: 30;
+    -webkit-tap-highlight-color: transparent;
+    user-select:none;
+
+    /* visual “glass + depth” */
+    background:
+      radial-gradient(120% 120% at 30% 20%, rgba(255,255,255,.18) 0%, rgba(255,255,255,0) 55%),
+      linear-gradient(180deg, rgba(20,20,22,.78) 0%, rgba(0,0,0,.60) 100%);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    box-shadow:
+      0 16px 30px rgba(0,0,0,.45),
+      inset 0 1px 0 rgba(255,255,255,.10);
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    transition: transform .12s ease, filter .12s ease, box-shadow .12s ease;
+  }
+  .vidSoundBtn:hover{ filter: brightness(1.04); }
+  .vidSoundBtn:active{ transform: scale(.96); }
+
+  /* aro “facebook” */
+  .vidSoundBtn::before{
+    content:"";
+    position:absolute;
+    inset:-2px;
+    border-radius: 20px;
+    background: linear-gradient(135deg, rgba(8,102,255,.55), rgba(255,255,255,.08), rgba(8,102,255,.18));
+    opacity:.25;
+    pointer-events:none;
+  }
+
+  .vidSoundBtn i{
+    font-size: 22px;
+    line-height:1;
+    color: #fff;
+    text-shadow: 0 4px 18px rgba(0,0,0,.6);
+  }
+
+  /* x do mudo */
+  .vidSoundBtn .xMark{
+    position:absolute;
+    right: 10px;
+    bottom: 10px;
+    width: 22px;
+    height: 22px;
+    border-radius: 8px;
+    background: rgba(0,0,0,.55);
+    border: 1px solid rgba(255,255,255,.12);
+    display:none;
+    align-items:center;
+    justify-content:center;
+    font-weight: 900;
+    font-size: 14px;
+    color:#fff;
+    line-height:1;
+    box-shadow: 0 10px 20px rgba(0,0,0,.35);
+  }
+  .vidSoundBtn.isMuted .xMark{ display:flex; }
+
+  /* quando mutado, dá um “pulse” leve */
+  .vidSoundBtn.isMuted{
+    box-shadow:
+      0 16px 30px rgba(0,0,0,.45),
+      inset 0 1px 0 rgba(255,255,255,.10),
+      0 0 0 0 rgba(8,102,255,.0);
+    animation: mutePulse 1.6s ease-in-out infinite;
+  }
+  @keyframes mutePulse{
+    0%,100%{ box-shadow: 0 16px 30px rgba(0,0,0,.45), inset 0 1px 0 rgba(255,255,255,.10), 0 0 0 0 rgba(8,102,255,.00); }
+    50%{ box-shadow: 0 16px 30px rgba(0,0,0,.45), inset 0 1px 0 rgba(255,255,255,.10), 0 0 0 6px rgba(8,102,255,.10); }
   }
 
   .post-actions{
@@ -1333,7 +1419,13 @@ let __radioLocksFeedAudio = false;
 
 function forceMuteAllFeedVideos(){
   document.querySelectorAll("#feed video[data-feedvideo='1']").forEach(v=>{
-    try{ v.__userUnmuted = false; v.muted = true; v.volume = 1.0; }catch(e){}
+    try{
+      v.__userUnmuted = false;
+      v.__allowSound = false;
+      v.muted = true;
+      v.volume = 1.0;
+      if(v.__soundBtn) setSoundBtnUI(v.__soundBtn, true);
+    }catch(e){}
   });
 }
 
@@ -1708,10 +1800,6 @@ msgBtn.addEventListener("click", ()=>{
 
 <script>
 /* ===================== ✅ BLOCO "CONECTADOS AO FACECUMBA" (CARROSSEL) ===================== */
-/* ✅ ALTERAÇÃO PEDIDA:
-   - Trocar "Arraste →" por um botão "Ver todos"
-   - Ao clicar: vai para https://marcio2307.github.io/terreiro/usuariosface.html
-*/
 const CONNECTIONS_ID = "connectionsSection";
 let connectionsUsers = [];
 
@@ -1741,7 +1829,6 @@ function ensureConnectionsSection(){
   renderConnections();
 }
 
-/* shuffle simples */
 function shuffleArray(arr){
   const a = arr.slice();
   for(let i=a.length-1;i>0;i--){
@@ -1758,7 +1845,6 @@ async function renderConnections(){
   const base = connectionsUsers
     .filter(u => u && u.uid && u.uid !== UID && (u.name||"").trim().length >= 2);
 
-  /* estilo "talvez conheça": mistura e pega alguns */
   const list = shuffleArray(base).slice(0, 18);
 
   sec.innerHTML = `
@@ -1812,7 +1898,6 @@ async function renderConnections(){
   carousel.innerHTML = cards.join("");
 }
 
-/* ✅ Agora escuta os cadastrados em /profiles */
 (function listenRegisteredProfiles(){
   const ref = DB.ref("profiles");
   ref.on("value", (snap)=>{
@@ -1835,7 +1920,7 @@ async function renderConnections(){
 })();
 </script>
 
-<!-- ===================== STORIES (COM ALTERAÇÃO NO CARD "CRIAR STORY") ===================== -->
+<!-- ===================== STORIES (MANTIDO) ===================== -->
 <script>
 /* ===================== STORIES ===================== */
 const menuTop = document.querySelector('.top-menu');
@@ -2397,12 +2482,176 @@ async function addStory(file){
 })();
 </script>
 
-<!-- ✅ O RESTO DO SEU CÓDIGO (FEED, VIDEOS, POSTS, COMENTÁRIOS) FICA IGUAL AO SEU ORIGINAL -->
-<!-- Para não quebrar nada, mantenha exatamente como estava abaixo (sem alterações). -->
-<!-- ===================== FEED (AUTO PLAY...) + FEED / MURAL ===================== -->
+<!-- ===================== FEED (AUTO PLAY + SOM SOMENTE NO ÍCONE ✅) ===================== -->
 <script>
-/* ===================== ✅ FEED (AUTO PLAY + SILÊNCIO NÃO "VOLTA" AO ROLAR) ===================== */
+/* ===================== ✅ FEED (AUTO PLAY + SOM SOMENTE NO BOTÃO) ===================== */
+
 let __feedObserver = null;
+
+/* ✅ armazenamento do estado do som por post */
+function soundKeyForVideo(v){
+  try{
+    const post = v.closest(".post");
+    const pid = post ? post.id : "";
+    if(pid) return "feed_sound_" + pid;
+  }catch(e){}
+  try{
+    const ds = v.getAttribute("data-src") || "";
+    if(ds) return "feed_sound_src_" + ds.slice(-80);
+  }catch(e){}
+  return "";
+}
+function getSavedSoundState(v){
+  const k = soundKeyForVideo(v);
+  if(!k) return null;
+  try{
+    const val = sessionStorage.getItem(k);
+    if(val === "1") return true;
+    if(val === "0") return false;
+    return null;
+  }catch(e){ return null; }
+}
+function saveSoundState(v, isUnmuted){
+  const k = soundKeyForVideo(v);
+  if(!k) return;
+  try{
+    sessionStorage.setItem(k, isUnmuted ? "1" : "0");
+  }catch(e){}
+}
+
+/* ✅ botão overlay do som */
+function ensureSoundButton(v){
+  if(!v) return null;
+  if(v.__soundBtn && v.__soundBtn.isConnected) return v.__soundBtn;
+
+  const wrap = v.closest(".mediaWrap");
+  if(!wrap) return null;
+
+  let btn = wrap.querySelector(".vidSoundBtn");
+  if(!btn){
+    btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = "vidSoundBtn isMuted";
+    btn.setAttribute("aria-label", "Som do vídeo");
+    btn.innerHTML = `
+      <i class="fa-solid fa-volume-high"></i>
+      <span class="xMark">×</span>
+    `;
+    wrap.appendChild(btn);
+  }
+
+  v.__soundBtn = btn;
+  btn.__video = v;
+
+  if(!btn.__hooked){
+    btn.__hooked = true;
+    btn.addEventListener("click", (e)=>{
+      e.preventDefault();
+      e.stopPropagation();
+      toggleVideoSound(btn.__video, true);
+    });
+    btn.addEventListener("touchend", (e)=>{
+      e.preventDefault();
+      e.stopPropagation();
+      toggleVideoSound(btn.__video, true);
+    }, { passive:false });
+  }
+
+  return btn;
+}
+function setSoundBtnUI(btn, isMuted){
+  if(!btn) return;
+  if(isMuted){
+    btn.classList.add("isMuted");
+    btn.title = "Toque para ativar o som";
+  }else{
+    btn.classList.remove("isMuted");
+    btn.title = "Toque para deixar mudo";
+  }
+}
+
+/* ✅ só 1 vídeo com som por vez */
+function muteAllFeedVideosExcept(exceptVideo){
+  document.querySelectorAll("#feed video[data-feedvideo='1']").forEach(v=>{
+    if(v !== exceptVideo){
+      try{
+        v.__userUnmuted = false;
+        v.__allowSound = false;
+        v.muted = true;
+        v.volume = 1.0;
+        saveSoundState(v, false);
+        const b = ensureSoundButton(v);
+        setSoundBtnUI(b, true);
+      }catch(e){}
+    }
+  });
+}
+
+/* ✅ alterna som APENAS pelo botão */
+function toggleVideoSound(v, fromUserClick){
+  if(!v) return;
+  try{
+    if(fromUserClick) unlockAudioOnce();
+
+    if(__radioLocksFeedAudio || radioPlaying){
+      v.__userUnmuted = false;
+      v.__allowSound = false;
+      v.muted = true;
+      v.volume = 1.0;
+      saveSoundState(v, false);
+      const b = ensureSoundButton(v);
+      setSoundBtnUI(b, true);
+      try{ v.play().catch(()=>{}); }catch(e){}
+      return;
+    }
+
+    if(v.muted){
+      muteAllFeedVideosExcept(v);
+
+      v.__userUnmuted = true;
+      v.__allowSound = true;
+      v.muted = false;
+      v.volume = 1.0;
+      saveSoundState(v, true);
+
+      if(!v.__srcSet){
+        const ds = v.getAttribute("data-src");
+        if(ds){
+          v.src = ds;
+          v.__srcSet = true;
+          v.preload = "metadata";
+          v.setAttribute("preload","metadata");
+          v.setAttribute("fetchpriority","high");
+          try{ v.load(); }catch(e){}
+        }
+      }
+
+      const b = ensureSoundButton(v);
+      setSoundBtnUI(b, false);
+
+      const p = v.play();
+      if(p && p.catch) p.catch(()=>{
+        try{
+          v.__userUnmuted = false;
+          v.__allowSound = false;
+          v.muted = true;
+          saveSoundState(v, false);
+          setSoundBtnUI(b, true);
+          v.play().catch(()=>{});
+        }catch(e){}
+      });
+    }else{
+      v.__userUnmuted = false;
+      v.__allowSound = false;
+      v.muted = true;
+      v.volume = 1.0;
+      saveSoundState(v, false);
+
+      const b = ensureSoundButton(v);
+      setSoundBtnUI(b, true);
+    }
+  }catch(e){}
+}
 
 function ensureFeedObserver(){
   if(__feedObserver) return;
@@ -2411,6 +2660,24 @@ function ensureFeedObserver(){
     entries.forEach(entry=>{
       const v = entry.target;
       if(!v || v.tagName !== "VIDEO") return;
+
+      const btn = ensureSoundButton(v);
+
+      const saved = getSavedSoundState(v);
+
+      if(saved === true && !(__radioLocksFeedAudio || radioPlaying)){
+        v.__userUnmuted = true;
+        v.__allowSound = true;
+        v.muted = false;
+        v.volume = 1.0;
+        setSoundBtnUI(btn, false);
+      }else{
+        v.__userUnmuted = false;
+        v.__allowSound = false;
+        v.muted = true;
+        v.volume = 1.0;
+        setSoundBtnUI(btn, true);
+      }
 
       if(entry.isIntersecting){
         try{
@@ -2431,8 +2698,26 @@ function ensureFeedObserver(){
           try{
             if(__radioLocksFeedAudio || radioPlaying){
               v.__userUnmuted = false;
+              v.__allowSound = false;
               v.muted = true;
               v.volume = 1.0;
+              saveSoundState(v, false);
+              setSoundBtnUI(btn, true);
+            }else{
+              const pref = getSavedSoundState(v);
+              if(pref === true){
+                v.__userUnmuted = true;
+                v.__allowSound = true;
+                v.muted = false;
+                v.volume = 1.0;
+                setSoundBtnUI(btn, false);
+              }else{
+                v.__userUnmuted = false;
+                v.__allowSound = false;
+                v.muted = true;
+                v.volume = 1.0;
+                setSoundBtnUI(btn, true);
+              }
             }
 
             const p = v.play();
@@ -2440,6 +2725,9 @@ function ensureFeedObserver(){
               try{
                 v.muted = true;
                 v.__userUnmuted = false;
+                v.__allowSound = false;
+                saveSoundState(v, false);
+                setSoundBtnUI(btn, true);
                 v.play().catch(()=>{});
               }catch(e){}
             });
@@ -2452,17 +2740,6 @@ function ensureFeedObserver(){
   }, {
     threshold: [0, 0.10, 0.25, 0.60, 1],
     rootMargin: "900px 0px 900px 0px"
-  });
-}
-
-function muteAllFeedVideosExcept(exceptVideo){
-  document.querySelectorAll("#feed video[data-feedvideo='1']").forEach(v=>{
-    if(v !== exceptVideo){
-      try{
-        v.__userUnmuted = false;
-        v.muted = true;
-      }catch(e){}
-    }
   });
 }
 
@@ -2504,8 +2781,9 @@ function setupOneFeedVideo(v){
   ensureFeedObserver();
 
   try{
+    v.muted = true;             // ✅ sempre começa mudo
     v.__userUnmuted = false;
-    v.muted = true;
+    v.__allowSound = false;     // ✅ trava som (só o botão libera)
     v.volume = 1.0;
     v.playsInline = true;
     v.setAttribute("playsinline","");
@@ -2518,51 +2796,50 @@ function setupOneFeedVideo(v){
 
   attachRestartGesture(v);
 
-  const onUserToggleSound = (e)=>{
-    try{
-      unlockAudioOnce();
+  const btn = ensureSoundButton(v);
 
-      if(__radioLocksFeedAudio || radioPlaying){
-        v.__userUnmuted = false;
-        v.muted = true;
-        v.volume = 1.0;
-        try{ v.play().catch(()=>{}); }catch(e){}
-        return;
-      }
+  // ✅ aplica estado salvo ao criar
+  const saved = getSavedSoundState(v);
+  if(saved === true && !(__radioLocksFeedAudio || radioPlaying)){
+    v.__userUnmuted = true;
+    v.__allowSound = true;
+    v.muted = false;
+    v.volume = 1.0;
+    setSoundBtnUI(btn, false);
+  }else{
+    v.__userUnmuted = false;
+    v.__allowSound = false;
+    v.muted = true;
+    v.volume = 1.0;
+    setSoundBtnUI(btn, true);
+  }
 
-      if(v.muted){
-        muteAllFeedVideosExcept(v);
-        v.__userUnmuted = true;
-        v.muted = false;
-        v.volume = 1.0;
-
-        if(!v.__srcSet){
-          const ds = v.getAttribute("data-src");
-          if(ds){
-            v.src = ds;
-            v.__srcSet = true;
-            v.preload = "metadata";
-            v.setAttribute("preload","metadata");
-            v.setAttribute("fetchpriority","high");
-            try{ v.load(); }catch(e){}
-          }
+  // ✅ TRAVA TOTAL: se tentar liberar som pelos controles nativos, volta pra mudo
+  if(!v.__lockVolHooked){
+    v.__lockVolHooked = true;
+    v.addEventListener("volumechange", ()=>{
+      try{
+        if(__radioLocksFeedAudio || radioPlaying){
+          v.__allowSound = false;
+          v.__userUnmuted = false;
+          if(!v.muted) v.muted = true;
+          v.volume = 1.0;
+          saveSoundState(v, false);
+          setSoundBtnUI(btn, true);
+          return;
         }
+        if(!v.__allowSound){
+          if(!v.muted) v.muted = true;
+          v.volume = 1.0;
+          saveSoundState(v, false);
+          setSoundBtnUI(btn, true);
+        }
+      }catch(e){}
+    });
+  }
 
-        const p = v.play();
-        if(p && p.catch) p.catch(()=>{});
-      }else{
-        v.__userUnmuted = false;
-        v.muted = true;
-        v.volume = 1.0;
-      }
-    }catch(e){}
-  };
-
-  v.addEventListener("click", onUserToggleSound);
-  v.addEventListener("touchend", (ev)=>{
-    if(ev.defaultPrevented) return;
-    onUserToggleSound(ev);
-  }, { passive:false });
+  // ✅ IMPORTANTE: NÃO tem mais toggle no clique do vídeo.
+  // Agora o som só muda no botão overlay.
 
   try{ __feedObserver.observe(v); }catch(e){}
 }
@@ -3158,4 +3435,5 @@ setupAllFeedVideos();
 
 </body>
 </html>
+
 
