@@ -49,16 +49,8 @@
     gap:12px;
     padding-top: calc(10px + env(safe-area-inset-top));
   }
-  .topbar .left{
-    display:flex; align-items:center; gap:10px; min-width:0;
-  }
-  .topbar .center{
-    flex:1;
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    min-width:0;
-  }
+  .topbar .left{ display:flex; align-items:center; gap:10px; min-width:0; }
+  .topbar .center{ flex:1; display:flex; justify-content:center; align-items:center; min-width:0; }
   .brand{
     font-weight:900;
     color: var(--text);
@@ -300,11 +292,8 @@
       grid-template-columns: repeat(3, 1fr);
       gap:10px;
     }
-    #tab_friends{
-      grid-column: 1 / -1;
-      width: 72%;
-      justify-self:center;
-    }
+    #tab_friends{ grid-column: 1 / -1; width: 72%; justify-self:center; }
+    #tab_followers{ grid-column: 1 / -1; width: 72%; justify-self:center; }
   }
 
   /* ===================== PANELS + CARD ===================== */
@@ -336,12 +325,7 @@
 
   /* PERFIL (edição) */
   .field{ display:flex; flex-direction:column; gap:7px; margin-bottom:10px; }
-  .label{
-    font-weight:900;
-    color: var(--muted);
-    font-size:13px;
-    letter-spacing:.2px;
-  }
+  .label{ font-weight:900; color: var(--muted); font-size:13px; letter-spacing:.2px; }
   .input, .textarea{
     width:100%;
     background: rgba(255,255,255,.05);
@@ -379,8 +363,6 @@
     display:block;
     border: 1px solid rgba(255,255,255,.10);
   }
-
-  /* ✅ autoplay silencioso (sem áudio) */
   .post .mediaWrap video{ object-fit: cover; }
 
   .postHead{
@@ -416,13 +398,8 @@
     max-width: 62vw;
     cursor:pointer;
   }
-  .when{
-    font-size:12px;
-    color: var(--muted);
-    margin-top:4px;
-  }
+  .when{ font-size:12px; color: var(--muted); margin-top:4px; }
 
-  /* 3 pontinhos (post) bem visível */
   .menu-btn{
     position:absolute;
     top: 10px;
@@ -461,11 +438,7 @@
     z-index: 15;
     min-width: 160px;
   }
-  .menu-box div{
-    display:flex;
-    align-items:center;
-    gap:10px;
-  }
+  .menu-box div{ display:flex; align-items:center; gap:10px; }
   .menu-box .danger{ color: var(--danger); }
 
   .post-actions{
@@ -539,7 +512,6 @@
   }
   .cText{ color: var(--muted); }
 
-  /* 3 pontinhos (coment) bem visível */
   .coment-menu-btn{
     position:absolute;
     top:10px;
@@ -594,12 +566,7 @@
     margin-bottom:8px;
   }
   .friendRow.centered{ justify-content:center; text-align:center; }
-  .friendLeft{
-    min-width:0;
-    display:flex;
-    align-items:center;
-    gap:10px;
-  }
+  .friendLeft{ min-width:0; display:flex; align-items:center; gap:10px; }
   .friendRow.centered .friendLeft{ flex-direction:column; gap:8px; }
 
   .friendAvatar{
@@ -635,8 +602,23 @@
     margin-top:6px;
   }
 
-  /* util */
   .tinyBlue{ color: var(--primary); font-weight:900; }
+
+  /* Seguidores (usa o mesmo visual do friends) */
+  .followPillBtn{
+    cursor:pointer;
+    border:1px solid rgba(255,255,255,.10);
+    background: rgba(255,255,255,.06);
+    color: var(--text);
+    padding:10px 12px;
+    border-radius: 999px;
+    font-weight: 900;
+    display:inline-flex;
+    align-items:center;
+    gap:10px;
+    user-select:none;
+  }
+  .followPillBtn:hover{ background: rgba(255,255,255,.09); }
 </style>
 </head>
 
@@ -691,9 +673,20 @@
 
     <div class="identity">
       <h1 id="profileName">—</h1>
-      <div class="sub">
-        <span class="pill"><span class="onlineDot"></span> Online</span>
-        <span class="pill"><i class="fa-solid fa-location-dot tinyBlue"></i> <span id="cityText">Sem cidade</span></span>
+
+      <div class="sub" style="justify-content:space-between;">
+        <div style="display:flex; flex-wrap:wrap; gap:10px; align-items:center;">
+          <span class="pill"><span class="onlineDot"></span> Online</span>
+          <span class="pill"><i class="fa-solid fa-location-dot tinyBlue"></i> <span id="cityText">Sem cidade</span></span>
+        </div>
+
+        <!-- ✅ Seguidores (atalho) -->
+        <div style="display:flex; gap:10px; flex-wrap:wrap; justify-content:flex-end;">
+          <div class="followPillBtn" onclick="setTabActive('followers')" title="Ver seguidores">
+            <i class="fa-solid fa-user-group tinyBlue"></i>
+            <span id="followersCountTop">0 seguidores</span>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -708,6 +701,7 @@
     <div class="tab active" id="tab_posts" onclick="toggleTab('posts')"><i class="fa-solid fa-newspaper"></i> Postagens</div>
     <div class="tab" id="tab_about" onclick="toggleTab('about')"><i class="fa-solid fa-circle-info"></i> Sobre</div>
     <div class="tab" id="tab_profile" onclick="toggleTab('profile')"><i class="fa-solid fa-user-pen"></i> Perfil</div>
+    <div class="tab" id="tab_followers" onclick="toggleTab('followers')"><i class="fa-solid fa-user-group"></i> Seguidores</div>
     <div class="tab" id="tab_friends" onclick="toggleTab('friends')"><i class="fa-solid fa-users"></i> Amigos online</div>
   </div>
 
@@ -791,6 +785,21 @@
           Salvo ✅
         </div>
       </div>
+    </div>
+  </div>
+
+  <!-- ✅ SEGUIDORES -->
+  <div class="panel" id="panel_followers">
+    <div class="card">
+      <div style="display:flex; align-items:center; justify-content:space-between; gap:10px;">
+        <div style="font-weight:900; color:var(--text); letter-spacing:.2px;">
+          <i class="fa-solid fa-user-group tinyBlue"></i> Seus seguidores
+        </div>
+        <div style="color:var(--muted); font-size:13px;" id="followersCount">0 seguidores</div>
+      </div>
+
+      <div id="followersList" style="margin-top:12px;"></div>
+      <div id="followersEmpty" style="display:none; color:var(--muted); padding:12px;">Você ainda não tem seguidores.</div>
     </div>
   </div>
 
@@ -935,6 +944,13 @@ function safeId(s){ return (s||"").toString().replace(/[^a-zA-Z0-9_-]/g, "_"); }
 const PROFILE_REF = (uid)=> DB.ref("profiles/" + uid);
 const MY_PROFILE_REF = ()=> DB.ref("profiles/" + UID);
 
+/* ✅ Seguidores no Firebase:
+   followers/{targetUid}/{followerUid} = { uid, userName, createdAt }
+   (Aqui no perfil: targetUid = UID, porque é "meu perfil")
+*/
+const FOLLOWERS_REF = (targetUid)=> DB.ref("followers/" + targetUid);
+
+/* Cache de perfis p/ foto/nome */
 const profileCache = new Map();
 async function getProfileForUID(uid, fallbackName){
   if(!uid) return { url:"", name: fallbackName || "Usuário" };
@@ -955,6 +971,8 @@ async function getProfileForUID(uid, fallbackName){
       profileCache.set(uid, { url: uu, name: nn });
       updatePostAvatarsInDOM(uid, uu, nn);
       updateOnlineAvatarsInDOM(uid, uu, nn);
+      // seguidores também
+      updateFollowerRowInDOM(uid, uu, nn);
     });
 
     return obj;
@@ -1053,6 +1071,12 @@ const aboutShowCity = document.getElementById("aboutShowCity");
 const aboutShowBio  = document.getElementById("aboutShowBio");
 
 const saveInfo = document.getElementById("saveInfo");
+
+/* seguidores UI */
+const followersCountTop = document.getElementById("followersCountTop");
+const followersCount = document.getElementById("followersCount");
+const followersList = document.getElementById("followersList");
+const followersEmpty = document.getElementById("followersEmpty");
 
 function attachingAvatar(url, nameForInitial){
   if(url){
@@ -1305,20 +1329,25 @@ avatarInput.addEventListener("change", async ()=>{
 /* ✅ TABS COM TOGGLE */
 let CURRENT_TAB = "posts";
 function setTabActive(which){
-  ["posts","about","profile","friends"].forEach(k=>{
-    document.getElementById("tab_"+k).classList.remove("active");
-    document.getElementById("panel_"+k).classList.remove("active");
+  ["posts","about","profile","followers","friends"].forEach(k=>{
+    const t = document.getElementById("tab_"+k);
+    const p = document.getElementById("panel_"+k);
+    if(t) t.classList.remove("active");
+    if(p) p.classList.remove("active");
   });
-  document.getElementById("tab_"+which).classList.add("active");
-  document.getElementById("panel_"+which).classList.add("active");
+  const tt = document.getElementById("tab_"+which);
+  const pp = document.getElementById("panel_"+which);
+  if(tt) tt.classList.add("active");
+  if(pp) pp.classList.add("active");
   CURRENT_TAB = which;
-
   setTimeout(()=>{ ensureAutoplayMutedVideos(); }, 80);
 }
 function closeAllTabs(){
-  ["posts","about","profile","friends"].forEach(k=>{
-    document.getElementById("tab_"+k).classList.remove("active");
-    document.getElementById("panel_"+k).classList.remove("active");
+  ["posts","about","profile","followers","friends"].forEach(k=>{
+    const t = document.getElementById("tab_"+k);
+    const p = document.getElementById("panel_"+k);
+    if(t) t.classList.remove("active");
+    if(p) p.classList.remove("active");
   });
   CURRENT_TAB = "";
 }
@@ -1381,7 +1410,6 @@ function toggleMenu(id){
   if(!m) return;
   m.style.display = (m.style.display==="block" ? "none" : "block");
 }
-
 function abrirComentarios(id){
   const box = document.getElementById("comentarios_"+id);
   if(!box) return;
@@ -1689,6 +1717,80 @@ function listenMyPosts(){
   });
 }
 
+/* ====================== ✅ SEGUIDORES: LISTAR QUEM ME SEGUE ====================== */
+function followerAvatarHTML(url, name){
+  if(url) return `<img src="${escapeHTML(url)}" alt="avatar">`;
+  return `<div class="friendInit">${escapeHTML(initials(name || "U"))}</div>`;
+}
+
+function updateFollowerRowInDOM(uid, url, name){
+  const sid = safeId(uid);
+  const ava = document.getElementById("fAva_" + sid);
+  const nm  = document.getElementById("fName_" + sid);
+  if(ava){
+    ava.innerHTML = followerAvatarHTML(url, name);
+  }
+  if(nm && name){
+    nm.textContent = name;
+  }
+}
+
+function listenFollowers(){
+  const ref = FOLLOWERS_REF(UID).orderByChild("createdAt");
+  ref.on("value", async snap=>{
+    const obj = snap.val() || {};
+    const arr = Object.keys(obj).map(k=>obj[k]).filter(Boolean);
+
+    // ordena do mais recente para o mais antigo
+    arr.sort((a,b)=>(b.createdAt||0)-(a.createdAt||0));
+
+    const total = arr.length;
+    followersCount.textContent = `${total} seguidor${total===1?"":"es"}`;
+    followersCountTop.textContent = `${total} seguidor${total===1?"":"es"}`;
+
+    if(total === 0){
+      followersList.innerHTML = "";
+      followersEmpty.style.display = "block";
+      return;
+    }
+    followersEmpty.style.display = "none";
+
+    // render rápido com o que tem no node (userName). depois hidrata com profiles p/ foto
+    const rows = arr.slice(0, 200).map(f=>{
+      const fuid = (f.uid || "").toString();
+      const nm = (f.userName || "Usuário").toString();
+      const sid = safeId(fuid);
+      const when = f.createdAt ? fmtDate(f.createdAt) : "";
+
+      return `
+        <div class="friendRow centered" onclick="abrirPrevia('${escapeHTML(fuid)}')" style="cursor:pointer;">
+          <div class="friendLeft">
+            <div class="friendAvatar" id="fAva_${sid}">
+              ${followerAvatarHTML("", nm)}
+            </div>
+            <div style="min-width:0;">
+              <div class="friendName" id="fName_${sid}">${escapeHTML(nm)}</div>
+            </div>
+          </div>
+          <div class="friendRight">
+            <span style="opacity:.85;">${escapeHTML(when)}</span>
+          </div>
+        </div>
+      `;
+    });
+
+    followersList.innerHTML = rows.join("");
+
+    // hidrata com profiles (foto e nome real)
+    for(const f of arr.slice(0, 200)){
+      const fuid = (f.uid || "").toString();
+      if(!fuid) continue;
+      const prof = await getProfileForUID(fuid, f.userName || "Usuário");
+      updateFollowerRowInDOM(fuid, prof.url || "", prof.name || (f.userName||"Usuário"));
+    }
+  });
+}
+
 /* ====================== AMIGOS ONLINE ====================== */
 function friendAvatarHTML(u){
   const name = u.userName || "Usuário";
@@ -1786,6 +1888,7 @@ function listenOnline(){
 
   await loadProfile();
   listenMyPosts();
+  listenFollowers();   // ✅ seguidores
   listenOnline();
   setTabActive("posts");
 
