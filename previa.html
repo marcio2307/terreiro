@@ -1,5 +1,5 @@
 <!-- ===========================
-  PREVIA.HTML (com botão SEGUIR)
+  PREVIA.HTML (SEM ícone "i" no topo)
   =========================== -->
 <!DOCTYPE html>
 <html lang="pt-br">
@@ -55,20 +55,6 @@
     text-overflow:ellipsis;
     max-width: 92vw;
   }
-  .iconBtn{
-    width:44px; height:44px;
-    border-radius:999px;
-    border:1px solid var(--fb-border);
-    background: var(--fb-surface-2);
-    color: var(--fb-text);
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    cursor:pointer;
-    user-select:none;
-    box-shadow: 0 6px 14px rgba(0,0,0,.22);
-  }
-  .iconBtn:active{ transform:scale(.99); }
 
   .wrap{ width:min(980px, 100%); margin:0 auto; }
 
@@ -79,7 +65,6 @@
     background: #111;
     overflow:hidden;
     border-bottom:1px solid var(--fb-border);
-    cursor:pointer;
   }
   .cover img{
     width:100%;
@@ -117,7 +102,6 @@
     display:flex;
     align-items:center;
     justify-content:center;
-    cursor:pointer;
   }
   .avatar img{
     width:100%;
@@ -231,12 +215,6 @@
     box-shadow: 0 10px 18px rgba(0,0,0,.18);
   }
   .btn.ghost:hover{ background: rgba(255,255,255,.09); }
-  .btn.red{
-    background: rgba(255,90,90,.16);
-    border:1px solid rgba(255,90,90,.35);
-    color:#ff8080;
-    box-shadow:none;
-  }
 
   .post{
     background: var(--fb-surface);
@@ -451,6 +429,8 @@
   }
   .login-btn:active{ transform:scale(.99); }
 
+  /* ✅ Mantive o toast no código, mas SEM o botão "i" ele só aparece ao clicar na capa/Avatar.
+     Se quiser remover o toast também, me diga. */
   .toastStatus{
     position: fixed;
     left: 50%;
@@ -499,15 +479,14 @@
   <span id="toastText">Online</span>
 </div>
 
-<!-- TOPBAR -->
+<!-- TOPBAR (SEM botão i) -->
 <div class="topbar">
   <div style="width:44px;"></div>
   <div class="center">
     <div class="brand" id="brandTitle">Prévia do Perfil</div>
   </div>
-  <button class="iconBtn" id="infoBtn" title="Status" aria-label="Status">
-    <i class="fa-solid fa-circle-info"></i>
-  </button>
+  <!-- ✅ removido o botão "i" -->
+  <div style="width:44px;"></div>
 </div>
 
 <div class="wrap">
@@ -540,9 +519,6 @@
       <div class="rowActionsTop">
         <button class="btn" id="followBtn" onclick="toggleFollow()" style="display:none;">
           <i class="fa-solid fa-user-plus"></i> Seguir
-        </button>
-        <button class="btn ghost" id="backBtn" onclick="goBack()" style="display:none;">
-          <i class="fa-solid fa-arrow-left"></i> Voltar
         </button>
       </div>
     </div>
@@ -680,7 +656,6 @@ const postsCount = document.getElementById("postsCount");
 const brandTitle = document.getElementById("brandTitle");
 const followersCount = document.getElementById("followersCount");
 const followBtn = document.getElementById("followBtn");
-const backBtn = document.getElementById("backBtn");
 
 function setAvatar(url, name){
   if(url){
@@ -764,13 +739,12 @@ function listenSelfPresence(){
   });
 }
 
-/* ====================== TOAST STATUS ====================== */
+/* ====================== TOAST STATUS (sem botão i, só ao clicar capa/avatar) ====================== */
 const toastStatus = document.getElementById("toastStatus");
 const toastDot = document.getElementById("toastDot");
 const toastText = document.getElementById("toastText");
 const previewClickableCover = document.getElementById("previewClickableCover");
 const previewClickableAvatar = document.getElementById("previewClickableAvatar");
-const infoBtn = document.getElementById("infoBtn");
 
 let toastTimer = null;
 function showStatusToast(){
@@ -790,11 +764,9 @@ function showStatusToast(){
 }
 previewClickableCover.addEventListener("click", showStatusToast);
 previewClickableAvatar.addEventListener("click", showStatusToast);
-infoBtn.addEventListener("click", showStatusToast);
 
 /* ====================== ✅ SEGUIDORES (followers/{target}/{me}) ====================== */
 let IS_FOLLOWING = false;
-let TARGET_PROFILE_CACHE = { name:"Usuário", avatarUrl:"" };
 
 async function fetchMyAvatarUrl(){
   try{
@@ -812,7 +784,6 @@ async function fetchMyNameFromProfileOrLogin(){
 }
 
 function setFollowBtn(){
-  // não mostra se for você mesmo ou sem target
   if(!TARGET_UID || TARGET_UID === UID){
     followBtn.style.display = "none";
     return;
@@ -839,7 +810,6 @@ async function toggleFollow(){
   if(precisaLogin()) return;
   startSelfPresence();
 
-  // pega dados do seguidor
   const myName = await fetchMyNameFromProfileOrLogin();
   const myAvatar = await fetchMyAvatarUrl();
 
@@ -862,31 +832,17 @@ async function toggleFollow(){
 function listenFollowState(){
   if(!TARGET_UID) return;
 
-  // estado de "eu sigo este perfil?"
   DB.ref(`followers/${TARGET_UID}/${UID}`).on("value", s=>{
     IS_FOLLOWING = !!s.val();
     setFollowBtn();
   });
 
-  // contador de seguidores
   DB.ref(`followers/${TARGET_UID}`).on("value", s=>{
     const obj = s.val() || {};
     const total = Object.keys(obj).length;
     followersCount.textContent = `${total} seguidor${total>1?"es":""}`;
   });
 }
-
-/* voltar */
-function goBack(){
-  if(PARAMS.back){
-    window.location.href = PARAMS.back;
-  }else{
-    history.back();
-  }
-}
-(function(){
-  if(PARAMS.back) backBtn.style.display = "inline-flex";
-})();
 
 /* ====================== ✅ VÍDEOS: autoplay SEM SOM + som só ao clicar ====================== */
 function setupVideoAutoplay(container){
@@ -960,11 +916,6 @@ async function loadProfile(){
     const name = p.name || "Usuário";
     const city = p.city || "Sem cidade";
     const bio  = p.bio  || "Sem biografia.";
-
-    TARGET_PROFILE_CACHE = {
-      name,
-      avatarUrl: (p.avatarDataUrl || p.avatarUrl || "").toString()
-    };
 
     profileName.textContent = name;
     brandTitle.textContent = name;
@@ -1248,4 +1199,3 @@ function listenFeed(){
 
 </body>
 </html>
-
