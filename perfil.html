@@ -1,185 +1,85 @@
+<!-- ===========================
+  PREVIA.HTML (com botão SEGUIR)
+  =========================== -->
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-<title>Perfil • Facebook 2025 (Escuro)</title>
+<title>Prévia do Perfil</title>
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
 <style>
-  :root{
-    --bg:#18191a;
-    --surface:#242526;
-    --surface2:#2d2e30;
-    --text:#e4e6eb;
-    --muted:#b0b3b8;
-    --line:#3a3b3c;
-
-    --primary:#0866ff;
-    --primary2:#0b5cff;
-    --primarySoft: rgba(8,102,255,.16);
-
-    --good:#31a24c;
-    --danger:#ff5b5b;
-
-    --shadow:0 10px 22px rgba(0,0,0,.35);
-  }
-
   *{ box-sizing:border-box; }
   html,body{ width:100%; max-width:100%; overflow-x:hidden; }
   body{
     margin:0;
-    background: var(--bg);
-    color: var(--text);
+    background:#18191A;
+    color:#E4E6EB;
     font-family: Arial, sans-serif;
     padding-bottom: env(safe-area-inset-bottom);
   }
 
-  /* ===================== TOPBAR ===================== */
+  :root{
+    --fb-bg:#18191A;
+    --fb-surface:#242526;
+    --fb-surface-2:#2D2E30;
+    --fb-border:rgba(255,255,255,.10);
+    --fb-text:#E4E6EB;
+    --fb-muted:rgba(228,230,235,.72);
+    --fb-blue:#0866FF;
+    --fb-green:#31A24C;
+    --fb-shadow:0 8px 18px rgba(0,0,0,.35);
+    --fb-radius:16px;
+  }
+
   .topbar{
     position: sticky; top:0; z-index:9999;
-    background: var(--surface);
-    border-bottom: 1px solid var(--line);
-    box-shadow: 0 2px 14px rgba(0,0,0,.35);
+    background: var(--fb-surface);
+    border-bottom:1px solid var(--fb-border);
+    box-shadow: 0 6px 16px rgba(0,0,0,.25);
     padding: 10px 12px;
     display:flex;
     align-items:center;
     justify-content:space-between;
     gap:12px;
-    padding-top: calc(10px + env(safe-area-inset-top));
   }
-  .topbar .left{
-    display:flex; align-items:center; gap:10px; min-width:0;
-  }
-  .topbar .center{
-    flex:1;
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    min-width:0;
-  }
+  .topbar .center{ flex:1; display:flex; justify-content:center; align-items:center; min-width:0; }
   .brand{
     font-weight:900;
-    color: var(--text);
-    letter-spacing:.2px;
+    color: var(--fb-text);
+    letter-spacing:.3px;
     white-space:nowrap;
     overflow:hidden;
     text-overflow:ellipsis;
+    max-width: 92vw;
   }
-  .topbar .actions{ display:flex; align-items:center; gap:10px; }
-
-  .btn{
-    border:none;
-    cursor:pointer;
-    font-weight:900;
-    padding:10px 12px;
+  .iconBtn{
+    width:44px; height:44px;
     border-radius:999px;
-    background: var(--primary);
-    color:#fff;
-    user-select:none;
-    display:inline-flex;
-    align-items:center;
-    gap:8px;
-    justify-content:center;
-    text-decoration:none;
-    transition:.15s;
-  }
-  .btn:hover{ background: var(--primary2); }
-  .btn:active{ transform:scale(.99); }
-  .btn.ghost{
-    background: rgba(255,255,255,.06);
-    color: var(--text);
-    border:1px solid rgba(255,255,255,.10);
-  }
-  .btn.ghost:hover{ background: rgba(255,255,255,.09); }
-  .btn.icon{ width:44px; height:44px; padding:0; }
-
-  .backLabel{
-    font-weight:900;
-    color: var(--muted);
-    white-space:nowrap;
-  }
-
-  /* ====================== LOGIN ====================== */
-  .login-overlay{
-    position:fixed; inset:0;
-    background: rgba(0,0,0,0.72);
-    display:none;
-    align-items:center;
-    justify-content:center;
-    z-index: 9999999;
-    padding: 16px;
-  }
-  .login-card{
-    width: min(520px, 94vw);
-    background: var(--surface);
-    border: 1px solid var(--line);
-    border-radius: 18px;
-    box-shadow: var(--shadow);
-    padding: 18px;
-    text-align:center;
-  }
-  .login-title{
-    font-size: clamp(18px, 6vw, 24px);
-    font-weight: 900;
-    color: var(--primary);
-    letter-spacing:.3px;
-    margin: 4px 0 14px 0;
+    border:1px solid var(--fb-border);
+    background: var(--fb-surface-2);
+    color: var(--fb-text);
     display:flex;
-    gap:10px;
     align-items:center;
     justify-content:center;
-  }
-  .login-input{
-    width:100%;
-    background: var(--surface2);
-    border:1px solid var(--line);
-    border-radius: 999px;
-    padding: 14px 18px;
-    color: var(--text);
-    outline:none;
-    font-size: 16px;
-  }
-  .login-input:focus{
-    border-color: rgba(8,102,255,.65);
-    box-shadow: 0 0 0 4px var(--primarySoft);
-  }
-  .login-btn{
-    width: 100%;
-    margin-top: 12px;
-    border:none;
-    border-radius: 999px;
-    padding: 14px 12px;
-    font-weight: 900;
     cursor:pointer;
-    font-size: 16px;
-    transition:.18s;
-    background: var(--primary);
-    color:#fff;
+    user-select:none;
+    box-shadow: 0 6px 14px rgba(0,0,0,.22);
   }
-  .login-btn:hover{ background: var(--primary2); }
+  .iconBtn:active{ transform:scale(.99); }
 
-  /* ✅ input file NÃO pode display:none */
-  .filePicker{
-    position:absolute;
-    left:-99999px;
-    top:0;
-    width:1px;
-    height:1px;
-    opacity:0;
-  }
+  .wrap{ width:min(980px, 100%); margin:0 auto; }
 
-  .profileWrap{ width:min(980px, 100%); margin: 0 auto; }
-
-  /* ===================== CAPA ===================== */
   .cover{
     position:relative;
     width:100%;
     height: clamp(190px, 36vw, 340px);
-    background: var(--surface2);
+    background: #111;
     overflow:hidden;
-    border-bottom:1px solid var(--line);
+    border-bottom:1px solid var(--fb-border);
+    cursor:pointer;
   }
   .cover img{
     width:100%;
@@ -187,16 +87,15 @@
     object-fit:cover;
     display:block;
     background:#000;
-    filter: contrast(1.05) saturate(1.05);
+    filter: contrast(1.02) saturate(1.03);
   }
   .coverShade{
     position:absolute; inset:auto 0 0 0;
-    height:60%;
-    background: linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(0,0,0,.30) 35%, rgba(0,0,0,.85) 100%);
+    height:55%;
+    background: linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(0,0,0,.35) 35%, rgba(0,0,0,.85) 100%);
     pointer-events:none;
   }
 
-  /* ===================== AVATAR + IDENTIDADE ===================== */
   .avatarRow{
     position:relative;
     padding: 0 12px 12px 12px;
@@ -207,24 +106,30 @@
     flex-wrap:wrap;
   }
   .avatar{
-    width: 122px;
-    height: 122px;
+    width: 120px;
+    height: 120px;
     border-radius: 50%;
     overflow:hidden;
-    background: var(--surface);
-    border: 4px solid var(--bg);
-    box-shadow: 0 0 0 1px rgba(255,255,255,.12), 0 12px 28px rgba(0,0,0,.55);
+    background: #3A3B3C;
+    border:4px solid var(--fb-bg);
+    box-shadow: 0 0 0 3px rgba(8,102,255,.22), 0 10px 28px rgba(0,0,0,.55);
     flex:0 0 auto;
     display:flex;
     align-items:center;
     justify-content:center;
     cursor:pointer;
   }
-  .avatar img{ width:100%; height:100%; object-fit:cover; display:block; }
+  .avatar img{
+    width:100%;
+    height:100%;
+    object-fit:cover;
+    object-position:center;
+    display:block;
+  }
   .avatarInitial{
     font-weight:900; font-size:34px;
-    color: var(--text);
-    opacity:.95;
+    color:#fff;
+    text-shadow:0 0 14px rgba(0,0,0,.55);
   }
 
   .identity{ min-width: 220px; flex:1; }
@@ -233,15 +138,15 @@
     font-size: clamp(22px, 6vw, 34px);
     font-weight: 900;
     letter-spacing:.2px;
-    color: var(--text);
+    color: var(--fb-text);
+    text-shadow:0 2px 14px rgba(0,0,0,.55);
   }
-  .identity .sub{
-    margin-top:6px;
+  .sub{
+    margin-top:8px;
     display:flex;
-    flex-wrap:wrap;
     gap:10px;
+    flex-wrap:wrap;
     align-items:center;
-    color: var(--muted);
   }
   .pill{
     display:inline-flex;
@@ -251,405 +156,335 @@
     border-radius:999px;
     background: rgba(255,255,255,.06);
     border:1px solid rgba(255,255,255,.10);
-    color: var(--text);
+    color: var(--fb-text);
     font-weight:900;
     font-size:13px;
-  }
-  .onlineDot{
-    width:10px; height:10px; border-radius:50%;
-    background: var(--good);
-    box-shadow: 0 0 0 2px rgba(49,162,76,.18);
-    animation: blinkDot .9s infinite;
-  }
-  @keyframes blinkDot{
-    0%,100%{ transform:scale(1); opacity:1; }
-    50%{ transform:scale(1.25); opacity:.35; }
-  }
-
-  /* ===================== TABS ===================== */
-  .tabs{
-    display:flex;
-    gap:10px;
-    padding: 10px 12px 0 12px;
-    flex-wrap:wrap;
-  }
-  .tab{
-    cursor:pointer;
-    padding:10px 14px;
-    border-radius:999px;
-    background: rgba(255,255,255,.06);
-    border:1px solid rgba(255,255,255,.10);
-    color: var(--text);
-    font-weight:900;
     user-select:none;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    gap:8px;
   }
-  .tab.active{
-    background: var(--primary);
-    color:#fff;
-    border-color: rgba(8,102,255,.35);
-    box-shadow: 0 10px 18px rgba(8,102,255,.20);
-  }
-
-  @media (max-width: 520px){
-    .tabs{
-      display:grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap:10px;
-    }
-    #tab_friends{
-      grid-column: 1 / -1;
-      width: 72%;
-      justify-self:center;
-    }
-  }
-
-  /* ===================== PANELS + CARD ===================== */
-  .panel{ padding: 12px; display:none; }
-  .panel.active{ display:block; }
+  .dot{ width:10px; height:10px; border-radius:50%; box-shadow:0 0 14px rgba(0,0,0,.35); }
+  .dot.online{ background: var(--fb-green); box-shadow:0 0 14px rgba(49,162,76,.6); animation: blinkDot 1.0s infinite; }
+  .dot.offline{ background:#F7B928; box-shadow:0 0 14px rgba(247,185,40,.55); }
+  @keyframes blinkDot{ 0%,100%{ transform:scale(1); opacity:1; } 50%{ transform:scale(1.25); opacity:.35; } }
+  .pill.offline{ background: rgba(247,185,40,.08); border-color: rgba(247,185,40,.28); color:#F7B928; }
 
   .card{
-    background: var(--surface);
-    border: 1px solid var(--line);
-    border-radius: 16px;
-    padding:12px;
-    box-shadow: 0 6px 18px rgba(0,0,0,.25);
+    background: var(--fb-surface);
+    border:1px solid var(--fb-border);
+    border-radius: var(--fb-radius);
+    padding: 12px;
+    box-shadow: var(--fb-shadow);
+    margin: 12px;
   }
 
-  /* SOBRE (somente leitura) */
-  .infoRow{
+  .bioBox{
+    border:1px solid rgba(255,255,255,.06);
+    background: rgba(255,255,255,.03);
+    border-radius:14px;
+    padding:12px;
+    margin-top:10px;
+  }
+  .bioTitle{
+    font-weight:900;
+    color: var(--fb-text);
+    letter-spacing:.4px;
+    display:flex;
+    align-items:center;
+    gap:10px;
+  }
+  .bioTitle i{ color: var(--fb-blue); }
+  .bioText{
+    margin-top:10px;
+    opacity:.92;
+    line-height:1.45;
+    word-break:break-word;
+    color: rgba(228,230,235,.95);
+  }
+
+  .rowActionsTop{
+    margin-top:10px;
     display:flex;
     gap:10px;
-    padding:10px;
-    border-radius:14px;
-    border:1px solid rgba(255,255,255,.08);
-    background: rgba(255,255,255,.04);
-    margin-top:10px;
-    align-items:flex-start;
+    flex-wrap:wrap;
+    align-items:center;
   }
-  .infoRow i{ color: var(--primary); margin-top:2px; }
-  .infoTitle{ font-weight:900; color: var(--text); }
-  .infoText{ color: var(--muted); word-break:break-word; }
-
-  /* PERFIL (edição) */
-  .field{ display:flex; flex-direction:column; gap:7px; margin-bottom:10px; }
-  .label{
+  .btn{
+    border:none;
+    cursor:pointer;
     font-weight:900;
-    color: var(--muted);
-    font-size:13px;
-    letter-spacing:.2px;
+    padding:12px 14px;
+    border-radius:999px;
+    background: var(--fb-blue);
+    color:#fff;
+    user-select:none;
+    display:inline-flex;
+    align-items:center;
+    gap:10px;
+    justify-content:center;
+    transition:.15s;
+    box-shadow: 0 10px 18px rgba(8,102,255,.18);
   }
-  .input, .textarea{
-    width:100%;
-    background: rgba(255,255,255,.05);
+  .btn:active{ transform:scale(.99); }
+  .btn.ghost{
+    background: rgba(255,255,255,.06);
+    color: var(--fb-text);
     border:1px solid rgba(255,255,255,.10);
-    border-radius:14px;
-    padding: 12px 12px;
-    color: var(--text);
-    outline:none;
-    font-size:15px;
+    box-shadow: 0 10px 18px rgba(0,0,0,.18);
   }
-  .input:focus, .textarea:focus{
-    border-color: rgba(8,102,255,.65);
-    box-shadow: 0 0 0 4px var(--primarySoft);
-    background: rgba(255,255,255,.07);
+  .btn.ghost:hover{ background: rgba(255,255,255,.09); }
+  .btn.red{
+    background: rgba(255,90,90,.16);
+    border:1px solid rgba(255,90,90,.35);
+    color:#ff8080;
+    box-shadow:none;
   }
-  .textarea{ min-height: 90px; resize: vertical; }
-  .rowBtns{ display:flex; gap:10px; flex-wrap:wrap; }
 
-  /* ===================== FEED POST ===================== */
   .post{
-    background: var(--surface);
+    background: var(--fb-surface);
     margin: 12px 0;
-    padding: 14px;
-    border-radius: 16px;
-    border: 1px solid var(--line);
-    box-shadow: 0 6px 18px rgba(0,0,0,.22);
+    padding: 12px;
+    border-radius: var(--fb-radius);
+    border:1px solid var(--fb-border);
+    box-shadow: var(--fb-shadow);
     position:relative;
   }
-  .post .mediaWrap img,
-  .post .mediaWrap video{
-    width:100%;
-    border-radius:12px;
-    margin-top:10px;
-    background:#000;
-    display:block;
-    border: 1px solid rgba(255,255,255,.10);
-  }
-
-  /* ✅ autoplay silencioso (sem áudio) */
-  .post .mediaWrap video{
-    object-fit: cover;
-  }
-
-  .postHead{
-    display:flex;
-    align-items:center;
-    gap:12px;
-    padding-right:52px;
-  }
+  .postHead{ display:flex; align-items:center; gap:10px; }
   .postAvatar{
-    width:52px;
-    height:52px;
+    width:42px; height:42px;
     border-radius:50%;
     overflow:hidden;
-    background:#3a3b3c;
-    border: 2px solid var(--surface);
-    box-shadow: 0 1px 10px rgba(0,0,0,.35);
+    background:#3A3B3C;
+    border:1px solid rgba(255,255,255,.08);
     flex:0 0 auto;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    cursor:pointer;
+    display:flex; align-items:center; justify-content:center;
   }
-  .postAvatar img{
-    width:100%;
-    height:100%;
-    object-fit:cover;
-    display:block;
-  }
-  .postAvatar .init{ font-weight:900; color: var(--text); }
-  .postHeadText{ min-width:0; }
+  .postAvatar img{ width:100%; height:100%; object-fit:cover; object-position:center; display:block; }
+  .postAvatar .init{ font-weight:900; color: var(--fb-text); }
+
   .postName{
     font-weight:900;
-    font-size: 18px;
-    color: var(--text);
+    font-size:15px;
+    color: var(--fb-text);
     overflow:hidden;
     text-overflow:ellipsis;
     white-space:nowrap;
     max-width: 62vw;
-    cursor:pointer;
   }
-  .when{
-    font-size:12px;
-    color: var(--muted);
-    margin-top:4px;
+  .when{ font-size:12px; color: var(--fb-muted); margin-top:3px; }
+  .post p{ margin:10px 0 0 0; font-size:14px; line-height:1.35; color: rgba(228,230,235,.95); }
+
+  .mediaWrap img, .mediaWrap video{
+    width:100%;
+    border-radius: 14px;
+    margin-top:10px;
+    background:#000;
+    display:block;
+    border:1px solid rgba(255,255,255,.08);
   }
 
-  /* 3 pontinhos (post) bem visível */
-  .menu-btn{
-    position:absolute;
-    top: 10px;
-    right: 10px;
-    width: 40px;
-    height: 34px;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    font-size: 22px;
-    font-weight: 900;
-    cursor: pointer;
-    color: var(--text);
-    background: rgba(0,0,0,.42);
-    border: 1px solid rgba(255,255,255,.18);
-    border-radius: 12px;
-    box-shadow: 0 8px 18px rgba(0,0,0,.35);
-    user-select:none;
+  .videoWrap{ position:relative; margin-top:10px; }
+  .videoWrap video{
+    width:100%;
+    border-radius: 14px;
+    background:#000;
+    display:block;
+    border:1px solid rgba(255,255,255,.08);
   }
-  .menu-btn:hover{ background: rgba(0,0,0,.55); }
-  .menu-btn:active{ transform: scale(.96); }
-
-  .menu-box{
+  .tapToSound{
     position:absolute;
-    top: 50px;
-    right: 10px;
-    background: var(--surface2);
-    color: var(--text);
-    padding: 10px 12px;
-    border-radius: 12px;
-    display:none;
-    cursor:pointer;
-    font-weight:900;
-    box-shadow: var(--shadow);
-    border: 1px solid var(--line);
-    z-index: 15;
-    min-width: 160px;
-  }
-  .menu-box div{
-    display:flex;
-    align-items:center;
+    left: 12px;
+    bottom: 12px;
+    display:inline-flex;
     gap:10px;
+    align-items:center;
+    padding:10px 12px;
+    border-radius:999px;
+    background: rgba(0,0,0,.55);
+    border:1px solid rgba(255,255,255,.14);
+    color: var(--fb-text);
+    font-weight:900;
+    font-size:13px;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    box-shadow: 0 10px 22px rgba(0,0,0,.35);
+    user-select:none;
+    pointer-events:none;
   }
-  .menu-box .danger{ color: var(--danger); }
+  .tapToSound i{ color: var(--fb-blue); }
+  .tapToSound.hide{ display:none; }
 
   .post-actions{
     display:flex;
     justify-content:space-around;
     margin-top:12px;
     flex-wrap:wrap;
-    gap: 10px;
+    gap: 8px;
   }
   .btn-action{
-    color: var(--text);
-    padding:10px 12px;
-    border-radius:12px;
+    color: var(--fb-text);
+    padding: 10px 12px;
+    border-radius: 10px;
     font-weight:900;
     cursor:pointer;
-    transition:0.2s;
+    transition:.15s;
     text-align:center;
     border: 1px solid rgba(255,255,255,.10);
-    background: rgba(255,255,255,.05);
+    background: rgba(255,255,255,.06);
     user-select:none;
-    min-width:160px;
+    min-width: 150px;
   }
   .btn-action:hover{ background: rgba(255,255,255,.08); }
+  .btn-action:active{ transform: scale(.99); }
+
   .contador{
     margin-top:6px;
-    font-size:13px;
-    color: var(--muted);
+    font-size:12px;
+    color: var(--fb-muted);
     text-align:center;
     line-height:1.35;
     word-break: break-word;
   }
+
   .coment-area{
     background: rgba(255,255,255,.04);
     padding:10px;
     margin-top:10px;
-    border-radius:12px;
+    border-radius: 14px;
     display:none;
     border:1px solid rgba(255,255,255,.10);
   }
 
-  /* Comentários */
   .cRow{
-    position:relative;
-    background: rgba(0,0,0,.22);
+    background: rgba(255,255,255,.03);
     border:1px solid rgba(255,255,255,.10);
-    padding:10px 56px 10px 10px;
-    border-radius:12px;
+    padding:10px;
+    border-radius: 14px;
     margin-bottom:8px;
   }
   .cHead{ display:flex; align-items:center; gap:10px; margin-bottom:6px; min-width:0; }
   .cAvatar{
-    width:34px; height:34px;
+    width:30px; height:30px;
     border-radius:50%;
     overflow:hidden;
-    background:#3a3b3c;
-    border:1px solid rgba(255,255,255,.12);
+    background:#3A3B3C;
+    border:1px solid rgba(255,255,255,.08);
     flex:0 0 auto;
     display:flex; align-items:center; justify-content:center;
-    cursor:pointer;
   }
   .cAvatar img{ width:100%; height:100%; object-fit:cover; display:block; }
-  .cAvatar .init{ font-weight:900; color: var(--text); }
+  .cAvatar .init{ font-weight:900; color: var(--fb-text); }
   .cName{
     font-weight:900;
-    color: var(--text);
+    color: var(--fb-text);
     overflow:hidden;
     text-overflow:ellipsis;
     white-space:nowrap;
     max-width: 62vw;
-    cursor:pointer;
+    font-size:14px;
   }
-  .cText{ color: var(--muted); }
+  .cText{ opacity:.95; font-size:13px; color: rgba(228,230,235,.92); }
 
-  /* 3 pontinhos (coment) bem visível */
-  .coment-menu-btn{
-    position:absolute;
-    top:10px;
-    right:10px;
-    width: 38px;
-    height: 32px;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    font-size: 20px;
-    font-weight: 900;
-    cursor: pointer;
-    color: var(--text);
-    background: rgba(0,0,0,.42);
-    border: 1px solid rgba(255,255,255,.18);
-    border-radius: 12px;
-    box-shadow: 0 8px 18px rgba(0,0,0,.30);
-    user-select:none;
-    line-height:1;
-  }
-  .coment-menu-btn:hover{ background: rgba(0,0,0,.55); }
-  .coment-menu-btn:active{ transform: scale(.96); }
-
-  .coment-menu-box{
-    position:absolute;
-    top:48px;
-    right:10px;
-    background: var(--surface2);
-    color: var(--text);
-    padding:10px 12px;
-    border-radius:12px;
-    display:none;
-    font-weight:900;
-    cursor:pointer;
-    box-shadow: var(--shadow);
-    border: 1px solid var(--line);
-    z-index: 5;
-    min-width: 140px;
-  }
-  .coment-menu-box span{ color: var(--danger); }
-
-  /* Friends (lista) */
-  .friendRow{
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    gap:10px;
-    padding:10px 10px;
-    border-radius:14px;
+  .empty{
+    opacity:.9;
+    padding:12px;
     border:1px solid rgba(255,255,255,.08);
-    background: rgba(255,255,255,.04);
-    margin-bottom:8px;
+    background: rgba(255,255,255,.03);
+    border-radius:14px;
+    margin-top:12px;
+    color: var(--fb-text);
   }
-  .friendRow.centered{ justify-content:center; text-align:center; }
-  .friendLeft{
-    min-width:0;
+
+  .login-overlay{
+    position:fixed; inset:0;
+    background: rgba(0,0,0,0.94);
+    display:none;
+    align-items:center;
+    justify-content:center;
+    z-index: 9999999;
+    padding: 16px;
+  }
+  .login-card{
+    width: min(520px, 94vw);
+    max-width: 94vw;
+    background: var(--fb-surface);
+    border:1px solid var(--fb-border);
+    border-radius: 18px;
+    box-shadow: var(--fb-shadow);
+    padding: 18px;
+    text-align:center;
+  }
+  .login-title{
+    font-size: clamp(18px, 6vw, 24px);
+    font-weight: 900;
+    color: var(--fb-text);
+    letter-spacing:.5px;
+    margin: 4px 0 14px 0;
     display:flex;
+    gap:10px;
+    align-items:center;
+    justify-content:center;
+  }
+  .login-title i{ color: var(--fb-blue); }
+  .login-input{
+    width: 100%;
+    display:block;
+    background:#3A3B3C;
+    border:1px solid rgba(255,255,255,.10);
+    border-radius: 999px;
+    padding: 14px 18px;
+    color: var(--fb-text);
+    outline:none;
+    font-size: 16px;
+  }
+  .login-btn{
+    width: 100%;
+    margin-top: 12px;
+    border:none;
+    border-radius: 999px;
+    padding: 14px 12px;
+    font-weight: 900;
+    cursor:pointer;
+    font-size: 16px;
+    transition:.15s;
+    background: var(--fb-blue);
+    color:#fff;
+    box-shadow: 0 10px 20px rgba(0,0,0,.22);
+  }
+  .login-btn:active{ transform:scale(.99); }
+
+  .toastStatus{
+    position: fixed;
+    left: 50%;
+    bottom: calc(16px + env(safe-area-inset-bottom));
+    transform: translateX(-50%);
+    background: rgba(36,37,38,.92);
+    border: 1px solid rgba(255,255,255,.10);
+    box-shadow: 0 10px 20px rgba(0,0,0,.35);
+    color: var(--fb-text);
+    padding: 10px 14px;
+    border-radius: 999px;
+    font-weight: 900;
+    display:none;
     align-items:center;
     gap:10px;
+    z-index: 99999999;
+    max-width: 92vw;
+    text-align:center;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
   }
-  .friendRow.centered .friendLeft{ flex-direction:column; gap:8px; }
+  .toastDot{ width:10px; height:10px; border-radius:50%; box-shadow: 0 0 0 3px rgba(0,0,0,.18); }
+  .toastDot.on{ background: var(--fb-green); box-shadow:0 0 14px rgba(49,162,76,.55); }
+  .toastDot.off{ background:#F7B928; box-shadow:0 0 14px rgba(247,185,40,.45); }
 
-  .friendAvatar{
-    width:54px; height:54px;
-    border-radius:50%;
-    overflow:hidden;
-    background:#3a3b3c;
-    border: 2px solid var(--surface);
-    box-shadow: 0 1px 10px rgba(0,0,0,.35);
-    display:flex; align-items:center; justify-content:center;
-    flex: 0 0 auto;
-    position:relative;
+  @media(max-width:480px){
+    .avatar{ width:104px; height:104px; }
   }
-  .friendAvatar img{ width:100%; height:100%; object-fit:cover; display:block; }
-  .friendInit{ font-weight:900; color: var(--text); }
-  .friendName{
-    font-weight:900;
-    overflow:hidden;
-    text-overflow:ellipsis;
-    white-space:nowrap;
-    max-width: 80vw;
-    color: var(--text);
-  }
-  .friendRight{
-    display:flex; align-items:center; gap:8px;
-    font-size:12px;
-    color: var(--muted);
-    white-space:nowrap;
-  }
-  .friendRow.centered .friendRight{
-    justify-content:center;
-    width:100%;
-    margin-top:6px;
-  }
-
-  /* util */
-  .tinyBlue{ color: var(--primary); font-weight:900; }
 </style>
 </head>
 
 <body>
 
-<!-- LOGIN -->
+<!-- LOGIN (pra curtir/comentar/seguir) -->
 <div class="login-overlay" id="loginOverlay">
   <div class="login-card">
     <div class="login-title"><i class="fa-solid fa-user"></i> ENTRAR</div>
@@ -658,164 +493,77 @@
   </div>
 </div>
 
-<!-- TOPBAR -->
-<div class="topbar">
-  <div class="left">
-    <button class="btn ghost icon" title="Voltar" aria-label="Voltar" onclick="voltarSite()">
-      <i class="fa-solid fa-arrow-left"></i>
-    </button>
-    <div class="backLabel">Voltar</div>
-  </div>
-
-  <div class="center">
-    <div class="brand">PERFIL</div>
-  </div>
-
-  <div class="actions">
-    <button class="btn ghost" onclick="sairNome()">
-      <i class="fa-solid fa-right-from-bracket"></i> Sair
-    </button>
-  </div>
+<!-- TOAST STATUS -->
+<div class="toastStatus" id="toastStatus" aria-live="polite">
+  <span class="toastDot on" id="toastDot"></span>
+  <span id="toastText">Online</span>
 </div>
 
-<div class="profileWrap">
+<!-- TOPBAR -->
+<div class="topbar">
+  <div style="width:44px;"></div>
+  <div class="center">
+    <div class="brand" id="brandTitle">Prévia do Perfil</div>
+  </div>
+  <button class="iconBtn" id="infoBtn" title="Status" aria-label="Status">
+    <i class="fa-solid fa-circle-info"></i>
+  </button>
+</div>
+
+<div class="wrap">
 
   <!-- CAPA -->
-  <div class="cover" id="coverBox">
-    <img id="coverImg" alt="Capa do perfil" style="display:none;">
+  <div class="cover" id="previewClickableCover" title="Toque para ver o status">
+    <img id="coverImg" alt="Capa do perfil">
     <div class="coverShade"></div>
-    <input id="coverInput" class="filePicker" type="file" accept="image/*">
   </div>
 
   <!-- FOTO PERFIL + IDENTIDADE -->
   <div class="avatarRow">
-    <div class="avatar" id="avatarBox" title="Trocar foto" onclick="abrirGaleriaAvatar()">
+    <div class="avatar" id="previewClickableAvatar" title="Toque para ver o status">
       <img id="avatarImg" alt="Foto do perfil" style="display:none;">
       <div id="avatarInitial" class="avatarInitial">U</div>
     </div>
 
-    <input id="avatarInput" class="filePicker" type="file" accept="image/*">
-
     <div class="identity">
-      <h1 id="profileName">—</h1>
+      <h1 id="profileName">Carregando...</h1>
       <div class="sub">
-        <span class="pill"><span class="onlineDot"></span> Online</span>
-        <span class="pill"><i class="fa-solid fa-location-dot tinyBlue"></i> <span id="cityText">Sem cidade</span></span>
-      </div>
-    </div>
-
-    <div style="display:flex; gap:10px; flex-wrap:wrap; margin-left:auto;">
-      <button class="btn ghost" onclick="abrirGaleriaCapa()"><i class="fa-solid fa-image"></i> Capa</button>
-      <button class="btn ghost" onclick="abrirGaleriaAvatar()"><i class="fa-solid fa-camera"></i> Foto</button>
-    </div>
-  </div>
-
-  <input id="coverInput2" class="filePicker" type="file" accept="image/*" style="display:none;">
-  <input id="coverInput" class="filePicker" type="file" accept="image/*">
-
-  <!-- TABS -->
-  <div class="tabs">
-    <div class="tab active" id="tab_posts" onclick="toggleTab('posts')"><i class="fa-solid fa-newspaper"></i> Postagens</div>
-    <div class="tab" id="tab_about" onclick="toggleTab('about')"><i class="fa-solid fa-circle-info"></i> Sobre</div>
-    <div class="tab" id="tab_profile" onclick="toggleTab('profile')"><i class="fa-solid fa-user-pen"></i> Perfil</div>
-    <div class="tab" id="tab_friends" onclick="toggleTab('friends')"><i class="fa-solid fa-users"></i> Amigos online</div>
-  </div>
-
-  <!-- POSTAGENS -->
-  <div class="panel active" id="panel_posts">
-    <div class="card">
-      <div style="display:flex; align-items:center; justify-content:space-between; gap:10px;">
-        <div style="font-weight:900; color:var(--text); letter-spacing:.2px;">
-          <i class="fa-solid fa-list tinyBlue"></i> Feed do usuário
-        </div>
-        <div style="color:var(--muted); font-size:13px;" id="postsCount">0 postagens</div>
-      </div>
-      <div id="myFeed" style="margin-top:10px;"></div>
-    </div>
-  </div>
-
-  <!-- SOBRE (somente leitura) -->
-  <div class="panel" id="panel_about">
-    <div class="card">
-      <div style="font-weight:900; color:var(--text); letter-spacing:.2px;">
-        <i class="fa-solid fa-circle-info tinyBlue"></i> Informações
+        <span class="pill" id="statusPill">
+          <span class="dot online" id="statusDot"></span>
+          <span id="statusText">Online</span>
+        </span>
+        <span class="pill"><i class="fa-solid fa-location-dot" style="color:var(--fb-blue)"></i> <span id="cityText">—</span></span>
+        <span class="pill"><i class="fa-solid fa-user-plus" style="color:var(--fb-blue)"></i> <span id="followersCount">0 seguidores</span></span>
       </div>
 
-      <div class="infoRow">
-        <i class="fa-solid fa-user"></i>
-        <div>
-          <div class="infoTitle">Nome</div>
-          <div class="infoText" id="aboutShowName">—</div>
-        </div>
-      </div>
-
-      <div class="infoRow">
-        <i class="fa-solid fa-location-dot"></i>
-        <div>
-          <div class="infoTitle">Cidade</div>
-          <div class="infoText" id="aboutShowCity">—</div>
-        </div>
-      </div>
-
-      <div class="infoRow">
-        <i class="fa-solid fa-message"></i>
-        <div>
-          <div class="infoTitle">Bio</div>
-          <div class="infoText" id="aboutShowBio">—</div>
-        </div>
+      <!-- ✅ SEGUIR -->
+      <div class="rowActionsTop">
+        <button class="btn" id="followBtn" onclick="toggleFollow()" style="display:none;">
+          <i class="fa-solid fa-user-plus"></i> Seguir
+        </button>
+        <button class="btn ghost" id="backBtn" onclick="goBack()" style="display:none;">
+          <i class="fa-solid fa-arrow-left"></i> Voltar
+        </button>
       </div>
     </div>
   </div>
 
-  <!-- PERFIL (edição) -->
-  <div class="panel" id="panel_profile">
-    <div class="card">
-      <div style="display:flex; align-items:center; justify-content:space-between; gap:10px;">
-        <div style="font-weight:900; color:var(--text); letter-spacing:.2px;">
-          <i class="fa-solid fa-user-pen tinyBlue"></i> Editar perfil
-        </div>
-      </div>
+  <!-- BIO + FEED -->
+  <div class="card">
+    <div class="bioTitle"><i class="fa-solid fa-circle-info"></i> Biografia</div>
 
-      <div style="margin-top:12px;">
-        <div class="field">
-          <div class="label">Nome</div>
-          <input class="input" id="aboutName" maxlength="24" placeholder="Seu nome">
-        </div>
-
-        <div class="field">
-          <div class="label">Cidade</div>
-          <input class="input" id="aboutCity" maxlength="40" placeholder="Ex: Fortaleza">
-        </div>
-
-        <div class="field">
-          <div class="label">Bio</div>
-          <textarea class="textarea" id="aboutBio" maxlength="220" placeholder="Escreva algo sobre você..."></textarea>
-        </div>
-
-        <div class="rowBtns">
-          <button class="btn" onclick="saveProfile()"><i class="fa-solid fa-floppy-disk"></i> Salvar</button>
-          <button class="btn ghost" onclick="loadProfile()"><i class="fa-solid fa-rotate"></i> Recarregar</button>
-        </div>
-
-        <div id="saveInfo" style="margin-top:10px; color:var(--muted); font-weight:900; display:none;">
-          Salvo ✅
-        </div>
-      </div>
+    <div class="bioBox">
+      <div class="bioText" id="bioText">Carregando...</div>
     </div>
-  </div>
 
-  <!-- AMIGOS ONLINE -->
-  <div class="panel" id="panel_friends">
-    <div class="card">
-      <div style="display:flex; align-items:center; justify-content:space-between; gap:10px;">
-        <div style="font-weight:900; color:var(--text); letter-spacing:.2px;">
-          <i class="fa-solid fa-users tinyBlue"></i> Quem está online agora
-        </div>
-        <div style="color:var(--muted); font-size:13px;" id="onlineCount">0 online</div>
+    <div style="margin-top:14px; display:flex; align-items:center; justify-content:space-between; gap:10px;">
+      <div style="font-weight:900; color: var(--fb-text); letter-spacing:.4px;">
+        <i class="fa-solid fa-list" style="color:var(--fb-blue)"></i> Feed do usuário
       </div>
-
-      <div id="onlineList" style="margin-top:12px;"></div>
+      <div style="opacity:.85; font-size:13px; color: var(--fb-muted);" id="postsCount">0 postagens</div>
     </div>
+
+    <div id="feed" style="margin-top:10px;"></div>
   </div>
 
 </div>
@@ -823,7 +571,6 @@
 <!-- Firebase -->
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
-<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-storage.js"></script>
 
 <script>
 /* ====================== FIREBASE (MESMO DO SEU SITE) ====================== */
@@ -839,42 +586,31 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 const DB = firebase.database();
 
-/* ====================== ✅ PRÉVIA (clicar nome/foto) ====================== */
-const PREVIEW_URL = "https://marcio2307.github.io/terreiro/previa.html";
-function abrirPrevia(uid){
-  if(!uid) return;
-  const back = encodeURIComponent(window.location.href);
-  window.location.href = `${PREVIEW_URL}?uid=${encodeURIComponent(uid)}&back=${back}`;
+/* ====================== PARAMS: uid do perfil ====================== */
+function getParams(){
+  const u = new URLSearchParams(location.search);
+  return {
+    uid: (u.get("uid") || "").trim(),
+    back: (u.get("back") || "").trim()
+  };
 }
+const PARAMS = getParams();
+const TARGET_UID = PARAMS.uid;
 
-/* ====================== VOLTAR (continua logado) ====================== */
-function voltarSite(){
-  const nome = (localStorage.getItem("nome_passageiro") || "").trim();
-  const uid  = (localStorage.getItem("uid_passageiro") || "").trim();
-  if(nome) sessionStorage.setItem("nome_passageiro", nome);
-  if(uid)  sessionStorage.setItem("uid_passageiro", uid);
-  window.location.href = "https://marcio2307.github.io/terreiro/site.html";
-}
+/* ====================== LOGIN (pra curtir/comentar/seguir) ====================== */
+const loginOverlay = document.getElementById("loginOverlay");
+const loginName = document.getElementById("loginName");
 
-/* ====================== LOGIN + UID ====================== */
 function getOrCreateUID(){
   let uid = localStorage.getItem("uid_passageiro");
   if(!uid){
     uid = "u_" + Math.random().toString(36).slice(2) + "_" + Date.now();
     localStorage.setItem("uid_passageiro", uid);
   }
-  sessionStorage.setItem("uid_passageiro", uid);
   return uid;
 }
 let UID = getOrCreateUID();
-
-function getNomeSalvo(){
-  return (localStorage.getItem("nome_passageiro") || "").trim();
-}
-let USER_NAME = getNomeSalvo();
-
-const loginOverlay = document.getElementById("loginOverlay");
-const loginName = document.getElementById("loginName");
+let USER_NAME = (localStorage.getItem("nome_passageiro") || "").trim();
 
 function abrirLogin(){
   loginOverlay.style.display = "flex";
@@ -893,27 +629,16 @@ function confirmarNome(){
     return;
   }
   localStorage.setItem("nome_passageiro", nome);
-  sessionStorage.setItem("nome_passageiro", nome);
   USER_NAME = nome;
   UID = getOrCreateUID();
   fecharLogin();
-  startPresence();
-  setTimeout(()=>{ location.reload(); }, 80);
 }
-(function exigirLogin(){
-  if(!USER_NAME) abrirLogin();
-})();
-
-/* SAIR: desloga */
-function sairNome(){
-  stopPresence(true);
-  localStorage.removeItem("nome_passageiro");
-  localStorage.removeItem("uid_passageiro");
-  sessionStorage.removeItem("nome_passageiro");
-  sessionStorage.removeItem("uid_passageiro");
-  USER_NAME = "";
-  UID = getOrCreateUID();
-  abrirLogin();
+function precisaLogin(){
+  if(!USER_NAME){
+    abrirLogin();
+    return true;
+  }
+  return false;
 }
 document.addEventListener("keydown", (e)=>{
   if(loginOverlay.style.display === "flex" && e.key === "Enter"){ confirmarNome(); }
@@ -939,132 +664,25 @@ function initials(name){
 function fmtDate(ts){
   try{ return new Date(ts).toLocaleString("pt-BR"); }catch(e){ return ""; }
 }
-function safeId(s){ return (s||"").toString().replace(/[^a-zA-Z0-9_-]/g, "_"); }
 
-/* ====================== PERFIL (profiles/{uid}) ====================== */
-const PROFILE_REF = (uid)=> DB.ref("profiles/" + uid);
-const MY_PROFILE_REF = ()=> DB.ref("profiles/" + UID);
-
-const profileCache = new Map();
-async function getProfileForUID(uid, fallbackName){
-  if(!uid) return { url:"", name: fallbackName || "Usuário" };
-  if(profileCache.has(uid)) return profileCache.get(uid);
-
-  try{
-    const snap = await PROFILE_REF(uid).once("value");
-    const p = snap.val() || {};
-    const name = p.name || fallbackName || "Usuário";
-    const url = p.avatarDataUrl || p.avatarUrl || "";
-    const obj = { url, name };
-    profileCache.set(uid, obj);
-
-    PROFILE_REF(uid).on("value", s=>{
-      const px = s.val() || {};
-      const nn = px.name || name;
-      const uu = px.avatarDataUrl || px.avatarUrl || "";
-      profileCache.set(uid, { url: uu, name: nn });
-      updatePostAvatarsInDOM(uid, uu, nn);
-      updateOnlineAvatarsInDOM(uid, uu, nn);
-    });
-
-    return obj;
-  }catch(e){
-    const obj = { url:"", name: fallbackName || "Usuário" };
-    profileCache.set(uid, obj);
-    return obj;
-  }
-}
-
-/* ====================== PRESENÇA ONLINE ====================== */
-let presenceRef = null;
-let presenceTimer = null;
-
-async function getMyAvatarFromProfiles(){
-  try{
-    const snap = await MY_PROFILE_REF().once("value");
-    const p = snap.val() || {};
-    return (p.avatarDataUrl || p.avatarUrl || "").toString();
-  }catch(e){ return ""; }
-}
-async function getMyNameFromProfiles(){
-  try{
-    const snap = await MY_PROFILE_REF().once("value");
-    const p = snap.val() || {};
-    return (p.name || USER_NAME || "Usuário").toString();
-  }catch(e){ return (USER_NAME || "Usuário").toString(); }
-}
-
-function startPresence(){
-  try{
-    if(!USER_NAME || !UID) return;
-    if(presenceTimer) return;
-
-    presenceRef = DB.ref("presence/" + UID);
-    const connectedRef = DB.ref(".info/connected");
-
-    connectedRef.on("value", async (snap)=>{
-      if(snap.val() === true){
-        const avatar = await getMyAvatarFromProfiles();
-        const nameNow = await getMyNameFromProfiles();
-
-        presenceRef.onDisconnect().remove().catch(()=>{});
-        presenceRef.set({
-          uid: UID,
-          userName: nameNow,
-          online: true,
-          onlineAt: firebase.database.ServerValue.TIMESTAMP,
-          lastActive: firebase.database.ServerValue.TIMESTAMP,
-          avatarDataUrl: avatar || ""
-        }).catch(()=>{});
-      }
-    });
-
-    presenceTimer = setInterval(async ()=>{
-      if(!presenceRef) return;
-      const avatar = await getMyAvatarFromProfiles();
-      const nameNow = await getMyNameFromProfiles();
-      presenceRef.update({
-        online: true,
-        lastActive: firebase.database.ServerValue.TIMESTAMP,
-        userName: nameNow,
-        avatarDataUrl: avatar || ""
-      }).catch(()=>{});
-    }, 25000);
-
-    window.addEventListener("beforeunload", ()=>{ try{ stopPresence(true); }catch(e){} });
-  }catch(e){}
-}
-function stopPresence(){
-  try{
-    if(presenceTimer){ clearInterval(presenceTimer); presenceTimer=null; }
-    if(presenceRef){ presenceRef.remove().catch(()=>{}); presenceRef=null; }
-  }catch(e){}
-}
-if(USER_NAME && UID){ startPresence(); }
-
-/* ====================== UI PERFIL ====================== */
-const coverBox = document.getElementById("coverBox");
+/* ====================== UI: AVATAR / CAPA / STATUS ====================== */
 const coverImg = document.getElementById("coverImg");
-const coverInput = document.getElementById("coverInput");
-
 const avatarImg = document.getElementById("avatarImg");
 const avatarInitial = document.getElementById("avatarInitial");
-const avatarInput = document.getElementById("avatarInput");
-
 const profileName = document.getElementById("profileName");
+const bioText = document.getElementById("bioText");
 const cityText = document.getElementById("cityText");
+const statusText = document.getElementById("statusText");
+const statusDot = document.getElementById("statusDot");
+const statusPill = document.getElementById("statusPill");
+const feed = document.getElementById("feed");
+const postsCount = document.getElementById("postsCount");
+const brandTitle = document.getElementById("brandTitle");
+const followersCount = document.getElementById("followersCount");
+const followBtn = document.getElementById("followBtn");
+const backBtn = document.getElementById("backBtn");
 
-const aboutName = document.getElementById("aboutName");
-const aboutCity = document.getElementById("aboutCity");
-const aboutBio  = document.getElementById("aboutBio");
-
-const aboutShowName = document.getElementById("aboutShowName");
-const aboutShowCity = document.getElementById("aboutShowCity");
-const aboutShowBio  = document.getElementById("aboutShowBio");
-
-const saveInfo = document.getElementById("saveInfo");
-
-function attachingAvatar(url, nameForInitial){
+function setAvatar(url, name){
   if(url){
     avatarImg.src = url;
     avatarImg.style.display = "block";
@@ -1072,749 +690,559 @@ function attachingAvatar(url, nameForInitial){
   }else{
     avatarImg.style.display = "none";
     avatarInitial.style.display = "block";
-    avatarInitial.textContent = initials(nameForInitial || "U");
+    avatarInitial.textContent = initials(name || "U");
   }
 }
-function attachingCover(url){
-  if(url){
-    coverImg.src = url;
-    coverImg.style.display = "block";
+function setCover(url){
+  coverImg.src = url || "data:image/svg+xml;charset=UTF-8," + encodeURIComponent(`
+    <svg xmlns="http://www.w3.org/2000/svg" width="1200" height="520">
+      <defs>
+        <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+          <stop offset="0" stop-color="#242526"/>
+          <stop offset="1" stop-color="#18191A"/>
+        </linearGradient>
+      </defs>
+      <rect width="100%" height="100%" fill="url(#g)"/>
+      <circle cx="170" cy="260" r="120" fill="rgba(8,102,255,.18)"/>
+      <circle cx="1030" cy="150" r="150" fill="rgba(8,102,255,.10)"/>
+      <text x="50%" y="58%" dominant-baseline="middle" text-anchor="middle"
+            fill="rgba(228,230,235,.28)" font-size="52" font-family="Arial" font-weight="900">
+        PERFIL
+      </text>
+    </svg>
+  `);
+}
+
+/* status do perfil aberto */
+let CURRENT_TARGET_ONLINE = false;
+/* status do próprio usuário */
+let CURRENT_SELF_ONLINE = true;
+
+function setStatus(isOnline){
+  CURRENT_TARGET_ONLINE = !!isOnline;
+  if(isOnline){
+    statusText.textContent = "Online";
+    statusDot.classList.remove("offline");
+    statusDot.classList.add("online");
+    statusPill.classList.remove("offline");
   }else{
-    coverImg.style.display = "none";
+    statusText.textContent = "Offline";
+    statusDot.classList.remove("online");
+    statusDot.classList.add("offline");
+    statusPill.classList.add("offline");
   }
 }
 
-function setAboutReadOnly(prof){
-  aboutShowName.textContent = prof.name || USER_NAME || "—";
-  aboutShowCity.textContent = prof.city ? prof.city : "—";
-  aboutShowBio.textContent  = prof.bio ? prof.bio : "—";
+/* ====================== PRESENÇA DO PRÓPRIO USUÁRIO ====================== */
+function startSelfPresence(){
+  const ref = DB.ref("presence/" + UID);
+
+  const ping = ()=>{
+    ref.update({
+      uid: UID,
+      userName: USER_NAME || "Usuário",
+      online: true,
+      lastActive: firebase.database.ServerValue.TIMESTAMP
+    }).catch(()=>{});
+  };
+
+  if(USER_NAME) ping();
+  setInterval(()=>{ if(USER_NAME) ping(); }, 25000);
+
+  try{
+    window.addEventListener("beforeunload", ()=>{
+      ref.update({ online:false, lastActive: Date.now() }).catch(()=>{});
+    });
+  }catch(e){}
 }
-function applyProfileUI(p){
-  const prof = p || {};
-  profileName.textContent = prof.name || USER_NAME || "Usuário";
-  cityText.textContent = prof.city || "Sem cidade";
+function listenSelfPresence(){
+  DB.ref("presence/" + UID).on("value", snap=>{
+    const u = snap.val() || {};
+    const last = u.lastActive || 0;
+    const now = Date.now();
+    CURRENT_SELF_ONLINE = (u.online === true) && (now - last < 65000);
+  });
+}
 
-  aboutName.value = prof.name || USER_NAME || "";
-  aboutCity.value = prof.city || "";
-  aboutBio.value = prof.bio || "";
+/* ====================== TOAST STATUS ====================== */
+const toastStatus = document.getElementById("toastStatus");
+const toastDot = document.getElementById("toastDot");
+const toastText = document.getElementById("toastText");
+const previewClickableCover = document.getElementById("previewClickableCover");
+const previewClickableAvatar = document.getElementById("previewClickableAvatar");
+const infoBtn = document.getElementById("infoBtn");
 
-  setAboutReadOnly({
-    name: prof.name || USER_NAME || "",
-    city: prof.city || "",
-    bio: prof.bio || ""
+let toastTimer = null;
+function showStatusToast(){
+  const isSelfProfile = (TARGET_UID && UID && TARGET_UID === UID);
+  const on = isSelfProfile ? (CURRENT_SELF_ONLINE === true) : (CURRENT_TARGET_ONLINE === true);
+  const label = isSelfProfile
+    ? (on ? "Você está Online" : "Você está Offline")
+    : (on ? "Online agora" : "Offline agora");
+
+  toastDot.classList.toggle("on", on);
+  toastDot.classList.toggle("off", !on);
+  toastText.textContent = label;
+
+  toastStatus.style.display = "inline-flex";
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(()=>{ toastStatus.style.display = "none"; }, 1600);
+}
+previewClickableCover.addEventListener("click", showStatusToast);
+previewClickableAvatar.addEventListener("click", showStatusToast);
+infoBtn.addEventListener("click", showStatusToast);
+
+/* ====================== ✅ SEGUIDORES (followers/{target}/{me}) ====================== */
+let IS_FOLLOWING = false;
+let TARGET_PROFILE_CACHE = { name:"Usuário", avatarUrl:"" };
+
+async function fetchMyAvatarUrl(){
+  try{
+    const s = await DB.ref("profiles/" + UID).once("value");
+    const p = s.val() || {};
+    return (p.avatarDataUrl || p.avatarUrl || "").toString();
+  }catch(e){ return ""; }
+}
+async function fetchMyNameFromProfileOrLogin(){
+  try{
+    const s = await DB.ref("profiles/" + UID).once("value");
+    const p = s.val() || {};
+    return (p.name || USER_NAME || "Usuário").toString();
+  }catch(e){ return (USER_NAME || "Usuário").toString(); }
+}
+
+function setFollowBtn(){
+  // não mostra se for você mesmo ou sem target
+  if(!TARGET_UID || TARGET_UID === UID){
+    followBtn.style.display = "none";
+    return;
+  }
+  followBtn.style.display = "inline-flex";
+
+  if(IS_FOLLOWING){
+    followBtn.classList.add("ghost");
+    followBtn.classList.remove("red");
+    followBtn.innerHTML = `<i class="fa-solid fa-user-check"></i> Seguindo`;
+  }else{
+    followBtn.classList.remove("ghost");
+    followBtn.classList.remove("red");
+    followBtn.innerHTML = `<i class="fa-solid fa-user-plus"></i> Seguir`;
+  }
+}
+
+async function toggleFollow(){
+  if(!TARGET_UID) return;
+  if(TARGET_UID === UID){
+    alert("Você não pode seguir você mesmo.");
+    return;
+  }
+  if(precisaLogin()) return;
+  startSelfPresence();
+
+  // pega dados do seguidor
+  const myName = await fetchMyNameFromProfileOrLogin();
+  const myAvatar = await fetchMyAvatarUrl();
+
+  const ref = DB.ref(`followers/${TARGET_UID}/${UID}`);
+  const snap = await ref.once("value");
+  const cur = snap.val();
+
+  if(cur){
+    await ref.remove().catch(()=>{});
+  }else{
+    await ref.set({
+      uid: UID,
+      userName: myName,
+      avatarUrl: myAvatar || "",
+      followedAt: firebase.database.ServerValue.TIMESTAMP
+    }).catch(()=>{});
+  }
+}
+
+function listenFollowState(){
+  if(!TARGET_UID) return;
+
+  // estado de "eu sigo este perfil?"
+  DB.ref(`followers/${TARGET_UID}/${UID}`).on("value", s=>{
+    IS_FOLLOWING = !!s.val();
+    setFollowBtn();
   });
 
-  attachingCover(prof.coverDataUrl || prof.coverUrl || "");
-  attachingAvatar(prof.avatarDataUrl || prof.avatarUrl || "", prof.name || USER_NAME || "U");
+  // contador de seguidores
+  DB.ref(`followers/${TARGET_UID}`).on("value", s=>{
+    const obj = s.val() || {};
+    const total = Object.keys(obj).length;
+    followersCount.textContent = `${total} seguidor${total>1?"es":""}`;
+  });
 }
 
-async function loadProfile(){
-  if(!USER_NAME) return;
-  try{
-    const snap = await MY_PROFILE_REF().once("value");
-    if(!snap.exists()){
-      await MY_PROFILE_REF().set({
-        uid: UID,
-        name: USER_NAME,
-        city: "",
-        bio: "",
-        createdAt: firebase.database.ServerValue.TIMESTAMP,
-        updatedAt: firebase.database.ServerValue.TIMESTAMP
+/* voltar */
+function goBack(){
+  if(PARAMS.back){
+    window.location.href = PARAMS.back;
+  }else{
+    history.back();
+  }
+}
+(function(){
+  if(PARAMS.back) backBtn.style.display = "inline-flex";
+})();
+
+/* ====================== ✅ VÍDEOS: autoplay SEM SOM + som só ao clicar ====================== */
+function setupVideoAutoplay(container){
+  const videos = (container || document).querySelectorAll("video[data-autopreview='1']");
+  videos.forEach(v=>{
+    v.muted = true;
+    v.defaultMuted = true;
+    v.setAttribute("muted", "");
+    v.autoplay = true;
+    v.setAttribute("autoplay", "");
+    v.loop = true;
+    v.setAttribute("loop", "");
+    v.playsInline = true;
+    v.setAttribute("playsinline", "");
+    v.setAttribute("preload", "metadata");
+    v.controls = false;
+
+    const tryPlay = ()=>{
+      const p = v.play();
+      if(p && typeof p.catch === "function"){ p.catch(()=>{}); }
+    };
+    tryPlay();
+
+    const wrap = v.closest(".videoWrap");
+    const badge = wrap ? wrap.querySelector(".tapToSound") : null;
+    if(badge) badge.classList.remove("hide");
+
+    const onClick = ()=>{
+      document.querySelectorAll("video[data-autopreview='1']").forEach(other=>{
+        if(other !== v){
+          other.muted = true;
+          other.defaultMuted = true;
+          other.setAttribute("muted","");
+          const w = other.closest(".videoWrap");
+          const b = w ? w.querySelector(".tapToSound") : null;
+          if(b) b.classList.remove("hide");
+        }
       });
-      applyProfileUI({ name: USER_NAME });
-      return;
+
+      v.muted = false;
+      v.defaultMuted = false;
+      v.removeAttribute("muted");
+      v.controls = true;
+      tryPlay();
+
+      if(badge) badge.classList.add("hide");
+    };
+
+    if(!v.__soundClickBound){
+      v.addEventListener("click", onClick);
+      v.__soundClickBound = true;
     }
-    const val = snap.val() || {};
-    if(typeof val.link !== "undefined"){
-      MY_PROFILE_REF().child("link").remove().catch(()=>{});
-    }
-    applyProfileUI(val);
-  }catch(e){ console.log(e); }
+  });
 }
 
-async function saveProfile(){
-  if(!USER_NAME) return;
-
-  const name = (aboutName.value || "").trim().slice(0,24);
-  const city = (aboutCity.value || "").trim().slice(0,40);
-  const bio  = (aboutBio.value || "").trim().slice(0,220);
-
-  if(name.length < 2){
-    alert("O nome precisa ter pelo menos 2 letras.");
+/* ====================== CARREGAR PERFIL ====================== */
+async function loadProfile(){
+  if(!TARGET_UID){
+    profileName.textContent = "Perfil inválido";
+    brandTitle.textContent = "Prévia do Perfil";
+    bioText.textContent = "Nenhum UID informado na URL. Use: ?uid=XXXX";
+    setCover("");
+    setAvatar("", "U");
+    setStatus(false);
+    cityText.textContent = "—";
     return;
   }
 
-  try{
-    localStorage.setItem("nome_passageiro", name);
-    sessionStorage.setItem("nome_passageiro", name);
-    USER_NAME = name;
+  DB.ref("profiles/" + TARGET_UID).on("value", snap=>{
+    const p = snap.val() || {};
+    const name = p.name || "Usuário";
+    const city = p.city || "Sem cidade";
+    const bio  = p.bio  || "Sem biografia.";
 
-    await MY_PROFILE_REF().update({
-      uid: UID,
-      name, city, bio,
-      updatedAt: firebase.database.ServerValue.TIMESTAMP
-    });
-
-    MY_PROFILE_REF().child("link").remove().catch(()=>{});
-
-    const pSnap = await MY_PROFILE_REF().once("value");
-    const p = pSnap.val() || {};
-    const avatar = (p.avatarDataUrl || p.avatarUrl || "").toString();
-    DB.ref("presence/" + UID).update({ userName: name, avatarDataUrl: avatar || "" }).catch(()=>{});
-
-    saveInfo.style.display = "block";
-    setTimeout(()=> saveInfo.style.display="none", 1600);
+    TARGET_PROFILE_CACHE = {
+      name,
+      avatarUrl: (p.avatarDataUrl || p.avatarUrl || "").toString()
+    };
 
     profileName.textContent = name;
-    cityText.textContent = city || "Sem cidade";
-    avatarInitial.textContent = initials(name);
-    setAboutReadOnly({ name, city, bio });
-  }catch(e){
-    console.log(e);
-    alert("Erro ao salvar.");
-  }
-}
+    brandTitle.textContent = name;
+    cityText.textContent = city;
+    bioText.textContent = bio;
 
-/* ====================== GALERIA ====================== */
-function abrirGaleriaCapa(){
-  if(!USER_NAME){ abrirLogin(); return; }
-  coverInput.value = "";
-  coverInput.click();
-}
-function abrirGaleriaAvatar(){
-  if(!USER_NAME){ abrirLogin(); return; }
-  avatarInput.value = "";
-  avatarInput.click();
-}
-
-/* ====================== CORTE/REDIMENSIONAMENTO ====================== */
-const MAX_IMG_MB = 18;
-function checkImageSize(file){
-  const mb = file.size/(1024*1024);
-  if(mb > MAX_IMG_MB){
-    alert(`Imagem muito grande (${mb.toFixed(1)}MB). Envie até ${MAX_IMG_MB}MB.`);
-    return false;
-  }
-  return true;
-}
-function loadImageFromFile(file){
-  return new Promise((resolve, reject)=>{
-    const url = URL.createObjectURL(file);
-    const img = new Image();
-    img.onload = ()=>{ try{ URL.revokeObjectURL(url); }catch(e){} resolve(img); };
-    img.onerror = (e)=>{ try{ URL.revokeObjectURL(url); }catch(_e){} reject(e); };
-    img.src = url;
+    setCover(p.coverDataUrl || p.coverUrl || "");
+    setAvatar(p.avatarDataUrl || p.avatarUrl || "", name);
   });
-}
-function cropToCoverDataUrl(img, outW=1400, outH=420, quality=0.85){
-  const canvas = document.createElement("canvas");
-  canvas.width = outW;
-  canvas.height = outH;
-  const ctx = canvas.getContext("2d");
 
-  const targetAR = outW / outH;
-  const srcAR = img.width / img.height;
-
-  let sx=0, sy=0, sw=img.width, sh=img.height;
-  if(srcAR > targetAR){
-    sh = img.height;
-    sw = Math.round(sh * targetAR);
-    sx = Math.round((img.width - sw) / 2);
-    sy = 0;
-  }else{
-    sw = img.width;
-    sh = Math.round(sw / targetAR);
-    sx = 0;
-    sy = Math.round((img.height - sh) / 2);
-  }
-
-  ctx.drawImage(img, sx, sy, sw, sh, 0, 0, outW, outH);
-  return canvas.toDataURL("image/jpeg", quality);
-}
-function cropToAvatarDataUrl(img, outSize=420, quality=0.86){
-  const canvas = document.createElement("canvas");
-  canvas.width = outSize;
-  canvas.height = outSize;
-  const ctx = canvas.getContext("2d");
-
-  const side = Math.min(img.width, img.height);
-  const sx = Math.round((img.width - side)/2);
-  const sy = Math.round((img.height - side)/2);
-
-  ctx.drawImage(img, sx, sy, side, side, 0, 0, outSize, outSize);
-  return canvas.toDataURL("image/jpeg", quality);
-}
-
-/* UPLOAD CAPA */
-coverInput.addEventListener("change", async ()=>{
-  const file = coverInput.files && coverInput.files[0];
-  if(!file) return;
-
-  if(!file.type || !file.type.startsWith("image/")){
-    alert("Envie uma imagem (JPG/PNG/etc).");
-    return;
-  }
-  if(!checkImageSize(file)) return;
-
-  try{
-    const img = await loadImageFromFile(file);
-    const rect = coverBox.getBoundingClientRect();
-    const outW = Math.min(1600, Math.max(1100, Math.round(rect.width * 2)));
-    const outH = Math.round((rect.height * outW) / rect.width);
-
-    const dataUrl = cropToCoverDataUrl(img, outW, outH, 0.86);
-
-    attachingCover(dataUrl);
-
-    await MY_PROFILE_REF().update({
-      coverDataUrl: dataUrl,
-      updatedAt: firebase.database.ServerValue.TIMESTAMP
-    });
-  }catch(err){
-    console.log("COVER ERROR:", err);
-    alert("Erro ao salvar a capa.");
-  }finally{
-    coverInput.value = "";
-  }
-});
-
-/* UPLOAD AVATAR */
-avatarInput.addEventListener("change", async ()=>{
-  const file = avatarInput.files && avatarInput.files[0];
-  if(!file) return;
-
-  if(!file.type || !file.type.startsWith("image/")){
-    alert("Envie uma imagem (JPG/PNG/etc).");
-    return;
-  }
-  if(!checkImageSize(file)) return;
-
-  try{
-    const img = await loadImageFromFile(file);
-    const dataUrl = cropToAvatarDataUrl(img, 520, 0.86);
-
-    attachingAvatar(dataUrl, USER_NAME);
-
-    await MY_PROFILE_REF().update({
-      avatarDataUrl: dataUrl,
-      updatedAt: firebase.database.ServerValue.TIMESTAMP
-    });
-
-    DB.ref("presence/" + UID).update({
-      userName: USER_NAME,
-      avatarDataUrl: dataUrl
-    }).catch(()=>{});
-  }catch(err){
-    console.log("AVATAR ERROR:", err);
-    alert("Erro ao salvar a foto de perfil.");
-  }finally{
-    avatarInput.value = "";
-  }
-});
-
-/* ✅ TABS COM TOGGLE */
-let CURRENT_TAB = "posts";
-function setTabActive(which){
-  ["posts","about","profile","friends"].forEach(k=>{
-    document.getElementById("tab_"+k).classList.remove("active");
-    document.getElementById("panel_"+k).classList.remove("active");
-  });
-  document.getElementById("tab_"+which).classList.add("active");
-  document.getElementById("panel_"+which).classList.add("active");
-  CURRENT_TAB = which;
-
-  // ✅ garante que vídeos novos/visíveis fiquem tocando em mudo
-  setTimeout(()=>{ ensureAutoplayMutedVideos(); }, 80);
-}
-function closeAllTabs(){
-  ["posts","about","profile","friends"].forEach(k=>{
-    document.getElementById("tab_"+k).classList.remove("active");
-    document.getElementById("panel_"+k).classList.remove("active");
-  });
-  CURRENT_TAB = "";
-}
-function toggleTab(which){
-  if(CURRENT_TAB === which) closeAllTabs();
-  else setTabActive(which);
-}
-
-/* ====================== FEED: AVATAR + NOME ====================== */
-function updatePostAvatarsInDOM(uid, url, name){
-  document.querySelectorAll(`[data-post-avatar-uid="${uid}"]`).forEach(el=>{
-    el.innerHTML = url
-      ? `<img src="${url}" alt="avatar">`
-      : `<div class="init">${escapeHTML(initials(name||"U"))}</div>`;
-  });
-  document.querySelectorAll(`[data-post-name-uid="${uid}"]`).forEach(el=>{
-    el.textContent = name || "Usuário";
+  DB.ref("presence/" + TARGET_UID).on("value", snap=>{
+    const u = snap.val() || {};
+    const last = u.lastActive || 0;
+    const now = Date.now();
+    const online = (u.online === true) && (now - last < 65000);
+    setStatus(online);
   });
 }
 
-/* ====================== ✅ VÍDEO: autoplay em mudo + áudio só ao clicar ====================== */
-function ensureAutoplayMutedVideos(){
-  const videos = document.querySelectorAll(".post .mediaWrap video");
-  videos.forEach(v=>{
-    try{
-      v.setAttribute("playsinline", "");
-      v.setAttribute("autoplay", "");
-      v.setAttribute("loop", "");
-      v.setAttribute("muted", "");
-      v.muted = true;
+/* ====================== FEED DO USUÁRIO (curtir / comentar) ====================== */
+let cachedName = "Usuário";
+let cachedAvatar = "";
 
-      // evita fullscreen automático no iPhone
-      v.playsInline = true;
-
-      // se não tem controles, mantém (você pediu só tocar áudio ao clicar)
-      // controles continuam pra pausar/seek se quiser.
-      // importante: autoplay só funciona se estiver muted.
-      const p = v.play();
-      if(p && p.catch) p.catch(()=>{});
-    }catch(e){}
+/* fotos nos comentários */
+const avatarCache = {};
+function getAvatarUrlFromProfile(p){
+  return (p && (p.avatarDataUrl || p.avatarUrl || "")) || "";
+}
+function fetchAvatarUrl(uid){
+  return new Promise((resolve)=>{
+    if(!uid){ resolve(""); return; }
+    if(avatarCache[uid] !== undefined){ resolve(avatarCache[uid]); return; }
+    DB.ref("profiles/" + uid).once("value").then(s=>{
+      const p = s.val() || {};
+      const url = getAvatarUrlFromProfile(p) || "";
+      avatarCache[uid] = url;
+      resolve(url);
+    }).catch(()=>{ avatarCache[uid]=""; resolve(""); });
   });
 }
 
-// ✅ ao clicar no vídeo: liga/desliga o áudio (sem parar o vídeo)
-document.addEventListener("click", (ev)=>{
-  const v = ev.target && ev.target.closest && ev.target.closest(".post .mediaWrap video");
-  if(!v) return;
-
-  // se estava mudo, liga o som
-  if(v.muted){
-    v.muted = false;
-    v.removeAttribute("muted");
-    // tenta reproduzir (alguns navegadores exigem user gesture — o clique já é)
-    try{
-      const p = v.play();
-      if(p && p.catch) p.catch(()=>{});
-    }catch(e){}
-  }else{
-    // se já tinha som, volta pro mudo ao clicar de novo (opcional e útil)
-    v.muted = true;
-    v.setAttribute("muted","");
+function postHTML(postId, d){
+  let midia = "";
+  if(d.mediaUrl){
+    const isImg = (d.mediaType || "").startsWith("image/");
+    if(isImg){
+      midia = `<img src="${escapeHTML(d.mediaUrl)}" loading="lazy" alt="imagem">`;
+    }else{
+      midia = `
+        <div class="videoWrap">
+          <video
+            src="${escapeHTML(d.mediaUrl)}"
+            data-autopreview="1"
+            muted
+            autoplay
+            loop
+            playsinline
+            preload="metadata"
+          ></video>
+          <div class="tapToSound"><i class="fa-solid fa-volume-high"></i> Toque para ouvir</div>
+        </div>
+      `;
+    }
   }
-}, true);
 
-/* ====================== FEED só do usuário ====================== */
-const postsCache = new Set();
-let postsCountNum = 0;
+  const texto = escapeHTML(d.text || "");
+  const quando = d.createdAt ? fmtDate(d.createdAt) : "";
 
-function toggleMenu(id){
-  const m = document.getElementById("menu_"+id);
-  if(!m) return;
-  m.style.display = (m.style.display==="block" ? "none" : "block");
+  const av = cachedAvatar
+    ? `<img src="${escapeHTML(cachedAvatar)}" alt="avatar">`
+    : `<div class="init">${escapeHTML(initials(cachedName))}</div>`;
+
+  return `
+    <div class="post" id="${escapeHTML(postId)}">
+      <div class="postHead">
+        <div class="postAvatar">${av}</div>
+        <div style="min-width:0;">
+          <div class="postName">${escapeHTML(cachedName)}</div>
+          <div class="when">${escapeHTML(quando)}</div>
+        </div>
+      </div>
+
+      ${texto ? `<p>${texto}</p>` : ""}
+
+      <div class="mediaWrap">
+        ${midia}
+      </div>
+
+      <div class="post-actions">
+        <div style="text-align:center;">
+          <div class="btn-action" id="btnLike_${escapeHTML(postId)}" onclick="curtir('${escapeHTML(postId)}')">👍 Curtir</div>
+          <div class="contador" id="likesCount_${escapeHTML(postId)}"></div>
+        </div>
+
+        <div style="text-align:center;">
+          <div class="btn-action" onclick="toggleComentarios('${escapeHTML(postId)}')">💬 Comentar</div>
+          <div class="contador" id="commentsCount_${escapeHTML(postId)}"></div>
+        </div>
+      </div>
+
+      <div class="coment-area" id="comentBox_${escapeHTML(postId)}">
+        <div id="commentsList_${escapeHTML(postId)}" style="margin-bottom:12px;"></div>
+
+        <input type="text" id="commentInput_${escapeHTML(postId)}"
+          placeholder="Escreva um comentário..."
+          style="width:100%;padding:10px;border-radius:12px;border:1px solid rgba(255,255,255,.12);background:#3A3B3C;color:var(--fb-text);outline:none;">
+
+        <button class="login-btn" style="margin-top:10px;width:100%;" onclick="enviarComentario('${escapeHTML(postId)}')">
+          Enviar comentário
+        </button>
+      </div>
+    </div>
+  `;
 }
 
-function abrirComentarios(id){
-  const box = document.getElementById("comentarios_"+id);
+function toggleComentarios(postId){
+  const box = document.getElementById("comentBox_"+postId);
   if(!box) return;
   box.style.display = (box.style.display === "block") ? "none" : "block";
 }
 
 async function curtir(postId){
-  if(!USER_NAME){ abrirLogin(); return; }
+  if(precisaLogin()) return;
+  startSelfPresence();
+
   const likeRef = DB.ref(`likes/${postId}/${UID}`);
   const snap = await likeRef.once("value");
   const cur = snap.val();
+
   if(cur) await likeRef.remove();
-  else await likeRef.set({ type:"like", uid:UID, userName:USER_NAME, createdAt: firebase.database.ServerValue.TIMESTAMP });
-}
-async function amei(postId){
-  if(!USER_NAME){ abrirLogin(); return; }
-  const likeRef = DB.ref(`likes/${postId}/${UID}`);
-  const snap = await likeRef.once("value");
-  const cur = snap.val();
-  if(cur && cur.type === "love") await likeRef.remove();
-  else await likeRef.set({ type:"love", uid:UID, userName:USER_NAME, createdAt: firebase.database.ServerValue.TIMESTAMP });
-}
-
-let holdTimer = null;
-let longPress = {};
-function pressionarCurtir(id){
-  longPress[id] = false;
-  holdTimer = setTimeout(()=>{
-    longPress[id] = true;
-    amei(id);
-  }, 500);
-}
-function soltarCurtir(){ if(holdTimer) clearTimeout(holdTimer); }
-
-function atualizarCurtidasUI(postId, likesObj){
-  const btn = document.getElementById("curtir_"+postId);
-  const cont = document.getElementById("contadorCurtidas_"+postId);
-  if(!btn || !cont) return;
-
-  const likes = likesObj || {};
-  const entries = Object.values(likes);
-  const total = entries.length;
-  const my = likes[UID];
-
-  if(my){
-    if(my.type === "love"){
-      btn.textContent = "❤️ Você amou";
-      btn.style.color = "#ff4da6";
-    }else{
-      btn.textContent = "👍 Você curtiu";
-      btn.style.color = "#9cc4ff";
-    }
-  }else{
-    btn.textContent = "👍 Curtir";
-    btn.style.color = "";
-  }
-
-  if(total === 0){ cont.innerHTML = ""; return; }
-
-  const sorted = entries.sort((a,b)=>(a.createdAt||0)-(b.createdAt||0));
-  const nomes = sorted.map(x => (x.uid === UID ? "Você" : escapeHTML(x.userName || "Usuário")));
-  cont.innerHTML = `Curtidas (${total}): <b>${nomes.join(", ")}</b>`;
+  else await likeRef.set({
+    type:"like",
+    uid: UID,
+    userName: USER_NAME,
+    createdAt: firebase.database.ServerValue.TIMESTAMP
+  });
 }
 
 async function enviarComentario(postId){
-  if(!USER_NAME){ abrirLogin(); return; }
-  const input = document.getElementById("comentarioInput_"+postId);
+  if(precisaLogin()) return;
+  startSelfPresence();
+
+  const input = document.getElementById("commentInput_"+postId);
   if(!input) return;
-  const texto = input.value.trim();
+  const texto = (input.value || "").trim();
   if(!texto) return;
 
   const commentId = "cmt_" + Date.now() + "_" + Math.random().toString(36).slice(2);
+  const myAvatarUrl = await fetchAvatarUrl(UID);
+
   await DB.ref(`comments/${postId}/${commentId}`).set({
     uid: UID,
     userName: USER_NAME,
+    avatarUrl: myAvatarUrl || "",
     text: texto,
     createdAt: firebase.database.ServerValue.TIMESTAMP
   });
   input.value = "";
 }
 
-function toggleComentMenu(cid){
-  const menu = document.getElementById("menu_"+cid);
-  if(!menu) return;
-  menu.style.display = (menu.style.display==="block" ? "none" : "block");
-}
-async function excluirComentario(cid, postId){
-  await DB.ref(`comments/${postId}/${cid}`).remove();
-}
-
-async function excluirPost(postId){
-  const snap = await DB.ref("posts/" + postId).once("value");
-  const data = snap.val();
-  if(!data) return;
-
-  if(data.uid !== UID){
-    alert("Você só pode excluir suas próprias postagens.");
-    return;
-  }
-
-  await DB.ref("posts/" + postId).remove();
-  await DB.ref("likes/" + postId).remove().catch(()=>{});
-  await DB.ref("comments/" + postId).remove().catch(()=>{});
-
-  const el = document.getElementById(postId);
-  if(el) el.remove();
-  postsCache.delete(postId);
-
-  postsCountNum = Math.max(0, postsCountNum - 1);
-  document.getElementById("postsCount").textContent = `${postsCountNum} postagens`;
-}
-
-async function postHTML(id, postData){
-  let midia = "";
-  if(postData.mediaUrl){
-    const isImg = (postData.mediaType || "").startsWith("image/");
-    midia = isImg
-      ? `<img src="${postData.mediaUrl}" loading="lazy">`
-      : `
-        <video
-          src="${postData.mediaUrl}"
-          controls
-          preload="metadata"
-          playsinline
-          autoplay
-          loop
-          muted
-        ></video>`;
-  }
-
-  const uid = postData.uid || "";
-  const fallbackName = postData.userName || "Usuário";
-  const prof = await getProfileForUID(uid, fallbackName);
-
-  const nome = escapeHTML(prof.name || fallbackName);
-  const texto = escapeHTML(postData.text || "");
-  const quando = postData.createdAt ? fmtDate(postData.createdAt) : "";
-
-  const avatarHTML = prof.url
-    ? `<img src="${prof.url}" alt="avatar">`
-    : `<div class="init">${escapeHTML(initials(prof.name || fallbackName))}</div>`;
-
-  return `
-  <div class="post" id="${id}">
-    <div class="menu-btn" title="Opções" aria-label="Opções" onclick="toggleMenu('${id}')">⋮</div>
-    <div class="menu-box" id="menu_${id}">
-      <div onclick="excluirPost('${id}')"><i class="fa-solid fa-trash"></i> <span class="danger">Excluir post</span></div>
-    </div>
-
-    <div class="postHead">
-      <div class="postAvatar" data-post-avatar-uid="${escapeHTML(uid)}" onclick="abrirPrevia('${escapeHTML(uid)}')">
-        ${avatarHTML}
-      </div>
-      <div class="postHeadText">
-        <div class="postName" data-post-name-uid="${escapeHTML(uid)}" onclick="abrirPrevia('${escapeHTML(uid)}')">${nome}</div>
-        <div class="when">${escapeHTML(quando)}</div>
-      </div>
-    </div>
-
-    <p style="margin:12px 0 0 0; color: var(--text);">${texto}</p>
-
-    <div class="mediaWrap" id="mediaWrap_${id}">
-      ${midia}
-    </div>
-
-    <div class="post-actions">
-      <div style="text-align:center;">
-        <div class="btn-action"
-          id="curtir_${id}"
-          onmousedown="pressionarCurtir('${id}')"
-          onmouseup="soltarCurtir()"
-          ontouchstart="pressionarCurtir('${id}')"
-          ontouchend="soltarCurtir()"
-          onclick="curtir('${id}')">
-          👍 Curtir
-        </div>
-        <div class="contador" id="contadorCurtidas_${id}"></div>
-      </div>
-
-      <div style="text-align:center;">
-        <div class="btn-action" onclick="abrirComentarios('${id}')">💬 Comentar</div>
-        <div class="contador" id="contadorComentarios_${id}"></div>
-      </div>
-    </div>
-
-    <div class="coment-area" id="comentarios_${id}">
-      <div id="listaComentarios_${id}" style="margin-bottom:15px;"></div>
-
-      <input type="text" id="comentarioInput_${id}"
-        placeholder="Escreva um comentário..."
-        style="width:100%;padding:10px;border-radius:10px;border:1px solid rgba(255,255,255,.12);background:rgba(255,255,255,.05);color:var(--text);outline:none;">
-
-      <button class="btn" style="margin-top:10px;" onclick="enviarComentario('${id}')">Enviar</button>
-    </div>
-  </div>
-  `;
-}
-
 function listenLikes(postId){
   DB.ref("likes/" + postId).on("value", snap=>{
-    atualizarCurtidasUI(postId, snap.val() || {});
+    const obj = snap.val() || {};
+    const total = Object.values(obj).length;
+    const mine = obj[UID];
+
+    const btn = document.getElementById("btnLike_"+postId);
+    const cont = document.getElementById("likesCount_"+postId);
+    if(!btn || !cont) return;
+
+    if(mine){
+      btn.textContent = "👍 Você curtiu";
+      btn.style.opacity = "1";
+      btn.style.borderColor = "rgba(8,102,255,.35)";
+      btn.style.boxShadow = "0 0 0 3px rgba(8,102,255,.12)";
+    }else{
+      btn.textContent = "👍 Curtir";
+      btn.style.opacity = ".95";
+      btn.style.borderColor = "rgba(255,255,255,.10)";
+      btn.style.boxShadow = "none";
+    }
+
+    cont.textContent = total ? `${total} curtida${total>1?"s":""}` : "";
   });
 }
 
 function listenComments(postId){
   DB.ref("comments/" + postId).orderByChild("createdAt").on("value", async snap=>{
-    const lista = document.getElementById("listaComentarios_"+postId);
-    const contador = document.getElementById("contadorComentarios_"+postId);
-    if(!lista || !contador) return;
-
     const obj = snap.val() || {};
-    const arr = Object.keys(obj).map(cid=>({ cid, ...obj[cid] }))
+    const arr = Object.keys(obj).map(id=>({ id, ...obj[id] }))
       .sort((a,b)=>(a.createdAt||0)-(b.createdAt||0));
 
-    if(arr.length === 0){
-      lista.innerHTML = "";
-      contador.innerHTML = "";
+    const cont = document.getElementById("commentsCount_"+postId);
+    const list = document.getElementById("commentsList_"+postId);
+    if(!cont || !list) return;
+
+    const total = arr.length;
+    cont.textContent = total ? `${total} comentário${total>1?"s":""}` : "";
+
+    if(total === 0){
+      list.innerHTML = `<div class="empty">Nenhum comentário ainda.</div>`;
       return;
     }
 
-    const rows = await Promise.all(arr.map(async c=>{
-      const uid = (c.uid || "").toString();
-      const fallbackName = (c.userName || "Usuário").toString();
-      const prof = await getProfileForUID(uid, fallbackName);
+    const htmlParts = await Promise.all(arr.map(async (c)=>{
+      const nome = c.userName || "Usuário";
+      const txt = escapeHTML(c.text || "");
+      const uid = c.uid || "";
+      let url = (c.avatarUrl || "").trim();
+      if(!url && uid) url = await fetchAvatarUrl(uid);
 
-      const nome = escapeHTML(prof.name || fallbackName);
-      const txt  = escapeHTML(c.text || "");
-
-      const avatar = prof.url
-        ? `<img src="${prof.url}" alt="avatar">`
-        : `<div class="init">${escapeHTML(initials(prof.name || fallbackName))}</div>`;
+      const avatarHTML = url
+        ? `<img src="${escapeHTML(url)}" alt="foto">`
+        : `<div class="init">${escapeHTML(initials(nome))}</div>`;
 
       return `
-        <div id="${escapeHTML(c.cid)}" class="cRow">
+        <div class="cRow">
           <div class="cHead">
-            <div class="cAvatar" onclick="abrirPrevia('${escapeHTML(uid)}')">
-              ${avatar}
-            </div>
-            <div class="cName" onclick="abrirPrevia('${escapeHTML(uid)}')">${nome}</div>
+            <div class="cAvatar">${avatarHTML}</div>
+            <div class="cName">${escapeHTML(nome)}</div>
           </div>
           <div class="cText">💬 ${txt}</div>
-
-          <div class="coment-menu-btn" title="Opções" onclick="toggleComentMenu('${escapeHTML(c.cid)}')">⋮</div>
-          <div class="coment-menu-box" id="menu_${escapeHTML(c.cid)}" onclick="excluirComentario('${escapeHTML(c.cid)}','${escapeHTML(postId)}')">
-            <span><i class="fa-solid fa-trash"></i> Excluir</span>
-          </div>
         </div>
       `;
     }));
 
-    lista.innerHTML = rows.join("");
-
-    const total = arr.length;
-    contador.innerHTML = (total === 1) ? "1 comentário" : `${total} comentários`;
+    list.innerHTML = htmlParts.join("");
   });
 }
 
-async function renderMyPost(postId, data){
-  if(postsCache.has(postId)) return;
-  if(data.uid !== UID) return;
+function listenFeed(){
+  if(!TARGET_UID) return;
 
-  postsCache.add(postId);
-
-  const feed = document.getElementById("myFeed");
-  const temp = document.createElement("div");
-  temp.innerHTML = (await postHTML(postId, data)).trim();
-  feed.prepend(temp.firstChild);
-
-  // ✅ depois de inserir o post, garante autoplay mudo
-  ensureAutoplayMutedVideos();
-
-  listenLikes(postId);
-  listenComments(postId);
-
-  postsCountNum++;
-  document.getElementById("postsCount").textContent = `${postsCountNum} postagens`;
-}
-
-function listenMyPosts(){
-  postsCache.clear();
-  postsCountNum = 0;
-  document.getElementById("postsCount").textContent = `0 postagens`;
-  document.getElementById("myFeed").innerHTML = `<div style="color:var(--muted); padding:12px;">Carregando suas postagens...</div>`;
-
-  const q = DB.ref("posts").orderByChild("uid").equalTo(UID).limitToLast(200);
-  q.on("value", async snap=>{
-    const obj = snap.val() || {};
-    const entries = Object.keys(obj).map(id=>({ id, ...obj[id] }))
-      .sort((a,b)=>(a.createdAt||0)-(b.createdAt||0));
-
-    document.getElementById("myFeed").innerHTML = "";
-    postsCache.clear();
-    postsCountNum = 0;
-
-    if(entries.length === 0){
-      document.getElementById("myFeed").innerHTML = `<div style="color:var(--muted); padding:12px;">Você ainda não postou nada.</div>`;
-      document.getElementById("postsCount").textContent = `0 postagens`;
-      return;
-    }
-
-    for(const p of entries.slice().reverse()){
-      await renderMyPost(p.id, p);
-    }
-
-    // ✅ garante autoplay mudo após renderizar tudo
-    ensureAutoplayMutedVideos();
+  DB.ref("profiles/" + TARGET_UID).on("value", snap=>{
+    const p = snap.val() || {};
+    cachedName = p.name || "Usuário";
+    cachedAvatar = p.avatarDataUrl || p.avatarUrl || "";
   });
-}
 
-/* ====================== AMIGOS ONLINE ====================== */
-function friendAvatarHTML(u){
-  const name = u.userName || "Usuário";
-  const init = initials(name);
-  const imgUrl = (u.avatarDataUrl || u.avatarUrl || "").trim();
-  if(imgUrl) return `<img src="${imgUrl}" alt="avatar">`;
-  return `<div class="friendInit">${escapeHTML(init)}</div>`;
-}
-
-function updateOnlineAvatarsInDOM(uid, url, name){
-  const sid = safeId(uid);
-  const box = document.getElementById("onlineAva_" + sid);
-  const nameEl = document.getElementById("onlineName_" + sid);
-  if(box){
-    box.innerHTML = url
-      ? `<img src="${url}" alt="avatar">`
-      : `<div class="friendInit">${escapeHTML(initials(name||"U"))}</div>`;
-  }
-  if(nameEl && name){
-    const hasYou = nameEl.dataset.you === "1";
-    nameEl.innerHTML = `${escapeHTML(name)} ${hasYou ? `<span style="opacity:.85;">(você)</span>` : ""}`;
-  }
-}
-
-async function hydrateOnlineFromProfiles(aliveArr){
-  for(const u of (aliveArr||[])){
-    if(!u || !u.uid) continue;
-    const hasPresenceAvatar = (u.avatarDataUrl || u.avatarUrl || "").trim();
-    if(hasPresenceAvatar) continue;
-    const prof = await getProfileForUID(u.uid, u.userName || "Usuário");
-    if(prof && (prof.url || prof.name)){
-      updateOnlineAvatarsInDOM(u.uid, prof.url || "", prof.name || (u.userName||"Usuário"));
-    }
-  }
-}
-
-function listenOnline(){
-  const onlineCount = document.getElementById("onlineCount");
-  const onlineList  = document.getElementById("onlineList");
-
-  const ref = DB.ref("presence");
+  const ref = DB.ref("posts").limitToLast(300);
   ref.on("value", snap=>{
     const obj = snap.val() || {};
-    const arr = Object.keys(obj).map(uid=>obj[uid]).filter(Boolean);
+    const entries = Object.keys(obj)
+      .map(id=>({ id, ...obj[id] }))
+      .filter(p => (p.uid || "") === TARGET_UID)
+      .sort((a,b)=>(a.createdAt||0)-(b.createdAt||0));
 
-    const now = Date.now();
-    const alive = arr.filter(u=>{
-      const last = u.lastActive || 0;
-      return (u.online === true) && (now - last < 65000);
-    });
+    postsCount.textContent = `${entries.length} postagens`;
 
-    alive.sort((a,b)=>(b.lastActive||0)-(a.lastActive||0));
-    onlineCount.textContent = `${alive.length} online`;
-
-    if(alive.length === 0){
-      onlineList.innerHTML = `<div style="color:var(--muted); padding:12px;">Ninguém online agora.</div>`;
+    if(entries.length === 0){
+      feed.innerHTML = `<div class="empty">Este usuário ainda não postou nada.</div>`;
       return;
     }
 
-    const rows = alive.slice(0, 80).map(u=>{
-      const name = u.userName || "Usuário";
-      const last = u.lastActive ? fmtDate(u.lastActive) : "";
-      const sid = safeId(u.uid);
-      const isMe = (u.uid === UID);
+    feed.innerHTML = entries.slice().reverse().map(p=> postHTML(p.id, p)).join("");
 
-      return `
-        <div class="friendRow centered">
-          <div class="friendLeft">
-            <div class="friendAvatar" id="onlineAva_${sid}">
-              ${friendAvatarHTML(u)}
-            </div>
-            <div style="min-width:0;">
-              <div class="friendName" id="onlineName_${sid}" data-you="${isMe ? "1":"0"}">
-                ${escapeHTML(name)} ${isMe ? `<span style="opacity:.85;">(você)</span>` : ""}
-              </div>
-            </div>
-          </div>
-          <div class="friendRight">
-            <span class="onlineDot"></span>
-            <span>${escapeHTML(last)}</span>
-          </div>
-        </div>
-      `;
+    setupVideoAutoplay(feed);
+
+    entries.forEach(p=>{
+      listenLikes(p.id);
+      listenComments(p.id);
     });
-
-    onlineList.innerHTML = rows.join("");
-    hydrateOnlineFromProfiles(alive.slice(0, 80));
   });
 }
 
 /* ====================== BOOT ====================== */
 (async function boot(){
-  profileName.textContent = USER_NAME || "Usuário";
-  avatarInitial.textContent = initials(USER_NAME || "U");
+  setCover("");
+  setAvatar("", "U");
+  setStatus(false);
+
+  startSelfPresence();
+  listenSelfPresence();
 
   await loadProfile();
-  listenMyPosts();
-  listenOnline();
-  setTabActive("posts");
-
-  // ✅ garante autoplay mudo logo ao iniciar
-  setTimeout(()=>{ ensureAutoplayMutedVideos(); }, 200);
+  listenFeed();
+  listenFollowState();
+  setFollowBtn();
 })();
 </script>
 
