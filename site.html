@@ -417,6 +417,29 @@
   }
   .connectionsTitle i{ color: var(--fb-blue); }
 
+  /* ✅ NOVO BOTÃO "VER TODOS" (no lugar do Arraste →) */
+  .connSeeAllBtn{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    gap:8px;
+    padding: 10px 14px;
+    border-radius: 999px;
+    background: var(--fb-blue);
+    color:#fff;
+    text-decoration:none;
+    font-weight:900;
+    font-size: 12px;
+    letter-spacing:.4px;
+    border: 1px solid rgba(255,255,255,.10);
+    box-shadow: 0 10px 20px rgba(0,0,0,.22);
+    white-space:nowrap;
+    user-select:none;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .connSeeAllBtn:active{ transform: scale(.99); }
+  .connSeeAllBtn i{ color:#fff; }
+
   /* Carrossel horizontal estilo "Pessoas que você talvez conheça" */
   .connCarousel{
     display:flex;
@@ -1686,10 +1709,8 @@ msgBtn.addEventListener("click", ()=>{
 <script>
 /* ===================== ✅ BLOCO "CONECTADOS AO FACECUMBA" (CARROSSEL) ===================== */
 /* ✅ ALTERAÇÃO PEDIDA:
-   - Antes: puxava /presence (só quem tá online)
-   - Agora: puxa /profiles (usuários cadastrados)
-   - Layout: carrossel horizontal tipo Facebook
-   - Título: "CONECTADOS AO FACECUMBA"
+   - Trocar "Arraste →" por um botão "Ver todos"
+   - Ao clicar: vai para https://marcio2307.github.io/terreiro/usuariosface.html
 */
 const CONNECTIONS_ID = "connectionsSection";
 let connectionsUsers = [];
@@ -1746,9 +1767,13 @@ async function renderConnections(){
         <i class="fa-solid fa-users"></i>
         <span>CONECTADOS AO FACECUMBA</span>
       </div>
-      <div style="font-weight:900;opacity:.85;font-size:12px;white-space:nowrap;">
-        Arraste →
-      </div>
+
+      <a class="connSeeAllBtn"
+         href="https://marcio2307.github.io/terreiro/usuariosface.html"
+         title="Ver todos"
+         aria-label="Ver todos">
+        Ver todos <i class="fa-solid fa-arrow-right"></i>
+      </a>
     </div>
 
     <div class="connCarousel" id="connCarousel"></div>
