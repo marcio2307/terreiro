@@ -1,3 +1,6 @@
+<!-- ===========================
+  PREVIA.HTML (com botão SEGUIR)
+  =========================== -->
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
@@ -197,6 +200,44 @@
     color: rgba(228,230,235,.95);
   }
 
+  .rowActionsTop{
+    margin-top:10px;
+    display:flex;
+    gap:10px;
+    flex-wrap:wrap;
+    align-items:center;
+  }
+  .btn{
+    border:none;
+    cursor:pointer;
+    font-weight:900;
+    padding:12px 14px;
+    border-radius:999px;
+    background: var(--fb-blue);
+    color:#fff;
+    user-select:none;
+    display:inline-flex;
+    align-items:center;
+    gap:10px;
+    justify-content:center;
+    transition:.15s;
+    box-shadow: 0 10px 18px rgba(8,102,255,.18);
+  }
+  .btn:active{ transform:scale(.99); }
+  .btn.ghost{
+    background: rgba(255,255,255,.06);
+    color: var(--fb-text);
+    border:1px solid rgba(255,255,255,.10);
+    box-shadow: 0 10px 18px rgba(0,0,0,.18);
+  }
+  .btn.ghost:hover{ background: rgba(255,255,255,.09); }
+  .btn.red{
+    background: rgba(255,90,90,.16);
+    border:1px solid rgba(255,90,90,.35);
+    color:#ff8080;
+    box-shadow:none;
+  }
+
   .post{
     background: var(--fb-surface);
     margin: 12px 0;
@@ -240,11 +281,7 @@
     border:1px solid rgba(255,255,255,.08);
   }
 
-  /* ✅ overlay “toque para ouvir” */
-  .videoWrap{
-    position:relative;
-    margin-top:10px;
-  }
+  .videoWrap{ position:relative; margin-top:10px; }
   .videoWrap video{
     width:100%;
     border-radius: 14px;
@@ -270,7 +307,7 @@
     -webkit-backdrop-filter: blur(10px);
     box-shadow: 0 10px 22px rgba(0,0,0,.35);
     user-select:none;
-    pointer-events:none; /* clique vai no vídeo */
+    pointer-events:none;
   }
   .tapToSound i{ color: var(--fb-blue); }
   .tapToSound.hide{ display:none; }
@@ -447,7 +484,7 @@
 
 <body>
 
-<!-- LOGIN (pra curtir/comentar) -->
+<!-- LOGIN (pra curtir/comentar/seguir) -->
 <div class="login-overlay" id="loginOverlay">
   <div class="login-card">
     <div class="login-title"><i class="fa-solid fa-user"></i> ENTRAR</div>
@@ -496,6 +533,17 @@
           <span id="statusText">Online</span>
         </span>
         <span class="pill"><i class="fa-solid fa-location-dot" style="color:var(--fb-blue)"></i> <span id="cityText">—</span></span>
+        <span class="pill"><i class="fa-solid fa-user-plus" style="color:var(--fb-blue)"></i> <span id="followersCount">0 seguidores</span></span>
+      </div>
+
+      <!-- ✅ SEGUIR -->
+      <div class="rowActionsTop">
+        <button class="btn" id="followBtn" onclick="toggleFollow()" style="display:none;">
+          <i class="fa-solid fa-user-plus"></i> Seguir
+        </button>
+        <button class="btn ghost" id="backBtn" onclick="goBack()" style="display:none;">
+          <i class="fa-solid fa-arrow-left"></i> Voltar
+        </button>
       </div>
     </div>
   </div>
@@ -549,7 +597,7 @@ function getParams(){
 const PARAMS = getParams();
 const TARGET_UID = PARAMS.uid;
 
-/* ====================== LOGIN (pra curtir/comentar) ====================== */
+/* ====================== LOGIN (pra curtir/comentar/seguir) ====================== */
 const loginOverlay = document.getElementById("loginOverlay");
 const loginName = document.getElementById("loginName");
 
@@ -630,6 +678,9 @@ const statusPill = document.getElementById("statusPill");
 const feed = document.getElementById("feed");
 const postsCount = document.getElementById("postsCount");
 const brandTitle = document.getElementById("brandTitle");
+const followersCount = document.getElementById("followersCount");
+const followBtn = document.getElementById("followBtn");
+const backBtn = document.getElementById("backBtn");
 
 function setAvatar(url, name){
   if(url){
@@ -704,7 +755,6 @@ function startSelfPresence(){
     });
   }catch(e){}
 }
-
 function listenSelfPresence(){
   DB.ref("presence/" + UID).on("value", snap=>{
     const u = snap.val() || {};
@@ -742,16 +792,106 @@ previewClickableCover.addEventListener("click", showStatusToast);
 previewClickableAvatar.addEventListener("click", showStatusToast);
 infoBtn.addEventListener("click", showStatusToast);
 
+/* ====================== ✅ SEGUIDORES (followers/{target}/{me}) ====================== */
+let IS_FOLLOWING = false;
+let TARGET_PROFILE_CACHE = { name:"Usuário", avatarUrl:"" };
+
+async function fetchMyAvatarUrl(){
+  try{
+    const s = await DB.ref("profiles/" + UID).once("value");
+    const p = s.val() || {};
+    return (p.avatarDataUrl || p.avatarUrl || "").toString();
+  }catch(e){ return ""; }
+}
+async function fetchMyNameFromProfileOrLogin(){
+  try{
+    const s = await DB.ref("profiles/" + UID).once("value");
+    const p = s.val() || {};
+    return (p.name || USER_NAME || "Usuário").toString();
+  }catch(e){ return (USER_NAME || "Usuário").toString(); }
+}
+
+function setFollowBtn(){
+  // não mostra se for você mesmo ou sem target
+  if(!TARGET_UID || TARGET_UID === UID){
+    followBtn.style.display = "none";
+    return;
+  }
+  followBtn.style.display = "inline-flex";
+
+  if(IS_FOLLOWING){
+    followBtn.classList.add("ghost");
+    followBtn.classList.remove("red");
+    followBtn.innerHTML = `<i class="fa-solid fa-user-check"></i> Seguindo`;
+  }else{
+    followBtn.classList.remove("ghost");
+    followBtn.classList.remove("red");
+    followBtn.innerHTML = `<i class="fa-solid fa-user-plus"></i> Seguir`;
+  }
+}
+
+async function toggleFollow(){
+  if(!TARGET_UID) return;
+  if(TARGET_UID === UID){
+    alert("Você não pode seguir você mesmo.");
+    return;
+  }
+  if(precisaLogin()) return;
+  startSelfPresence();
+
+  // pega dados do seguidor
+  const myName = await fetchMyNameFromProfileOrLogin();
+  const myAvatar = await fetchMyAvatarUrl();
+
+  const ref = DB.ref(`followers/${TARGET_UID}/${UID}`);
+  const snap = await ref.once("value");
+  const cur = snap.val();
+
+  if(cur){
+    await ref.remove().catch(()=>{});
+  }else{
+    await ref.set({
+      uid: UID,
+      userName: myName,
+      avatarUrl: myAvatar || "",
+      followedAt: firebase.database.ServerValue.TIMESTAMP
+    }).catch(()=>{});
+  }
+}
+
+function listenFollowState(){
+  if(!TARGET_UID) return;
+
+  // estado de "eu sigo este perfil?"
+  DB.ref(`followers/${TARGET_UID}/${UID}`).on("value", s=>{
+    IS_FOLLOWING = !!s.val();
+    setFollowBtn();
+  });
+
+  // contador de seguidores
+  DB.ref(`followers/${TARGET_UID}`).on("value", s=>{
+    const obj = s.val() || {};
+    const total = Object.keys(obj).length;
+    followersCount.textContent = `${total} seguidor${total>1?"es":""}`;
+  });
+}
+
+/* voltar */
+function goBack(){
+  if(PARAMS.back){
+    window.location.href = PARAMS.back;
+  }else{
+    history.back();
+  }
+}
+(function(){
+  if(PARAMS.back) backBtn.style.display = "inline-flex";
+})();
+
 /* ====================== ✅ VÍDEOS: autoplay SEM SOM + som só ao clicar ====================== */
-/* Regras:
-   - vídeos nas postagens ficam: autoplay + loop + muted + playsinline
-   - somente quando clicar no vídeo: desmuta e deixa com som
-   - ao desmutar um, muta todos os outros (pra não virar bagunça)
-*/
 function setupVideoAutoplay(container){
   const videos = (container || document).querySelectorAll("video[data-autopreview='1']");
   videos.forEach(v=>{
-    // garantir atributos corretos
     v.muted = true;
     v.defaultMuted = true;
     v.setAttribute("muted", "");
@@ -762,24 +902,19 @@ function setupVideoAutoplay(container){
     v.playsInline = true;
     v.setAttribute("playsinline", "");
     v.setAttribute("preload", "metadata");
-    // sem controls por padrão (fica estilo preview). pode mudar se quiser:
     v.controls = false;
 
-    // tentar iniciar automaticamente
     const tryPlay = ()=>{
       const p = v.play();
       if(p && typeof p.catch === "function"){ p.catch(()=>{}); }
     };
     tryPlay();
 
-    // overlay “toque para ouvir”
     const wrap = v.closest(".videoWrap");
     const badge = wrap ? wrap.querySelector(".tapToSound") : null;
     if(badge) badge.classList.remove("hide");
 
-    // clicar: ativa som
     const onClick = ()=>{
-      // muta todos os outros
       document.querySelectorAll("video[data-autopreview='1']").forEach(other=>{
         if(other !== v){
           other.muted = true;
@@ -791,17 +926,15 @@ function setupVideoAutoplay(container){
         }
       });
 
-      // desmuta este
       v.muted = false;
       v.defaultMuted = false;
       v.removeAttribute("muted");
-      v.controls = true; // ao ativar som, libera controles
+      v.controls = true;
       tryPlay();
 
       if(badge) badge.classList.add("hide");
     };
 
-    // evita múltiplos listeners
     if(!v.__soundClickBound){
       v.addEventListener("click", onClick);
       v.__soundClickBound = true;
@@ -827,6 +960,11 @@ async function loadProfile(){
     const name = p.name || "Usuário";
     const city = p.city || "Sem cidade";
     const bio  = p.bio  || "Sem biografia.";
+
+    TARGET_PROFILE_CACHE = {
+      name,
+      avatarUrl: (p.avatarDataUrl || p.avatarUrl || "").toString()
+    };
 
     profileName.textContent = name;
     brandTitle.textContent = name;
@@ -875,7 +1013,6 @@ function postHTML(postId, d){
     if(isImg){
       midia = `<img src="${escapeHTML(d.mediaUrl)}" loading="lazy" alt="imagem">`;
     }else{
-      // ✅ vídeo em autoplay SEM som (muted) e som só no clique
       midia = `
         <div class="videoWrap">
           <video
@@ -1084,7 +1221,6 @@ function listenFeed(){
 
     feed.innerHTML = entries.slice().reverse().map(p=> postHTML(p.id, p)).join("");
 
-    // ✅ após renderizar, ativa autoplay/mute + clique para som
     setupVideoAutoplay(feed);
 
     entries.forEach(p=>{
@@ -1105,8 +1241,11 @@ function listenFeed(){
 
   await loadProfile();
   listenFeed();
+  listenFollowState();
+  setFollowBtn();
 })();
 </script>
 
 </body>
 </html>
+
