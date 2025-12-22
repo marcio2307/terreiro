@@ -825,6 +825,10 @@
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-storage.js"></script>
 
 <script>
+/* ====================== URLs ====================== */
+const SITE_HOME_URL  = "https://marcio2307.github.io/terreiro/site.html";
+const LOGOUT_URL     = "https://marcio2307.github.io/terreiro/loguin.html";
+
 /* ====================== FIREBASE (MESMO DO SEU SITE) ====================== */
 const firebaseConfig = {
   apiKey: "AIzaSyAt4CeGjdbjzdtMH1qZHw6RuBFJ6SeTDKk",
@@ -852,7 +856,7 @@ function voltarSite(){
   const uid  = (localStorage.getItem("uid_passageiro") || "").trim();
   if(nome) sessionStorage.setItem("nome_passageiro", nome);
   if(uid)  sessionStorage.setItem("uid_passageiro", uid);
-  window.location.href = "https://marcio2307.github.io/terreiro/site.html";
+  window.location.href = SITE_HOME_URL;
 }
 
 /* ====================== LOGIN + UID ====================== */
@@ -903,17 +907,18 @@ function confirmarNome(){
   if(!USER_NAME) abrirLogin();
 })();
 
-/* SAIR: desloga */
+/* ✅ SAIR: desloga e vai para loguin.html */
 function sairNome(){
-  stopPresence(true);
+  try{ stopPresence(true); }catch(e){}
   localStorage.removeItem("nome_passageiro");
   localStorage.removeItem("uid_passageiro");
   sessionStorage.removeItem("nome_passageiro");
   sessionStorage.removeItem("uid_passageiro");
   USER_NAME = "";
-  UID = getOrCreateUID();
-  abrirLogin();
+  /* em vez de abrir overlay, redireciona */
+  window.location.replace(LOGOUT_URL);
 }
+
 document.addEventListener("keydown", (e)=>{
   if(loginOverlay.style.display === "flex" && e.key === "Enter"){ confirmarNome(); }
 });
@@ -971,7 +976,6 @@ async function getProfileForUID(uid, fallbackName){
       profileCache.set(uid, { url: uu, name: nn });
       updatePostAvatarsInDOM(uid, uu, nn);
       updateOnlineAvatarsInDOM(uid, uu, nn);
-      // seguidores também
       updateFollowerRowInDOM(uid, uu, nn);
     });
 
@@ -1755,7 +1759,6 @@ function listenFollowers(){
     }
     followersEmpty.style.display = "none";
 
-    // render rápido com o que tem no node (userName). depois hidrata com profiles p/ foto
     const rows = arr.slice(0, 200).map(f=>{
       const fuid = (f.uid || "").toString();
       const nm = (f.userName || "Usuário").toString();
@@ -1781,7 +1784,6 @@ function listenFollowers(){
 
     followersList.innerHTML = rows.join("");
 
-    // hidrata com profiles (foto e nome real)
     for(const f of arr.slice(0, 200)){
       const fuid = (f.uid || "").toString();
       if(!fuid) continue;
@@ -1888,7 +1890,7 @@ function listenOnline(){
 
   await loadProfile();
   listenMyPosts();
-  listenFollowers();   // ✅ seguidores
+  listenFollowers();
   listenOnline();
   setTabActive("posts");
 
