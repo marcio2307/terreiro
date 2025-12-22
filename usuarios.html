@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Cadastrados</title>
+  <style>
+    body{ margin:0; font-family:Arial,sans-serif; background:#111; color:#fff; }
+    header{
+      padding:14px 16px; background:#1b1b1b;
+      border-bottom:1px solid rgba(255,255,255,.12);
+      position:sticky; top:0; z-index:50;
+    }
+    header h1{ margin:0; font-size:18px; font-weight:900; letter-spacing:.3px; }
+    .wrap{ padding:16px; max-width: 980px; margin: 0 auto; }
+    .meta{ opacity:.8; font-size:12px; margin-top:8px; }
+    .status{
+      display:inline-block; padding:6px 10px; border-radius:999px;
+      border:1px solid rgba(255,255,255,.14); background: rgba(255,255,255,.06);
+      font-weight:900; font-size:12px;
+    }
+    .grid{ display:grid; grid-template-columns: repeat(2, 1fr); gap:12px; margin-top:12px; }
+    @media(min-width:520px){ .grid{ grid-template-columns: repeat(4, 1fr); } }
+    @media(min-width:900px){ .grid{ grid-template-columns: repeat(6, 1fr); } }
+
+    .card{
+      background:#1a1a1a; border:1px solid rgba(255,255,255,.10);
+      border-radius:14px; overflow:hidden; box-shadow: 0 10px 18px rgba(0,0,0,.25);
+      position:relative;
+    }
+    .photo{
+      width:100%; aspect-ratio: 1/1; background:#000;
+      display:flex; align-items:center; justify-content:center;
+    }
+    .photo img{ width:100%; height:100%; object-fit:cover; display:block; }
+    .init{
+      width:100%; height:100%;
+      display:flex; align-items:center; justify-content:center;
+      font-weight:900; font-size:26px;
+      background: radial-gradient(80% 80% at 50% 35%, rgba(255,255,255,.12), rgba(255,255,255,.02));
+    }
+    .name{
+      padding:10px 10px 12px 10px;
+      font-weight:900; font-size:13px;
+      white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+    }
+
+    /* ✅ 3 pontinhos */
+    .dotsBtn{
+      position:absolute; top:8px; right:8px;
+      width:34px; height:34px; border-radius:10px;
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(0,0,0,.35);
+      color:#fff; cursor:pointer; user-select:none;
+      display:flex; align-items:center; justify-content:center;
+      font-size:18px; font-weight:900;
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
+      z-index:5;
+    }
+    .dotsBtn:hover{ background: rgba(0,0,0,.5); }
+
+    .menu{
+      position:absolute; top:46px; right:8px;
+      min-width:160px;
+      background:#fff; color:#111;
+      border-radius:12px; overflow:hidden;
+      box-shadow: 0 14px 28px rgba(0,0,0,.45);
+      display:none; z-index:10;
+    }
+    .menu button{
+      width:100%;
+      border:0; background:transparent;
+      padding:12px 12px;
+      text-align:left;
+      font-weight:900;
+      cursor:pointer;
+    }
+    .menu button:hover{ background: rgba(0,0,0,.06); }
+    .danger{ color:#c0262d; }
+
+    /* modal simples */
+    .overlay{
+      position:fixed; inset:0;
+      background: rgba(0,0,0,.75);
+      display:none;
+      align-items:center; justify-content:center;
+      padding:16px;
+      z-index:999;
+    }
+    .modal{
+      width:min(520px, 94vw);
+      background:#1b1b1b;
+      border:1px solid rgba(255,255,255,.12);
+      border-radius:16px;
+      padding:16px;
+      box-shadow: 0 16px 40px rgba(0,0,0,.6);
+    }
+    .modal h2{ margin:0 0 10px 0; font-size:16px; font-weight:900; }
+    .modal p{ margin:0 0 14px 0; opacity:.9; line-height:1.35; font-size:13px; }
+    .rowBtns{ display:flex; gap:10px; }
+    .btn{
+      flex:1;
+      border:0;
+      border-radius:12px;
+      padding:12px 10px;
+      font-weight:900;
+      cursor:pointer;
+    }
+    .btnCancel{ background: rgba(255,255,255,.08); color:#fff; border:1px solid rgba(255,255,255,.16); }
+    .btnDelete{ background:#c0262d; color:#fff; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Cadastrados (foto + nome)</h1>
+  </header>
+
+  <div class="wrap">
+    <div class="meta"><span class="status" id="status">Carregando...</span></div>
+    <div class="grid" id="grid"></div>
+  </div>
+
+  <!-- Modal confirmação -->
+  <div class="overlay" id="overlay">
+    <div class="modal">
+      <h2>Excluir usuário</h2>
+      <p id="modalText">Tem certeza?</p>
+      <div class="rowBtns">
+        <button class="btn btnCancel" id="btnCancel">Cancelar</button>
+        <button class="btn btnDelete" id="btnConfirm">Excluir</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Firebase v8 -->
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+
+  <script>
+    // ✅ Mesma config do seu site
+    const firebaseConfig = {
+      apiKey: "AIzaSyAt4CeGjdbjzdtMH1qZHw6RuBFJ6SeTDKk",
+      authDomain: "coletivo-f34d4.firebaseapp.com",
+      databaseURL: "https://coletivo-f34d4-default-rtdb.firebaseio.com",
+      projectId: "coletivo-f34d4",
+      storageBucket: "coletivo-f34d4.firebasestorage.app",
+      messagingSenderId: "296376447787",
+      appId: "1:296376447787:web:1341c59c8087d6ac1e4b6e"
+    };
+    firebase.initializeApp(firebaseConfig);
+
+    const DB = firebase.database();
+    const grid = document.getElementById("grid");
+    const statusEl = document.getElementById("status");
+
+    const overlay = document.getElementById("overlay");
+    const modalText = document.getElementById("modalText");
+    const btnCancel = document.getElementById("btnCancel");
+    const btnConfirm = document.getElementById("btnConfirm");
+
+    let pendingDelete = null; // { uid, name }
+
+    function escapeHTML(str){
+      str = (str == null ? "" : String(str));
+      return str
+        .replace(/&/g,"&amp;")
+        .replace(/</g,"&lt;")
+        .replace(/>/g,"&gt;")
+        .replace(/"/g,"&quot;")
+        .replace(/'/g,"&#039;");
+    }
+
+    function initials(name){
+      const n = (name||"").trim().split(/\s+/).filter(Boolean);
+      if(!n.length) return "U";
+      const a = n[0][0] || "U";
+      const b = (n.length>1 ? n[n.length-1][0] : "") || "";
+      return (a+b).toUpperCase();
+    }
+
+    function closeAllMenus(){
+      document.querySelectorAll(".menu").forEach(m => m.style.display = "none");
+    }
+
+    function openConfirm(uid, name){
+      pendingDelete = { uid, name };
+      modalText.innerHTML = `Você quer excluir o usuário <b>${escapeHTML(name || "Usuário")}</b>?<br><br>
+      Isso remove o perfil em <b>/profiles/${escapeHTML(uid)}</b>.`;
+      overlay.style.display = "flex";
+    }
+    function closeConfirm(){
+      overlay.style.display = "none";
+      pendingDelete = null;
+    }
+
+    btnCancel.onclick = closeConfirm;
+    overlay.addEventListener("click", (e)=>{ if(e.target === overlay) closeConfirm(); });
+
+    btnConfirm.onclick = async ()=>{
+      if(!pendingDelete) return;
+      const { uid } = pendingDelete;
+      try{
+        btnConfirm.disabled = true;
+        btnConfirm.textContent = "Excluindo...";
+
+        // ✅ Exclui o perfil (cadastrado)
+        await DB.ref("profiles/" + uid).remove();
+
+        // (Opcional) Se quiser também limpar presença:
+        // await DB.ref("presence/" + uid).remove().catch(()=>{});
+
+        closeConfirm();
+      }catch(err){
+        console.error(err);
+        alert("Não foi possível excluir. Provável: regras do Firebase não permitem remoção pelo navegador.");
+      }finally{
+        btnConfirm.disabled = false;
+        btnConfirm.textContent = "Excluir";
+      }
+    };
+
+    function makeCard(uid, name, avatarUrl){
+      const safeUid = escapeHTML(uid);
+      const safeName = escapeHTML(name || "Usuário");
+      const hasPhoto = !!(avatarUrl && String(avatarUrl).trim());
+
+      const photoHTML = hasPhoto
+        ? `<img src="${escapeHTML(avatarUrl)}" alt="Foto de ${safeName}" loading="lazy">`
+        : `<div class="init" aria-label="Sem foto">${escapeHTML(initials(name))}</div>`;
+
+      return `
+        <div class="card" data-uid="${safeUid}" data-name="${safeName}">
+          <button class="dotsBtn" title="Opções" aria-label="Opções">⋮</button>
+          <div class="menu">
+            <button class="danger" data-action="delete">Excluir usuário</button>
+          </div>
+
+          <div class="photo">${photoHTML}</div>
+          <div class="name" title="${safeName}">${safeName}</div>
+        </div>
+      `;
+    }
+
+    function attachCardHandlers(){
+      // botão ⋮ abre/fecha menu
+      document.querySelectorAll(".card .dotsBtn").forEach(btn=>{
+        btn.onclick = (e)=>{
+          e.stopPropagation();
+          const card = btn.closest(".card");
+          const menu = card.querySelector(".menu");
+          const isOpen = menu.style.display === "block";
+          closeAllMenus();
+          menu.style.display = isOpen ? "none" : "block";
+        };
+      });
+
+      // clique em "Excluir usuário"
+      document.querySelectorAll(".card .menu [data-action='delete']").forEach(b=>{
+        b.onclick = (e)=>{
+          e.stopPropagation();
+          const card = b.closest(".card");
+          const uid = card.getAttribute("data-uid");
+          const name = card.getAttribute("data-name");
+          closeAllMenus();
+          openConfirm(uid, name);
+        };
+      });
+    }
+
+    // fecha menus ao clicar fora / rolar
+    document.addEventListener("click", closeAllMenus);
+    document.addEventListener("scroll", closeAllMenus, { passive:true });
+
+    // ✅ Lista cadastrados do node /profiles (com nome + foto se existir)
+    function listenProfiles(){
+      statusEl.textContent = "Conectando...";
+      DB.ref("profiles").on("value", (snap)=>{
+        const obj = snap.val() || {};
+
+        const list = Object.keys(obj).map(uid=>{
+          const p = obj[uid] || {};
+          const name = (p.name ? String(p.name).trim() : "");
+          const avatarUrl = (p.avatarDataUrl || p.avatarUrl || "").toString().trim();
+          return { uid, name, avatarUrl };
+        }).filter(x => x.name.length >= 2);
+
+        list.sort((a,b)=> a.name.localeCompare(b.name, "pt-BR"));
+
+        statusEl.textContent = list.length ? `Encontrados: ${list.length}` : "Nenhum cadastrado em /profiles.";
+        grid.innerHTML = list.map(x => makeCard(x.uid, x.name, x.avatarUrl)).join("");
+
+        attachCardHandlers();
+      }, (err)=>{
+        console.error(err);
+        statusEl.textContent = "Erro ao ler /profiles (verifique regras do Firebase).";
+      });
+    }
+
+    listenProfiles();
+  </script>
+</body>
+</html>
