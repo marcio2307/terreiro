@@ -746,66 +746,6 @@
     100% { transform: translate(-18px, -150px) scale(1.0); opacity: 0; }
   }
 
-  /* ====================== LOGIN ====================== */
-  .login-overlay{
-    position:fixed; inset:0;
-    background: rgba(0,0,0,0.94);
-    display:none;
-    align-items:center;
-    justify-content:center;
-    z-index: 9999999;
-    padding: 16px;
-  }
-  .login-card{
-    width: min(520px, 94vw);
-    max-width: 94vw;
-    background: var(--fb-surface);
-    border:1px solid var(--fb-border);
-    border-radius: 18px;
-    box-shadow: var(--fb-shadow);
-    padding: 18px;
-    text-align:center;
-  }
-  .login-title{
-    font-size: clamp(18px, 6vw, 24px);
-    font-weight: 900;
-    color: var(--fb-text);
-    letter-spacing:.5px;
-    margin: 4px 0 14px 0;
-    display:flex;
-    gap:10px;
-    align-items:center;
-    justify-content:center;
-  }
-  .login-title i{ color: var(--fb-blue); }
-  .login-input{
-    width: 100%;
-    max-width: 100%;
-    display:block;
-    background:#3A3B3C;
-    border:1px solid rgba(255,255,255,.10);
-    border-radius: 999px;
-    padding: 14px 18px;
-    color: var(--fb-text);
-    outline:none;
-    font-size: 16px;
-  }
-  .login-btn{
-    width: 100%;
-    margin-top: 12px;
-    border:none;
-    border-radius: 999px;
-    padding: 14px 12px;
-    font-weight: 900;
-    cursor:pointer;
-    font-size: 16px;
-    transition:.15s;
-    background: var(--fb-blue);
-    color:#fff;
-    box-shadow: 0 10px 20px rgba(0,0,0,.22);
-  }
-  .login-btn:active{ transform: scale(.99); }
-
   /* ===================== FEED ===================== */
   .post{
     background: var(--fb-surface);
@@ -877,7 +817,7 @@
     border:1px solid rgba(255,255,255,.08);
   }
 
-  /* ===================== ✅ BOTÃO SOM (SEM FUNDO, ESTILO IMAGEM 1/2) ===================== */
+  /* ===================== ✅ BOTÃO SOM (SEM FUNDO) ===================== */
   .vidSoundBtn{
     position:absolute;
     right: 14px;
@@ -890,8 +830,8 @@
     align-items:center;
     justify-content:center;
 
-    border: none;           /* ✅ sem borda */
-    background: transparent;/* ✅ sem fundo preto */
+    border: none;
+    background: transparent;
     padding: 0;
     margin: 0;
 
@@ -900,7 +840,6 @@
     -webkit-tap-highlight-color: transparent;
     user-select:none;
 
-    /* ✅ só um “realce” pra aparecer bem em cima do vídeo */
     filter: drop-shadow(0 8px 16px rgba(0,0,0,.55));
     transition: transform .12s ease, filter .12s ease;
   }
@@ -914,10 +853,7 @@
     display:block;
   }
 
-  /* ✅ ondas só quando está com som */
   .vidSoundBtn.isMuted .waves{ display:none; }
-
-  /* ✅ X ao lado do ícone quando mutado (igual imagem 2) */
   .vidSoundBtn .xMark{
     position:absolute;
     right: 8px;
@@ -1184,15 +1120,6 @@
 
 <body>
 
-<!-- LOGIN -->
-<div class="login-overlay" id="loginOverlay">
-  <div class="login-card">
-    <div class="login-title"><i class="fa-solid fa-user"></i> ENTRAR</div>
-    <input id="loginName" class="login-input" maxlength="24" placeholder="Digite seu nome" autocomplete="off">
-    <button class="login-btn" onclick="confirmarNome()">Entrar</button>
-  </div>
-</div>
-
 <!-- LOADING -->
 <div class="loadingOverlay" id="loadingOverlay">
   <div class="loadingCard">
@@ -1329,6 +1256,34 @@
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-storage.js"></script>
 
 <script>
+/* ====================== ✅ VINCULAR AO LOGIN DO OUTRO SITE ======================
+   - O login externo grava: localStorage.setItem("nome_passageiro", usuario)
+   - Aqui: se não tiver nome, manda pro login externo
+   - E cria/usa UID FIXO por usuário usando Firebase: /usernames/<nome_normalizado> -> uid
+*/
+const LOGIN_URL = "https://marcio2307.github.io/terreiro/entrar.html"; // <- coloque a URL REAL do seu login externo
+const SITE_URL  = "https://marcio2307.github.io/terreiro/site.html";   // sua home
+
+function normalizeNameKey(name){
+  return (name || "")
+    .trim()
+    .toLowerCase()
+    .normalize("NFD").replace(/[\u0300-\u036f]/g, "")
+    .replace(/[^a-z0-9\s]/g, "")
+    .replace(/\s+/g, " ")
+    .trim()
+    .replace(/\s/g, "_");
+}
+function mustBeLogged(){
+  const u = (localStorage.getItem("nome_passageiro") || "").trim();
+  if(!u){
+    // não está logado -> vai pro login externo
+    location.replace(LOGIN_URL);
+    return null;
+  }
+  return u;
+}
+
 /* ====================== FIREBASE ====================== */
 const firebaseConfig = {
   apiKey: "AIzaSyAt4CeGjdbjzdtMH1qZHw6RuBFJ6SeTDKk",
@@ -1445,8 +1400,8 @@ function toggleRadio(){
   }
 }
 
-/* ====================== LOGIN + UID persistente ====================== */
-function getOrCreateUID(){
+/* ====================== ✅ LOGIN EXTERNO + UID FIXO POR USUÁRIO ====================== */
+function getOrCreateDeviceUID(){
   let uid = localStorage.getItem("uid_passageiro");
   if(!uid){
     uid = "u_" + Math.random().toString(36).slice(2) + "_" + Date.now();
@@ -1455,49 +1410,54 @@ function getOrCreateUID(){
   sessionStorage.setItem("uid_passageiro", uid);
   return uid;
 }
-let UID = getOrCreateUID();
 
-function getNomeSalvo(){
-  return (localStorage.getItem("nome_passageiro") || "").trim();
+// 🔥 1) pega USER_NAME do login externo, senão volta pra tela de login
+let USER_NAME = mustBeLogged();
+if(!USER_NAME){
+  // já redirecionou
+  throw new Error("Not logged");
 }
-let USER_NAME = getNomeSalvo();
 
-const loginOverlay = document.getElementById("loginOverlay");
-const loginName = document.getElementById("loginName");
+// 🔥 2) UID local imediato (não trava a tela)
+const nameKey = normalizeNameKey(USER_NAME);
+let UID = localStorage.getItem("uid_user_" + nameKey) || localStorage.getItem("uid_passageiro") || getOrCreateDeviceUID();
+localStorage.setItem("uid_user_" + nameKey, UID);
+localStorage.setItem("uid_passageiro", UID);
+sessionStorage.setItem("uid_passageiro", UID);
 
-function abrirLogin(){
-  loginOverlay.style.display = "flex";
-  document.body.style.overflow = "hidden";
-  setTimeout(()=>{ try{ loginName.focus(); }catch(e){} }, 50);
-}
-function fecharLogin(){
-  loginOverlay.style.display = "none";
-  document.body.style.overflow = "";
-}
-function confirmarNome(){
-  let nome = (loginName.value || "").trim();
-  if(nome.length < 2){
-    alert("Digite um nome com pelo menos 2 letras.");
-    try{ loginName.focus(); }catch(e){}
-    return;
+// 🔥 3) sincroniza com Firebase (se já existe, usa o mesmo UID SEMPRE)
+(async function syncUidWithFirebase(){
+  try{
+    const ref = DB.ref("usernames/" + nameKey);
+    const snap = await ref.once("value");
+    const remoteUid = snap.val();
+
+    if(remoteUid && typeof remoteUid === "string" && remoteUid.length > 5){
+      if(remoteUid !== UID){
+        UID = remoteUid;
+        localStorage.setItem("uid_user_" + nameKey, UID);
+        localStorage.setItem("uid_passageiro", UID);
+        sessionStorage.setItem("uid_passageiro", UID);
+        // recarrega para tudo usar o UID certo
+        location.reload();
+        return;
+      }
+    }else{
+      // não existe ainda -> registra o UID atual para este usuário
+      await ref.set(UID);
+    }
+  }catch(e){
+    // se falhar, fica no UID local (não quebra o site)
   }
-  localStorage.setItem("nome_passageiro", nome);
-  USER_NAME = nome;
-  UID = getOrCreateUID();
-  fecharLogin();
-  startPresence();
-  setTimeout(()=>{ location.reload(); }, 80);
-}
-(function exigirLogin(){
-  if(!USER_NAME) abrirLogin();
 })();
-function precisaLogin(){
-  if(!USER_NAME){ abrirLogin(); return true; }
-  return false;
-}
-document.addEventListener("keydown", (e)=>{
-  if(loginOverlay.style.display === "flex" && e.key === "Enter"){ confirmarNome(); }
-});
+
+// ✅ se quiser botão sair em qualquer lugar: chama window.logoutFacecumba()
+window.logoutFacecumba = function(){
+  // NÃO apaga UID, senão a pessoa perde o vínculo no mesmo aparelho
+  localStorage.removeItem("nome_passageiro");
+  try{ stopPresence(true); }catch(e){}
+  location.replace(LOGIN_URL);
+};
 
 /* Helpers */
 function escapeHTML(str){
@@ -1612,7 +1572,7 @@ function stopPresence(silent){
   }catch(e){}
   if(!silent){}
 }
-if(USER_NAME && UID){ startPresence(); }
+startPresence();
 </script>
 
 <script>
@@ -1964,7 +1924,6 @@ function floatingReactionAnim(type){
 
 async function reactToStory(type){
   try{
-    if(precisaLogin()) return;
     const s = activeStories[current];
     if(!s || !s.id) return;
     if(s.uid === UID) return;
@@ -2095,7 +2054,6 @@ async function renderOwnerPanel(viewsObj, reactsObj){
 async function markStoryView(story){
   try{
     if(!story || !story.id) return;
-    if(precisaLogin()) return;
     if(story.uid === UID) return;
     await DB.ref(`storyViews/${story.id}/${UID}`).set({
       uid: UID,
@@ -2244,6 +2202,13 @@ function showStory(){
       }
     }catch(e){}
   }
+
+  // ✅ só dono pode excluir
+  if(CAN_SEE_VIEWERS){
+    deleteBtn.style.display = "none"; // abre pelo "⋮"
+  }else{
+    deleteBtn.style.display = "none";
+  }
 }
 function runProgress(ms){
   const fill = document.getElementById("currentFill");
@@ -2282,6 +2247,7 @@ dots.onclick = ()=>{ deleteBtn.style.display = (deleteBtn.style.display==="block
 deleteBtn.onclick = async ()=>{
   const s = activeStories[current];
   if(!s) return;
+  if(s.uid !== UID) return;
   try{
     stopVideo();
     await DB.ref("stories/" + s.id).remove();
@@ -2318,13 +2284,11 @@ function renderCreateCard(){
   }).catch(()=>{});
 
   card.onclick = ()=>{
-    if(precisaLogin()) return;
     document.getElementById(inputId).click();
   };
   setTimeout(()=>{
     const upload = document.getElementById(inputId);
     upload.onchange = e=>{
-      if(precisaLogin()) return;
       const file = e.target.files[0];
       if(!file) return;
       if(!checkSize(file)) { upload.value=""; return; }
@@ -2401,7 +2365,6 @@ function renderStoriesRow(){
     .forEach(g => row.appendChild(renderUserCard(g)));
 }
 async function addStory(file){
-  if(precisaLogin()) return;
   try{
     showLoading("Enviando story...", "Seu vídeo/foto vai aparecer já já");
     const storyId = "story_" + Date.now() + "_" + Math.random().toString(36).slice(2);
@@ -2506,12 +2469,9 @@ function ensureSoundButton(v){
     btn.className = "vidSoundBtn isMuted";
     btn.setAttribute("aria-label", "Som do vídeo");
 
-    // ✅ ÍCONE IGUAL IMAGEM 1 (com ondas) e ao mutar fica IGUAL IMAGEM 2 (com X)
     btn.innerHTML = `
       <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-        <!-- speaker -->
         <path d="M3 10v4c0 .55.45 1 1 1h3l4.6 3.45c.66.5 1.4.02 1.4-.8V6.35c0-.82-.74-1.3-1.4-.8L7 9H4c-.55 0-1 .45-1 1z"></path>
-        <!-- waves -->
         <g class="waves">
           <path d="M16.2 8.1a1 1 0 0 1 1.4 0 5.6 5.6 0 0 1 0 7.8 1 1 0 1 1-1.4-1.4 3.6 3.6 0 0 0 0-5 1 1 0 0 1 0-1.4z"></path>
           <path d="M18.8 5.5a1 1 0 0 1 1.4 0 9.2 9.2 0 0 1 0 13 1 1 0 1 1-1.4-1.4 7.2 7.2 0 0 0 0-10.2 1 1 0 0 1 0-1.4z"></path>
@@ -2763,9 +2723,9 @@ function setupOneFeedVideo(v){
   ensureFeedObserver();
 
   try{
-    v.muted = true;             // ✅ sempre começa mudo
+    v.muted = true;
     v.__userUnmuted = false;
-    v.__allowSound = false;     // ✅ trava som (só o botão libera)
+    v.__allowSound = false;
     v.volume = 1.0;
     v.playsInline = true;
     v.setAttribute("playsinline","");
@@ -2780,7 +2740,6 @@ function setupOneFeedVideo(v){
 
   const btn = ensureSoundButton(v);
 
-  // ✅ aplica estado salvo ao criar
   const saved = getSavedSoundState(v);
   if(saved === true && !(__radioLocksFeedAudio || radioPlaying)){
     v.__userUnmuted = true;
@@ -2796,7 +2755,6 @@ function setupOneFeedVideo(v){
     setSoundBtnUI(btn, true);
   }
 
-  // ✅ TRAVA TOTAL: se tentar liberar som pelos controles nativos, volta pra mudo
   if(!v.__lockVolHooked){
     v.__lockVolHooked = true;
     v.addEventListener("volumechange", ()=>{
@@ -2830,7 +2788,6 @@ function setupAllFeedVideos(){
 
 <script>
 /* ===================== FEED / MURAL ===================== */
-/* ✅ Mantido igual ao seu original */
 let selectedFile = null;
 let mode = "add";
 let longPress = {};
@@ -2859,14 +2816,12 @@ function updateButton(){
   }
 }
 function buttonAction(){
-  if(precisaLogin()) return;
   mode === "add" ? fileInput.click() : postarTexto();
 }
 
 let previewUrlToRevoke = null;
 
 fileInput.onchange = e=>{
-  if(precisaLogin()) return;
   selectedFile = e.target.files[0];
   if(!selectedFile) return;
   if(!checkSize(selectedFile)){ selectedFile=null; fileInput.value=""; return; }
@@ -2883,7 +2838,6 @@ fileInput.onchange = e=>{
 };
 
 async function postarTexto(){
-  if(precisaLogin()) return;
   const t = postText.value.trim();
   if(!t) return;
   showLoading("Publicando...", "Enviando para o mural");
@@ -2898,7 +2852,6 @@ async function postarTexto(){
 }
 
 async function postar(){
-  if(precisaLogin()) return;
   if(!selectedFile){
     alert("Selecione uma mídia primeiro.");
     return;
@@ -2991,7 +2944,6 @@ function soltarCurtir(){
 }
 
 async function curtir(id){
-  if(precisaLogin()) return;
   if(longPress[id]){ longPress[id] = false; return; }
   const likeRef = DB.ref(`likes/${id}/${UID}`);
   const snap = await likeRef.once("value");
@@ -3001,7 +2953,6 @@ async function curtir(id){
   playActionSound();
 }
 async function amei(id){
-  if(precisaLogin()) return;
   const likeRef = DB.ref(`likes/${id}/${UID}`);
   const snap = await likeRef.once("value");
   const cur = snap.val();
@@ -3080,7 +3031,6 @@ function abrirComentarios(id){
 }
 
 async function enviarComentario(id){
-  if(precisaLogin()) return;
   const input = document.getElementById("comentarioInput_"+id);
   if(!input) return;
   const texto = input.value.trim();
@@ -3116,6 +3066,12 @@ function toggleMenu(id){
 async function excluirPost(id){
   const snap = await DB.ref("posts/" + id).once("value");
   const data = snap.val();
+
+  // ✅ só autor pode excluir
+  if(data && data.uid && data.uid !== UID){
+    alert("Você só pode excluir suas próprias postagens.");
+    return;
+  }
 
   await DB.ref("posts/" + id).remove();
   await DB.ref("likes/" + id).remove().catch(()=>{});
@@ -3159,6 +3115,8 @@ function postHTML(id, postData, avatarUrl){
   const uid = postData.uid || "";
   const uname = postData.userName || "Usuário";
 
+  const isMine = (uid === UID);
+
   const avatarHTML = `
     <div class="postAvatar" data-avatar-uid="${escapeHTML(uid)}" onclick="openProfileModal('${escapeHTML(uid)}')">
       ${avatarUrl
@@ -3171,7 +3129,7 @@ function postHTML(id, postData, avatarUrl){
   <div class="post" id="${id}" ${postData._pending ? 'data-pending="1"' : ''}>
     <div class="menu-btn" onclick="toggleMenu('${id}')">⋮</div>
     <div class="menu-box" id="menu_${id}">
-      <div onclick="excluirPost('${id}')">Excluir</div>
+      ${isMine ? `<div onclick="excluirPost('${id}')">Excluir</div>` : `<div onclick="alert('Você só pode excluir suas próprias postagens.')">Excluir</div>`}
     </div>
 
     <div class="postHead">
@@ -3314,6 +3272,8 @@ function listenComments(postId){
         ? `<div class="cAvatar" data-avatar-uid="${escapeHTML(c.uid)}" onclick="openProfileModal('${escapeHTML(c.uid)}')"><img src="${prof.url}" alt="avatar" loading="lazy"></div>`
         : `<div class="cAvatar" data-avatar-uid="${escapeHTML(c.uid)}" onclick="openProfileModal('${escapeHTML(c.uid)}')"><div class="init">${escapeHTML(initials(nome))}</div></div>`;
 
+      const canDelete = (c.uid === UID);
+
       return `
         <div id="${c.cid}" class="cRow">
           <div class="cHead">
@@ -3324,7 +3284,7 @@ function listenComments(postId){
 
           <span class="coment-menu-btn" onclick="toggleComentMenu('${c.cid}')">⋮</span>
           <div class="coment-menu-box" id="menu_${c.cid}"
-            onclick="excluirComentario('${c.cid}','${postId}')">
+            onclick="${canDelete ? `excluirComentario('${c.cid}','${postId}')` : `alert('Você só pode excluir seus comentários.')`}">
             Excluir
           </div>
         </div>
@@ -3414,6 +3374,3 @@ setupAllFeedVideos();
 
 </body>
 </html>
-
-
-
