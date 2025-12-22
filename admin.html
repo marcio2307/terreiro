@@ -1,0 +1,1092 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<title>Admin — Users / Presence / Stories / Posts / Comments</title>
+
+<link rel="preconnect" href="https://www.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://coletivo-f34d4-default-rtdb.firebaseio.com" crossorigin>
+<link rel="preconnect" href="https://firebasestorage.googleapis.com" crossorigin>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+<style>
+  *{box-sizing:border-box}
+  html,body{width:100%; max-width:100%; overflow-x:hidden}
+  body{
+    margin:0;
+    font-family: Arial, sans-serif;
+    background:#0f1114;
+    color:#e9eef5;
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+  :root{
+    --bg:#0f1114;
+    --card:#171a1f;
+    --card2:#1f232b;
+    --border:rgba(255,255,255,.10);
+    --muted:rgba(233,238,245,.72);
+    --blue:#0866FF;
+    --red:#F02849;
+    --green:#31A24C;
+    --shadow:0 10px 22px rgba(0,0,0,.35);
+    --r:16px;
+  }
+
+  header{
+    position:sticky; top:0; z-index:999;
+    background:rgba(23,26,31,.92);
+    backdrop-filter: blur(10px);
+    border-bottom:1px solid var(--border);
+    padding:12px 12px;
+    display:flex; align-items:center; justify-content:space-between; gap:10px;
+  }
+  .h-left{display:flex; align-items:center; gap:10px; min-width:0;}
+  .title{
+    font-weight:900; letter-spacing:.4px;
+    overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
+  }
+  .badge{
+    padding:6px 10px; border-radius:999px;
+    background:rgba(255,255,255,.08);
+    border:1px solid rgba(255,255,255,.10);
+    font-weight:900; font-size:12px; color:#fff;
+    white-space:nowrap;
+  }
+  .wrap{max-width:1100px; margin:0 auto; padding:14px 12px;}
+  .muted{color:var(--muted); font-weight:700; font-size:13px; line-height:1.35}
+  .grid{
+    display:grid;
+    grid-template-columns: 1fr;
+    gap:12px;
+    margin-top:12px;
+  }
+  @media(min-width:980px){
+    .grid{grid-template-columns: 1fr 1fr;}
+  }
+
+  .card{
+    background:var(--card);
+    border:1px solid var(--border);
+    border-radius:var(--r);
+    box-shadow:var(--shadow);
+    overflow:hidden;
+  }
+  .cardTop{
+    padding:12px 12px;
+    border-bottom:1px solid rgba(255,255,255,.08);
+    display:flex; align-items:center; justify-content:space-between; gap:10px;
+    background:rgba(255,255,255,.02);
+  }
+  .cardTop .name{
+    font-weight:900; letter-spacing:.3px;
+    display:flex; align-items:center; gap:10px;
+    min-width:0;
+  }
+  .cardTop .name i{color:var(--blue)}
+  .cardBody{padding:12px 12px;}
+
+  .row{display:flex; gap:10px; flex-wrap:wrap; align-items:center;}
+  .input{
+    flex:1; min-width:190px;
+    padding:12px 12px;
+    border-radius:12px;
+    border:1px solid rgba(255,255,255,.10);
+    background:var(--card2);
+    color:#fff;
+    outline:none;
+    font-weight:800;
+  }
+  .btn{
+    border:none;
+    padding:12px 14px;
+    border-radius:12px;
+    font-weight:900;
+    cursor:pointer;
+    color:#fff;
+    background:rgba(255,255,255,.10);
+    border:1px solid rgba(255,255,255,.12);
+    transition:.15s;
+    user-select:none;
+    white-space:nowrap;
+  }
+  .btn:hover{filter:brightness(1.05)}
+  .btn:active{transform:scale(.99)}
+  .btn.blue{background:var(--blue); border-color:rgba(255,255,255,.10)}
+  .btn.red{background:var(--red); border-color:rgba(255,255,255,.10)}
+  .btn.green{background:var(--green); border-color:rgba(255,255,255,.10)}
+  .btn.small{padding:10px 12px; border-radius:12px; font-size:13px}
+
+  /* LISTA (stories/posts/comments/presence) */
+  .list{display:flex; flex-direction:column; gap:10px; margin-top:12px;}
+  .item{
+    background:rgba(255,255,255,.03);
+    border:1px solid rgba(255,255,255,.10);
+    border-radius:14px;
+    padding:10px 10px;
+    display:flex;
+    gap:10px;
+    align-items:flex-start;
+    justify-content:space-between;
+  }
+  .itemMain{min-width:0; flex:1;}
+  .itemTitle{
+    font-weight:900;
+    overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
+  }
+  .itemMeta{
+    margin-top:4px;
+    color:var(--muted);
+    font-size:12px;
+    font-weight:800;
+    display:flex; gap:10px; flex-wrap:wrap;
+  }
+  .itemText{
+    margin-top:8px;
+    font-size:13px;
+    color:rgba(233,238,245,.92);
+    white-space:pre-wrap;
+    word-break:break-word;
+  }
+  .thumb{
+    width:72px; height:72px; border-radius:12px;
+    background:#000;
+    border:1px solid rgba(255,255,255,.10);
+    overflow:hidden;
+    flex:0 0 auto;
+    display:flex; align-items:center; justify-content:center;
+  }
+  .thumb img,.thumb video{width:100%; height:100%; object-fit:cover; display:block}
+  .actions{display:flex; flex-direction:column; gap:8px; flex:0 0 auto; align-items:flex-end;}
+
+  /* ✅ USERS GRID (igual seu exemplo, mais organizado) */
+  .usersGrid{
+    display:grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap:12px;
+    margin-top:12px;
+  }
+  @media(min-width:520px){ .usersGrid{ grid-template-columns: repeat(4, 1fr); } }
+  @media(min-width:900px){ .usersGrid{ grid-template-columns: repeat(6, 1fr); } }
+
+  .uCard{
+    background:#1a1a1a;
+    border:1px solid rgba(255,255,255,.10);
+    border-radius:14px;
+    overflow:hidden;
+    box-shadow: 0 10px 18px rgba(0,0,0,.25);
+    position:relative;
+  }
+  .uPhoto{
+    width:100%; aspect-ratio: 1/1; background:#000;
+    display:flex; align-items:center; justify-content:center;
+  }
+  .uPhoto img{ width:100%; height:100%; object-fit:cover; display:block; }
+  .uInit{
+    width:100%; height:100%;
+    display:flex; align-items:center; justify-content:center;
+    font-weight:900; font-size:26px;
+    background: radial-gradient(80% 80% at 50% 35%, rgba(255,255,255,.12), rgba(255,255,255,.02));
+  }
+  .uName{
+    padding:10px 10px 12px 10px;
+    font-weight:900; font-size:13px;
+    white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+  }
+
+  .dotsBtn{
+    position:absolute; top:8px; right:8px;
+    width:34px; height:34px; border-radius:10px;
+    border:1px solid rgba(255,255,255,.12);
+    background: rgba(0,0,0,.35);
+    color:#fff; cursor:pointer; user-select:none;
+    display:flex; align-items:center; justify-content:center;
+    font-size:18px; font-weight:900;
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    z-index:5;
+  }
+  .dotsBtn:hover{ background: rgba(0,0,0,.5); }
+  .menu{
+    position:absolute; top:46px; right:8px;
+    min-width:170px;
+    background:#fff; color:#111;
+    border-radius:12px; overflow:hidden;
+    box-shadow: 0 14px 28px rgba(0,0,0,.45);
+    display:none; z-index:10;
+  }
+  .menu button{
+    width:100%;
+    border:0; background:transparent;
+    padding:12px 12px;
+    text-align:left;
+    font-weight:900;
+    cursor:pointer;
+  }
+  .menu button:hover{ background: rgba(0,0,0,.06); }
+  .danger{ color:#c0262d; }
+
+  /* MODAL confirmação (reutilizável) */
+  .overlay{
+    position:fixed; inset:0;
+    background: rgba(0,0,0,.78);
+    display:none;
+    align-items:center; justify-content:center;
+    padding:16px;
+    z-index:99999;
+  }
+  .modal{
+    width:min(560px, 94vw);
+    background:#1b1b1b;
+    border:1px solid rgba(255,255,255,.12);
+    border-radius:16px;
+    padding:16px;
+    box-shadow: 0 16px 40px rgba(0,0,0,.6);
+  }
+  .modal h2{ margin:0 0 10px 0; font-size:16px; font-weight:900; }
+  .modal p{ margin:0 0 14px 0; opacity:.92; line-height:1.35; font-size:13px; }
+  .rowBtns{ display:flex; gap:10px; flex-wrap:wrap; }
+  .mBtn{
+    flex:1;
+    border:0;
+    border-radius:12px;
+    padding:12px 10px;
+    font-weight:900;
+    cursor:pointer;
+  }
+  .mCancel{ background: rgba(255,255,255,.08); color:#fff; border:1px solid rgba(255,255,255,.16); }
+  .mOK{ background:#c0262d; color:#fff; }
+
+  /* LOGIN do admin */
+  .loginOverlay{
+    position:fixed; inset:0;
+    display:flex; align-items:center; justify-content:center;
+    background:rgba(0,0,0,.85);
+    z-index:999999;
+    padding:16px;
+  }
+  .loginCard{
+    width:min(520px, 96vw);
+    background:var(--card);
+    border:1px solid var(--border);
+    border-radius:18px;
+    box-shadow:var(--shadow);
+    padding:16px;
+  }
+  .loginTitle{font-weight:900; font-size:18px}
+  .sep{height:1px; background:rgba(255,255,255,.08); margin:12px 0}
+  .dangerBox{
+    margin-top:10px;
+    padding:12px;
+    border-radius:14px;
+    background:rgba(240,40,73,.10);
+    border:1px solid rgba(240,40,73,.25);
+    color:#fff;
+  }
+  code{background:rgba(255,255,255,.08); padding:2px 6px; border-radius:8px}
+</style>
+</head>
+
+<body>
+
+<header>
+  <div class="h-left">
+    <div class="title"><i class="fa-solid fa-shield-halved"></i> Admin</div>
+    <span class="badge" id="badgeStatus">Bloqueado</span>
+  </div>
+  <div class="row" style="justify-content:flex-end">
+    <button class="btn small" onclick="refreshAll()"><i class="fa-solid fa-rotate"></i> Atualizar</button>
+    <button class="btn small red" onclick="adminLogout()"><i class="fa-solid fa-right-from-bracket"></i> Sair</button>
+  </div>
+</header>
+
+<div class="wrap">
+  <div class="muted">
+    Painel administrador para gerenciar <b>usuários</b>, <b>conectados</b>, <b>stories</b>, <b>postagens</b> e <b>comentários</b>.
+    <br>⚠️ Dica: não compartilhe este arquivo publicamente.
+  </div>
+
+  <div class="grid">
+
+    <!-- ✅ USUÁRIOS (PROFILES) -->
+    <div class="card">
+      <div class="cardTop">
+        <div class="name"><i class="fa-solid fa-address-card"></i> Usuários cadastrados (/profiles)</div>
+        <span class="badge" id="countProfiles">0</span>
+      </div>
+      <div class="cardBody">
+        <div class="row">
+          <input class="input" id="filterProfiles" placeholder="Filtrar por nome/uid..." />
+          <button class="btn blue" onclick="loadProfiles()"><i class="fa-solid fa-magnifying-glass"></i> Carregar</button>
+          <button class="btn red" onclick="deleteAllProfilesConfirm()"><i class="fa-solid fa-trash"></i> Apagar TODOS</button>
+        </div>
+
+        <div class="dangerBox">
+          <b>Excluir usuário</b> aqui remove apenas <code>/profiles/UID</code>.
+          Se quiser “apagar tudo do usuário” (posts, stories, etc.), eu faço um botão separado.
+        </div>
+
+        <div class="usersGrid" id="profilesGrid"></div>
+        <div class="muted" id="profilesEmpty" style="display:none; margin-top:10px;">Nenhum usuário encontrado.</div>
+      </div>
+    </div>
+
+    <!-- ✅ CONECTADOS (PRESENCE) -->
+    <div class="card">
+      <div class="cardTop">
+        <div class="name"><i class="fa-solid fa-users"></i> Conectados (Presence)</div>
+        <span class="badge" id="countPresence">0</span>
+      </div>
+      <div class="cardBody">
+        <div class="row">
+          <input class="input" id="filterPresence" placeholder="Filtrar por nome/uid..." />
+          <button class="btn blue" onclick="loadPresence()"><i class="fa-solid fa-magnifying-glass"></i> Carregar</button>
+          <button class="btn red" onclick="removeAllPresenceConfirm()"><i class="fa-solid fa-user-slash"></i> Limpar Presence</button>
+        </div>
+        <div class="dangerBox">
+          Remover do <code>presence</code> só tira da lista. Se a pessoa estiver online, pode voltar a aparecer.
+        </div>
+        <div class="list" id="listPresence"></div>
+      </div>
+    </div>
+
+    <!-- ✅ STORIES -->
+    <div class="card">
+      <div class="cardTop">
+        <div class="name"><i class="fa-solid fa-circle-play"></i> Stories</div>
+        <span class="badge" id="countStories">0</span>
+      </div>
+      <div class="cardBody">
+        <div class="row">
+          <input class="input" id="filterStories" placeholder="Filtrar por nome/uid/id..." />
+          <button class="btn blue" onclick="loadStories()"><i class="fa-solid fa-magnifying-glass"></i> Carregar</button>
+          <button class="btn red" onclick="deleteAllStoriesConfirm()"><i class="fa-solid fa-trash"></i> Apagar TODOS</button>
+        </div>
+        <div class="list" id="listStories"></div>
+      </div>
+    </div>
+
+    <!-- ✅ POSTS -->
+    <div class="card">
+      <div class="cardTop">
+        <div class="name"><i class="fa-solid fa-newspaper"></i> Postagens</div>
+        <span class="badge" id="countPosts">0</span>
+      </div>
+      <div class="cardBody">
+        <div class="row">
+          <input class="input" id="filterPosts" placeholder="Filtrar por texto/nome/uid/id..." />
+          <button class="btn blue" onclick="loadPosts()"><i class="fa-solid fa-magnifying-glass"></i> Carregar</button>
+          <button class="btn red" onclick="deleteAllPostsConfirm()"><i class="fa-solid fa-trash"></i> Apagar TODOS</button>
+        </div>
+        <div class="list" id="listPosts"></div>
+      </div>
+    </div>
+
+    <!-- ✅ COMMENTS (GLOBAL) -->
+    <div class="card" style="grid-column: 1 / -1;">
+      <div class="cardTop">
+        <div class="name"><i class="fa-solid fa-comments"></i> Comentários (global)</div>
+        <span class="badge" id="countComments">0</span>
+      </div>
+      <div class="cardBody">
+        <div class="row">
+          <input class="input" id="filterComments" placeholder="Filtrar por texto/nome/uid/postId..." />
+          <button class="btn blue" onclick="loadCommentsGlobal()"><i class="fa-solid fa-magnifying-glass"></i> Carregar</button>
+          <button class="btn red" onclick="deleteAllCommentsConfirm()"><i class="fa-solid fa-trash"></i> Apagar TODOS</button>
+        </div>
+        <div class="muted" style="margin-top:8px">
+          Mostra comentários de vários posts (varre últimos 200 posts). Use o filtro para achar rápido.
+        </div>
+        <div class="list" id="listComments"></div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ✅ MODAL CONFIRMAÇÃO -->
+<div class="overlay" id="overlay">
+  <div class="modal">
+    <h2 id="modalTitle">Confirmar</h2>
+    <p id="modalText">Tem certeza?</p>
+    <div class="rowBtns">
+      <button class="mBtn mCancel" id="btnCancel">Cancelar</button>
+      <button class="mBtn mOK" id="btnConfirm">Excluir</button>
+    </div>
+  </div>
+</div>
+
+<!-- ✅ LOGIN SIMPLES -->
+<div class="loginOverlay" id="loginOverlay">
+  <div class="loginCard">
+    <div class="loginTitle"><i class="fa-solid fa-lock"></i> Acesso do Administrador</div>
+    <div class="sep"></div>
+    <div class="muted">Digite a senha do painel para continuar.</div>
+    <div class="row" style="margin-top:12px">
+      <input class="input" id="adminPass" type="password" placeholder="Senha do admin" />
+      <button class="btn blue" onclick="adminLogin()"><i class="fa-solid fa-key"></i> Entrar</button>
+    </div>
+    <div class="muted" style="margin-top:10px">
+      Senha atual no código: <b>jurema</b> (troque em <code>ADMIN_PASSWORD</code>).
+    </div>
+  </div>
+</div>
+
+<!-- Firebase v8 -->
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-storage.js"></script>
+
+<script>
+/* ===================== CONFIG FIREBASE (IGUAL AO SEU) ===================== */
+const firebaseConfig = {
+  apiKey: "AIzaSyAt4CeGjdbjzdtMH1qZHw6RuBFJ6SeTDKk",
+  authDomain: "coletivo-f34d4.firebaseapp.com",
+  databaseURL: "https://coletivo-f34d4-default-rtdb.firebaseio.com",
+  projectId: "coletivo-f34d4",
+  storageBucket: "coletivo-f34d4.firebasestorage.app",
+  messagingSenderId: "296376447787",
+  appId: "1:296376447787:web:1341c59c8087d6ac1e4b6e"
+};
+firebase.initializeApp(firebaseConfig);
+const DB = firebase.database();
+const ST = firebase.storage();
+
+/* ===================== LOGIN ADMIN (LOCAL) ===================== */
+const ADMIN_PASSWORD = "jurema"; // ✅ TROQUE AQUI se quiser
+const badgeStatus = document.getElementById("badgeStatus");
+
+function setStatus(txt, good){
+  badgeStatus.textContent = txt;
+  badgeStatus.style.background = good ? "rgba(49,162,76,.18)" : "rgba(240,40,73,.18)";
+  badgeStatus.style.borderColor = good ? "rgba(49,162,76,.35)" : "rgba(240,40,73,.35)";
+}
+function adminLogin(){
+  const pass = (document.getElementById("adminPass").value || "").trim();
+  if(pass !== ADMIN_PASSWORD){
+    alert("Senha incorreta.");
+    return;
+  }
+  localStorage.setItem("admin_ok", "1");
+  document.getElementById("loginOverlay").style.display = "none";
+  setStatus("Online", true);
+  refreshAll();
+}
+function adminLogout(){
+  localStorage.removeItem("admin_ok");
+  location.reload();
+}
+(function bootAdmin(){
+  const ok = localStorage.getItem("admin_ok") === "1";
+  if(ok){
+    document.getElementById("loginOverlay").style.display = "none";
+    setStatus("Online", true);
+    refreshAll();
+  }else{
+    setStatus("Bloqueado", false);
+  }
+})();
+
+/* ===================== HELPERS ===================== */
+function escapeHTML(str){
+  str = (str == null ? "" : String(str));
+  return str.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;")
+            .replace(/"/g,"&quot;").replace(/'/g,"&#039;");
+}
+function initials(name){
+  const n = (name||"").trim().split(/\s+/).filter(Boolean);
+  if(!n.length) return "U";
+  const a = n[0][0] || "U";
+  const b = (n.length>1 ? n[n.length-1][0] : "") || "";
+  return (a+b).toUpperCase();
+}
+function fmt(ts){
+  try{ return new Date(ts).toLocaleString("pt-BR"); }catch(e){ return ""; }
+}
+function containsFilter(txt, f){
+  if(!f) return true;
+  return (txt||"").toLowerCase().includes(f.toLowerCase());
+}
+
+/* ===================== MODAL CONFIRMAÇÃO (REUTILIZÁVEL) ===================== */
+const overlay = document.getElementById("overlay");
+const modalTitle = document.getElementById("modalTitle");
+const modalText = document.getElementById("modalText");
+const btnCancel = document.getElementById("btnCancel");
+const btnConfirm = document.getElementById("btnConfirm");
+
+let pendingAction = null; // async fn
+
+function openConfirm(title, htmlText, confirmLabel, actionFn){
+  pendingAction = actionFn;
+  modalTitle.textContent = title || "Confirmar";
+  modalText.innerHTML = htmlText || "Tem certeza?";
+  btnConfirm.textContent = confirmLabel || "Confirmar";
+  btnConfirm.disabled = false;
+  overlay.style.display = "flex";
+}
+function closeConfirm(){
+  overlay.style.display = "none";
+  pendingAction = null;
+}
+btnCancel.onclick = closeConfirm;
+overlay.addEventListener("click", (e)=>{ if(e.target === overlay) closeConfirm(); });
+
+btnConfirm.onclick = async ()=>{
+  if(!pendingAction) return;
+  try{
+    btnConfirm.disabled = true;
+    btnConfirm.textContent = "Processando...";
+    await pendingAction();
+    closeConfirm();
+  }catch(err){
+    console.error(err);
+    alert("Não foi possível concluir. Possível: regras do Firebase bloqueiam remoção no navegador.");
+    btnConfirm.disabled = false;
+  }
+};
+
+/* ===================== MENUS DOS CARDS DE USUÁRIO ===================== */
+function closeAllMenus(){
+  document.querySelectorAll(".menu").forEach(m => m.style.display = "none");
+}
+document.addEventListener("click", closeAllMenus);
+document.addEventListener("scroll", closeAllMenus, { passive:true });
+
+/* ===================== REFRESH ===================== */
+function refreshAll(){
+  loadProfiles();
+  loadPresence();
+  loadStories();
+  loadPosts();
+  loadCommentsGlobal();
+}
+
+/* ===================== ✅ PROFILES (USUÁRIOS) ===================== */
+const profilesGrid = document.getElementById("profilesGrid");
+const profilesEmpty = document.getElementById("profilesEmpty");
+const countProfiles = document.getElementById("countProfiles");
+
+async function loadProfiles(){
+  const filter = (document.getElementById("filterProfiles").value || "").trim();
+  profilesGrid.innerHTML = "";
+  profilesEmpty.style.display = "none";
+  countProfiles.textContent = "0";
+
+  try{
+    const snap = await DB.ref("profiles").once("value");
+    const obj = snap.val() || {};
+
+    let list = Object.keys(obj).map(uid=>{
+      const p = obj[uid] || {};
+      const name = (p.name ? String(p.name).trim() : "");
+      const avatarUrl = (p.avatarDataUrl || p.avatarUrl || "").toString().trim();
+      return { uid, name, avatarUrl };
+    }).filter(x => (x.name||"").length >= 2);
+
+    list = list.filter(x=>{
+      const big = `${x.uid} ${x.name}`.toLowerCase();
+      return containsFilter(big, filter);
+    });
+
+    list.sort((a,b)=> (a.name||"").localeCompare((b.name||""), "pt-BR"));
+
+    countProfiles.textContent = String(list.length);
+
+    if(!list.length){
+      profilesEmpty.style.display = "block";
+      profilesEmpty.textContent = "Nenhum usuário encontrado.";
+      return;
+    }
+
+    profilesGrid.innerHTML = list.map(u=>{
+      const safeUid = escapeHTML(u.uid);
+      const safeName = escapeHTML(u.name || "Usuário");
+      const hasPhoto = !!(u.avatarUrl && u.avatarUrl.trim());
+      const photoHTML = hasPhoto
+        ? `<img src="${escapeHTML(u.avatarUrl)}" alt="Foto de ${safeName}" loading="lazy">`
+        : `<div class="uInit" aria-label="Sem foto">${escapeHTML(initials(u.name))}</div>`;
+
+      return `
+        <div class="uCard" data-uid="${safeUid}" data-name="${safeName}">
+          <button class="dotsBtn" title="Opções" aria-label="Opções">⋮</button>
+          <div class="menu">
+            <button class="danger" data-action="deleteProfile">Excluir usuário</button>
+          </div>
+
+          <div class="uPhoto">${photoHTML}</div>
+          <div class="uName" title="${safeName}">${safeName}</div>
+        </div>
+      `;
+    }).join("");
+
+    attachProfileCardHandlers();
+
+  }catch(e){
+    console.error(e);
+    profilesEmpty.style.display = "block";
+    profilesEmpty.textContent = "Erro ao ler /profiles (verifique regras do Firebase).";
+  }
+}
+
+function attachProfileCardHandlers(){
+  document.querySelectorAll(".uCard .dotsBtn").forEach(btn=>{
+    btn.onclick = (e)=>{
+      e.stopPropagation();
+      const card = btn.closest(".uCard");
+      const menu = card.querySelector(".menu");
+      const isOpen = menu.style.display === "block";
+      closeAllMenus();
+      menu.style.display = isOpen ? "none" : "block";
+    };
+  });
+
+  document.querySelectorAll(".uCard .menu [data-action='deleteProfile']").forEach(b=>{
+    b.onclick = (e)=>{
+      e.stopPropagation();
+      const card = b.closest(".uCard");
+      const uid = card.getAttribute("data-uid");
+      const name = card.getAttribute("data-name");
+      closeAllMenus();
+
+      openConfirm(
+        "Excluir usuário",
+        `Você quer excluir o usuário <b>${name}</b>?<br><br>
+         Isso remove apenas <b>/profiles/${escapeHTML(uid)}</b>.`,
+        "Excluir",
+        async ()=>{
+          await DB.ref("profiles/" + uid).remove();
+          // opcional: tirar da lista de conectados também
+          await DB.ref("presence/" + uid).remove().catch(()=>{});
+          await loadProfiles();
+          await loadPresence();
+        }
+      );
+    };
+  });
+}
+
+function deleteAllProfilesConfirm(){
+  openConfirm(
+    "Apagar TODOS os usuários",
+    `Tem certeza que deseja apagar <b>todos os perfis</b> em <code>/profiles</code>?`,
+    "Apagar tudo",
+    async ()=>{
+      await DB.ref("profiles").remove();
+      await loadProfiles();
+    }
+  );
+}
+
+/* ===================== ✅ PRESENCE ===================== */
+async function loadPresence(){
+  const list = document.getElementById("listPresence");
+  const filter = (document.getElementById("filterPresence").value || "").trim();
+  list.innerHTML = `<div class="muted">Carregando...</div>`;
+
+  try{
+    const snap = await DB.ref("presence").once("value");
+    const obj = snap.val() || {};
+    const arr = Object.keys(obj).map(uid => ({ uid, ...obj[uid] }))
+      .sort((a,b)=>(b.lastActive||0)-(a.lastActive||0));
+
+    const filtered = arr.filter(u=>{
+      const big = `${u.uid} ${u.userName||""}`.toLowerCase();
+      return containsFilter(big, filter);
+    });
+
+    document.getElementById("countPresence").textContent = String(filtered.length);
+
+    if(!filtered.length){
+      list.innerHTML = `<div class="muted">Ninguém online agora.</div>`;
+      return;
+    }
+
+    list.innerHTML = filtered.map(u=>{
+      return `
+        <div class="item">
+          <div class="itemMain">
+            <div class="itemTitle"><i class="fa-solid fa-circle" style="color:var(--green)"></i> ${escapeHTML(u.userName||"Usuário")}</div>
+            <div class="itemMeta">
+              <span><i class="fa-solid fa-fingerprint"></i> ${escapeHTML(u.uid)}</span>
+              <span><i class="fa-solid fa-clock"></i> Ativo: ${escapeHTML(fmt(u.lastActive||0))}</span>
+            </div>
+            <div class="itemText">onlineAt: ${escapeHTML(fmt(u.onlineAt||0))}</div>
+          </div>
+          <div class="actions">
+            <button class="btn red small" onclick="removePresenceAsk('${escapeHTML(u.uid)}','${escapeHTML(u.userName||"Usuário")}')">
+              <i class="fa-solid fa-user-slash"></i> Remover
+            </button>
+          </div>
+        </div>
+      `;
+    }).join("");
+
+  }catch(e){
+    console.log(e);
+    list.innerHTML = `<div class="muted">Erro ao carregar presence.</div>`;
+  }
+}
+
+function removePresenceAsk(uid, name){
+  openConfirm(
+    "Remover conectado",
+    `Remover <b>${escapeHTML(name)}</b> do presence?<br><br><span class="muted">Ele pode voltar se estiver online.</span>`,
+    "Remover",
+    async ()=>{
+      await DB.ref("presence/"+uid).remove();
+      await loadPresence();
+    }
+  );
+}
+
+function removeAllPresenceConfirm(){
+  openConfirm(
+    "Limpar presence",
+    `Deseja limpar <code>/presence</code> inteiro?`,
+    "Limpar",
+    async ()=>{
+      await DB.ref("presence").remove();
+      await loadPresence();
+    }
+  );
+}
+
+/* ===================== ✅ STORIES ===================== */
+async function loadStories(){
+  const list = document.getElementById("listStories");
+  const filter = (document.getElementById("filterStories").value || "").trim();
+  list.innerHTML = `<div class="muted">Carregando...</div>`;
+
+  try{
+    const snap = await DB.ref("stories").orderByChild("createdAt").limitToLast(300).once("value");
+    const obj = snap.val() || {};
+    const arr = Object.keys(obj).map(id => ({ id, ...obj[id] }))
+      .sort((a,b)=>(b.createdAt||0)-(a.createdAt||0));
+
+    const filtered = arr.filter(s=>{
+      const big = `${s.id} ${s.uid||""} ${s.userName||""} ${s.type||""}`.toLowerCase();
+      return containsFilter(big, filter);
+    });
+
+    document.getElementById("countStories").textContent = String(filtered.length);
+
+    if(!filtered.length){
+      list.innerHTML = `<div class="muted">Nenhum story encontrado.</div>`;
+      return;
+    }
+
+    list.innerHTML = filtered.map(s=>{
+      const isImg = (s.type||"").includes("image");
+      const thumb = s.url ? (
+        isImg
+          ? `<img src="${escapeHTML(s.url)}" alt="story">`
+          : `<video src="${escapeHTML(s.url)}" muted playsinline></video>`
+      ) : `<div class="muted">sem mídia</div>`;
+
+      return `
+        <div class="item">
+          <div class="thumb">${thumb}</div>
+          <div class="itemMain">
+            <div class="itemTitle">Story: <b>${escapeHTML(s.userName||"Usuário")}</b></div>
+            <div class="itemMeta">
+              <span><i class="fa-solid fa-id-badge"></i> ${escapeHTML(s.id)}</span>
+              <span><i class="fa-solid fa-user"></i> ${escapeHTML(s.uid||"")}</span>
+              <span><i class="fa-solid fa-clock"></i> ${escapeHTML(fmt(s.createdAt||0))}</span>
+            </div>
+            <div class="itemText">${escapeHTML(s.type||"")}</div>
+          </div>
+          <div class="actions">
+            <button class="btn red small" onclick="deleteStoryAsk('${escapeHTML(s.id)}')">
+              <i class="fa-solid fa-trash"></i> Excluir
+            </button>
+            <button class="btn small" onclick="deleteStoryExtrasAsk('${escapeHTML(s.id)}')">
+              <i class="fa-solid fa-broom"></i> Limpar views/react
+            </button>
+          </div>
+        </div>
+      `;
+    }).join("");
+
+  }catch(e){
+    console.log(e);
+    list.innerHTML = `<div class="muted">Erro ao carregar stories.</div>`;
+  }
+}
+
+function deleteStoryAsk(storyId){
+  openConfirm(
+    "Excluir story",
+    `Excluir o story <b>${escapeHTML(storyId)}</b>?<br><br>
+     Isso remove o story e tenta apagar o arquivo no Storage (se tiver <code>storagePath</code>).`,
+    "Excluir",
+    async ()=>{
+      const snap = await DB.ref("stories/"+storyId).once("value");
+      const data = snap.val() || {};
+      await DB.ref("stories/"+storyId).remove();
+      await DB.ref("storyViews/"+storyId).remove().catch(()=>{});
+      await DB.ref("storyReactions/"+storyId).remove().catch(()=>{});
+      if(data.storagePath){
+        await ST.ref().child(data.storagePath).delete().catch(()=>{});
+      }
+      await loadStories();
+    }
+  );
+}
+
+function deleteStoryExtrasAsk(storyId){
+  openConfirm(
+    "Limpar views/reactions",
+    `Limpar <b>views</b> e <b>reactions</b> do story <b>${escapeHTML(storyId)}</b>?`,
+    "Limpar",
+    async ()=>{
+      await DB.ref("storyViews/"+storyId).remove().catch(()=>{});
+      await DB.ref("storyReactions/"+storyId).remove().catch(()=>{});
+      await loadStories();
+    }
+  );
+}
+
+function deleteAllStoriesConfirm(){
+  openConfirm(
+    "Apagar TODOS os stories",
+    `Apagar <b>todos</b> os stories em <code>/stories</code>?<br><br>
+     Também tenta limpar <code>/storyViews</code> e <code>/storyReactions</code>.`,
+    "Apagar tudo",
+    async ()=>{
+      const snap = await DB.ref("stories").once("value");
+      const obj = snap.val() || {};
+      const ids = Object.keys(obj);
+
+      for(const id of ids){
+        const s = obj[id] || {};
+        if(s.storagePath){
+          await ST.ref().child(s.storagePath).delete().catch(()=>{});
+        }
+        await DB.ref("storyViews/"+id).remove().catch(()=>{});
+        await DB.ref("storyReactions/"+id).remove().catch(()=>{});
+      }
+
+      await DB.ref("stories").remove();
+      await loadStories();
+    }
+  );
+}
+
+/* ===================== ✅ POSTS ===================== */
+async function loadPosts(){
+  const list = document.getElementById("listPosts");
+  const filter = (document.getElementById("filterPosts").value || "").trim();
+  list.innerHTML = `<div class="muted">Carregando...</div>`;
+
+  try{
+    const snap = await DB.ref("posts").orderByChild("createdAt").limitToLast(200).once("value");
+    const obj = snap.val() || {};
+    const arr = Object.keys(obj).map(id => ({ id, ...obj[id] }))
+      .sort((a,b)=>(b.createdAt||0)-(a.createdAt||0));
+
+    const filtered = arr.filter(p=>{
+      const big = `${p.id} ${p.uid||""} ${p.userName||""} ${p.text||""}`.toLowerCase();
+      return containsFilter(big, filter);
+    });
+
+    document.getElementById("countPosts").textContent = String(filtered.length);
+
+    if(!filtered.length){
+      list.innerHTML = `<div class="muted">Nenhuma postagem encontrada.</div>`;
+      return;
+    }
+
+    list.innerHTML = filtered.map(p=>{
+      const isImg = (p.mediaType||"").startsWith("image/");
+      const isVid = (p.mediaType||"").startsWith("video/");
+      const thumb = p.mediaUrl ? (
+        isImg ? `<img src="${escapeHTML(p.mediaUrl)}" alt="post">`
+        : isVid ? `<video src="${escapeHTML(p.mediaUrl)}" muted playsinline></video>`
+        : `<div class="muted">mídia</div>`
+      ) : `<div class="muted">sem mídia</div>`;
+
+      return `
+        <div class="item">
+          <div class="thumb">${thumb}</div>
+          <div class="itemMain">
+            <div class="itemTitle">Post: <b>${escapeHTML(p.userName||"Usuário")}</b></div>
+            <div class="itemMeta">
+              <span><i class="fa-solid fa-id-badge"></i> ${escapeHTML(p.id)}</span>
+              <span><i class="fa-solid fa-user"></i> ${escapeHTML(p.uid||"")}</span>
+              <span><i class="fa-solid fa-clock"></i> ${escapeHTML(fmt(p.createdAt||0))}</span>
+            </div>
+            <div class="itemText">${escapeHTML((p.text||"").slice(0, 500))}${(p.text||"").length>500?"…":""}</div>
+          </div>
+          <div class="actions">
+            <button class="btn red small" onclick="deletePostAsk('${escapeHTML(p.id)}')">
+              <i class="fa-solid fa-trash"></i> Excluir
+            </button>
+            <button class="btn small" onclick="deletePostCommentsAsk('${escapeHTML(p.id)}')">
+              <i class="fa-solid fa-comment-slash"></i> Apagar comentários
+            </button>
+          </div>
+        </div>
+      `;
+    }).join("");
+
+  }catch(e){
+    console.log(e);
+    list.innerHTML = `<div class="muted">Erro ao carregar posts.</div>`;
+  }
+}
+
+function deletePostAsk(postId){
+  openConfirm(
+    "Excluir postagem",
+    `Excluir a postagem <b>${escapeHTML(postId)}</b>?<br><br>
+     Remove <code>/posts</code>, <code>/likes</code>, <code>/comments</code> e tenta apagar a mídia no Storage (se tiver <code>storagePath</code>).`,
+    "Excluir",
+    async ()=>{
+      const snap = await DB.ref("posts/"+postId).once("value");
+      const data = snap.val() || {};
+      await DB.ref("posts/"+postId).remove();
+      await DB.ref("likes/"+postId).remove().catch(()=>{});
+      await DB.ref("comments/"+postId).remove().catch(()=>{});
+      if(data.storagePath){
+        await ST.ref().child(data.storagePath).delete().catch(()=>{});
+      }
+      await loadPosts();
+      await loadCommentsGlobal();
+    }
+  );
+}
+
+function deletePostCommentsAsk(postId){
+  openConfirm(
+    "Apagar comentários do post",
+    `Apagar <b>todos</b> os comentários do post <b>${escapeHTML(postId)}</b>?`,
+    "Apagar",
+    async ()=>{
+      await DB.ref("comments/"+postId).remove().catch(()=>{});
+      await loadCommentsGlobal();
+    }
+  );
+}
+
+function deleteAllPostsConfirm(){
+  openConfirm(
+    "Apagar TODAS as postagens",
+    `Apagar <b>todas</b> as postagens em <code>/posts</code>?<br><br>
+     Também apaga <code>/likes</code> e <code>/comments</code>.`,
+    "Apagar tudo",
+    async ()=>{
+      const snap = await DB.ref("posts").once("value");
+      const obj = snap.val() || {};
+      const ids = Object.keys(obj);
+
+      for(const id of ids){
+        const p = obj[id] || {};
+        if(p.storagePath){
+          await ST.ref().child(p.storagePath).delete().catch(()=>{});
+        }
+        await DB.ref("likes/"+id).remove().catch(()=>{});
+        await DB.ref("comments/"+id).remove().catch(()=>{});
+      }
+
+      await DB.ref("posts").remove();
+      await loadPosts();
+      await loadCommentsGlobal();
+    }
+  );
+}
+
+/* ===================== ✅ COMMENTS GLOBAL ===================== */
+async function loadCommentsGlobal(){
+  const list = document.getElementById("listComments");
+  const filter = (document.getElementById("filterComments").value || "").trim();
+  list.innerHTML = `<div class="muted">Carregando...</div>`;
+
+  try{
+    const snapPosts = await DB.ref("posts").orderByChild("createdAt").limitToLast(200).once("value");
+    const postsObj = snapPosts.val() || {};
+    const postIds = Object.keys(postsObj);
+
+    let all = [];
+    for(const postId of postIds){
+      const sn = await DB.ref("comments/"+postId).orderByChild("createdAt").limitToLast(120).once("value");
+      const obj = sn.val() || {};
+      Object.keys(obj).forEach(cid=>{
+        all.push({ postId, cid, ...obj[cid] });
+      });
+    }
+
+    all.sort((a,b)=>(b.createdAt||0)-(a.createdAt||0));
+
+    const filtered = all.filter(c=>{
+      const big = `${c.postId} ${c.cid} ${c.uid||""} ${c.userName||""} ${c.text||""}`.toLowerCase();
+      return containsFilter(big, filter);
+    });
+
+    document.getElementById("countComments").textContent = String(filtered.length);
+
+    if(!filtered.length){
+      list.innerHTML = `<div class="muted">Nenhum comentário encontrado.</div>`;
+      return;
+    }
+
+    list.innerHTML = filtered.slice(0, 260).map(c=>{
+      return `
+        <div class="item">
+          <div class="itemMain">
+            <div class="itemTitle">Comentário: <b>${escapeHTML(c.userName||"Usuário")}</b></div>
+            <div class="itemMeta">
+              <span><i class="fa-solid fa-hashtag"></i> Post: ${escapeHTML(c.postId)}</span>
+              <span><i class="fa-solid fa-id-badge"></i> ${escapeHTML(c.cid)}</span>
+              <span><i class="fa-solid fa-user"></i> ${escapeHTML(c.uid||"")}</span>
+              <span><i class="fa-solid fa-clock"></i> ${escapeHTML(fmt(c.createdAt||0))}</span>
+            </div>
+            <div class="itemText">${escapeHTML(c.text||"")}</div>
+          </div>
+          <div class="actions">
+            <button class="btn red small" onclick="deleteCommentAsk('${escapeHTML(c.postId)}','${escapeHTML(c.cid)}')">
+              <i class="fa-solid fa-trash"></i> Excluir
+            </button>
+          </div>
+        </div>
+      `;
+    }).join("");
+
+    if(filtered.length > 260){
+      list.innerHTML += `<div class="muted">Mostrando 260 de ${filtered.length}. Use o filtro para achar mais rápido.</div>`;
+    }
+
+  }catch(e){
+    console.log(e);
+    list.innerHTML = `<div class="muted">Erro ao carregar comentários.</div>`;
+  }
+}
+
+function deleteCommentAsk(postId, commentId){
+  openConfirm(
+    "Excluir comentário",
+    `Excluir o comentário <b>${escapeHTML(commentId)}</b> do post <b>${escapeHTML(postId)}</b>?`,
+    "Excluir",
+    async ()=>{
+      await DB.ref("comments/"+postId+"/"+commentId).remove();
+      await loadCommentsGlobal();
+    }
+  );
+}
+
+function deleteAllCommentsConfirm(){
+  openConfirm(
+    "Apagar TODOS os comentários",
+    `Deseja apagar <b>todos</b> os comentários em <code>/comments</code>?`,
+    "Apagar tudo",
+    async ()=>{
+      await DB.ref("comments").remove();
+      await loadCommentsGlobal();
+    }
+  );
+}
+</script>
+
+</body>
+</html>
