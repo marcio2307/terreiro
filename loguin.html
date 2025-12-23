@@ -41,7 +41,7 @@ body{
 }
 
 .brandLogo{
-  width:320px;   /* 🔥 logo maior */
+  width:320px;
   height:320px;
   display:flex;
   align-items:center;
@@ -51,7 +51,7 @@ body{
 .brandLogo img{
   width:100%;
   height:100%;
-  object-fit:contain; /* imagem inteira */
+  object-fit:contain;
   display:block;
 }
 
@@ -130,6 +130,25 @@ body{
 .msg.ok{background:rgba(49,162,76,.2)}
 .msg.err{background:rgba(240,40,73,.2)}
 
+/* ===== LEMBRAR-ME ===== */
+.rememberRow{
+  margin-top:12px;
+  display:flex;
+  align-items:center;
+  gap:10px;
+  user-select:none;
+}
+.rememberRow input{
+  width:18px;
+  height:18px;
+  accent-color:#0866FF;
+}
+.rememberRow label{
+  font-weight:800;
+  color:#E4E6EB;
+  cursor:pointer;
+}
+
 /* ===== MODAL ===== */
 .overlay{
   position:fixed;
@@ -189,9 +208,15 @@ body{
 
   <!-- LOGIN -->
   <div class="card">
-    <input class="input" id="loginUser" placeholder="Usuário">
+    <input class="input" id="loginUser" placeholder="Usuário" autocomplete="username">
     <div style="height:12px"></div>
-    <input class="input" id="loginPass" type="password" placeholder="Senha">
+    <input class="input" id="loginPass" type="password" placeholder="Senha" autocomplete="current-password">
+
+    <!-- ✅ Lembrar-me -->
+    <div class="rememberRow">
+      <input type="checkbox" id="rememberMe">
+      <label for="rememberMe">Lembrar usuário e senha</label>
+    </div>
 
     <button class="btn btnPrimary" onclick="login()">Entrar</button>
 
@@ -211,9 +236,9 @@ body{
   <div class="modal">
     <button class="closeBtn" onclick="closeRegister()">×</button>
 
-    <input class="input" id="regUser" placeholder="Novo usuário">
+    <input class="input" id="regUser" placeholder="Novo usuário" autocomplete="username">
     <div style="height:12px"></div>
-    <input class="input" id="regPass" type="password" placeholder="Nova senha">
+    <input class="input" id="regPass" type="password" placeholder="Nova senha" autocomplete="new-password">
 
     <button class="btn btnGreen" onclick="register()">Cadastrar</button>
   </div>
@@ -222,12 +247,38 @@ body{
 <script>
 const SITE_URL = "https://marcio2307.github.io/terreiro/site.html";
 
+/* Chaves do "lembrar-me" */
+const REMEMBER_KEY = "facecumba_remember";
+const REMEMBER_USER = "facecumba_saved_user";
+const REMEMBER_PASS = "facecumba_saved_pass";
+
 /* ✅ Se já estiver logado, pula a tela de login */
 (function autoSkipLogin(){
   const u = (localStorage.getItem("nome_passageiro") || "").trim();
   if(u){
-    location.replace(SITE_URL); // replace evita voltar pra tela de login no "voltar"
+    location.replace(SITE_URL);
   }
+})();
+
+/* ✅ Carrega usuário/senha salvos (mesmo navegador) */
+(function preloadRemember(){
+  try{
+    const remember = localStorage.getItem(REMEMBER_KEY) === "1";
+    rememberMe.checked = remember;
+
+    if(remember){
+      const u = (localStorage.getItem(REMEMBER_USER) || "");
+      const p = (localStorage.getItem(REMEMBER_PASS) || "");
+      if(u) loginUser.value = u;
+      if(p) loginPass.value = p;
+
+      /* ✅ Se quiser AUTO-ENTRAR quando já estiver salvo, deixe ligado */
+      if(u && p){
+        // tenta entrar automaticamente
+        setTimeout(() => login(true), 200);
+      }
+    }
+  }catch(e){}
 })();
 
 function users(){return JSON.parse(localStorage.getItem("facecumba_users")||"{}")}
@@ -240,17 +291,37 @@ function showMsg(t,ok){
   m.style.display="block";
 }
 
-function login(){
+function rememberSave(user, pass){
+  if(rememberMe.checked){
+    localStorage.setItem(REMEMBER_KEY, "1");
+    localStorage.setItem(REMEMBER_USER, user);
+    localStorage.setItem(REMEMBER_PASS, pass);
+  }else{
+    localStorage.setItem(REMEMBER_KEY, "0");
+    localStorage.removeItem(REMEMBER_USER);
+    localStorage.removeItem(REMEMBER_PASS);
+  }
+}
+
+function login(isAuto=false){
   const u=loginUser.value.trim();
   const p=loginPass.value.trim();
   const us=users();
 
-  if(!u || !p) return showMsg("Preencha usuário e senha", false);
+  if(!u || !p){
+    if(!isAuto) return showMsg("Preencha usuário e senha", false);
+    return;
+  }
 
   if(!us[u]) return showMsg("Usuário não encontrado",false);
   if(us[u]!=p) return showMsg("Senha incorreta",false);
 
+  /* ✅ marca sessão */
   localStorage.setItem("nome_passageiro",u);
+
+  /* ✅ salva login/senha se marcou "lembrar-me" */
+  rememberSave(u, p);
+
   location.href=SITE_URL;
 }
 
@@ -280,8 +351,14 @@ function register(){
   loginPass.value="";
   showMsg("Conta criada! Agora entre com sua senha.", true);
 }
+
+/* ✅ Enter para entrar */
+document.addEventListener("keydown", (e)=>{
+  if(e.key === "Enter"){
+    login();
+  }
+});
 </script>
 
 </body>
 </html>
-
