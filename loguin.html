@@ -13,18 +13,13 @@ html,body{height:100%}
 body{
   margin:0;
   font-family: Helvetica, Arial, sans-serif;
-
-  /* ✅ FUNDO EXATO */
   background:#242526;
-
   color:#E4E6EB;
   display:flex;
   align-items:center;
   justify-content:center;
   padding:18px;
 }
-
-/* ===== CONTAINER ===== */
 .page{
   width:min(600px,100%);
   display:flex;
@@ -32,30 +27,15 @@ body{
   align-items:center;
   gap:24px;
 }
-
-/* ===== LOGO CENTRAL (GIGANTE) ===== */
-.brand{
-  display:flex;
-  align-items:center;
-  justify-content:center;
-}
-
+.brand{display:flex;align-items:center;justify-content:center;}
 .brandLogo{
-  width:320px;
-  height:320px;
-  display:flex;
-  align-items:center;
-  justify-content:center;
+  width:320px;height:320px;
+  display:flex;align-items:center;justify-content:center;
 }
-
 .brandLogo img{
-  width:100%;
-  height:100%;
-  object-fit:contain;
-  display:block;
+  width:100%;height:100%;
+  object-fit:contain;display:block;
 }
-
-/* ===== CARD LOGIN ===== */
 .card{
   width:100%;
   background:#18191A;
@@ -63,7 +43,6 @@ body{
   padding:20px;
   box-shadow:0 20px 50px rgba(0,0,0,.6);
 }
-
 .input{
   width:100%;
   padding:15px;
@@ -74,12 +53,10 @@ body{
   color:#E4E6EB;
   outline:none;
 }
-
 .input:focus{
   border-color:#0866FF;
   box-shadow:0 0 0 3px rgba(8,102,255,.25);
 }
-
 .btn{
   width:100%;
   margin-top:14px;
@@ -90,17 +67,8 @@ body{
   border-radius:14px;
   cursor:pointer;
 }
-
-.btnPrimary{
-  background:#0866FF;
-  color:#fff;
-}
-
-.btnGreen{
-  background:#31A24C;
-  color:#fff;
-}
-
+.btnPrimary{background:#0866FF;color:#fff;}
+.btnGreen{background:#31A24C;color:#fff;}
 .link{
   display:block;
   margin-top:14px;
@@ -110,15 +78,12 @@ body{
   color:#86B7FF;
   text-decoration:none;
 }
-
 .link:hover{text-decoration:underline}
-
 .divider{
   height:1px;
   background:rgba(255,255,255,.12);
   margin:16px 0;
 }
-
 .msg{
   display:none;
   margin-top:14px;
@@ -126,11 +91,8 @@ body{
   border-radius:12px;
   font-weight:700;
 }
-
 .msg.ok{background:rgba(49,162,76,.2)}
 .msg.err{background:rgba(240,40,73,.2)}
-
-/* ===== LEMBRAR-ME ===== */
 .rememberRow{
   margin-top:12px;
   display:flex;
@@ -138,18 +100,9 @@ body{
   gap:10px;
   user-select:none;
 }
-.rememberRow input{
-  width:18px;
-  height:18px;
-  accent-color:#0866FF;
-}
-.rememberRow label{
-  font-weight:800;
-  color:#E4E6EB;
-  cursor:pointer;
-}
+.rememberRow input{width:18px;height:18px;accent-color:#0866FF;}
+.rememberRow label{font-weight:800;color:#E4E6EB;cursor:pointer;}
 
-/* ===== MODAL ===== */
 .overlay{
   position:fixed;
   inset:0;
@@ -159,7 +112,6 @@ body{
   justify-content:center;
   z-index:9999;
 }
-
 .modal{
   width:100%;
   max-width:440px;
@@ -169,14 +121,11 @@ body{
   position:relative;
   box-shadow:0 20px 50px rgba(0,0,0,.7);
 }
-
-/* ❌ FECHAR */
 .closeBtn{
   position:absolute;
   top:12px;
   right:12px;
-  width:38px;
-  height:38px;
+  width:38px;height:38px;
   border-radius:50%;
   background:#3A3B3C;
   color:#E4E6EB;
@@ -185,10 +134,15 @@ body{
   font-weight:900;
   cursor:pointer;
 }
-
 .closeBtn:hover{ background:#4A4B4C; }
 
-/* ===== MOBILE ===== */
+.smallNote{
+  margin-top:10px;
+  font-size:12px;
+  opacity:.85;
+  line-height:1.35;
+}
+
 @media(max-width:420px){
   .brandLogo{width:240px;height:240px}
 }
@@ -198,166 +152,299 @@ body{
 <body>
 
 <div class="page">
-
-  <!-- LOGO -->
   <div class="brand">
     <div class="brandLogo">
       <img src="https://i.ibb.co/5ggFxcG7/Design-sem-nome.png" alt="Facecumba">
     </div>
   </div>
 
-  <!-- LOGIN -->
   <div class="card">
-    <input class="input" id="loginUser" placeholder="Usuário" autocomplete="username">
+    <input class="input" id="loginUser" placeholder="Usuário">
     <div style="height:12px"></div>
-    <input class="input" id="loginPass" type="password" placeholder="Senha" autocomplete="current-password">
+    <input class="input" id="loginPass" type="password" placeholder="Senha">
 
-    <!-- ✅ Lembrar-me -->
     <div class="rememberRow">
-      <input type="checkbox" id="rememberMe">
-      <label for="rememberMe">Lembrar usuário e senha</label>
+      <input type="checkbox" id="rememberMe" checked>
+      <label for="rememberMe">Manter conectado neste aparelho</label>
     </div>
 
-    <button class="btn btnPrimary" onclick="login()">Entrar</button>
+    <button class="btn btnPrimary" id="btnLogin">Entrar</button>
 
-    <a class="link" href="#" onclick="recover();return false;">Esqueceu a senha?</a>
+    <a class="link" href="#" id="btnRecover">Esqueceu a senha?</a>
 
     <div class="divider"></div>
 
-    <button class="btn btnGreen" onclick="openRegister()">Criar nova conta</button>
+    <button class="btn btnGreen" id="btnOpenRegister">Criar nova conta</button>
 
     <div class="msg" id="msg"></div>
   </div>
-
 </div>
 
 <!-- CADASTRO -->
 <div class="overlay" id="overlay">
   <div class="modal">
-    <button class="closeBtn" onclick="closeRegister()">×</button>
+    <button class="closeBtn" id="btnCloseRegister">×</button>
 
-    <input class="input" id="regUser" placeholder="Novo usuário" autocomplete="username">
+    <input class="input" id="regUser" placeholder="Novo usuário">
     <div style="height:12px"></div>
-    <input class="input" id="regPass" type="password" placeholder="Nova senha" autocomplete="new-password">
+    <input class="input" id="regPass" type="password" placeholder="Nova senha">
+    <div style="height:12px"></div>
+    <input class="input" id="regKey" placeholder="Chave de recuperação (ex: 1234 ou palavra)">
 
-    <button class="btn btnGreen" onclick="register()">Cadastrar</button>
+    <button class="btn btnGreen" id="btnRegister">Cadastrar</button>
+
+    <div class="smallNote">
+      ✅ Esta “chave de recuperação” serve para você redefinir a senha caso esqueça.<br>
+      (Sem e-mail, não tem como recuperar senha automaticamente.)
+    </div>
+
+    <div class="msg" id="msgReg"></div>
   </div>
 </div>
 
+<!-- RECUPERAÇÃO -->
+<div class="overlay" id="overlayRecover">
+  <div class="modal">
+    <button class="closeBtn" id="btnCloseRecover">×</button>
+
+    <div style="font-weight:900;margin-bottom:10px;">Redefinir senha</div>
+
+    <input class="input" id="recUser" placeholder="Usuário">
+    <div style="height:12px"></div>
+    <input class="input" id="recKey" placeholder="Chave de recuperação">
+    <div style="height:12px"></div>
+    <input class="input" id="recNewPass" type="password" placeholder="Nova senha">
+
+    <button class="btn btnPrimary" id="btnDoRecover">Salvar nova senha</button>
+
+    <div class="msg" id="msgRec"></div>
+  </div>
+</div>
+
+<!-- Firebase v8 (igual seu site.html) -->
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+
 <script>
-const SITE_URL = "https://marcio2307.github.io/terreiro/site.html";
+/* ========= CONFIG ========= */
+const SITE_URL  = "https://marcio2307.github.io/terreiro/site.html";
 
-/* Chaves do "lembrar-me" */
-const REMEMBER_KEY = "facecumba_remember";
-const REMEMBER_USER = "facecumba_saved_user";
-const REMEMBER_PASS = "facecumba_saved_pass";
+/* ✅ SEU firebaseConfig (igual você mandou) */
+const firebaseConfig = {
+  apiKey: "AIzaSyAt4CeGjdbjzdtMH1qZHw6RuBFJ6SeTDKk",
+  authDomain: "coletivo-f34d4.firebaseapp.com",
+  databaseURL: "https://coletivo-f34d4-default-rtdb.firebaseio.com",
+  projectId: "coletivo-f34d4",
+  storageBucket: "coletivo-f34d4.firebasestorage.app",
+  messagingSenderId: "296376447787",
+  appId: "1:296376447787:web:1341c59c8087d6ac1e4b6e"
+};
+firebase.initializeApp(firebaseConfig);
+const DB = firebase.database();
 
-/* ✅ Se já estiver logado, pula a tela de login */
-(function autoSkipLogin(){
+/* ========= UI helpers ========= */
+function $(id){ return document.getElementById(id); }
+
+function showMsg(id, text, ok){
+  const el = $(id);
+  el.className = "msg " + (ok ? "ok" : "err");
+  el.textContent = text;
+  el.style.display = "block";
+}
+function hideMsg(id){
+  const el = $(id);
+  el.style.display = "none";
+  el.textContent = "";
+}
+
+/* ========= Normalização ========= */
+function normalizeUser(u){
+  return (u||"")
+    .trim()
+    .toLowerCase()
+    .normalize("NFD").replace(/[\u0300-\u036f]/g,"")
+    .replace(/[^a-z0-9._-]/g,"");
+}
+function validUser(u){
+  const x = normalizeUser(u);
+  return x.length >= 3;
+}
+
+/* ========= Crypto (hash) =========
+   - Não guarda senha em texto puro
+   - Funciona em qualquer navegador pois o check é no Firebase
+*/
+async function sha256(text){
+  const enc = new TextEncoder().encode(text);
+  const buf = await crypto.subtle.digest("SHA-256", enc);
+  const arr = Array.from(new Uint8Array(buf));
+  return arr.map(b => b.toString(16).padStart(2,"0")).join("");
+}
+
+/* ========= Banco =========
+accounts/<userKey> = {
+  user: "usuario",
+  passHash: "...",
+  recoverHash: "...",
+  createdAt: <timestamp>
+}
+*/
+function ACC_REF(userKey){
+  return DB.ref("accounts/" + userKey);
+}
+
+/* ========= Sessão =========
+- Para seu site.html: ele já usa localStorage.nome_passageiro
+- Aqui salvamos isso ao logar.
+*/
+function setSession(username){
+  localStorage.setItem("nome_passageiro", username);
+  // opcional: marca que está logado
+  localStorage.setItem("facecumba_logged", "1");
+}
+
+/* ✅ Auto pular login se já tiver sessão salva neste aparelho */
+(function autoSkip(){
   const u = (localStorage.getItem("nome_passageiro") || "").trim();
   if(u){
     location.replace(SITE_URL);
   }
 })();
 
-/* ✅ Carrega usuário/senha salvos (mesmo navegador) */
-(function preloadRemember(){
-  try{
-    const remember = localStorage.getItem(REMEMBER_KEY) === "1";
-    rememberMe.checked = remember;
+/* ========= Botões ========= */
+$("btnOpenRegister").onclick = ()=>{ $("overlay").style.display="flex"; hideMsg("msgReg"); };
+$("btnCloseRegister").onclick = ()=>{ $("overlay").style.display="none"; };
 
-    if(remember){
-      const u = (localStorage.getItem(REMEMBER_USER) || "");
-      const p = (localStorage.getItem(REMEMBER_PASS) || "");
-      if(u) loginUser.value = u;
-      if(p) loginPass.value = p;
+$("btnRecover").onclick = (e)=>{ e.preventDefault(); $("overlayRecover").style.display="flex"; hideMsg("msgRec"); };
+$("btnCloseRecover").onclick = ()=>{ $("overlayRecover").style.display="none"; };
 
-      /* ✅ Se quiser AUTO-ENTRAR quando já estiver salvo, deixe ligado */
-      if(u && p){
-        // tenta entrar automaticamente
-        setTimeout(() => login(true), 200);
-      }
-    }
-  }catch(e){}
-})();
+$("overlay").addEventListener("click", (e)=>{ if(e.target === $("overlay")) $("overlay").style.display="none"; });
+$("overlayRecover").addEventListener("click", (e)=>{ if(e.target === $("overlayRecover")) $("overlayRecover").style.display="none"; });
 
-function users(){return JSON.parse(localStorage.getItem("facecumba_users")||"{}")}
-function save(u){localStorage.setItem("facecumba_users",JSON.stringify(u))}
-
-function showMsg(t,ok){
-  const m=document.getElementById("msg");
-  m.className="msg "+(ok?"ok":"err");
-  m.textContent=t;
-  m.style.display="block";
-}
-
-function rememberSave(user, pass){
-  if(rememberMe.checked){
-    localStorage.setItem(REMEMBER_KEY, "1");
-    localStorage.setItem(REMEMBER_USER, user);
-    localStorage.setItem(REMEMBER_PASS, pass);
+/* ========= Manter conectado =========
+- Não existe “manter conectado em todos aparelhos automaticamente”
+- Mas o usuário pode entrar em qualquer aparelho digitando user+senha.
+- Aqui só decide se vamos guardar a sessão (nome_passageiro) ou não.
+*/
+function applyRemember(username){
+  if($("rememberMe").checked){
+    setSession(username);
   }else{
-    localStorage.setItem(REMEMBER_KEY, "0");
-    localStorage.removeItem(REMEMBER_USER);
-    localStorage.removeItem(REMEMBER_PASS);
+    // sessão só nessa aba (não persistir)
+    sessionStorage.setItem("nome_passageiro", username);
+    // não guarda no localStorage
+    localStorage.removeItem("nome_passageiro");
   }
 }
 
-function login(isAuto=false){
-  const u=loginUser.value.trim();
-  const p=loginPass.value.trim();
-  const us=users();
+/* ========= LOGIN ========= */
+$("btnLogin").onclick = async ()=>{
+  hideMsg("msg");
 
-  if(!u || !p){
-    if(!isAuto) return showMsg("Preencha usuário e senha", false);
-    return;
+  const rawU = $("loginUser").value;
+  const rawP = $("loginPass").value;
+
+  const userKey = normalizeUser(rawU);
+  if(!validUser(rawU) || !rawP) return showMsg("msg", "Preencha usuário e senha (usuário mínimo 3).", false);
+
+  try{
+    const snap = await ACC_REF(userKey).once("value");
+    const acc = snap.val();
+
+    if(!acc) return showMsg("msg", "Usuário não encontrado. Crie uma conta.", false);
+
+    const passHash = await sha256(rawP);
+    if(acc.passHash !== passHash) return showMsg("msg", "Senha incorreta.", false);
+
+    // ✅ ok
+    applyRemember(acc.user || rawU.trim());
+    showMsg("msg", "Login OK! Entrando...", true);
+    setTimeout(()=> location.href = SITE_URL, 350);
+  }catch(err){
+    console.log(err);
+    showMsg("msg", "Erro ao entrar. Tente novamente.", false);
   }
+};
 
-  if(!us[u]) return showMsg("Usuário não encontrado",false);
-  if(us[u]!=p) return showMsg("Senha incorreta",false);
-
-  /* ✅ marca sessão */
-  localStorage.setItem("nome_passageiro",u);
-
-  /* ✅ salva login/senha se marcou "lembrar-me" */
-  rememberSave(u, p);
-
-  location.href=SITE_URL;
-}
-
-function recover(){
-  const u=loginUser.value.trim();
-  const us=users();
-  if(!u) return showMsg("Digite o usuário para recuperar a senha", false);
-  if(!us[u]) return showMsg("Usuário não encontrado",false);
-  showMsg("Sua senha é: "+us[u],true);
-}
-
-function openRegister(){overlay.style.display="flex"}
-function closeRegister(){overlay.style.display="none"}
-
-function register(){
-  const u=regUser.value.trim();
-  const p=regPass.value.trim();
-  if(u.length<3||p.length<4) return alert("Dados inválidos");
-  const us=users();
-
-  if(us[u]) return alert("Esse usuário já existe");
-
-  us[u]=p;
-  save(us);
-  closeRegister();
-  loginUser.value=u;
-  loginPass.value="";
-  showMsg("Conta criada! Agora entre com sua senha.", true);
-}
-
-/* ✅ Enter para entrar */
+/* Enter para logar */
 document.addEventListener("keydown", (e)=>{
-  if(e.key === "Enter"){
-    login();
+  if(e.key === "Enter" && $("overlay").style.display !== "flex" && $("overlayRecover").style.display !== "flex"){
+    $("btnLogin").click();
   }
 });
+
+/* ========= CADASTRO ========= */
+$("btnRegister").onclick = async ()=>{
+  hideMsg("msgReg");
+
+  const rawU = $("regUser").value;
+  const rawP = $("regPass").value;
+  const rawK = $("regKey").value;
+
+  const userKey = normalizeUser(rawU);
+  if(!validUser(rawU)) return showMsg("msgReg", "Usuário inválido. Use no mínimo 3 caracteres.", false);
+  if(!rawP || rawP.length < 4) return showMsg("msgReg", "Senha inválida. Mínimo 4 caracteres.", false);
+  if(!rawK || rawK.trim().length < 3) return showMsg("msgReg", "Crie uma chave de recuperação (mínimo 3).", false);
+
+  try{
+    const ref = ACC_REF(userKey);
+    const exists = (await ref.once("value")).exists();
+    if(exists) return showMsg("msgReg", "Esse usuário já existe.", false);
+
+    const passHash = await sha256(rawP);
+    const recoverHash = await sha256(rawK.trim());
+
+    await ref.set({
+      user: rawU.trim(),
+      passHash,
+      recoverHash,
+      createdAt: firebase.database.ServerValue.TIMESTAMP
+    });
+
+    // ✅ já loga
+    applyRemember(rawU.trim());
+    showMsg("msgReg", "Conta criada! Entrando...", true);
+    setTimeout(()=> location.href = SITE_URL, 450);
+  }catch(err){
+    console.log(err);
+    showMsg("msgReg", "Erro ao cadastrar. Tente novamente.", false);
+  }
+};
+
+/* ========= RECUPERAR (REDEFINIR) ========= */
+$("btnDoRecover").onclick = async ()=>{
+  hideMsg("msgRec");
+
+  const rawU = $("recUser").value;
+  const rawK = $("recKey").value;
+  const rawNew = $("recNewPass").value;
+
+  const userKey = normalizeUser(rawU);
+  if(!validUser(rawU)) return showMsg("msgRec", "Usuário inválido.", false);
+  if(!rawK || rawK.trim().length < 3) return showMsg("msgRec", "Digite sua chave de recuperação.", false);
+  if(!rawNew || rawNew.length < 4) return showMsg("msgRec", "Nova senha inválida (mínimo 4).", false);
+
+  try{
+    const ref = ACC_REF(userKey);
+    const snap = await ref.once("value");
+    const acc = snap.val();
+    if(!acc) return showMsg("msgRec", "Usuário não encontrado.", false);
+
+    const keyHash = await sha256(rawK.trim());
+    if(acc.recoverHash !== keyHash) return showMsg("msgRec", "Chave de recuperação incorreta.", false);
+
+    const newHash = await sha256(rawNew);
+    await ref.update({ passHash: newHash });
+
+    showMsg("msgRec", "Senha alterada! Agora você pode entrar.", true);
+    $("overlayRecover").style.display = "none";
+    $("loginUser").value = acc.user || rawU.trim();
+    $("loginPass").value = "";
+  }catch(err){
+    console.log(err);
+    showMsg("msgRec", "Erro ao redefinir. Tente novamente.", false);
+  }
+};
 </script>
 
 </body>
