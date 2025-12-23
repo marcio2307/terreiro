@@ -13,18 +13,13 @@ html,body{height:100%}
 body{
   margin:0;
   font-family: Helvetica, Arial, sans-serif;
-
-  /* ✅ FUNDO EXATO */
   background:#242526;
-
   color:#E4E6EB;
   display:flex;
   align-items:center;
   justify-content:center;
   padding:18px;
 }
-
-/* ===== CONTAINER ===== */
 .page{
   width:min(600px,100%);
   display:flex;
@@ -32,30 +27,20 @@ body{
   align-items:center;
   gap:24px;
 }
-
-/* ===== LOGO CENTRAL (GIGANTE) ===== */
-.brand{
-  display:flex;
-  align-items:center;
-  justify-content:center;
-}
-
+.brand{display:flex;align-items:center;justify-content:center;}
 .brandLogo{
-  width:320px;   /* 🔥 logo maior */
+  width:320px;
   height:320px;
   display:flex;
   align-items:center;
   justify-content:center;
 }
-
 .brandLogo img{
   width:100%;
   height:100%;
-  object-fit:contain; /* imagem inteira */
+  object-fit:contain;
   display:block;
 }
-
-/* ===== CARD LOGIN ===== */
 .card{
   width:100%;
   background:#18191A;
@@ -63,7 +48,6 @@ body{
   padding:20px;
   box-shadow:0 20px 50px rgba(0,0,0,.6);
 }
-
 .input{
   width:100%;
   padding:15px;
@@ -74,12 +58,10 @@ body{
   color:#E4E6EB;
   outline:none;
 }
-
 .input:focus{
   border-color:#0866FF;
   box-shadow:0 0 0 3px rgba(8,102,255,.25);
 }
-
 .btn{
   width:100%;
   margin-top:14px;
@@ -90,17 +72,8 @@ body{
   border-radius:14px;
   cursor:pointer;
 }
-
-.btnPrimary{
-  background:#0866FF;
-  color:#fff;
-}
-
-.btnGreen{
-  background:#31A24C;
-  color:#fff;
-}
-
+.btnPrimary{background:#0866FF;color:#fff;}
+.btnGreen{background:#31A24C;color:#fff;}
 .link{
   display:block;
   margin-top:14px;
@@ -110,15 +83,12 @@ body{
   color:#86B7FF;
   text-decoration:none;
 }
-
 .link:hover{text-decoration:underline}
-
 .divider{
   height:1px;
   background:rgba(255,255,255,.12);
   margin:16px 0;
 }
-
 .msg{
   display:none;
   margin-top:14px;
@@ -126,11 +96,9 @@ body{
   border-radius:12px;
   font-weight:700;
 }
-
 .msg.ok{background:rgba(49,162,76,.2)}
 .msg.err{background:rgba(240,40,73,.2)}
 
-/* ===== MODAL ===== */
 .overlay{
   position:fixed;
   inset:0;
@@ -140,7 +108,6 @@ body{
   justify-content:center;
   z-index:9999;
 }
-
 .modal{
   width:100%;
   max-width:440px;
@@ -150,8 +117,6 @@ body{
   position:relative;
   box-shadow:0 20px 50px rgba(0,0,0,.7);
 }
-
-/* ❌ FECHAR */
 .closeBtn{
   position:absolute;
   top:12px;
@@ -166,10 +131,8 @@ body{
   font-weight:900;
   cursor:pointer;
 }
-
 .closeBtn:hover{ background:#4A4B4C; }
 
-/* ===== MOBILE ===== */
 @media(max-width:420px){
   .brandLogo{width:240px;height:240px}
 }
@@ -179,106 +142,162 @@ body{
 <body>
 
 <div class="page">
-
-  <!-- LOGO -->
   <div class="brand">
     <div class="brandLogo">
       <img src="https://i.ibb.co/5ggFxcG7/Design-sem-nome.png" alt="Facecumba">
     </div>
   </div>
 
-  <!-- LOGIN -->
   <div class="card">
     <input class="input" id="loginUser" placeholder="Usuário">
     <div style="height:12px"></div>
     <input class="input" id="loginPass" type="password" placeholder="Senha">
 
-    <button class="btn btnPrimary" onclick="login()">Entrar</button>
+    <button class="btn btnPrimary" id="btnLogin">Entrar</button>
 
-    <a class="link" href="#" onclick="recover();return false;">Esqueceu a senha?</a>
+    <!-- ✅ AGORA VAI PARA A PÁGINA recuperar.html -->
+    <a class="link" id="recoverLink" href="https://marcio2307.github.io/terreiro/recuperar.html">
+      Esqueceu a senha?
+    </a>
 
     <div class="divider"></div>
 
-    <button class="btn btnGreen" onclick="openRegister()">Criar nova conta</button>
+    <button class="btn btnGreen" id="btnOpenRegister">Criar nova conta</button>
 
     <div class="msg" id="msg"></div>
   </div>
-
 </div>
 
-<!-- CADASTRO -->
 <div class="overlay" id="overlay">
   <div class="modal">
-    <button class="closeBtn" onclick="closeRegister()">×</button>
+    <button class="closeBtn" id="btnCloseRegister">×</button>
 
     <input class="input" id="regUser" placeholder="Novo usuário">
     <div style="height:12px"></div>
     <input class="input" id="regPass" type="password" placeholder="Nova senha">
 
-    <button class="btn btnGreen" onclick="register()">Cadastrar</button>
+    <button class="btn btnGreen" id="btnRegister">Cadastrar</button>
   </div>
 </div>
 
-<script>
-const SITE_URL = "https://marcio2307.github.io/terreiro/site.html";
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
+import {
+  getFirestore, doc, getDoc, setDoc, serverTimestamp
+} from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
 
-/* ✅ Se já estiver logado, pula a tela de login */
+const SITE_URL = "https://marcio2307.github.io/terreiro/site.html";
+const RECOVER_URL = "https://marcio2307.github.io/terreiro/recuperar.html";
+
+/* ✅ COLE AQUI O SEU FIREBASE CONFIG (o mesmo do recuperar.html) */
+const firebaseConfig = {
+  apiKey: "COLE_AQUI",
+  authDomain: "COLE_AQUI",
+  projectId: "COLE_AQUI",
+  storageBucket: "COLE_AQUI",
+  messagingSenderId: "COLE_AQUI",
+  appId: "COLE_AQUI"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+const $ = (id) => document.getElementById(id);
+function showMsg(t, ok){
+  const m = $("msg");
+  m.className = "msg " + (ok ? "ok" : "err");
+  m.textContent = t;
+  m.style.display = "block";
+}
+
+async function sha256(text){
+  const enc = new TextEncoder().encode(text);
+  const hashBuf = await crypto.subtle.digest("SHA-256", enc);
+  return [...new Uint8Array(hashBuf)].map(b => b.toString(16).padStart(2,"0")).join("");
+}
+
+/* ✅ Se já estiver logado neste navegador, pula */
 (function autoSkipLogin(){
   const u = (localStorage.getItem("nome_passageiro") || "").trim();
   if(u){
-    location.replace(SITE_URL); // replace evita voltar pra tela de login no "voltar"
+    location.replace(SITE_URL);
   }
 })();
 
-function users(){return JSON.parse(localStorage.getItem("facecumba_users")||"{}")}
-function save(u){localStorage.setItem("facecumba_users",JSON.stringify(u))}
+/* ✅ Ao clicar em "Esqueceu a senha?", manda com usuário preenchido (opcional) */
+$("recoverLink").addEventListener("click", (e) => {
+  e.preventDefault();
+  const u = ($("loginUser").value || "").trim();
+  location.href = RECOVER_URL + (u ? ("?user=" + encodeURIComponent(u)) : "");
+});
 
-function showMsg(t,ok){
-  const m=document.getElementById("msg");
-  m.className="msg "+(ok?"ok":"err");
-  m.textContent=t;
-  m.style.display="block";
-}
+$("btnLogin").addEventListener("click", login);
 
-function login(){
-  const u=loginUser.value.trim();
-  const p=loginPass.value.trim();
-  const us=users();
+$("btnOpenRegister").addEventListener("click", () => $("overlay").style.display = "flex");
+$("btnCloseRegister").addEventListener("click", () => $("overlay").style.display = "none");
+$("btnRegister").addEventListener("click", register);
+
+async function login(){
+  const u = $("loginUser").value.trim();
+  const p = $("loginPass").value.trim();
 
   if(!u || !p) return showMsg("Preencha usuário e senha", false);
 
-  if(!us[u]) return showMsg("Usuário não encontrado",false);
-  if(us[u]!=p) return showMsg("Senha incorreta",false);
+  try{
+    const ref = doc(db, "facecumba_users", u);
+    const snap = await getDoc(ref);
 
-  localStorage.setItem("nome_passageiro",u);
-  location.href=SITE_URL;
+    if(!snap.exists()) return showMsg("Usuário não encontrado", false);
+
+    const data = snap.data() || {};
+    const passHash = data.passHash || "";
+
+    const typedHash = await sha256(p);
+
+    if(!passHash || typedHash !== passHash){
+      return showMsg("Senha incorreta", false);
+    }
+
+    // "Logado" no navegador atual
+    localStorage.setItem("nome_passageiro", u);
+
+    location.href = SITE_URL;
+
+  }catch(err){
+    console.error(err);
+    showMsg("Erro ao entrar. Verifique Firebase config e regras do Firestore.", false);
+  }
 }
 
-function recover(){
-  const u=loginUser.value.trim();
-  const us=users();
-  if(!u) return showMsg("Digite o usuário para recuperar a senha", false);
-  if(!us[u]) return showMsg("Usuário não encontrado",false);
-  showMsg("Sua senha é: "+us[u],true);
-}
+async function register(){
+  const u = $("regUser").value.trim();
+  const p = $("regPass").value.trim();
 
-function openRegister(){overlay.style.display="flex"}
-function closeRegister(){overlay.style.display="none"}
+  if(u.length < 3 || p.length < 4) return alert("Dados inválidos (usuário min 3, senha min 4).");
 
-function register(){
-  const u=regUser.value.trim();
-  const p=regPass.value.trim();
-  if(u.length<3||p.length<4) return alert("Dados inválidos");
-  const us=users();
+  try{
+    const ref = doc(db, "facecumba_users", u);
+    const snap = await getDoc(ref);
 
-  if(us[u]) return alert("Esse usuário já existe");
+    if(snap.exists()) return alert("Esse usuário já existe.");
 
-  us[u]=p;
-  save(us);
-  closeRegister();
-  loginUser.value=u;
-  loginPass.value="";
-  showMsg("Conta criada! Agora entre com sua senha.", true);
+    const passHash = await sha256(p);
+
+    await setDoc(ref, {
+      passHash,
+      createdAt: serverTimestamp(),
+      updatedAt: serverTimestamp()
+    });
+
+    $("overlay").style.display = "none";
+    $("loginUser").value = u;
+    $("loginPass").value = "";
+    showMsg("Conta criada! Agora entre com sua senha.", true);
+
+  }catch(err){
+    console.error(err);
+    alert("Erro ao cadastrar. Verifique Firebase config e regras do Firestore.");
+  }
 }
 </script>
 
