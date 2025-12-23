@@ -36,7 +36,7 @@
     overscroll-behavior: none;
   }
 
-  /* ====================== LOGIN ====================== */
+  /* LOGIN */
   .login-overlay{
     position:fixed; inset:0;
     background: rgba(0,0,0,0.72);
@@ -96,7 +96,7 @@
   .login-btn:hover{ background: var(--primary2); }
   .login-btn:active{ transform: scale(.99); }
 
-  /* ===================== LOADING ===================== */
+  /* LOADING */
   .loadingOverlay{
     position:fixed; inset:0;
     background: rgba(0,0,0,.55);
@@ -126,7 +126,7 @@
   .loadingText{ color: var(--primary); font-weight:900; letter-spacing:.2px; }
   .loadingSub{ margin-top:6px; color: var(--muted); font-size:14px; }
 
-  /* ===================== APP ===================== */
+  /* APP */
   .app{
     height: 100vh;
     height: 100dvh;
@@ -136,7 +136,7 @@
     overflow:hidden;
   }
 
-  /* ===================== TOPBAR ===================== */
+  /* TOPBAR */
   .topbar{
     position: sticky;
     top:0;
@@ -151,7 +151,7 @@
     flex-direction:column;
     justify-content:center;
     position:relative;
-    padding: 10px 10px 10px 10px;
+    padding: 10px;
     gap: 10px;
   }
   .topRow{
@@ -196,7 +196,7 @@
     font-weight: 800;
   }
 
-  /* ===================== ONLINE BAR ===================== */
+  /* ONLINE BAR */
   .onlineBar{
     width:100%;
     overflow-x:auto;
@@ -255,7 +255,7 @@
     font-weight: 800;
   }
 
-  /* ===================== MESSAGES AREA ===================== */
+  /* MESSAGES */
   .messages{
     flex:1;
     overflow-y:auto;
@@ -266,7 +266,6 @@
     overscroll-behavior: contain;
   }
 
-  /* ===================== MESSAGE ROWS ===================== */
   .msgRow{
     display:flex;
     gap:10px;
@@ -289,7 +288,6 @@
   .msgAvatar img{ width:100%;height:100%;object-fit:cover;display:block; }
   .msgAvatar .init{ font-weight:900; color: var(--text); }
 
-  /* ===================== BALÕES (estilo da imagem 3 / Messenger) ===================== */
   .msgBubbleWrap{
     position:relative;
     display:inline-flex;
@@ -312,9 +310,7 @@
     user-select:none;
     -webkit-tap-highlight-color: transparent;
   }
-  .msgBubble.mediaOnly{
-    width: min(78vw, 560px);
-  }
+  .msgBubble.mediaOnly{ width: min(78vw, 560px); }
 
   .msgRow.me .msgBubble{
     background: var(--primary);
@@ -371,16 +367,10 @@
   }
   .msgRow.me .msgMedia img{ border-color: rgba(255,255,255,.22); }
 
-  .msgAudio{
-    margin-top: 8px;
-    width: 100%;
-  }
-  .msgAudio audio{
-    width: 100%;
-    height: 36px;
-  }
+  .msgAudio{ margin-top: 8px; width:100%; }
+  .msgAudio audio{ width: 100%; height: 36px; }
 
-  /* ===================== REAÇÕES (like/love) ===================== */
+  /* REAÇÕES */
   .reactionBadge{
     display:inline-flex;
     align-items:center;
@@ -400,7 +390,7 @@
   .reactionBadge.like i{ color: #4e8cff; }
   .reactionBadge.love i{ color: #ff4d6d; }
 
-  /* ===================== ✅ 3 PONTINHOS ===================== */
+  /* MENU */
   .msgMenuBtn{
     position:absolute;
     top: 8px;
@@ -423,15 +413,6 @@
     box-shadow: 0 8px 18px rgba(0,0,0,.38);
     backdrop-filter: blur(4px);
     -webkit-backdrop-filter: blur(4px);
-  }
-  .msgRow.me .msgMenuBtn{
-    background: rgba(0,0,0,.38);
-    border-color: rgba(255,255,255,.28);
-    color: #fff;
-  }
-  .msgMenuBtn:hover{
-    background: rgba(0,0,0,.58);
-    border-color: rgba(255,255,255,.35);
   }
   .msgMenuBtn:active{ transform: scale(.96); }
 
@@ -459,7 +440,7 @@
   }
   .msgMenuBox i{ font-size: 16px; color: var(--danger); }
 
-  /* ===================== COMPOSER (estilo imagem 2) ===================== */
+  /* COMPOSER (MOBILE) */
   .composer{
     position: sticky;
     bottom: 0;
@@ -468,21 +449,18 @@
     padding: 10px 12px calc(10px + env(safe-area-inset-bottom)) 12px;
     border-top: 1px solid var(--line);
   }
-
   .composerBar{
     width: 100%;
     display:flex;
     align-items:flex-end;
     gap: 10px;
   }
-
   .leftTools{
     display:flex;
     align-items:center;
     gap: 10px;
     flex:0 0 auto;
   }
-
   .toolBtn{
     width: 44px; height: 44px;
     border-radius: 50%;
@@ -511,7 +489,6 @@
     gap: 10px;
     box-shadow: 0 6px 18px rgba(0,0,0,.25);
   }
-
   .pillTextarea{
     flex:1;
     min-width:0;
@@ -547,8 +524,7 @@
     align-items:center;
     gap: 10px;
   }
-
-  .sendOrMic{
+  .sendBtn{
     width: 44px; height: 44px;
     border-radius: 50%;
     display:flex; align-items:center; justify-content:center;
@@ -561,8 +537,8 @@
     font-size: 18px;
     -webkit-tap-highlight-color: transparent;
   }
-  .sendOrMic:hover{ background: var(--primary2); }
-  .sendOrMic:active{ transform: scale(.98); }
+  .sendBtn:hover{ background: var(--primary2); }
+  .sendBtn:active{ transform: scale(.98); }
 
   .thumbBtn{
     width: 44px; height: 44px;
@@ -580,7 +556,7 @@
 
   input[type="file"]{ display:none; }
 
-  /* ===================== EMOJI PANEL ===================== */
+  /* EMOJI PANEL */
   .emojiPanel{
     position: fixed;
     left: 50%;
@@ -631,7 +607,7 @@
     user-select:none;
   }
 
-  /* ===================== REC (gravação) ===================== */
+  /* REC overlay */
   .recPill{
     position: fixed;
     left: 50%;
@@ -672,9 +648,7 @@
     51%,100%{ opacity: .35; }
   }
   .recTime{ color: rgba(255,255,255,.9); }
-  .recBtns{
-    display:flex; gap: 8px; align-items:center;
-  }
+  .recBtns{ display:flex; gap: 8px; align-items:center; }
   .miniBtn{
     padding: 10px 12px;
     border-radius: 12px;
@@ -735,15 +709,10 @@
   <!-- MENSAGENS -->
   <div class="messages" id="messages"></div>
 
-  <!-- COMPOSER (imagem 2) -->
+  <!-- COMPOSER -->
   <div class="composer">
     <div class="composerBar">
-
       <div class="leftTools">
-        <button class="toolBtn" title="Mais" aria-label="Mais" onclick="onPlus()">
-          <i class="fa-solid fa-plus"></i>
-        </button>
-
         <button class="toolBtn" title="Câmera" aria-label="Câmera" onclick="openCamera()">
           <i class="fa-solid fa-camera"></i>
         </button>
@@ -752,6 +721,7 @@
           <i class="fa-regular fa-image"></i>
         </button>
 
+        <!-- ✅ Ao clicar 1ª vez pede permissão do microfone -->
         <button class="toolBtn" title="Áudio" aria-label="Áudio" onclick="toggleRecord()">
           <i class="fa-solid fa-microphone"></i>
         </button>
@@ -765,7 +735,7 @@
       </div>
 
       <div class="rightAction">
-        <button class="sendOrMic" id="sendBtn" title="Enviar" aria-label="Enviar" onclick="sendText()">
+        <button class="sendBtn" title="Enviar" aria-label="Enviar" onclick="sendText()">
           <i class="fa-solid fa-paper-plane"></i>
         </button>
 
@@ -776,7 +746,6 @@
 
       <input type="file" id="imgInput" accept="image/*">
       <input type="file" id="camInput" accept="image/*" capture="environment">
-
     </div>
   </div>
 
@@ -812,7 +781,7 @@
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-storage.js"></script>
 
 <script>
-/* ====================== VOLTAR PARA O SITE (SEM DESLOGAR) ====================== */
+/* ====================== VOLTAR PARA O SITE ====================== */
 const BACK_URL = "https://marcio2307.github.io/terreiro/site.html";
 function goBackSite(ev){
   ev.preventDefault();
@@ -833,7 +802,7 @@ firebase.initializeApp(firebaseConfig);
 const DB = firebase.database();
 const ST = firebase.storage();
 
-/* ====================== SOM (ENVIAR E RECEBER) ====================== */
+/* ====================== SOM ====================== */
 const CHAT_SOUND_URL = "somm.mp3";
 const chatSfx = new Audio(CHAT_SOUND_URL);
 chatSfx.preload = "auto";
@@ -1001,7 +970,7 @@ if(USER_NAME && UID){ startPresence(); }
 </script>
 
 <script>
-/* ===================== PERFIS (avatar sincroniza com perfil.html) ===================== */
+/* ===================== PERFIS ===================== */
 const profileCache = new Map();
 function PROFILE_REF(uid){ return DB.ref("profiles/" + uid); }
 
@@ -1085,7 +1054,7 @@ DB.ref("presence").on("value", async (snap)=>{
 </script>
 
 <script>
-/* ===================== CHAT ABERTO (GRUPO) ===================== */
+/* ===================== CHAT (GRUPO) ===================== */
 const ROOM_ID = "global";
 const MSG_PATH = `groupChat/${ROOM_ID}/messages`;
 
@@ -1093,9 +1062,8 @@ const messagesEl = document.getElementById("messages");
 const msgInput = document.getElementById("msgInput");
 const imgInput = document.getElementById("imgInput");
 const camInput = document.getElementById("camInput");
-const sendBtn = document.getElementById("sendBtn");
 
-/* Emoji panel */
+/* EMOJIS */
 const emojiPanel = document.getElementById("emojiPanel");
 const emojiGrid  = document.getElementById("emojiGrid");
 const EMOJIS = ["😀","😁","😂","🤣","😊","😍","😘","😎",
@@ -1117,7 +1085,6 @@ function insertEmoji(e){
   msgInput.value = v.slice(0,start) + e + v.slice(end);
   const pos = start + e.length;
   msgInput.setSelectionRange(pos,pos);
-  refreshSendIcon();
 }
 
 /* Fechar emoji ao clicar fora */
@@ -1134,17 +1101,8 @@ function autoGrow(){
   msgInput.style.height = "auto";
   msgInput.style.height = Math.min(msgInput.scrollHeight, 140) + "px";
 }
-msgInput.addEventListener("input", ()=>{ autoGrow(); refreshSendIcon(); });
+msgInput.addEventListener("input", autoGrow);
 autoGrow();
-
-function refreshSendIcon(){
-  const hasText = ((msgInput.value||"").trim().length > 0);
-  sendBtn.innerHTML = hasText
-    ? `<i class="fa-solid fa-paper-plane"></i>`
-    : `<i class="fa-solid fa-microphone"></i>`;
-  sendBtn.title = hasText ? "Enviar" : "Gravar áudio";
-  sendBtn.setAttribute("aria-label", hasText ? "Enviar" : "Gravar áudio");
-}
 
 /* Enter envia / Shift+Enter quebra linha */
 msgInput.addEventListener("keydown", (e)=>{
@@ -1154,13 +1112,7 @@ msgInput.addEventListener("keydown", (e)=>{
   }
 });
 
-/* Botão + (opcional) */
-function onPlus(){
-  // você pode abrir um menu aqui se quiser; mantive simples
-  toggleEmojiPanel(false);
-}
-
-/* Upload imagem */
+/* GALERIA */
 function openFile(){
   if(precisaLogin()) return;
   imgInput.click();
@@ -1181,12 +1133,11 @@ imgInput.addEventListener("change", async ()=>{
     imgInput.value = "";
     return;
   }
-
   await sendImage(file);
   imgInput.value = "";
 });
 
-/* Câmera (celular) */
+/* CÂMERA */
 function openCamera(){
   if(precisaLogin()) return;
   camInput.click();
@@ -1207,32 +1158,24 @@ camInput.addEventListener("change", async ()=>{
     camInput.value = "";
     return;
   }
-
   await sendImage(file);
   camInput.value = "";
 });
 
-/* Enviar texto (ou gravar áudio se vazio) */
+/* ENVIAR TEXTO (✅ botão enviar funcionando) */
 async function sendText(){
   if(precisaLogin()) return;
 
   const text = (msgInput.value || "").trim();
-
-  // Se não tem texto: vira gravação (igual Messenger)
-  if(!text){
-    toggleRecord();
-    return;
-  }
+  if(!text) return;
 
   toggleEmojiPanel(false);
   showLoading("Enviando...", "Publicando no chat");
-
   try{
     await pushMessage({ text, mediaUrl:null, mediaType:null, storagePath:null, kind:"text" });
     playChatSound();
     msgInput.value = "";
     autoGrow();
-    refreshSendIcon();
   }catch(err){
     console.log(err);
     alert("Erro ao enviar mensagem.");
@@ -1241,7 +1184,7 @@ async function sendText(){
   }
 }
 
-/* Enviar “👍” (botão de curtir do composer) */
+/* ENVIAR 👍 */
 async function sendThumb(){
   if(precisaLogin()) return;
   showLoading("Enviando...", "Publicando no chat");
@@ -1256,7 +1199,7 @@ async function sendThumb(){
   }
 }
 
-/* Enviar imagem */
+/* ENVIAR IMAGEM */
 async function sendImage(file){
   if(precisaLogin()) return;
 
@@ -1264,7 +1207,6 @@ async function sendImage(file){
   toggleEmojiPanel(false);
 
   showLoading("Enviando imagem...", "No celular pode demorar um pouco");
-
   try{
     const msgId = "msg_" + Date.now() + "_" + Math.random().toString(36).slice(2);
     const storagePath = `groupChat/${ROOM_ID}/${UID}/${msgId}_img`;
@@ -1288,7 +1230,6 @@ async function sendImage(file){
     playChatSound();
     msgInput.value = "";
     autoGrow();
-    refreshSendIcon();
   }catch(err){
     console.log(err);
     alert("Erro ao enviar imagem.");
@@ -1297,7 +1238,7 @@ async function sendImage(file){
   }
 }
 
-/* Criar msg (texto puro) */
+/* PUSH MSG */
 async function pushMessage({text, mediaUrl, mediaType, storagePath, kind}){
   const msgId = "msg_" + Date.now() + "_" + Math.random().toString(36).slice(2);
   await DB.ref(`${MSG_PATH}/${msgId}`).set({
@@ -1313,15 +1254,35 @@ async function pushMessage({text, mediaUrl, mediaType, storagePath, kind}){
   });
 }
 
-/* ===================== GRAVAÇÃO DE ÁUDIO (MediaRecorder) ===================== */
-const recPill = document.getElementById("recPill");
-const recTimeEl = document.getElementById("recTime");
+/* ===================== ÁUDIO: PEDIR PERMISSÃO NA 1ª VEZ ===================== */
+let micPermissionAsked = (localStorage.getItem("mic_perm_ok") === "1");
 
+/* chama getUserMedia só pra pedir permissão e já fecha */
+async function ensureMicPermission(){
+  if(micPermissionAsked) return true;
+  try{
+    const s = await navigator.mediaDevices.getUserMedia({ audio:true });
+    s.getTracks().forEach(t=>t.stop());
+    micPermissionAsked = true;
+    localStorage.setItem("mic_perm_ok","1");
+    return true;
+  }catch(e){
+    micPermissionAsked = false;
+    localStorage.setItem("mic_perm_ok","0");
+    alert("Permissão do microfone negada. Ative o microfone nas permissões do navegador.");
+    return false;
+  }
+}
+
+/* GRAVAÇÃO */
 let recStream = null;
 let recRecorder = null;
 let recChunks = [];
 let recTimer = null;
 let recStartAt = 0;
+
+const recPill = document.getElementById("recPill");
+const recTimeEl = document.getElementById("recTime");
 
 function fmtMMSS(ms){
   const s = Math.max(0, Math.floor(ms/1000));
@@ -1333,7 +1294,10 @@ function fmtMMSS(ms){
 async function toggleRecord(){
   if(precisaLogin()) return;
 
-  // se já está gravando -> para e envia
+  /* ✅ primeira vez: pede permissão ao navegador */
+  const ok = await ensureMicPermission();
+  if(!ok) return;
+
   if(recRecorder && recRecorder.state === "recording"){
     stopRecord(true);
     return;
@@ -1341,10 +1305,10 @@ async function toggleRecord(){
 
   try{
     toggleEmojiPanel(false);
+
     recStream = await navigator.mediaDevices.getUserMedia({ audio:true });
     recChunks = [];
 
-    // Melhor compatibilidade
     let mime = "";
     if(window.MediaRecorder){
       if(MediaRecorder.isTypeSupported("audio/webm;codecs=opus")) mime = "audio/webm;codecs=opus";
@@ -1359,7 +1323,6 @@ async function toggleRecord(){
     };
 
     recRecorder.onstop = async ()=>{
-      // fecha microfone
       try{
         if(recStream){
           recStream.getTracks().forEach(t=>t.stop());
@@ -1367,13 +1330,11 @@ async function toggleRecord(){
         }
       }catch(e){}
 
-      // se não tem chunks, ignora
       if(!recChunks.length) return;
 
       const blob = new Blob(recChunks, { type: recRecorder.mimeType || "audio/webm" });
       recChunks = [];
 
-      // se foi cancelado (flag), não envia
       if(window.__recCancelled){
         window.__recCancelled = false;
         return;
@@ -1382,10 +1343,11 @@ async function toggleRecord(){
       await sendAudioBlob(blob);
     };
 
-    // UI
     recStartAt = Date.now();
     recTimeEl.textContent = "00:00";
     recPill.style.display = "block";
+
+    if(recTimer) clearInterval(recTimer);
     recTimer = setInterval(()=>{
       recTimeEl.textContent = fmtMMSS(Date.now() - recStartAt);
     }, 250);
@@ -1394,10 +1356,12 @@ async function toggleRecord(){
     playChatSound();
   }catch(err){
     console.log(err);
-    alert("Não consegui acessar o microfone. Verifique as permissões do navegador.");
+    alert("Não consegui iniciar a gravação. Verifique as permissões do microfone.");
     try{
       if(recStream){ recStream.getTracks().forEach(t=>t.stop()); recStream=null; }
     }catch(e){}
+    recPill.style.display = "none";
+    if(recTimer){ clearInterval(recTimer); recTimer=null; }
   }
 }
 
@@ -1424,7 +1388,6 @@ function stopRecord(send){
 
 async function sendAudioBlob(blob){
   showLoading("Enviando áudio...", "No celular pode demorar um pouco");
-
   try{
     const msgId = "msg_" + Date.now() + "_" + Math.random().toString(36).slice(2);
     const ext = (blob.type.includes("mp4") ? "m4a" : "webm");
@@ -1455,24 +1418,33 @@ async function sendAudioBlob(blob){
   }
 }
 
-/* ===================== REAÇÃO NO BALÃO: 1 clique = CURTI | pressionou = AMEI ===================== */
+/* ===================== REAÇÃO: clique = curti | pressionou = amei ===================== */
 function REACTION_REF(msgId){ return DB.ref(`${MSG_PATH}/${msgId}/reactions/${UID}`); }
 
 async function setReaction(msgId, type){
   if(precisaLogin()) return;
   if(!msgId) return;
 
-  // toggle: se já é igual, remove
   try{
     const snap = await REACTION_REF(msgId).once("value");
     const cur = snap.val() || null;
     if(cur === type) await REACTION_REF(msgId).remove();
     else await REACTION_REF(msgId).set(type);
-
     playChatSound();
   }catch(e){
     console.log(e);
   }
+}
+
+function reactionBadgeHTML(type){
+  if(!type) return "";
+  if(type === "like"){
+    return `<div class="reactionBadge like"><i class="fa-solid fa-thumbs-up"></i><span>Curti</span></div>`;
+  }
+  if(type === "love"){
+    return `<div class="reactionBadge love"><i class="fa-solid fa-heart"></i><span>Amei</span></div>`;
+  }
+  return "";
 }
 
 /* Menu ⋮ e excluir */
@@ -1481,6 +1453,7 @@ function toggleMsgMenu(id){
   if(!box) return;
   box.style.display = (box.style.display === "flex" ? "none" : "flex");
 }
+
 async function deleteMessage(id){
   try{
     const snap = await DB.ref(`${MSG_PATH}/${id}`).once("value");
@@ -1499,17 +1472,6 @@ async function deleteMessage(id){
 }
 
 /* Render */
-function reactionBadgeHTML(type){
-  if(!type) return "";
-  if(type === "like"){
-    return `<div class="reactionBadge like"><i class="fa-solid fa-thumbs-up"></i><span>Curti</span></div>`;
-  }
-  if(type === "love"){
-    return `<div class="reactionBadge love"><i class="fa-solid fa-heart"></i><span>Amei</span></div>`;
-  }
-  return "";
-}
-
 function messageHTML(m, avatarUrl, displayName, myReaction){
   const uid = m.uid || "";
   const name = displayName || m.userName || "Usuário";
@@ -1530,20 +1492,16 @@ function messageHTML(m, avatarUrl, displayName, myReaction){
     : "";
 
   const bubbleClass = (!text && (media || audio)) ? "msgBubble mediaOnly" : "msgBubble";
-
-  // reações do MEU usuário
   const rHTML = reactionBadgeHTML(myReaction);
 
   return `
     <div class="msgRow ${isMe ? "me" : ""}" id="${escapeHTML(m.id)}">
       ${avatar}
-
       <div class="msgBubbleWrap">
         <div class="${bubbleClass}"
-          data-msgid="${escapeHTML(m.id)}"
           onpointerdown="onBubbleDown(event, '${escapeHTML(m.id)}')"
-          onpointerup="onBubbleUp(event, '${escapeHTML(m.id)}')"
-          onpointercancel="onBubbleCancel(event, '${escapeHTML(m.id)}')"
+          onpointerup="onBubbleUp(event)"
+          onpointercancel="onBubbleCancel(event)"
           onclick="onBubbleClick(event, '${escapeHTML(m.id)}')"
         >
           <div class="msgMenuBtn" title="Opções" aria-label="Opções" onclick="event.stopPropagation(); toggleMsgMenu('${escapeHTML(m.id)}')">⋮</div>
@@ -1560,50 +1518,34 @@ function messageHTML(m, avatarUrl, displayName, myReaction){
           ${media}
           ${audio}
         </div>
-
         <div id="react_${escapeHTML(m.id)}">${rHTML}</div>
       </div>
     </div>
   `;
 }
 
-function scrollToBottom(){
-  messagesEl.scrollTop = messagesEl.scrollHeight;
-}
-
-/* ===================== PRESS/HOLD: AMEI ===================== */
+/* clique/hold */
 let pressTimer = null;
 let pressFired = false;
-
 function onBubbleDown(ev, msgId){
-  // inicia timer do “pressionou”
   pressFired = false;
   clearTimeout(pressTimer);
   pressTimer = setTimeout(()=>{
     pressFired = true;
-    setReaction(msgId, "love"); // pressionou = AMEI
+    setReaction(msgId, "love");
   }, 520);
 }
-
-function onBubbleUp(ev, msgId){
-  clearTimeout(pressTimer);
-}
-
-function onBubbleCancel(ev, msgId){
-  clearTimeout(pressTimer);
-}
-
+function onBubbleUp(){ clearTimeout(pressTimer); }
+function onBubbleCancel(){ clearTimeout(pressTimer); }
 function onBubbleClick(ev, msgId){
-  // se já disparou o “amei” por pressionar, não faz curtir
   if(pressFired) return;
-  setReaction(msgId, "like"); // 1 clique = CURTI
+  setReaction(msgId, "like");
 }
 
-/* ===================== LISTENER + SOM AO RECEBER ===================== */
-const rendered = new Set();
-let firstLoadDone = false;
+function scrollToBottom(){
+  messagesEl.scrollTop = messagesEl.scrollHeight;
+}
 
-// atualiza reação (somente do usuário logado) em tempo real
 function bindMyReaction(msgId){
   const r = REACTION_REF(msgId);
   r.on("value", (snap)=>{
@@ -1612,6 +1554,10 @@ function bindMyReaction(msgId){
     if(el) el.innerHTML = reactionBadgeHTML(type);
   });
 }
+
+/* Listener + som ao receber */
+const rendered = new Set();
+let firstLoadDone = false;
 
 DB.ref(MSG_PATH).orderByChild("createdAt").limitToLast(200).on("child_added", async (snap)=>{
   const m = snap.val() || {};
@@ -1622,7 +1568,6 @@ DB.ref(MSG_PATH).orderByChild("createdAt").limitToLast(200).on("child_added", as
 
   const prof = await getAvatarForUID(m.uid, m.userName || "Usuário");
 
-  // pega reação do usuário logado (se existir) antes de renderizar
   let myReaction = null;
   try{
     const rSnap = await REACTION_REF(m.id).once("value");
@@ -1633,11 +1578,9 @@ DB.ref(MSG_PATH).orderByChild("createdAt").limitToLast(200).on("child_added", as
   wrapper.innerHTML = messageHTML(m, prof.url, prof.name, myReaction).trim();
   messagesEl.appendChild(wrapper.firstChild);
 
-  // vincula atualização em tempo real da reação do usuário logado
   bindMyReaction(m.id);
 
   if(firstLoadDone && m.uid && m.uid !== UID) playChatSound();
-
   setTimeout(()=>{ scrollToBottom(); }, 20);
 
   if(!firstLoadDone){
@@ -1660,9 +1603,6 @@ document.addEventListener("click", (e)=>{
   if(clickedBtn || clickedBox) return;
   document.querySelectorAll(".msgMenuBox").forEach(b=> b.style.display = "none");
 });
-
-/* Inicial */
-refreshSendIcon();
 </script>
 
 </body>
