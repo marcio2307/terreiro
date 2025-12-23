@@ -113,11 +113,6 @@ body{
 </div>
 
 <script type="module">
-/**
- * 1) Crie um projeto no Firebase
- * 2) Ative o Firestore Database
- * 3) Coloque aqui suas credenciais (Firebase config)
- */
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
 import {
   getFirestore, doc, getDoc, setDoc, serverTimestamp
@@ -152,13 +147,9 @@ async function sha256(text){
   return [...new Uint8Array(hashBuf)].map(b => b.toString(16).padStart(2,"0")).join("");
 }
 
-function getUserFromQuery(){
-  const p = new URLSearchParams(location.search);
-  return (p.get("user") || "").trim();
-}
-
-// Preenche usuário se vier via ?user=...
-const qUser = getUserFromQuery();
+// Se vier usuário pela URL (opcional): recuperar.html?user=fulano
+const params = new URLSearchParams(location.search);
+const qUser = (params.get("user") || "").trim();
 if(qUser) $("user").value = qUser;
 
 $("btnSave").addEventListener("click", async () => {
