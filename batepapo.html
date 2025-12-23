@@ -180,21 +180,8 @@
     font-weight:900;
   }
   .backBtn i{ font-size:16px; color: var(--primary); }
-
-  .title{
-    font-weight:900;
-    color: var(--text);
-    letter-spacing:.2px;
-    font-size: 18px;
-    text-align:center;
-  }
-  .subtitle{
-    text-align:center;
-    margin-top:-6px;
-    color: var(--muted);
-    font-size: 12px;
-    font-weight: 800;
-  }
+  .title{ font-weight:900; color: var(--text); letter-spacing:.2px; font-size: 18px; text-align:center; }
+  .subtitle{ text-align:center; margin-top:-6px; color: var(--muted); font-size: 12px; font-weight: 800; }
 
   /* ONLINE BAR */
   .onlineBar{
@@ -208,51 +195,25 @@
   }
   .onlineBar::-webkit-scrollbar{ height:6px; }
   .onlineBar::-webkit-scrollbar-thumb{ background: rgba(255,255,255,.18); border-radius:999px; }
-
-  .oItem{
-    flex:0 0 auto;
-    width: 56px;
-    display:flex;
-    flex-direction:column;
-    align-items:center;
-    gap:6px;
-    user-select:none;
-  }
+  .oItem{ flex:0 0 auto; width: 56px; display:flex; flex-direction:column; align-items:center; gap:6px; user-select:none; }
   .oAvatar{
-    width: 52px;
-    height: 52px;
-    border-radius: 50%;
-    overflow:hidden;
-    background:#3a3b3c;
-    border: 2px solid var(--surface);
+    width: 52px; height: 52px; border-radius: 50%;
+    overflow:hidden; background:#3a3b3c; border: 2px solid var(--surface);
     box-shadow: 0 1px 10px rgba(0,0,0,.35);
-    position:relative;
-    display:flex;
-    align-items:center;
-    justify-content:center;
+    position:relative; display:flex; align-items:center; justify-content:center;
   }
   .oAvatar img{ width:100%; height:100%; object-fit:cover; display:block; }
   .oAvatar .init{ font-weight:900; color: var(--text); font-size: 14px; }
   .oDot{
-    position:absolute;
-    right: 3px;
-    bottom: 3px;
-    width: 12px;
-    height: 12px;
-    border-radius: 50%;
-    background: var(--good);
-    border: 2px solid var(--surface);
+    position:absolute; right: 3px; bottom: 3px;
+    width: 12px; height: 12px; border-radius: 50%;
+    background: var(--good); border: 2px solid var(--surface);
     box-shadow: 0 0 0 2px rgba(49,162,76,.18);
   }
   .oName{
-    font-size: 10px;
-    color: var(--muted);
-    max-width: 56px;
-    overflow:hidden;
-    text-overflow:ellipsis;
-    white-space:nowrap;
-    text-align:center;
-    font-weight: 800;
+    font-size: 10px; color: var(--muted);
+    max-width: 56px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
+    text-align:center; font-weight: 800;
   }
 
   /* MESSAGES */
@@ -266,13 +227,7 @@
     overscroll-behavior: contain;
   }
 
-  .msgRow{
-    display:flex;
-    gap:10px;
-    align-items:flex-end;
-    margin-bottom: 12px;
-    max-width: 100%;
-  }
+  .msgRow{ display:flex; gap:10px; align-items:flex-end; margin-bottom: 12px; max-width: 100%; }
   .msgRow.me{ flex-direction: row-reverse; }
 
   .msgAvatar{
@@ -288,12 +243,7 @@
   .msgAvatar img{ width:100%;height:100%;object-fit:cover;display:block; }
   .msgAvatar .init{ font-weight:900; color: var(--text); }
 
-  .msgBubbleWrap{
-    position:relative;
-    display:inline-flex;
-    flex-direction:column;
-    max-width: min(78vw, 560px);
-  }
+  .msgBubbleWrap{ position:relative; display:inline-flex; flex-direction:column; max-width: min(78vw, 560px); }
 
   .msgBubble{
     position:relative;
@@ -311,39 +261,20 @@
     -webkit-tap-highlight-color: transparent;
   }
   .msgBubble.mediaOnly{ width: min(78vw, 560px); }
-
   .msgRow.me .msgBubble{
     background: var(--primary);
     color:#fff;
     border-color: rgba(8,102,255,.25);
   }
 
-  .msgTop{
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    gap:10px;
-    margin-bottom: 6px;
-    min-width:0;
-  }
+  .msgTop{ display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom: 6px; min-width:0; }
   .msgName{
-    font-weight:900;
-    color: var(--muted);
-    overflow:hidden;
-    text-overflow:ellipsis;
-    white-space:nowrap;
-    max-width: 55vw;
-    font-size: 13px;
+    font-weight:900; color: var(--muted);
+    overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
+    max-width: 55vw; font-size: 13px;
   }
   .msgRow.me .msgName{ color: rgba(255,255,255,.92); }
-
-  .msgTime{
-    font-size:11px;
-    color: var(--muted);
-    white-space:nowrap;
-    flex:0 0 auto;
-    opacity:.95;
-  }
+  .msgTime{ font-size:11px; color: var(--muted); white-space:nowrap; flex:0 0 auto; opacity:.95; }
   .msgRow.me .msgTime{ color: rgba(255,255,255,.90); }
 
   .msgText{
@@ -370,7 +301,6 @@
   .msgAudio{ margin-top: 8px; width:100%; }
   .msgAudio audio{ width: 100%; height: 36px; }
 
-  /* REAÇÕES */
   .reactionBadge{
     display:inline-flex;
     align-items:center;
@@ -390,7 +320,6 @@
   .reactionBadge.like i{ color: #4e8cff; }
   .reactionBadge.love i{ color: #ff4d6d; }
 
-  /* MENU */
   .msgMenuBtn{
     position:absolute;
     top: 8px;
@@ -440,7 +369,7 @@
   }
   .msgMenuBox i{ font-size: 16px; color: var(--danger); }
 
-  /* COMPOSER (MOBILE) */
+  /* COMPOSER (✅ corrigido no celular: pill ocupa o espaço certo) */
   .composer{
     position: sticky;
     bottom: 0;
@@ -449,20 +378,25 @@
     padding: 10px 12px calc(10px + env(safe-area-inset-bottom)) 12px;
     border-top: 1px solid var(--line);
   }
+
+  /* grid evita o input ficar estreito/vertical */
   .composerBar{
     width: 100%;
-    display:flex;
-    align-items:flex-end;
+    display:grid;
+    grid-template-columns: auto 1fr auto;
+    align-items:end;
     gap: 10px;
   }
+
   .leftTools{
     display:flex;
     align-items:center;
-    gap: 10px;
-    flex:0 0 auto;
+    gap: 8px;
+    min-width: 0;
   }
+
   .toolBtn{
-    width: 44px; height: 44px;
+    width: 42px; height: 42px;
     border-radius: 50%;
     display:flex;
     align-items:center;
@@ -472,14 +406,13 @@
     color: var(--primary);
     cursor:pointer;
     user-select:none;
-    font-size: 20px;
+    font-size: 19px;
     -webkit-tap-highlight-color: transparent;
   }
   .toolBtn:active{ transform: scale(.98); }
 
   .inputPill{
-    flex:1;
-    min-width:0;
+    min-width: 0;
     background: #3a3b3c;
     border-radius: 999px;
     border: 1px solid rgba(255,255,255,.08);
@@ -489,9 +422,10 @@
     gap: 10px;
     box-shadow: 0 6px 18px rgba(0,0,0,.25);
   }
+
   .pillTextarea{
     flex:1;
-    min-width:0;
+    min-width: 0;
     resize:none;
     border:none;
     outline:none;
@@ -502,10 +436,10 @@
     max-height: 140px;
     padding: 4px 2px;
   }
-  .pillTextarea::placeholder{ color: rgba(255,255,255,.55); font-weight: 800; }
+  .pillTextarea::placeholder{ color: rgba(255,255,255,.65); font-weight: 800; }
 
   .pillEmoji{
-    width: 38px; height: 38px;
+    width: 36px; height: 36px;
     border-radius: 50%;
     display:flex; align-items:center; justify-content:center;
     border: 1px solid rgba(255,255,255,.08);
@@ -519,13 +453,14 @@
   .pillEmoji:active{ transform: scale(.98); }
 
   .rightAction{
-    flex:0 0 auto;
     display:flex;
     align-items:center;
-    gap: 10px;
+    gap: 8px;
+    min-width: 0;
   }
+
   .sendBtn{
-    width: 44px; height: 44px;
+    width: 42px; height: 42px;
     border-radius: 50%;
     display:flex; align-items:center; justify-content:center;
     border: none;
@@ -541,7 +476,7 @@
   .sendBtn:active{ transform: scale(.98); }
 
   .thumbBtn{
-    width: 44px; height: 44px;
+    width: 42px; height: 42px;
     border-radius: 50%;
     display:flex; align-items:center; justify-content:center;
     border: 1px solid rgba(255,255,255,.08);
@@ -549,7 +484,7 @@
     color: var(--primary);
     cursor:pointer;
     user-select:none;
-    font-size: 22px;
+    font-size: 21px;
     -webkit-tap-highlight-color: transparent;
   }
   .thumbBtn:active{ transform: scale(.98); }
@@ -573,11 +508,7 @@
     backdrop-filter: blur(6px);
     -webkit-backdrop-filter: blur(6px);
   }
-  .emojiGrid{
-    display:grid;
-    grid-template-columns: repeat(8, 1fr);
-    gap: 8px;
-  }
+  .emojiGrid{ display:grid; grid-template-columns: repeat(8, 1fr); gap: 8px; }
   .emojiBtn{
     font-size: 22px;
     padding: 8px 0;
@@ -589,13 +520,7 @@
     text-align:center;
   }
   .emojiBtn:active{ transform: scale(.98); }
-  .emojiTop{
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    gap:10px;
-    margin-bottom: 8px;
-  }
+  .emojiTop{ display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom: 8px; }
   .emojiTop .ttl{ color: var(--text); font-weight: 900; }
   .emojiClose{
     width:36px;height:36px;border-radius: 12px;
@@ -624,18 +549,8 @@
     -webkit-backdrop-filter: blur(8px);
     box-shadow: var(--shadow);
   }
-  .recRow{
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    gap: 10px;
-  }
-  .recLeft{
-    display:flex;
-    align-items:center;
-    gap: 10px;
-    font-weight: 900;
-  }
+  .recRow{ display:flex; align-items:center; justify-content:space-between; gap: 10px; }
+  .recLeft{ display:flex; align-items:center; gap: 10px; font-weight: 900; }
   .recDot{
     width: 10px; height: 10px;
     border-radius: 50%;
@@ -643,10 +558,7 @@
     box-shadow: 0 0 0 6px rgba(255,45,85,.15);
     animation: blink 1s infinite;
   }
-  @keyframes blink{
-    0%,50%{ opacity: 1; }
-    51%,100%{ opacity: .35; }
-  }
+  @keyframes blink{ 0%,50%{ opacity: 1; } 51%,100%{ opacity: .35; } }
   .recTime{ color: rgba(255,255,255,.9); }
   .recBtns{ display:flex; gap: 8px; align-items:center; }
   .miniBtn{
@@ -664,6 +576,14 @@
     border-color: rgba(255, 91, 91, .35);
   }
   .miniBtn:active{ transform: scale(.99); }
+
+  /* Extra: telas muito estreitas */
+  @media (max-width: 360px){
+    .composerBar{ gap:8px; }
+    .toolBtn,.sendBtn,.thumbBtn{ width:40px;height:40px; }
+    .leftTools{ gap:6px; }
+    .rightAction{ gap:6px; }
+  }
 </style>
 </head>
 
@@ -701,7 +621,6 @@
       </div>
 
       <div class="subtitle">Online agora</div>
-
       <div class="onlineBar" id="onlineBar" aria-label="Usuários online"></div>
     </div>
   </div>
@@ -712,16 +631,13 @@
   <!-- COMPOSER -->
   <div class="composer">
     <div class="composerBar">
-      <div class="leftTools">
-        <button class="toolBtn" title="Câmera" aria-label="Câmera" onclick="openCamera()">
-          <i class="fa-solid fa-camera"></i>
-        </button>
 
+      <div class="leftTools">
+        <!-- ✅ removido o botão de CÂMERA (a “opção da segunda foto”) -->
         <button class="toolBtn" title="Galeria" aria-label="Galeria" onclick="openFile()">
           <i class="fa-regular fa-image"></i>
         </button>
 
-        <!-- ✅ Ao clicar 1ª vez pede permissão do microfone -->
         <button class="toolBtn" title="Áudio" aria-label="Áudio" onclick="toggleRecord()">
           <i class="fa-solid fa-microphone"></i>
         </button>
@@ -745,7 +661,6 @@
       </div>
 
       <input type="file" id="imgInput" accept="image/*">
-      <input type="file" id="camInput" accept="image/*" capture="environment">
     </div>
   </div>
 
@@ -1061,7 +976,6 @@ const MSG_PATH = `groupChat/${ROOM_ID}/messages`;
 const messagesEl = document.getElementById("messages");
 const msgInput = document.getElementById("msgInput");
 const imgInput = document.getElementById("imgInput");
-const camInput = document.getElementById("camInput");
 
 /* EMOJIS */
 const emojiPanel = document.getElementById("emojiPanel");
@@ -1086,8 +1000,6 @@ function insertEmoji(e){
   const pos = start + e.length;
   msgInput.setSelectionRange(pos,pos);
 }
-
-/* Fechar emoji ao clicar fora */
 document.addEventListener("click", (ev)=>{
   const inside = emojiPanel.contains(ev.target);
   const clickedEmojiBtn = ev.target.closest(".pillEmoji");
@@ -1096,7 +1008,7 @@ document.addEventListener("click", (ev)=>{
   }
 });
 
-/* Auto-grow textarea */
+/* Auto-grow */
 function autoGrow(){
   msgInput.style.height = "auto";
   msgInput.style.height = Math.min(msgInput.scrollHeight, 140) + "px";
@@ -1104,7 +1016,7 @@ function autoGrow(){
 msgInput.addEventListener("input", autoGrow);
 autoGrow();
 
-/* Enter envia / Shift+Enter quebra linha */
+/* Enter envia */
 msgInput.addEventListener("keydown", (e)=>{
   if(e.key === "Enter" && !e.shiftKey){
     e.preventDefault();
@@ -1137,35 +1049,9 @@ imgInput.addEventListener("change", async ()=>{
   imgInput.value = "";
 });
 
-/* CÂMERA */
-function openCamera(){
-  if(precisaLogin()) return;
-  camInput.click();
-}
-camInput.addEventListener("change", async ()=>{
-  if(precisaLogin()) return;
-  const file = camInput.files && camInput.files[0];
-  if(!file) return;
-
-  if(!file.type.startsWith("image/")){
-    alert("Envie apenas imagem.");
-    camInput.value = "";
-    return;
-  }
-  const mb = file.size/(1024*1024);
-  if(mb > 15){
-    alert(`Imagem muito grande (${mb.toFixed(1)}MB). Envie até 15MB.`);
-    camInput.value = "";
-    return;
-  }
-  await sendImage(file);
-  camInput.value = "";
-});
-
-/* ENVIAR TEXTO (✅ botão enviar funcionando) */
+/* ENVIAR TEXTO */
 async function sendText(){
   if(precisaLogin()) return;
-
   const text = (msgInput.value || "").trim();
   if(!text) return;
 
@@ -1202,7 +1088,6 @@ async function sendThumb(){
 /* ENVIAR IMAGEM */
 async function sendImage(file){
   if(precisaLogin()) return;
-
   const text = (msgInput.value || "").trim();
   toggleEmojiPanel(false);
 
@@ -1256,8 +1141,6 @@ async function pushMessage({text, mediaUrl, mediaType, storagePath, kind}){
 
 /* ===================== ÁUDIO: PEDIR PERMISSÃO NA 1ª VEZ ===================== */
 let micPermissionAsked = (localStorage.getItem("mic_perm_ok") === "1");
-
-/* chama getUserMedia só pra pedir permissão e já fecha */
 async function ensureMicPermission(){
   if(micPermissionAsked) return true;
   try{
@@ -1294,7 +1177,6 @@ function fmtMMSS(ms){
 async function toggleRecord(){
   if(precisaLogin()) return;
 
-  /* ✅ primeira vez: pede permissão ao navegador */
   const ok = await ensureMicPermission();
   if(!ok) return;
 
@@ -1431,19 +1313,13 @@ async function setReaction(msgId, type){
     if(cur === type) await REACTION_REF(msgId).remove();
     else await REACTION_REF(msgId).set(type);
     playChatSound();
-  }catch(e){
-    console.log(e);
-  }
+  }catch(e){ console.log(e); }
 }
 
 function reactionBadgeHTML(type){
   if(!type) return "";
-  if(type === "like"){
-    return `<div class="reactionBadge like"><i class="fa-solid fa-thumbs-up"></i><span>Curti</span></div>`;
-  }
-  if(type === "love"){
-    return `<div class="reactionBadge love"><i class="fa-solid fa-heart"></i><span>Amei</span></div>`;
-  }
+  if(type === "like") return `<div class="reactionBadge like"><i class="fa-solid fa-thumbs-up"></i><span>Curti</span></div>`;
+  if(type === "love") return `<div class="reactionBadge love"><i class="fa-solid fa-heart"></i><span>Amei</span></div>`;
   return "";
 }
 
@@ -1453,14 +1329,12 @@ function toggleMsgMenu(id){
   if(!box) return;
   box.style.display = (box.style.display === "flex" ? "none" : "flex");
 }
-
 async function deleteMessage(id){
   try{
     const snap = await DB.ref(`${MSG_PATH}/${id}`).once("value");
     const data = snap.val();
 
     await DB.ref(`${MSG_PATH}/${id}`).remove();
-
     if(data && data.storagePath){
       await ST.ref().child(data.storagePath).delete().catch(()=>{});
     }
@@ -1469,6 +1343,31 @@ async function deleteMessage(id){
     console.log(err);
     alert("Erro ao excluir.");
   }
+}
+
+/* clique/hold */
+let pressTimer = null;
+let pressFired = false;
+function onBubbleDown(ev, msgId){
+  pressFired = false;
+  clearTimeout(pressTimer);
+  pressTimer = setTimeout(()=>{
+    pressFired = true;
+    setReaction(msgId, "love");
+  }, 520);
+}
+function onBubbleUp(){ clearTimeout(pressTimer); }
+function onBubbleCancel(){ clearTimeout(pressTimer); }
+function onBubbleClick(ev, msgId){
+  if(pressFired) return;
+  setReaction(msgId, "like");
+}
+function bindMyReaction(msgId){
+  REACTION_REF(msgId).on("value", (snap)=>{
+    const type = snap.val() || null;
+    const el = document.getElementById("react_"+msgId);
+    if(el) el.innerHTML = reactionBadgeHTML(type);
+  });
 }
 
 /* Render */
@@ -1492,7 +1391,6 @@ function messageHTML(m, avatarUrl, displayName, myReaction){
     : "";
 
   const bubbleClass = (!text && (media || audio)) ? "msgBubble mediaOnly" : "msgBubble";
-  const rHTML = reactionBadgeHTML(myReaction);
 
   return `
     <div class="msgRow ${isMe ? "me" : ""}" id="${escapeHTML(m.id)}">
@@ -1518,44 +1416,15 @@ function messageHTML(m, avatarUrl, displayName, myReaction){
           ${media}
           ${audio}
         </div>
-        <div id="react_${escapeHTML(m.id)}">${rHTML}</div>
+        <div id="react_${escapeHTML(m.id)}">${reactionBadgeHTML(myReaction)}</div>
       </div>
     </div>
   `;
 }
 
-/* clique/hold */
-let pressTimer = null;
-let pressFired = false;
-function onBubbleDown(ev, msgId){
-  pressFired = false;
-  clearTimeout(pressTimer);
-  pressTimer = setTimeout(()=>{
-    pressFired = true;
-    setReaction(msgId, "love");
-  }, 520);
-}
-function onBubbleUp(){ clearTimeout(pressTimer); }
-function onBubbleCancel(){ clearTimeout(pressTimer); }
-function onBubbleClick(ev, msgId){
-  if(pressFired) return;
-  setReaction(msgId, "like");
-}
+function scrollToBottom(){ messagesEl.scrollTop = messagesEl.scrollHeight; }
 
-function scrollToBottom(){
-  messagesEl.scrollTop = messagesEl.scrollHeight;
-}
-
-function bindMyReaction(msgId){
-  const r = REACTION_REF(msgId);
-  r.on("value", (snap)=>{
-    const type = snap.val() || null;
-    const el = document.getElementById("react_"+msgId);
-    if(el) el.innerHTML = reactionBadgeHTML(type);
-  });
-}
-
-/* Listener + som ao receber */
+/* Listener + som */
 const rendered = new Set();
 let firstLoadDone = false;
 
