@@ -316,7 +316,6 @@
     font-size: 13px;
     color: var(--text);
   }
-  .reactionBadge i{ font-size: 14px; }
   .reactionBadge.like i{ color: #4e8cff; }
   .reactionBadge.love i{ color: #ff4d6d; }
 
@@ -369,7 +368,7 @@
   }
   .msgMenuBox i{ font-size: 16px; color: var(--danger); }
 
-  /* COMPOSER (✅ corrigido no celular: pill ocupa o espaço certo) */
+  /* COMPOSER */
   .composer{
     position: sticky;
     bottom: 0;
@@ -379,7 +378,6 @@
     border-top: 1px solid var(--line);
   }
 
-  /* grid evita o input ficar estreito/vertical */
   .composerBar{
     width: 100%;
     display:grid;
@@ -438,20 +436,6 @@
   }
   .pillTextarea::placeholder{ color: rgba(255,255,255,.65); font-weight: 800; }
 
-  .pillEmoji{
-    width: 36px; height: 36px;
-    border-radius: 50%;
-    display:flex; align-items:center; justify-content:center;
-    border: 1px solid rgba(255,255,255,.08);
-    background: rgba(0,0,0,.12);
-    color: rgba(255,255,255,.85);
-    cursor:pointer;
-    user-select:none;
-    flex:0 0 auto;
-    font-size: 18px;
-  }
-  .pillEmoji:active{ transform: scale(.98); }
-
   .rightAction{
     display:flex;
     align-items:center;
@@ -474,20 +458,6 @@
   }
   .sendBtn:hover{ background: var(--primary2); }
   .sendBtn:active{ transform: scale(.98); }
-
-  .thumbBtn{
-    width: 42px; height: 42px;
-    border-radius: 50%;
-    display:flex; align-items:center; justify-content:center;
-    border: 1px solid rgba(255,255,255,.08);
-    background: transparent;
-    color: var(--primary);
-    cursor:pointer;
-    user-select:none;
-    font-size: 21px;
-    -webkit-tap-highlight-color: transparent;
-  }
-  .thumbBtn:active{ transform: scale(.98); }
 
   input[type="file"]{ display:none; }
 
@@ -577,10 +547,9 @@
   }
   .miniBtn:active{ transform: scale(.99); }
 
-  /* Extra: telas muito estreitas */
   @media (max-width: 360px){
     .composerBar{ gap:8px; }
-    .toolBtn,.sendBtn,.thumbBtn{ width:40px;height:40px; }
+    .toolBtn,.sendBtn{ width:40px;height:40px; }
     .leftTools{ gap:6px; }
     .rightAction{ gap:6px; }
   }
@@ -632,31 +601,30 @@
   <div class="composer">
     <div class="composerBar">
 
+      <!-- ✅ esquerda: foto + emoji (emoji ao lado da foto) -->
       <div class="leftTools">
-        <!-- ✅ removido o botão de CÂMERA (a “opção da segunda foto”) -->
         <button class="toolBtn" title="Galeria" aria-label="Galeria" onclick="openFile()">
           <i class="fa-regular fa-image"></i>
         </button>
 
-        <button class="toolBtn" title="Áudio" aria-label="Áudio" onclick="toggleRecord()">
-          <i class="fa-solid fa-microphone"></i>
+        <button class="toolBtn" title="Emojis" aria-label="Emojis" onclick="toggleEmojiPanel()">
+          <i class="fa-regular fa-face-smile"></i>
         </button>
       </div>
 
+      <!-- ✅ meio: input SEM emoji dentro -->
       <div class="inputPill">
         <textarea id="msgInput" class="pillTextarea" rows="1" placeholder="Mensagem"></textarea>
-        <div class="pillEmoji" title="Emojis" aria-label="Emojis" onclick="toggleEmojiPanel()">
-          <i class="fa-regular fa-face-smile"></i>
-        </div>
       </div>
 
+      <!-- ✅ direita: enviar + gravar áudio (áudio no lugar do curtir) -->
       <div class="rightAction">
         <button class="sendBtn" title="Enviar" aria-label="Enviar" onclick="sendText()">
           <i class="fa-solid fa-paper-plane"></i>
         </button>
 
-        <button class="thumbBtn" title="Curtir" aria-label="Curtir" onclick="sendThumb()">
-          <i class="fa-regular fa-thumbs-up"></i>
+        <button class="toolBtn" title="Áudio" aria-label="Áudio" onclick="toggleRecord()">
+          <i class="fa-solid fa-microphone"></i>
         </button>
       </div>
 
@@ -1002,7 +970,7 @@ function insertEmoji(e){
 }
 document.addEventListener("click", (ev)=>{
   const inside = emojiPanel.contains(ev.target);
-  const clickedEmojiBtn = ev.target.closest(".pillEmoji");
+  const clickedEmojiBtn = ev.target.closest('[aria-label="Emojis"]');
   if(!inside && !clickedEmojiBtn && emojiPanel.style.display === "block"){
     if(!ev.target.closest(".composerBar")) toggleEmojiPanel(false);
   }
@@ -1065,21 +1033,6 @@ async function sendText(){
   }catch(err){
     console.log(err);
     alert("Erro ao enviar mensagem.");
-  }finally{
-    hideLoading();
-  }
-}
-
-/* ENVIAR 👍 */
-async function sendThumb(){
-  if(precisaLogin()) return;
-  showLoading("Enviando...", "Publicando no chat");
-  try{
-    await pushMessage({ text:"👍", mediaUrl:null, mediaType:null, storagePath:null, kind:"text" });
-    playChatSound();
-  }catch(e){
-    console.log(e);
-    alert("Erro ao enviar.");
   }finally{
     hideLoading();
   }
