@@ -301,10 +301,11 @@
   .msgAudio{ margin-top: 8px; width:100%; }
   .msgAudio audio{ width: 100%; height: 36px; }
 
-  .reactionBadge{
+  /* ✅ REAÇÕES (AGORA VISÍVEIS PARA TODOS) */
+  .reactionBar{
     display:inline-flex;
     align-items:center;
-    gap:6px;
+    gap:8px;
     margin-top: 6px;
     width: fit-content;
     padding: 6px 10px;
@@ -315,9 +316,28 @@
     font-weight: 900;
     font-size: 13px;
     color: var(--text);
+    user-select:none;
   }
-  .reactionBadge.like i{ color: #4e8cff; }
-  .reactionBadge.love i{ color: #ff4d6d; }
+  .reactionChip{
+    display:inline-flex;
+    align-items:center;
+    gap:6px;
+    padding: 4px 8px;
+    border-radius: 999px;
+    border: 1px solid rgba(255,255,255,.10);
+    background: rgba(255,255,255,.06);
+  }
+  .reactionChip.like i{ color:#4e8cff; }
+  .reactionChip.love i{ color:#ff4d6d; }
+  .reactionMe{
+    box-shadow: 0 0 0 3px rgba(8,102,255,.18);
+    border-color: rgba(8,102,255,.55);
+  }
+  .reactionCount{
+    color: rgba(255,255,255,.92);
+    font-weight: 900;
+    min-width: 10px;
+  }
 
   .msgMenuBtn{
     position:absolute;
@@ -1254,26 +1274,55 @@ async function sendAudioBlob(blob){
 }
 
 /* ===================== REAÇÃO: clique = curti | pressionou = amei ===================== */
-function REACTION_REF(msgId){ return DB.ref(`${MSG_PATH}/${msgId}/reactions/${UID}`); }
+/* ✅ agora salva por UID (como já estava) e mostra CONTAGEM PARA TODOS */
+function REACTIONS_REF(msgId){ return DB.ref(`${MSG_PATH}/${msgId}/reactions`); }
+function MY_REACTION_REF(msgId){ return DB.ref(`${MSG_PATH}/${msgId}/reactions/${UID}`); }
 
 async function setReaction(msgId, type){
   if(precisaLogin()) return;
   if(!msgId) return;
 
   try{
-    const snap = await REACTION_REF(msgId).once("value");
+    const snap = await MY_REACTION_REF(msgId).once("value");
     const cur = snap.val() || null;
-    if(cur === type) await REACTION_REF(msgId).remove();
-    else await REACTION_REF(msgId).set(type);
+    if(cur === type) await MY_REACTION_REF(msgId).remove();
+    else await MY_REACTION_REF(msgId).set(type);
     playChatSound();
   }catch(e){ console.log(e); }
 }
 
-function reactionBadgeHTML(type){
-  if(!type) return "";
-  if(type === "like") return `<div class="reactionBadge like"><i class="fa-solid fa-thumbs-up"></i><span>Curti</span></div>`;
-  if(type === "love") return `<div class="reactionBadge love"><i class="fa-solid fa-heart"></i><span>Amei</span></div>`;
-  return "";
+/* ✅ HTML das reações: mostra 👍 e ❤️ com contagem + destaque da minha reação */
+function reactionSummaryHTML(counts, myType){
+  const like = (counts && counts.like) ? counts.like : 0;
+  const love = (counts && counts.love) ? counts.love : 0;
+  if(!like && !love) return "";
+
+  const likeClass = `reactionChip like ${myType==="like" ? "reactionMe" : ""}`.trim();
+  const loveClass = `reactionChip love ${myType==="love" ? "reactionMe" : ""}`.trim();
+
+  return `
+    <div class="reactionBar" title="Reações">
+      ${like ? `<span class="${likeClass}"><i class="fa-solid fa-thumbs-up"></i><span class="reactionCount">${like}</span></span>` : ``}
+      ${love ? `<span class="${loveClass}"><i class="fa-solid fa-heart"></i><span class="reactionCount">${love}</span></span>` : ``}
+    </div>
+  `;
+}
+
+/* ✅ Listener em tempo real por mensagem (todos veem igual) */
+function bindReactions(msgId){
+  REACTIONS_REF(msgId).on("value", (snap)=>{
+    const all = snap.val() || {};
+    let like = 0, love = 0;
+
+    Object.values(all).forEach(t=>{
+      if(t === "like") like++;
+      else if(t === "love") love++;
+    });
+
+    const myType = all[UID] || null;
+    const el = document.getElementById("react_"+msgId);
+    if(el) el.innerHTML = reactionSummaryHTML({ like, love }, myType);
+  });
 }
 
 /* Menu ⋮ e excluir */
@@ -1315,16 +1364,9 @@ function onBubbleClick(ev, msgId){
   if(pressFired) return;
   setReaction(msgId, "like");
 }
-function bindMyReaction(msgId){
-  REACTION_REF(msgId).on("value", (snap)=>{
-    const type = snap.val() || null;
-    const el = document.getElementById("react_"+msgId);
-    if(el) el.innerHTML = reactionBadgeHTML(type);
-  });
-}
 
 /* Render */
-function messageHTML(m, avatarUrl, displayName, myReaction){
+function messageHTML(m, avatarUrl, displayName){
   const uid = m.uid || "";
   const name = displayName || m.userName || "Usuário";
   const when = m.createdAt ? fmtDate(m.createdAt) : "";
@@ -1369,7 +1411,9 @@ function messageHTML(m, avatarUrl, displayName, myReaction){
           ${media}
           ${audio}
         </div>
-        <div id="react_${escapeHTML(m.id)}">${reactionBadgeHTML(myReaction)}</div>
+
+        <!-- ✅ aqui entra a contagem de reações (todos veem igual) -->
+        <div id="react_${escapeHTML(m.id)}"></div>
       </div>
     </div>
   `;
@@ -1390,17 +1434,12 @@ DB.ref(MSG_PATH).orderByChild("createdAt").limitToLast(200).on("child_added", as
 
   const prof = await getAvatarForUID(m.uid, m.userName || "Usuário");
 
-  let myReaction = null;
-  try{
-    const rSnap = await REACTION_REF(m.id).once("value");
-    myReaction = rSnap.val() || null;
-  }catch(e){}
-
   const wrapper = document.createElement("div");
-  wrapper.innerHTML = messageHTML(m, prof.url, prof.name, myReaction).trim();
+  wrapper.innerHTML = messageHTML(m, prof.url, prof.name).trim();
   messagesEl.appendChild(wrapper.firstChild);
 
-  bindMyReaction(m.id);
+  /* ✅ liga o listener de reações para esta mensagem (contagem global) */
+  bindReactions(m.id);
 
   if(firstLoadDone && m.uid && m.uid !== UID) playChatSound();
   setTimeout(()=>{ scrollToBottom(); }, 20);
