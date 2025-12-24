@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!DOCTYPE html> 
 <html lang="pt-br">
 <head>
 <meta charset="UTF-8" />
@@ -355,7 +355,6 @@
     background: linear-gradient(180deg, #242526 0%, #1f2021 100%);
   }
 
-  /* ✅ fundo com a foto do perfil logado atrás do + e do "Criar story" */
   .createBg{
     position:absolute;
     inset:0;
@@ -578,7 +577,6 @@
   .tapLeft{ left:0; }
   .tapRight{ right:0; }
 
-  /* ✅ (ALTERADO) escondido por padrão — só aparece para o dono do story */
   .dots{
     position:absolute; top: 10px; right: 18px;
     font-size: 28px;
@@ -1177,7 +1175,7 @@
     <div class="menuLabel">Reunião</div>
   </a>
 
-  <!-- ✅ (ALTERADO) tirado onclick do HTML para evitar delay do click em mobile -->
+  <!-- ✅ Rádio -->
   <a href="#" id="radioBtn" title="Rádio" aria-label="Rádio">
     <i class="fa-solid fa-radio" id="radioIcon"></i>
     <div class="menuLabel">Rádio</div>
@@ -1221,10 +1219,7 @@
 <!-- VIEWER -->
 <div id="viewer">
   <div class="topBars" id="bars"></div>
-
-  <!-- ✅ (ALTERADO) ⋮ só aparece quando o story for do usuário logado -->
   <div class="dots" id="dots">⋮</div>
-
   <div class="deleteBtn" id="deleteBtn">Excluir</div>
   <div class="tapLeft" id="tapLeft"></div>
   <div class="tapRight" id="tapRight"></div>
@@ -1317,15 +1312,121 @@ chatSfx.preload = "auto";
 chatSfx.volume = 1.0;
 
 let audioUnlocked = false;
+
+/* ====================== ✅ CONTROLE: RÁDIO x VÍDEOS DO FEED ====================== */
+let __radioLocksFeedAudio = false;
+
+function forceMuteAllFeedVideos(){
+  document.querySelectorAll("#feed video[data-feedvideo='1']").forEach(v=>{
+    try{
+      v.__userUnmuted = false;
+      v.__allowSound = false;
+      v.muted = true;
+      v.volume = 1.0;
+      if(v.__soundBtn) setSoundBtnUI(v.__soundBtn, true);
+    }catch(e){}
+  });
+}
+
+/* ====================== ✅ RADIO PLAYER (MENU) ====================== */
+const RADIO_URL = "https://stream.zeno.fm/l8ocj9i6ka2uv";
+let radio = null;
+let radioPlaying = false;
+
+/* ✅ flags pra tocar IMEDIATO ao dar play de novo */
+let __radioPrimed = false;      // já “aquecido”
+let __radioNeedReload = false;  // só dá load() se deu erro
+
+function ensureRadio(){
+  if(radio) return;
+
+  // ✅ cria já com URL e NÃO reinicia no play
+  radio = new Audio(RADIO_URL);
+  radio.preload = "auto";
+  radio.crossOrigin = "anonymous";
+  radio.volume = 1.0;
+
+  // tenta iniciar o carregamento logo que cria
+  try{ radio.load(); }catch(e){}
+
+  radio.addEventListener("playing", ()=>{ setRadioUI(true); onRadioStateChange(true); });
+
+  // ✅ IMPORTANTE: em alguns navegadores, "pause" pode disparar atrasado.
+  // Então garantimos o estado também no "emptied" e no "ended".
+  radio.addEventListener("pause",   ()=>{ setRadioUI(false); onRadioStateChange(false); });
+  radio.addEventListener("ended",   ()=>{ setRadioUI(false); onRadioStateChange(false); });
+  radio.addEventListener("emptied", ()=>{ setRadioUI(false); onRadioStateChange(false); });
+
+  // ✅ se der erro, marca pra dar load() só na próxima tentativa
+  radio.addEventListener("error", ()=>{
+    __radioNeedReload = true;
+    setRadioUI(false);
+    onRadioStateChange(false);
+  });
+
+  // ✅ (NOVO) se ficar travado e voltar, mantém flag primed
+  radio.addEventListener("canplay", ()=>{ __radioPrimed = true; });
+  radio.addEventListener("canplaythrough", ()=>{ __radioPrimed = true; });
+}
+
+function onRadioStateChange(isPlaying){
+  radioPlaying = !!isPlaying;
+  if(radioPlaying){
+    __radioLocksFeedAudio = true;
+    forceMuteAllFeedVideos();
+  }else{
+    __radioLocksFeedAudio = false;
+  }
+}
+
+function setRadioUI(isPlaying){
+  radioPlaying = !!isPlaying;
+  const icon = document.getElementById("radioIcon");
+  if(!icon) return;
+  icon.className = radioPlaying ? "fa-solid fa-pause" : "fa-solid fa-radio";
+}
+
+/* ✅ (NOVO) “aquecimento” do rádio no primeiro toque do usuário (deixa o play instantâneo) */
+async function primeRadioFast(){
+  try{
+    ensureRadio();
+    if(!radio || __radioPrimed) return;
+
+    // toca bem rapidinho MUTADO, para abrir a conexão do stream
+    radio.muted = true;
+
+    if(__radioNeedReload){
+      try{ radio.load(); }catch(e){}
+      __radioNeedReload = false;
+    }
+
+    // ✅ NÃO pausa imediatamente se o navegador ainda não começou.
+    // Espera um micro-tick pra evitar "play request was interrupted"
+    const p = radio.play();
+    if(p && p.then){
+      await p.catch(()=>{});
+    }
+
+    // pequeno delay só pra garantir que o buffer abriu (sem "travar")
+    await new Promise(r=>setTimeout(r, 120));
+
+    try{ radio.pause(); }catch(e){}
+    radio.muted = false;
+
+    __radioPrimed = true;
+  }catch(e){}
+}
+
 function unlockAudioOnce(){
   if(audioUnlocked) return;
   audioUnlocked = true;
+
   try{
     actionSfx.muted = false;
     chatSfx.muted = false;
 
-    // ✅ (NOVO) já cria e aquece o rádio no PRIMEIRO toque do usuário
-    try{ ensureRadio(); }catch(e){}
+    // ✅ garante que o rádio é criado e “aquecido” no primeiro gesto do usuário
+    try{ primeRadioFast(); }catch(e){}
 
     const p1 = actionSfx.play();
     if(p1 && p1.then) p1.then(()=>{ actionSfx.pause(); actionSfx.currentTime = 0; }).catch(()=>{});
@@ -1350,100 +1451,89 @@ function playChatSound(){
   try{ chatSfx.pause(); chatSfx.currentTime = 0; chatSfx.play().catch(()=>{}); }catch(e){}
 }
 
-/* ====================== ✅ CONTROLE: RÁDIO x VÍDEOS DO FEED ====================== */
-let __radioLocksFeedAudio = false;
-
-function forceMuteAllFeedVideos(){
-  document.querySelectorAll("#feed video[data-feedvideo='1']").forEach(v=>{
-    try{
-      v.__userUnmuted = false;
-      v.__allowSound = false;
-      v.muted = true;
-      v.volume = 1.0;
-      if(v.__soundBtn) setSoundBtnUI(v.__soundBtn, true);
-    }catch(e){}
-  });
-}
-
-/* ====================== RADIO PLAYER (MENU) ====================== */
-const RADIO_URL = "https://stream.zeno.fm/l8ocj9i6ka2uv";
-let radio = null;
-let radioPlaying = false;
-
-function ensureRadio(){
-  if(radio) return;
-  radio = new Audio();
-  // ✅ (ALTERADO) atribui src e faz preload "auto" pra reduzir delay
-  radio.src = RADIO_URL;
-  radio.preload = "auto";
-  radio.crossOrigin = "anonymous";
-  radio.volume = 1.0;
-
-  // ✅ (NOVO) tenta iniciar o carregamento logo que cria
-  try{ radio.load(); }catch(e){}
-
-  radio.addEventListener("playing", ()=>{ setRadioUI(true); onRadioStateChange(true); });
-  radio.addEventListener("pause", ()=>{ setRadioUI(false); onRadioStateChange(false); });
-  radio.addEventListener("ended", ()=>{ setRadioUI(false); onRadioStateChange(false); });
-  radio.addEventListener("error", ()=>{ setRadioUI(false); onRadioStateChange(false); });
-}
-function onRadioStateChange(isPlaying){
-  radioPlaying = !!isPlaying;
-  if(radioPlaying){
-    __radioLocksFeedAudio = true;
-    forceMuteAllFeedVideos();
-  }else{
-    __radioLocksFeedAudio = false;
-  }
-}
-function setRadioUI(isPlaying){
-  radioPlaying = !!isPlaying;
-  const icon = document.getElementById("radioIcon");
-  if(!icon) return;
-  icon.className = radioPlaying ? "fa-solid fa-pause" : "fa-solid fa-radio";
-}
-function toggleRadio(){
+/* ✅ (ALTERADO) toggle do rádio:
+   - ao PAUSAR: pausa de verdade (sem reset)
+   - ao TOCAR de novo: toca IMEDIATO (sem delay e sem recriar áudio) */
+async function toggleRadio(){
   ensureRadio();
   unlockAudioOnce();
-  if(!radioPlaying){
-    // ✅ (NOVO) garante que o src está setado e dá load antes do play
-    try{
-      if(!radio.src) radio.src = RADIO_URL;
-      radio.preload = "auto";
-      radio.load();
-    }catch(e){}
 
-    radio.play().then(()=>{ setRadioUI(true); onRadioStateChange(true); }).catch(()=>{
+  // ✅ fonte da verdade: estado real do elemento (evita “cliquei e não tocou”)
+  const isActuallyPlaying = radio && !radio.paused && !radio.ended;
+
+  if(!isActuallyPlaying){
+    try{
+      // ✅ Só dá load() se realmente houve erro antes
+      if(__radioNeedReload){
+        try{ radio.load(); }catch(e){}
+        __radioNeedReload = false;
+      }
+
+      // ✅ Se ainda não aqueceu, aquece agora (no clique do rádio)
+      if(!__radioPrimed){
+        await primeRadioFast();
+      }
+
+      // ✅ IMPORTANTE: garantir que o play retome “do ao vivo” sem acumular atraso
+      // (para stream não faz sentido manter currentTime)
+      try{ radio.currentTime = 0; }catch(e){}
+
+      radio.muted = false;
+
+      const p = radio.play();
+      if(p && p.then){
+        await p.catch(()=>{ throw new Error("play blocked"); });
+      }
+
+      // UI/estado
+      setRadioUI(true);
+      onRadioStateChange(true);
+    }catch(e){
       setRadioUI(false);
       onRadioStateChange(false);
-    });
+      __radioNeedReload = true;
+    }
   }else{
+    // ✅ PAUSA de verdade (sem resetar src nem chamar load)
     try{ radio.pause(); }catch(e){}
+    // ✅ força estado consistente imediatamente
     setRadioUI(false);
     onRadioStateChange(false);
   }
 }
 
-/* ✅ (NOVO) remove delay do clique no mobile: usa pointerdown/touchstart */
+/* ✅ (ALTERADO) remove delay do clique no mobile:
+   Usa pointerdown/touchstart e NÃO deixa disparar 2x (era isso que fazia “para” e logo “toca” ou vice-versa) */
 (function bindRadioFastTap(){
   const btn = document.getElementById("radioBtn");
   if(!btn) return;
 
+  let lastFire = 0;
   const handler = (e)=>{
     e.preventDefault();
     e.stopPropagation();
+
+    // ✅ anti-duplo disparo (touchstart + click)
+    const now = Date.now();
+    if(now - lastFire < 450) return false;
+    lastFire = now;
+
     toggleRadio();
     return false;
   };
 
-  // dispara no "toque" (antes do click)
   btn.addEventListener("pointerdown", handler, { passive:false });
   btn.addEventListener("touchstart", handler, { passive:false });
 
-  // fallback no click (desktop)
-  btn.addEventListener("click", handler);
+  // ✅ clique normal só como fallback (desktop)
+  btn.addEventListener("click", (e)=>{
+    // no mobile o click vem depois do touchstart, então a trava acima bloqueia
+    handler(e);
+  });
 })();
+</script>
 
+<script>
 /* ====================== ✅ LOGIN EXTERNO + UID FIXO POR USUÁRIO ====================== */
 function getOrCreateDeviceUID(){
   let uid = localStorage.getItem("uid_passageiro");
@@ -1608,6 +1698,8 @@ function stopPresence(silent){
 }
 startPresence();
 </script>
+
+<!-- ========= (RESTO DO SEU CÓDIGO CONTINUA IGUAL) ========= -->
 
 <script>
 /* ===================== PERFIS ===================== */
@@ -2134,8 +2226,6 @@ function closeViewer(){
   stopVideo();
   viewer.style.display = "none";
   deleteBtn.style.display = "none";
-
-  /* ✅ (ALTERADO) esconde ⋮ sempre ao fechar */
   dots.style.display = "none";
 
   menuTop.classList.remove("hide");
@@ -2174,7 +2264,6 @@ function showStory(){
   deleteBtn.style.display = "none";
   CAN_SEE_VIEWERS = (s.uid === UID);
 
-  /* ✅ (ALTERADO) ⋮ só para o dono do story */
   dots.style.display = CAN_SEE_VIEWERS ? "block" : "none";
   if(!CAN_SEE_VIEWERS){
     deleteBtn.style.display = "none";
@@ -2247,11 +2336,7 @@ function showStory(){
     }catch(e){}
   }
 
-  if(CAN_SEE_VIEWERS){
-    deleteBtn.style.display = "none";
-  }else{
-    deleteBtn.style.display = "none";
-  }
+  deleteBtn.style.display = "none";
 }
 function runProgress(ms){
   const fill = document.getElementById("currentFill");
@@ -3428,4 +3513,5 @@ setupAllFeedVideos();
 
 </body>
 </html>
+
 
