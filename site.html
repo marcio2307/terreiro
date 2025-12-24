@@ -10,6 +10,11 @@
 <link rel="preconnect" href="https://firebasestorage.googleapis.com" crossorigin>
 <link rel="preconnect" href="https://coletivo-f34d4-default-rtdb.firebaseio.com" crossorigin>
 <link rel="preconnect" href="https://i.ibb.co" crossorigin>
+
+<!-- ✅ (NOVO) pré-conexão do rádio (reduz delay ao clicar) -->
+<link rel="preconnect" href="https://stream.zeno.fm" crossorigin>
+<link rel="dns-prefetch" href="//stream.zeno.fm">
+
 <link rel="dns-prefetch" href="//www.gstatic.com">
 <link rel="dns-prefetch" href="//firebasestorage.googleapis.com">
 <link rel="dns-prefetch" href="//coletivo-f34d4-default-rtdb.firebaseio.com">
@@ -1172,7 +1177,8 @@
     <div class="menuLabel">Reunião</div>
   </a>
 
-  <a href="#" id="radioBtn" onclick="toggleRadio(); return false;" title="Rádio" aria-label="Rádio">
+  <!-- ✅ (ALTERADO) tirado onclick do HTML para evitar delay do click em mobile -->
+  <a href="#" id="radioBtn" title="Rádio" aria-label="Rádio">
     <i class="fa-solid fa-radio" id="radioIcon"></i>
     <div class="menuLabel">Rádio</div>
   </a>
@@ -1261,13 +1267,9 @@
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-storage.js"></script>
 
 <script>
-/* ====================== ✅ VINCULAR AO LOGIN DO OUTRO SITE ======================
-   - O login externo grava: localStorage.setItem("nome_passageiro", usuario)
-   - Aqui: se não tiver nome, manda pro login externo
-   - E cria/usa UID FIXO por usuário usando Firebase: /usernames/<nome_normalizado> -> uid
-*/
-const LOGIN_URL = "https://marcio2307.github.io/terreiro/entrar.html"; // <- coloque a URL REAL do seu login externo
-const SITE_URL  = "https://marcio2307.github.io/terreiro/site.html";   // sua home
+/* ====================== ✅ VINCULAR AO LOGIN DO OUTRO SITE ====================== */
+const LOGIN_URL = "https://marcio2307.github.io/terreiro/entrar.html";
+const SITE_URL  = "https://marcio2307.github.io/terreiro/site.html";
 
 function normalizeNameKey(name){
   return (name || "")
@@ -1322,6 +1324,9 @@ function unlockAudioOnce(){
     actionSfx.muted = false;
     chatSfx.muted = false;
 
+    // ✅ (NOVO) já cria e aquece o rádio no PRIMEIRO toque do usuário
+    try{ ensureRadio(); }catch(e){}
+
     const p1 = actionSfx.play();
     if(p1 && p1.then) p1.then(()=>{ actionSfx.pause(); actionSfx.currentTime = 0; }).catch(()=>{});
     else { actionSfx.pause(); actionSfx.currentTime = 0; }
@@ -1367,10 +1372,15 @@ let radioPlaying = false;
 
 function ensureRadio(){
   if(radio) return;
-  radio = new Audio(RADIO_URL);
-  radio.preload = "none";
+  radio = new Audio();
+  // ✅ (ALTERADO) atribui src e faz preload "auto" pra reduzir delay
+  radio.src = RADIO_URL;
+  radio.preload = "auto";
   radio.crossOrigin = "anonymous";
   radio.volume = 1.0;
+
+  // ✅ (NOVO) tenta iniciar o carregamento logo que cria
+  try{ radio.load(); }catch(e){}
 
   radio.addEventListener("playing", ()=>{ setRadioUI(true); onRadioStateChange(true); });
   radio.addEventListener("pause", ()=>{ setRadioUI(false); onRadioStateChange(false); });
@@ -1396,13 +1406,43 @@ function toggleRadio(){
   ensureRadio();
   unlockAudioOnce();
   if(!radioPlaying){
-    radio.play().then(()=>{ setRadioUI(true); onRadioStateChange(true); }).catch(()=>{ setRadioUI(false); onRadioStateChange(false); });
+    // ✅ (NOVO) garante que o src está setado e dá load antes do play
+    try{
+      if(!radio.src) radio.src = RADIO_URL;
+      radio.preload = "auto";
+      radio.load();
+    }catch(e){}
+
+    radio.play().then(()=>{ setRadioUI(true); onRadioStateChange(true); }).catch(()=>{
+      setRadioUI(false);
+      onRadioStateChange(false);
+    });
   }else{
     try{ radio.pause(); }catch(e){}
     setRadioUI(false);
     onRadioStateChange(false);
   }
 }
+
+/* ✅ (NOVO) remove delay do clique no mobile: usa pointerdown/touchstart */
+(function bindRadioFastTap(){
+  const btn = document.getElementById("radioBtn");
+  if(!btn) return;
+
+  const handler = (e)=>{
+    e.preventDefault();
+    e.stopPropagation();
+    toggleRadio();
+    return false;
+  };
+
+  // dispara no "toque" (antes do click)
+  btn.addEventListener("pointerdown", handler, { passive:false });
+  btn.addEventListener("touchstart", handler, { passive:false });
+
+  // fallback no click (desktop)
+  btn.addEventListener("click", handler);
+})();
 
 /* ====================== ✅ LOGIN EXTERNO + UID FIXO POR USUÁRIO ====================== */
 function getOrCreateDeviceUID(){
@@ -2208,7 +2248,7 @@ function showStory(){
   }
 
   if(CAN_SEE_VIEWERS){
-    deleteBtn.style.display = "none"; // abre pelo "⋮"
+    deleteBtn.style.display = "none";
   }else{
     deleteBtn.style.display = "none";
   }
@@ -2246,7 +2286,6 @@ function prevStory(){
 tapRight.onclick = nextStory;
 tapLeft.onclick = prevStory;
 
-/* ✅ (ALTERADO) só abre menu se for dono */
 dots.onclick = ()=>{
   if(!CAN_SEE_VIEWERS) return;
   deleteBtn.style.display = (deleteBtn.style.display==="block" ? "none" : "block");
@@ -2273,7 +2312,6 @@ deleteBtn.onclick = async ()=>{
   }
 };
 
-/* cards */
 function renderCreateCard(){
   const card = document.createElement("div");
   card.className = "storyCard createCard";
@@ -3390,3 +3428,4 @@ setupAllFeedVideos();
 
 </body>
 </html>
+
