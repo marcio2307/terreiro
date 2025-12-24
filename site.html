@@ -573,6 +573,7 @@
   .tapLeft{ left:0; }
   .tapRight{ right:0; }
 
+  /* ✅ (ALTERADO) escondido por padrão — só aparece para o dono do story */
   .dots{
     position:absolute; top: 10px; right: 18px;
     font-size: 28px;
@@ -580,6 +581,7 @@
     z-index:20;
     user-select:none;
     color: rgba(255,255,255,.9);
+    display:none;
   }
   .deleteBtn{
     position:absolute; top: 50px; right: 18px;
@@ -1213,7 +1215,10 @@
 <!-- VIEWER -->
 <div id="viewer">
   <div class="topBars" id="bars"></div>
+
+  <!-- ✅ (ALTERADO) ⋮ só aparece quando o story for do usuário logado -->
   <div class="dots" id="dots">⋮</div>
+
   <div class="deleteBtn" id="deleteBtn">Excluir</div>
   <div class="tapLeft" id="tapLeft"></div>
   <div class="tapRight" id="tapRight"></div>
@@ -1277,7 +1282,6 @@ function normalizeNameKey(name){
 function mustBeLogged(){
   const u = (localStorage.getItem("nome_passageiro") || "").trim();
   if(!u){
-    // não está logado -> vai pro login externo
     location.replace(LOGIN_URL);
     return null;
   }
@@ -1411,21 +1415,17 @@ function getOrCreateDeviceUID(){
   return uid;
 }
 
-// 🔥 1) pega USER_NAME do login externo, senão volta pra tela de login
 let USER_NAME = mustBeLogged();
 if(!USER_NAME){
-  // já redirecionou
   throw new Error("Not logged");
 }
 
-// 🔥 2) UID local imediato (não trava a tela)
 const nameKey = normalizeNameKey(USER_NAME);
 let UID = localStorage.getItem("uid_user_" + nameKey) || localStorage.getItem("uid_passageiro") || getOrCreateDeviceUID();
 localStorage.setItem("uid_user_" + nameKey, UID);
 localStorage.setItem("uid_passageiro", UID);
 sessionStorage.setItem("uid_passageiro", UID);
 
-// 🔥 3) sincroniza com Firebase (se já existe, usa o mesmo UID SEMPRE)
 (async function syncUidWithFirebase(){
   try{
     const ref = DB.ref("usernames/" + nameKey);
@@ -1438,22 +1438,16 @@ sessionStorage.setItem("uid_passageiro", UID);
         localStorage.setItem("uid_user_" + nameKey, UID);
         localStorage.setItem("uid_passageiro", UID);
         sessionStorage.setItem("uid_passageiro", UID);
-        // recarrega para tudo usar o UID certo
         location.reload();
         return;
       }
     }else{
-      // não existe ainda -> registra o UID atual para este usuário
       await ref.set(UID);
     }
-  }catch(e){
-    // se falhar, fica no UID local (não quebra o site)
-  }
+  }catch(e){}
 })();
 
-// ✅ se quiser botão sair em qualquer lugar: chama window.logoutFacecumba()
 window.logoutFacecumba = function(){
-  // NÃO apaga UID, senão a pessoa perde o vínculo no mesmo aparelho
   localStorage.removeItem("nome_passageiro");
   try{ stopPresence(true); }catch(e){}
   location.replace(LOGIN_URL);
@@ -2100,6 +2094,10 @@ function closeViewer(){
   stopVideo();
   viewer.style.display = "none";
   deleteBtn.style.display = "none";
+
+  /* ✅ (ALTERADO) esconde ⋮ sempre ao fechar */
+  dots.style.display = "none";
+
   menuTop.classList.remove("hide");
   clearTimeout(viewerTimer);
   viewerTimer = null;
@@ -2135,6 +2133,12 @@ function showStory(){
 
   deleteBtn.style.display = "none";
   CAN_SEE_VIEWERS = (s.uid === UID);
+
+  /* ✅ (ALTERADO) ⋮ só para o dono do story */
+  dots.style.display = CAN_SEE_VIEWERS ? "block" : "none";
+  if(!CAN_SEE_VIEWERS){
+    deleteBtn.style.display = "none";
+  }
 
   if(s.uid !== UID){
     reactionBar.style.display = "flex";
@@ -2203,7 +2207,6 @@ function showStory(){
     }catch(e){}
   }
 
-  // ✅ só dono pode excluir
   if(CAN_SEE_VIEWERS){
     deleteBtn.style.display = "none"; // abre pelo "⋮"
   }else{
@@ -2243,7 +2246,12 @@ function prevStory(){
 tapRight.onclick = nextStory;
 tapLeft.onclick = prevStory;
 
-dots.onclick = ()=>{ deleteBtn.style.display = (deleteBtn.style.display==="block" ? "none" : "block"); };
+/* ✅ (ALTERADO) só abre menu se for dono */
+dots.onclick = ()=>{
+  if(!CAN_SEE_VIEWERS) return;
+  deleteBtn.style.display = (deleteBtn.style.display==="block" ? "none" : "block");
+};
+
 deleteBtn.onclick = async ()=>{
   const s = activeStories[current];
   if(!s) return;
@@ -3067,7 +3075,6 @@ async function excluirPost(id){
   const snap = await DB.ref("posts/" + id).once("value");
   const data = snap.val();
 
-  // ✅ só autor pode excluir
   if(data && data.uid && data.uid !== UID){
     alert("Você só pode excluir suas próprias postagens.");
     return;
@@ -3125,12 +3132,17 @@ function postHTML(id, postData, avatarUrl){
     </div>
   `;
 
-  return `
-  <div class="post" id="${id}" ${postData._pending ? 'data-pending="1"' : ''}>
+  /* ✅ (ALTERADO) ⋮ no post só aparece para o usuário logado (dono do post) */
+  const postMenuHTML = isMine ? `
     <div class="menu-btn" onclick="toggleMenu('${id}')">⋮</div>
     <div class="menu-box" id="menu_${id}">
-      ${isMine ? `<div onclick="excluirPost('${id}')">Excluir</div>` : `<div onclick="alert('Você só pode excluir suas próprias postagens.')">Excluir</div>`}
+      <div onclick="excluirPost('${id}')">Excluir</div>
     </div>
+  ` : "";
+
+  return `
+  <div class="post" id="${id}" ${postData._pending ? 'data-pending="1"' : ''}>
+    ${postMenuHTML}
 
     <div class="postHead">
       ${avatarHTML}
@@ -3253,6 +3265,7 @@ function listenLikes(postId){
     atualizarCurtidasUI(postId, snap.val() || {});
   });
 }
+
 function listenComments(postId){
   DB.ref("comments/" + postId).orderByChild("createdAt").on("value", async snap=>{
     const lista = document.getElementById("listaComentarios_"+postId);
@@ -3274,6 +3287,14 @@ function listenComments(postId){
 
       const canDelete = (c.uid === UID);
 
+      /* ✅ (ALTERADO) ⋮ nos comentários só aparece para o usuário logado (dono do comentário) */
+      const cMenuHTML = canDelete ? `
+        <span class="coment-menu-btn" onclick="toggleComentMenu('${c.cid}')">⋮</span>
+        <div class="coment-menu-box" id="menu_${c.cid}" onclick="excluirComentario('${c.cid}','${postId}')">
+          Excluir
+        </div>
+      ` : "";
+
       return `
         <div id="${c.cid}" class="cRow">
           <div class="cHead">
@@ -3281,12 +3302,7 @@ function listenComments(postId){
             <div class="cName" data-name-uid="${escapeHTML(c.uid)}" onclick="openProfileModal('${escapeHTML(c.uid)}')">${escapeHTML(nome)}</div>
           </div>
           <div class="cText">💬 ${txt}</div>
-
-          <span class="coment-menu-btn" onclick="toggleComentMenu('${c.cid}')">⋮</span>
-          <div class="coment-menu-box" id="menu_${c.cid}"
-            onclick="${canDelete ? `excluirComentario('${c.cid}','${postId}')` : `alert('Você só pode excluir seus comentários.')`}">
-            Excluir
-          </div>
+          ${cMenuHTML}
         </div>
       `;
     }));
