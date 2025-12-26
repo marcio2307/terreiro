@@ -97,11 +97,6 @@
     overflow:hidden;
     flex:0 0 auto;
   }
-  .userAvatar img{
-    width:100%; height:100%;
-    object-fit:cover;
-    display:block;
-  }
   .userName{
     font-weight: 900;
     font-size: 13px;
@@ -142,7 +137,10 @@
   }
   .chip input::placeholder{ color: rgba(228,230,235,.55); }
 
-  .tabs{ display:flex; gap:8px; }
+  .tabs{
+    display:flex;
+    gap:8px;
+  }
   .tabBtn{
     border:none;
     cursor:pointer;
@@ -155,7 +153,10 @@
     box-shadow: 0 8px 16px rgba(0,0,0,.18);
     user-select:none;
   }
-  .tabBtn.active{ background: var(--fb-blue); color:#fff; }
+  .tabBtn.active{
+    background: var(--fb-blue);
+    color:#fff;
+  }
 
   /* ====== ANUNCIAR ====== */
   .createRow{
@@ -254,53 +255,37 @@
   }
   .menuItem:hover{ background: rgba(0,0,0,.06); }
 
-  /* ✅ CARD COMPACTO */
+  /* ✅ CARD COMPACTO (MOBILE FRIENDLY): CENTRALIZA FOTO + TÍTULO + BOTÃO MENOS LARGO */
   .adCompact{
     padding: 12px;
     display:flex;
     flex-direction:column;
     gap:10px;
+    align-items:center;           /* ✅ centraliza tudo */
+    text-align:center;            /* ✅ título central */
   }
 
-  /* ✅ meta com avatar do anunciante */
   .metaSmall{
+    width:100%;
     display:flex;
     align-items:center;
-    gap:10px;
+    justify-content:center;       /* ✅ centraliza a linha */
+    gap:8px;
     color: var(--fb-muted);
     font-size: 12px;
     font-weight: 900;
-    min-width:0;
-  }
-  .miniAvatar{
-    width:26px; height:26px;
-    border-radius:50%;
-    overflow:hidden;
-    background:#3A3B3C;
-    border:1px solid rgba(255,255,255,.10);
-    display:flex; align-items:center; justify-content:center;
-    flex:0 0 auto;
-    font-weight:900;
-    color: rgba(228,230,235,.95);
-  }
-  .miniAvatar img{ width:100%; height:100%; object-fit:cover; display:block; }
-  .metaName{
-    white-space:nowrap;
-    overflow:hidden;
-    text-overflow:ellipsis;
-    max-width:58vw;
+    flex-wrap:wrap;               /* ✅ quebra no celular */
+    text-align:center;
   }
 
-  /* ✅ FOTO CENTRALIZADA NO CELULAR + NO PC */
   .cover{
-    width: 160px;
+    width: 170px;
     aspect-ratio: 1/1;
     border-radius: 18px;
     overflow:hidden;
     background:#0f0f10;
     border: 1px solid rgba(255,255,255,.10);
-    margin: 0 auto;              /* ✅ centraliza */
-    display:block;
+    margin: 0 auto;              /* ✅ garante centralização */
   }
   .cover img{ width:100%; height:100%; object-fit:cover; display:block; }
   .coverFallback{
@@ -311,30 +296,27 @@
     font-weight: 900;
   }
 
-  /* ✅ TÍTULO CENTRALIZADO */
   .adTitleCompact{
     font-weight: 900;
     font-size: 18px;
     margin: 0;
     line-height: 1.15;
+    width:100%;
     text-align:center;           /* ✅ */
   }
 
-  /* ✅ BOTÃO “SAIBA MAIS” MENOS LARGO (centralizado) */
   .saibaBtn{
-    margin: 4px auto 0 auto;     /* ✅ centraliza */
-    width: auto;                 /* ✅ não ocupa tudo */
-    min-width: 190px;            /* ✅ tamanho bom */
-    max-width: 260px;            /* ✅ não fica enorme */
+    margin-top: 2px;
+    width: min(320px, 86%);      /* ✅ menos largo no celular */
     border:none;
     border-radius: 14px;
-    padding: 12px 14px;
+    padding: 12px 12px;
     font-weight: 900;
     cursor:pointer;
     background: var(--fb-blue);
     color:#fff;
     border: 1px solid rgba(255,255,255,.10);
-    display:inline-flex;         /* ✅ */
+    display:flex;
     align-items:center;
     justify-content:center;
     gap:10px;
@@ -408,7 +390,6 @@
     font-weight: 900;
     flex:0 0 auto;
   }
-  .adAvatar img{ width:100%; height:100%; object-fit:cover; display:block; }
   .adHeadText{ min-width:0; }
   .adOwner{
     font-weight: 900;
@@ -447,8 +428,14 @@
     cursor:pointer;
     position:relative;
   }
-  .photo img{ width:100%; height:100%; object-fit: cover; display:block; }
-  @media(max-width:520px){ .photos{ grid-template-columns: repeat(2, 1fr); } }
+  .photo img{
+    width:100%; height:100%;
+    object-fit: cover;
+    display:block;
+  }
+  @media(max-width:520px){
+    .photos{ grid-template-columns: repeat(2, 1fr); }
+  }
 
   .adDesc{
     margin: 10px 0 10px 0;
@@ -513,7 +500,11 @@
     user-select:none;
   }
   .actBtn:hover{ background: rgba(255,255,255,.08); }
-  .actBtn.primary{ background: var(--fb-blue); border-color: rgba(255,255,255,.10); color:#fff; }
+  .actBtn.primary{
+    background: var(--fb-blue);
+    border-color: rgba(255,255,255,.10);
+    color:#fff;
+  }
 
   /* create/edit form */
   .form{
@@ -554,7 +545,12 @@
   .textarea{ min-height: 120px; resize: vertical; white-space: pre-wrap; }
   .hint{ margin-top: 8px; font-size: 12px; color: rgba(228,230,235,.70); line-height: 1.25; }
 
-  .photoPicker{ display:flex; gap:10px; flex-wrap:wrap; margin-top: 10px; }
+  .photoPicker{
+    display:flex;
+    gap:10px;
+    flex-wrap:wrap;
+    margin-top: 10px;
+  }
   .pickBox{
     width: 120px;
     aspect-ratio: 1/1;
@@ -765,7 +761,8 @@
     <div class="form">
       <div class="field full">
         <div class="label"><i class="fa-solid fa-tag"></i> Título (Nome do serviço/loja)</div>
-        <input class="input" id="fTitle" maxlength="60" placeholder="Ex: Pai Márcio" />
+        <!-- ✅ Placeholder atualizado -->
+        <input class="input" id="fTitle" maxlength="60" placeholder="Ex: Loja ou Serviço" />
         <div class="hint">Máx. 60 caracteres.</div>
       </div>
 
@@ -782,7 +779,9 @@
 
       <div class="field">
         <div class="label"><i class="fa-solid fa-phone"></i> Telefone / WhatsApp</div>
-        <input class="input" id="fPhone" maxlength="30" placeholder="Ex: 85984368057" />
+        <!-- ✅ Placeholder + dica do 55 -->
+        <input class="input" id="fPhone" maxlength="30" placeholder="Ex: 55 85984368057" />
+        <div class="hint">✅ Coloque o <b>55</b> antes do DDD e número. Ex: <b>55 85 98436-8057</b>.</div>
       </div>
 
       <div class="field full">
@@ -889,12 +888,6 @@ function safeUrl(u){
 function fmtDate(ts){
   try{ return new Date(ts).toLocaleString("pt-BR"); }catch(e){ return ""; }
 }
-function normalizeText(s){
-  return (s||"")
-    .toString()
-    .toLowerCase()
-    .normalize("NFD").replace(/[\u0300-\u036f]/g, "");
-}
 
 /* ====================== FIREBASE ====================== */
 const firebaseConfig = {
@@ -952,82 +945,10 @@ sessionStorage.setItem("uid_passageiro", UID);
   }catch(e){}
 })();
 
-/* ====================== ✅ PERFIS (profiles/{uid}) p/ foto real ====================== */
-const PROFILE_REF = (uid)=> DB.ref("profiles/" + uid);
-
-const profileCache = new Map(); // uid -> { url, name }
-function getAvatarUrlFromProfile(p){
-  return (p?.avatarDataUrl || p?.avatarUrl || "").toString().trim();
-}
-async function getProfile(uid, fallbackName){
-  if(!uid) return { url:"", name: fallbackName || "Usuário" };
-  if(profileCache.has(uid)) return profileCache.get(uid);
-
-  try{
-    const snap = await PROFILE_REF(uid).once("value");
-    const p = snap.val() || {};
-    const obj = {
-      url: getAvatarUrlFromProfile(p),
-      name: (p.name || fallbackName || "Usuário").toString()
-    };
-    profileCache.set(uid, obj);
-
-    // listener p/ atualizar DOM quando trocar foto/nome
-    PROFILE_REF(uid).on("value", s=>{
-      const px = s.val() || {};
-      const upd = {
-        url: getAvatarUrlFromProfile(px),
-        name: (px.name || obj.name || fallbackName || "Usuário").toString()
-      };
-      profileCache.set(uid, upd);
-      updateAvatarNodes(uid, upd.url, upd.name);
-      updateNameNodes(uid, upd.name);
-    });
-
-    return obj;
-  }catch(e){
-    const obj = { url:"", name: fallbackName || "Usuário" };
-    profileCache.set(uid, obj);
-    return obj;
-  }
-}
-
-function avatarHTML(url, name){
-  if(url){
-    return `<img src="${escapeHTML(url)}" alt="avatar">`;
-  }
-  return escapeHTML(initials(name || "U"));
-}
-
-/* Atualiza todos os avatares do mesmo uid (cards + detalhes) */
-function updateAvatarNodes(uid, url, name){
-  document.querySelectorAll(`[data-uid-avatar="${uid}"]`).forEach(el=>{
-    el.innerHTML = avatarHTML(url, name);
-  });
-}
-/* Atualiza nomes (opcional, mas útil se usuário mudar nome no perfil) */
-function updateNameNodes(uid, name){
-  document.querySelectorAll(`[data-uid-name="${uid}"]`).forEach(el=>{
-    el.textContent = name || "Usuário";
-  });
-}
-
-/* UI do usuário (topo) */
-(function paintUserNameOnly(){
+/* UI do usuário */
+(function paintUser(){
   document.getElementById("userName").textContent = USER_NAME;
   document.getElementById("userAvatar").textContent = initials(USER_NAME);
-})();
-
-/* ✅ Puxa foto REAL do logado e coloca no topo */
-(async function hydrateLoggedUserAvatar(){
-  try{
-    const prof = await getProfile(UID, USER_NAME);
-    document.getElementById("userName").textContent = prof.name || USER_NAME;
-    document.getElementById("userAvatar").innerHTML = avatarHTML(prof.url, prof.name || USER_NAME);
-    // marca também p/ updates automáticos
-    document.getElementById("userAvatar").setAttribute("data-uid-avatar", UID);
-    document.getElementById("userName").setAttribute("data-uid-name", UID);
-  }catch(e){}
 })();
 
 /* ====================== LOADING ====================== */
@@ -1297,12 +1218,9 @@ async function saveAd(){
 
     const cleanedPhotos = finalPhotos.filter(Boolean);
 
-    // ✅ usa nome do perfil se existir (pra ficar igual ao Perfil)
-    const myProf = await getProfile(UID, USER_NAME);
-
     const payload = {
       uid: UID,
-      userName: myProf.name || USER_NAME,
+      userName: USER_NAME,
       title,
       desc,
       address,
@@ -1380,6 +1298,13 @@ let showOnlyMine = false;
 let adsAll = [];
 let adsFiltered = [];
 
+function normalizeText(s){
+  return (s||"")
+    .toString()
+    .toLowerCase()
+    .normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+}
+
 function setTab(active){
   if(active === "mine"){
     showOnlyMine = true;
@@ -1410,7 +1335,6 @@ function applyFilters(){
   });
 
   renderAds();
-  hydrateAvatarsForRenderedAds();
 }
 
 function toggleMenu(adId){
@@ -1429,7 +1353,7 @@ document.addEventListener("click", (e)=>{
   if(!clickedMenu) closeAllMenus();
 });
 
-/* ✅ CARD COMPACTO */
+/* ✅ CARD COMPACTO: foto centralizada + título centralizado + botão menor */
 function adCardHTML(adId, a){
   const isMine = (a.uid === UID);
   const when = fmtDate(a.createdAt || a.updatedAt || Date.now());
@@ -1455,17 +1379,14 @@ function adCardHTML(adId, a){
     ? `<img src="${escapeHTML(firstPhoto)}" loading="lazy" alt="Foto do anúncio">`
     : `<div class="coverFallback"><i class="fa-solid fa-image" style="margin-right:10px;"></i>Sem foto</div>`;
 
-  const uid = (a.uid || "").toString();
-  const fallbackName = (a.userName || "Usuário").toString();
-
   return `
     <div class="adCard" id="${escapeHTML(adId)}">
       ${menu}
 
       <div class="adCompact">
         <div class="metaSmall">
-          <div class="miniAvatar" data-uid-avatar="${escapeHTML(uid)}">${escapeHTML(initials(fallbackName))}</div>
-          <span class="metaName" data-uid-name="${escapeHTML(uid)}">${escapeHTML(fallbackName)}</span>
+          <i class="fa-solid fa-user"></i>
+          <span style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:60vw;">${escapeHTML(a.userName || "Usuário")}</span>
           <span style="opacity:.55;">•</span>
           <span>${escapeHTML(when)}</span>
         </div>
@@ -1493,23 +1414,6 @@ function renderAds(){
   adsFeed.innerHTML = sorted.map(a => adCardHTML(a.id, a)).join("");
 }
 
-/* ✅ depois de renderizar, busca perfis e troca iniciais por foto */
-async function hydrateAvatarsForRenderedAds(){
-  const uids = new Set();
-  adsFiltered.slice(0, 120).forEach(a=>{
-    const uid = (a?.uid || "").toString();
-    if(uid) uids.add(uid);
-  });
-  for(const uid of uids){
-    const fallback = (adsFiltered.find(x=>x.uid===uid)?.userName || "Usuário").toString();
-    const prof = await getProfile(uid, fallback);
-    if(prof){
-      updateAvatarNodes(uid, prof.url, prof.name || fallback);
-      updateNameNodes(uid, prof.name || fallback);
-    }
-  }
-}
-
 async function startEdit(adId){
   closeAllMenus();
   const ad = adsAll.find(x=>x.id === adId);
@@ -1526,7 +1430,7 @@ async function quickDelete(adId){
   const ad = adsAll.find(x=>x.id === adId);
   if(!ad) return;
   if(ad.uid !== UID){
-    alert("Você só pode excluir seu próprio anúncio.");
+    alert("Você só pode excluir seus próprios anúncios.");
     return;
   }
   if(!confirm("Deseja excluir este anúncio?")) return;
@@ -1569,9 +1473,6 @@ function buildDetailsHTML(a){
   const address = (a.address||"").trim();
   const phone = (a.phone||"").trim();
   const website = (a.website||"").trim();
-
-  const uid = (a.uid || "").toString();
-  const fallbackName = (a.userName || "Usuário").toString();
 
   const photosHTML = purls.length ? `
     <div class="photos">
@@ -1625,9 +1526,9 @@ function buildDetailsHTML(a){
 
   return `
     <div class="adHead">
-      <div class="adAvatar" data-uid-avatar="${escapeHTML(uid)}">${escapeHTML(initials(fallbackName))}</div>
+      <div class="adAvatar">${escapeHTML(initials(a.userName || "Usuário"))}</div>
       <div class="adHeadText">
-        <div class="adOwner" data-uid-name="${escapeHTML(uid)}">${escapeHTML(fallbackName)}</div>
+        <div class="adOwner">${escapeHTML(a.userName || "Usuário")}</div>
         <div class="adWhen">${escapeHTML(when)}</div>
       </div>
     </div>
@@ -1647,7 +1548,7 @@ function buildDetailsHTML(a){
   `;
 }
 
-async function openDetails(adId){
+function openDetails(adId){
   const ad = adsAll.find(x=>x.id === adId);
   if(!ad) return;
 
@@ -1656,14 +1557,6 @@ async function openDetails(adId){
 
   detailsModal.style.display = "flex";
   document.body.style.overflow = "hidden";
-
-  // ✅ troca avatar/nomes por dados reais do perfil do anunciante
-  const uid = (ad.uid || "").toString();
-  if(uid){
-    const prof = await getProfile(uid, ad.userName || "Usuário");
-    updateAvatarNodes(uid, prof.url, prof.name || ad.userName || "Usuário");
-    updateNameNodes(uid, prof.name || ad.userName || "Usuário");
-  }
 }
 
 function closeDetails(){
