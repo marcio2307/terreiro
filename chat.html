@@ -254,7 +254,7 @@
     text-align:center;
   }
 
-  /* ✅ linha com avatar do anunciante + nome + data (igual antes) */
+  /* ✅ linha com avatar do anunciante + nome + data */
   .metaLine{
     width:100%;
     display:flex;
@@ -272,6 +272,7 @@
     gap:8px;
     min-width:0;
     max-width: 92%;
+    cursor:pointer;
   }
   .miniAvatar{
     width:28px;
@@ -295,7 +296,7 @@
     max-width: 60vw;
   }
 
-  /* ✅ FOTO MAIS CHAMATIVA + CLICÁVEL */
+  /* ✅ FOTO DO ANÚNCIO */
   .cover{
     width: min(330px, 92%);
     aspect-ratio: 1/1;
@@ -304,7 +305,6 @@
     background:#0f0f10;
     border: 1px solid rgba(255,255,255,.12);
     margin: 2px auto 0 auto;
-
     box-shadow:
       0 18px 34px rgba(0,0,0,.50),
       0 0 0 1px rgba(255,255,255,.08) inset;
@@ -357,7 +357,6 @@
     text-align:center;
   }
 
-  /* ✅ botão mais largo */
   .saibaBtn{
     margin-top: 2px;
     width: min(360px, 92%);
@@ -775,7 +774,7 @@
     <div class="title">Lojas & Serviços</div>
   </div>
 
-  <!-- ✅ foto de perfil de quem está logado (como estava) -->
+  <!-- ✅ foto de perfil de quem está logado -->
   <div class="userBadge" title="Usuário logado">
     <div class="userAvatar" id="userAvatar">U</div>
     <div class="userName" id="userName">Carregando...</div>
@@ -832,8 +831,8 @@
 
       <div class="field">
         <div class="label"><i class="fa-solid fa-phone"></i> Telefone / WhatsApp</div>
-        <input class="input" id="fPhone" maxlength="30" placeholder="Ex: 55 85984368057" />
-        <div class="hint">✅ Coloque o <b>55</b> antes do DDD e número. Ex: <b>55 85 98436-8057</b>.</div>
+        <input class="input" id="fPhone" maxlength="30" placeholder="Ex: 55 11 91234-5678" />
+        <div class="hint">✅ Coloque o <b>55</b> antes do DDD e número. Ex: <b>55 11 91234-5678</b>.</div>
       </div>
 
       <div class="field full">
@@ -842,13 +841,7 @@
         <div class="hint">Dica: se você digitar sem https://, o sistema adiciona automaticamente.</div>
       </div>
 
-      <!-- ✅ FOTO DE PERFIL DO ANUNCIANTE (salva e aparece no feed e no saiba mais) -->
-      <div class="field full">
-        <div class="label"><i class="fa-solid fa-user"></i> Foto de perfil (vai aparecer no anúncio)</div>
-        <input class="input" id="fProfileUrl" maxlength="500" placeholder="Cole o link da sua foto (opcional)" />
-        <div class="hint">Se não colocar, aparece a letra do nome.</div>
-      </div>
-
+      <!-- ✅ Fotos do anúncio (até 3) -->
       <div class="field full">
         <div class="label"><i class="fa-solid fa-images"></i> Fotos (até 3)</div>
         <div class="photoPicker" id="photoPicker"></div>
@@ -979,49 +972,59 @@ localStorage.setItem("uid_user_" + nameKey, UID);
 localStorage.setItem("uid_passageiro", UID);
 sessionStorage.setItem("uid_passageiro", UID);
 
-/* ✅ foto de perfil do logado (como estava): lê do localStorage se existir */
-const LS_PROFILE_KEY = "perfil_foto_" + nameKey;
-let LOGGED_PROFILE_URL = (localStorage.getItem(LS_PROFILE_KEY) || "").trim();
+/* ====================== PERFIS (mesma base do seu perfil) ======================
+profiles/{uid} => { name, avatarDataUrl/avatarUrl, ... }
+*/
+const PROFILE_REF = (uid)=> DB.ref("profiles/" + uid);
+const profileCache = new Map();
 
-/* se tiver no firebase também (opcional), tenta puxar */
-(async function syncUidAndProfile(){
+async function getProfileForUID(uid, fallbackName){
+  if(!uid) return { url:"", name: fallbackName || "Usuário" };
+  if(profileCache.has(uid)) return profileCache.get(uid);
+
   try{
-    const refU = DB.ref("usernames/" + nameKey);
-    const snapU = await refU.once("value");
-    const remoteUid = snapU.val();
-    if(remoteUid && typeof remoteUid === "string" && remoteUid.length > 5 && remoteUid !== UID){
-      UID = remoteUid;
-      localStorage.setItem("uid_user_" + nameKey, UID);
-      localStorage.setItem("uid_passageiro", UID);
-      sessionStorage.setItem("uid_passageiro", UID);
-      location.reload();
-      return;
-    }else if(!remoteUid){
-      await refU.set(UID);
-    }
+    const snap = await PROFILE_REF(uid).once("value");
+    const p = snap.val() || {};
+    const name = p.name || fallbackName || "Usuário";
+    const url  = (p.avatarDataUrl || p.avatarUrl || "").toString();
+    const obj  = { url, name };
+    profileCache.set(uid, obj);
 
-    const refP = DB.ref("userProfiles/" + UID + "/photoUrl");
-    const snapP = await refP.once("value");
-    const remotePhoto = (snapP.val() || "").trim();
-    if(remotePhoto){
-      LOGGED_PROFILE_URL = remotePhoto;
-      localStorage.setItem(LS_PROFILE_KEY, remotePhoto);
-      paintUser();
-    }
-  }catch(e){}
-})();
+    // updates em tempo real (pra trocar avatar sem recarregar)
+    PROFILE_REF(uid).on("value", s=>{
+      const px = s.val() || {};
+      const nn = (px.name || fallbackName || "Usuário").toString();
+      const uu = (px.avatarDataUrl || px.avatarUrl || "").toString();
+      profileCache.set(uid, { url: uu, name: nn });
 
-function paintUser(){
-  document.getElementById("userName").textContent = USER_NAME;
+      // atualiza no topo e nos cards
+      if(uid === UID) paintUserFromProfiles();
+      updateAdAvatarsInDOM(uid, uu, nn);
+    });
+
+    return obj;
+  }catch(e){
+    const obj = { url:"", name: fallbackName || "Usuário" };
+    profileCache.set(uid, obj);
+    return obj;
+  }
+}
+
+/* ====================== UI (Topo - Logado) ====================== */
+function paintUserUI(name, url){
+  document.getElementById("userName").textContent = name || USER_NAME || "Usuário";
   const el = document.getElementById("userAvatar");
-  const url = (LOGGED_PROFILE_URL || "").trim();
   if(url){
     el.innerHTML = `<img src="${escapeHTML(url)}" alt="Foto de perfil">`;
   }else{
-    el.textContent = initials(USER_NAME);
+    el.textContent = initials(name || USER_NAME || "Usuário");
   }
 }
-paintUser();
+async function paintUserFromProfiles(){
+  const prof = await getProfileForUID(UID, USER_NAME || "Usuário");
+  paintUserUI(prof.name || USER_NAME, prof.url || "");
+}
+paintUserFromProfiles();
 
 /* ====================== LOADING ====================== */
 const loadingOverlay = document.getElementById("loadingOverlay");
@@ -1057,7 +1060,6 @@ const fDesc = document.getElementById("fDesc");
 const fAddress = document.getElementById("fAddress");
 const fPhone = document.getElementById("fPhone");
 const fWebsite = document.getElementById("fWebsite");
-const fProfileUrl = document.getElementById("fProfileUrl");
 
 const photoPicker = document.getElementById("photoPicker");
 
@@ -1079,9 +1081,6 @@ function openModalCreate(){
   fAddress.value = "";
   fPhone.value = "";
   fWebsite.value = "";
-
-  /* ✅ já preenche com a foto do logado (se tiver) */
-  fProfileUrl.value = (LOGGED_PROFILE_URL || "");
 
   pickedFiles = [null,null,null];
   cleanupPreviews();
@@ -1108,9 +1107,6 @@ function openModalEdit(adId, adData){
   fAddress.value = adData.address || "";
   fPhone.value = adData.phone || "";
   fWebsite.value = adData.website || "";
-
-  /* ✅ puxa a foto do anunciante do anúncio */
-  fProfileUrl.value = (adData.profilePhotoUrl || "");
 
   pickedFiles = [null,null,null];
   cleanupPreviews();
@@ -1236,7 +1232,6 @@ async function saveAd(){
   const address = (fAddress.value || "").trim();
   const phone = (fPhone.value || "").trim();
   const website = safeUrl(fWebsite.value || "");
-  const profilePhotoUrl = (fProfileUrl.value || "").trim();
 
   if(!title || title.length < 3){
     alert("Digite um título (mín. 3 caracteres).");
@@ -1297,10 +1292,14 @@ async function saveAd(){
 
     finalPhotos = finalPhotos.filter(Boolean);
 
+    // ✅ pega automaticamente a foto do anunciante pelo profiles/{uid}
+    const myProf = await getProfileForUID(UID, USER_NAME || "Usuário");
+    const profilePhotoUrl = (myProf.url || "").trim();
+
     const payload = {
       uid: UID,
-      userName: USER_NAME,
-      profilePhotoUrl: profilePhotoUrl || "",   /* ✅ salva foto do anunciante */
+      userName: (myProf.name || USER_NAME || "Usuário"),
+      profilePhotoUrl: profilePhotoUrl,          // ✅ foto automática (sem iniciais)
       title,
       desc,
       address,
@@ -1318,19 +1317,14 @@ async function saveAd(){
 
     await DB.ref(`${ADS_PATH}/${adId}`).set(payload);
 
-    /* ✅ se for o usuário logado, guarda como "foto do logado" também */
-    if(profilePhotoUrl){
-      localStorage.setItem(LS_PROFILE_KEY, profilePhotoUrl);
-      LOGGED_PROFILE_URL = profilePhotoUrl;
-      paintUser();
-      try{ await DB.ref("userProfiles/" + UID + "/photoUrl").set(profilePhotoUrl); }catch(e){}
-    }
-
     closeModal();
     cleanupPreviews();
     pickedFiles = [null,null,null];
     pickedPreviews = ["","",""];
     existingPhotos = [null,null,null];
+
+    // garante topo atualizado
+    paintUserFromProfiles();
   }catch(err){
     console.log(err);
     alert("Erro ao salvar anúncio. Tente novamente.");
@@ -1429,7 +1423,6 @@ function toggleMenu(adId){
   if(!box) return;
   box.style.display = (box.style.display === "block" ? "none" : "block");
 }
-
 function closeAllMenus(exceptId){
   document.querySelectorAll(".menuBox").forEach(m=>{
     if(!exceptId || m.id !== ("menu_" + exceptId)) m.style.display = "none";
@@ -1448,12 +1441,16 @@ function openFirstPhotoViewer(adId){
   if(firstUrl) openViewer(firstUrl);
 }
 
-function avatarHTML(photoUrl, userName){
-  const url = (photoUrl || "").trim();
-  if(url){
-    return `<span class="miniAvatar"><img src="${escapeHTML(url)}" alt="Foto de ${escapeHTML(userName||'usuário')}"></span>`;
-  }
-  return `<span class="miniAvatar">${escapeHTML(initials(userName||""))}</span>`;
+/* ✅ atualiza avatar/nome de anúncios já renderizados */
+function updateAdAvatarsInDOM(uid, url, name){
+  document.querySelectorAll(`[data-ad-avatar-uid="${uid}"]`).forEach(el=>{
+    el.innerHTML = url
+      ? `<img src="${escapeHTML(url)}" alt="Foto">`
+      : `${escapeHTML(initials(name||"Usuário"))}`;
+  });
+  document.querySelectorAll(`[data-ad-name-uid="${uid}"]`).forEach(el=>{
+    el.textContent = name || "Usuário";
+  });
 }
 
 function adCardHTML(adId, a){
@@ -1481,16 +1478,19 @@ function adCardHTML(adId, a){
     ? `<img src="${escapeHTML(firstPhoto)}" loading="lazy" alt="Foto do anúncio">`
     : `<div class="coverFallback"><i class="fa-solid fa-image" style="margin-right:10px;"></i>Sem foto</div>`;
 
+  // avatar do anunciante (vai ser hidratado pelo profiles/{uid})
+  const fallbackName = a.userName || "Usuário";
+  const initial = initials(fallbackName);
+
   return `
     <div class="adCard" id="${escapeHTML(adId)}">
       ${menu}
 
       <div class="adCompact">
-        <!-- ✅ avatar do anunciante + nome + data -->
         <div class="metaLine">
-          <div class="adUser" title="${escapeHTML(a.userName||'Usuário')}">
-            ${avatarHTML(a.profilePhotoUrl, a.userName)}
-            <span class="adUserName">${escapeHTML(a.userName || "Usuário")}</span>
+          <div class="adUser" title="${escapeHTML(fallbackName)}">
+            <span class="miniAvatar" data-ad-avatar-uid="${escapeHTML(a.uid||"")}">${escapeHTML(initial)}</span>
+            <span class="adUserName" data-ad-name-uid="${escapeHTML(a.uid||"")}">${escapeHTML(fallbackName)}</span>
           </div>
           <span style="opacity:.55;">•</span>
           <span>${escapeHTML(when)}</span>
@@ -1518,6 +1518,25 @@ function renderAds(){
   }
   const sorted = adsFiltered.slice().sort((a,b)=>(b.createdAt||b.updatedAt||0)-(a.createdAt||a.updatedAt||0));
   adsFeed.innerHTML = sorted.map(a => adCardHTML(a.id, a)).join("");
+  hydrateAdsAvatars(sorted.slice(0, 120));
+}
+
+async function hydrateAdsAvatars(list){
+  for(const a of (list||[])){
+    if(!a || !a.uid) continue;
+
+    // se já tem profilePhotoUrl no anúncio, mostra direto
+    if((a.profilePhotoUrl||"").trim()){
+      updateAdAvatarsInDOM(a.uid, a.profilePhotoUrl, a.userName || "Usuário");
+      continue;
+    }
+
+    // senão puxa do profiles/{uid}
+    const prof = await getProfileForUID(a.uid, a.userName || "Usuário");
+    if(prof){
+      updateAdAvatarsInDOM(a.uid, prof.url || "", prof.name || (a.userName||"Usuário"));
+    }
+  }
 }
 
 async function startEdit(adId){
@@ -1571,6 +1590,14 @@ async function quickDelete(adId){
 const detailsModal = document.getElementById("detailsModal");
 const detailsBody = document.getElementById("detailsBody");
 
+/* ✅ NOVA MENSAGEM AUTOMÁTICA */
+const WA_MESSAGE = `Olá! Vi seu anúncio em Lojas & Serviços no Facecumba Ainda está disponível?
+
+Não conhece o Facecumba?
+Faça Parte da Nossa Rede Social 
+Link:
+https://marcio2307.github.io/terreiro/loguin.html`;
+
 function buildDetailsHTML(a){
   const when = fmtDate(a.createdAt || a.updatedAt || Date.now());
   const photos = Array.isArray(a.photos) ? a.photos : [];
@@ -1616,7 +1643,9 @@ function buildDetailsHTML(a){
   `;
 
   const waPhone = phone ? phone.replace(/[^\d+]/g,"") : "";
-  const waLink = waPhone ? `https://wa.me/${waPhone.replace(/^\+/, "")}?text=${encodeURIComponent("Olá! Vi seu anúncio em Lojas & Serviços. Ainda está disponível?")}` : "";
+  const waLink = waPhone
+    ? `https://wa.me/${waPhone.replace(/^\+/, "")}?text=${encodeURIComponent(WA_MESSAGE)}`
+    : "";
 
   const waBtn = waLink ? `
     <button class="actBtn primary" onclick="window.open('${escapeHTML(waLink)}','_blank')">
@@ -1630,15 +1659,18 @@ function buildDetailsHTML(a){
     </button>
   ` : ``;
 
-  const avatar = (a.profilePhotoUrl||"").trim()
-    ? `<div class="adAvatar"><img src="${escapeHTML(a.profilePhotoUrl)}" alt="Foto do anunciante"></div>`
-    : `<div class="adAvatar">${escapeHTML(initials(a.userName || "Usuário"))}</div>`;
+  // ✅ avatar do anunciante: preferir profilePhotoUrl do anúncio, senão profiles/{uid}
+  const fallbackName = a.userName || "Usuário";
+  const avatarUrl = (a.profilePhotoUrl || "").trim();
+  const avatar = avatarUrl
+    ? `<div class="adAvatar"><img src="${escapeHTML(avatarUrl)}" alt="Foto do anunciante"></div>`
+    : `<div class="adAvatar" data-ad-avatar-uid="${escapeHTML(a.uid||"")}">${escapeHTML(initials(fallbackName))}</div>`;
 
   return `
     <div class="adHead">
       ${avatar}
       <div class="adHeadText">
-        <div class="adOwner">${escapeHTML(a.userName || "Usuário")}</div>
+        <div class="adOwner" data-ad-name-uid="${escapeHTML(a.uid||"")}">${escapeHTML(fallbackName)}</div>
         <div class="adWhen">${escapeHTML(when)}</div>
       </div>
     </div>
@@ -1665,6 +1697,17 @@ function openDetails(adId){
   closeAllMenus();
   detailsBody.innerHTML = buildDetailsHTML(ad);
 
+  // hidrata avatar/nome do anunciante também dentro do modal
+  (async ()=>{
+    if(!ad.uid) return;
+    if((ad.profilePhotoUrl||"").trim()){
+      updateAdAvatarsInDOM(ad.uid, ad.profilePhotoUrl, ad.userName || "Usuário");
+      return;
+    }
+    const prof = await getProfileForUID(ad.uid, ad.userName || "Usuário");
+    updateAdAvatarsInDOM(ad.uid, prof.url || "", prof.name || (ad.userName || "Usuário"));
+  })();
+
   detailsModal.style.display = "flex";
   document.body.style.overflow = "hidden";
 }
@@ -1674,7 +1717,6 @@ function closeDetails(){
   detailsBody.innerHTML = "";
   document.body.style.overflow = "";
 }
-
 detailsModal.addEventListener("click", (e)=>{ if(e.target === detailsModal) closeDetails(); });
 
 /* ====================== LISTENER ====================== */
@@ -1700,17 +1742,27 @@ detailsModal.addEventListener("click", (e)=>{ if(e.target === detailsModal) clos
 
 function upsertAd(id, data){
   if(!id) return;
-  const idx = adsAll.findIndex(x=>x.id === id);
   const item = { id, ...(data||{}) };
+
+  // ✅ se o anúncio ainda não tem profilePhotoUrl, tenta preencher por profiles/{uid} (sem travar)
+  if(item.uid && !(item.profilePhotoUrl||"").trim()){
+    getProfileForUID(item.uid, item.userName || "Usuário").then(prof=>{
+      if(prof && prof.url){
+        updateAdAvatarsInDOM(item.uid, prof.url, prof.name || item.userName || "Usuário");
+      }
+    }).catch(()=>{});
+  }
+
+  const idx = adsAll.findIndex(x=>x.id === id);
   if(idx >= 0) adsAll[idx] = item;
   else adsAll.push(item);
+
   applyFilters();
 }
 
 /* ====================== UI ====================== */
 btnPlus.addEventListener("click", openModalCreate);
 searchInput.addEventListener("input", ()=>applyFilters());
-
 </script>
 </body>
 </html>
