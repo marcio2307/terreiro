@@ -38,44 +38,32 @@
 
   /* ===================== TOPBAR ===================== */
   .topbar{
-  position: sticky;
-  top:0;
-  z-index:9999;
-  background: var(--surface);
-  border-bottom: 1px solid var(--line);
-  box-shadow: 0 2px 14px rgba(0,0,0,.35);
+    position: sticky;
+    top:0;
+    z-index:9999;
+    background: var(--surface);
+    border-bottom: 1px solid var(--line);
+    box-shadow: 0 2px 14px rgba(0,0,0,.35);
 
-  height:56px; /* ✅ altura fixa e limpa */
-  padding-top: env(safe-area-inset-top);
+    height:56px;
+    padding-top: env(safe-area-inset-top);
 
-  display:flex;
-  align-items:center;      /* ✅ alinha verticalmente */
-  justify-content:center;  /* título central */
-}
-
-/* botão voltar */
-.topbar .btn.icon{
-  position:absolute;
-  left:12px;
-  top:50%;
-  transform:translateY(-50%); /* ✅ nunca invade a linha */
-}
-
-/* título */
-.brand{
-  font-weight:900;
-  color: var(--text);
-  letter-spacing:.2px;
-  text-align:center;
-}
-
-/* título centralizado */
-.brand{
-  font-weight:900;
-  color: var(--text);
-  letter-spacing:.2px;
-  text-align:center;
-}
+    display:flex;
+    align-items:center;
+    justify-content:center;
+  }
+  .topbar .btn.icon{
+    position:absolute;
+    left:12px;
+    top:50%;
+    transform:translateY(-50%);
+  }
+  .brand{
+    font-weight:900;
+    color: var(--text);
+    letter-spacing:.2px;
+    text-align:center;
+  }
 
   .btn{
     border:none;
@@ -502,16 +490,22 @@
     z-index: 9999998;
     padding: 14px;
   }
+
+  /* ✅ IMPORTANTE: modal vira flex e o conteúdo rola certinho no celular */
   .modalCard{
     width: min(860px, 96vw);
-    max-height: min(92vh, 900px);
-    overflow:auto;
+    height: min(92vh, 900px);
     background: var(--surface);
     border: 1px solid var(--line);
     border-radius: 18px;
     box-shadow: var(--shadow);
     padding: 14px;
+
+    display:flex;
+    flex-direction:column;
+    overflow:hidden; /* ✅ o scroll fica no conteúdo, não no card inteiro */
   }
+
   .modalTop{
     display:flex; align-items:center; justify-content:space-between; gap:10px;
     position: sticky;
@@ -519,6 +513,7 @@
     background: linear-gradient(180deg, rgba(36,37,38,1) 0%, rgba(36,37,38,.92) 100%);
     padding: 8px 0 10px 0;
     z-index: 2;
+    flex: 0 0 auto;
   }
   .modalTitle{
     font-weight:900;
@@ -526,7 +521,18 @@
     display:flex; align-items:center; gap:10px;
   }
 
-  /* ===================== ALBUM VIEW (ABAS COM 1 ITEM VISÍVEL) ===================== */
+  /* ✅ conteúdo rolável do modal */
+  #albumViewTop, #albumBody{
+    flex: 0 0 auto;
+  }
+  #albumBody{
+    flex: 1 1 auto;
+    overflow:auto;
+    -webkit-overflow-scrolling: touch;
+    padding-bottom: calc(12px + env(safe-area-inset-bottom));
+  }
+
+  /* ===================== ALBUM VIEW ===================== */
   .albumHeader{
     display:flex;
     gap:12px;
@@ -627,36 +633,47 @@
   .likeItem:last-child{ margin-bottom:0; }
   .likeSmall{ color: var(--muted); font-size:12px; font-weight:900; }
 
+  /* ===================== STAGE (CORRIGIDO PARA CELULAR) ===================== */
   .stageBox{
     margin-top:12px;
     border-radius: 16px;
     border: 1px solid rgba(255,255,255,.10);
-    background: #000;
+    background:#000;
     overflow:hidden;
     position:relative;
+    display:flex;
+    flex-direction:column;
   }
+
   .stageMedia{
     width:100%;
-    height: min(64vh, 520px);
+    min-height: 52vh;     /* ✅ adapta no celular */
+    max-height: 80vh;     /* ✅ evita “sumir” */
     display:flex;
     align-items:center;
     justify-content:center;
     background:#000;
+    touch-action: pan-y;  /* ✅ permite rolar a página, swipe só quando horizontal */
   }
-  .stageMedia img, .stageMedia video{
-    width:100%;
-    height:100%;
-    object-fit: contain;
+
+  .stageMedia img,
+  .stageMedia video{
+    max-width:100%;
+    max-height:100%;
+    width:auto;
+    height:auto;
+    object-fit: contain;  /* ✅ NUNCA corta */
     background:#000;
     display:block;
   }
+
   .stageNav{
     position:absolute;
     inset:0;
     display:flex;
     align-items:center;
     justify-content:space-between;
-    pointer-events:none;
+    pointer-events:none; /* ✅ não bloqueia controles do vídeo */
   }
   .navBtn{
     pointer-events:auto;
@@ -682,7 +699,7 @@
     justify-content:space-between;
     gap:10px;
     flex-wrap:wrap;
-    background: rgba(0,0,0,.35);
+    background: rgba(0,0,0,.55);
     border-top: 1px solid rgba(255,255,255,.10);
   }
   .stageCounter{
@@ -697,9 +714,6 @@
     font-weight:900;
     color: rgba(255,255,255,.82);
     font-size: 12px;
-  }
-  @media (min-width: 820px){
-    .stageHint{ display:none; }
   }
 
   /* toast */
@@ -722,7 +736,6 @@
   /* painel simples */
   .panel{ display:none; }
   .panel.active{ display:block; }
-
 </style>
 </head>
 
@@ -816,115 +829,119 @@
       <button class="btn ghost icon" onclick="fecharModal('modalAlbum')" aria-label="Fechar"><i class="fa-solid fa-xmark"></i></button>
     </div>
 
-    <div class="field">
-      <div class="label">Título do álbum</div>
-      <input id="albumTitle" class="input" maxlength="60" placeholder="Ex: Meu Pai de Santo • 2025">
-    </div>
+    <!-- ✅ conteúdo rolável no modal de criar também -->
+    <div style="flex:1 1 auto; overflow:auto; -webkit-overflow-scrolling:touch; padding-bottom:12px;">
 
-    <div class="field">
-      <div class="label">Descrição do álbum (opcional)</div>
-      <textarea id="albumDesc" class="textarea" maxlength="600" placeholder="Escreva uma descrição..."></textarea>
-    </div>
-
-    <!-- CAPA -->
-    <div class="uploadBox">
-      <div class="uploadTop">
-        <div class="uploadTitle"><i class="fa-solid fa-image" style="color:var(--primary)"></i> Capa do álbum</div>
-        <div class="miniStat" id="albumCoverStatus">Nenhuma capa selecionada</div>
+      <div class="field">
+        <div class="label">Título do álbum</div>
+        <input id="albumTitle" class="input" maxlength="60" placeholder="Ex: Meu Pai de Santo • 2025">
       </div>
 
-      <div class="dropArea">
-        <div class="dropText">
-          Escolha uma imagem para ser a capa do álbum.<br>
-          <span style="opacity:.9;">(melhor em formato quadrado)</span>
-        </div>
-        <div class="rowBtns">
-          <button class="btn ghost" onclick="pickAlbumCover()"><i class="fa-solid fa-folder-open"></i> Selecionar capa</button>
-          <button class="btn ghost" onclick="clearCover()" title="Remover seleção"><i class="fa-solid fa-eraser"></i></button>
-        </div>
+      <div class="field">
+        <div class="label">Descrição do álbum (opcional)</div>
+        <textarea id="albumDesc" class="textarea" maxlength="600" placeholder="Escreva uma descrição..."></textarea>
       </div>
 
-      <input id="albumCoverInput" class="filePicker" type="file" accept="image/*">
+      <!-- CAPA -->
+      <div class="uploadBox">
+        <div class="uploadTop">
+          <div class="uploadTitle"><i class="fa-solid fa-image" style="color:var(--primary)"></i> Capa do álbum</div>
+          <div class="miniStat" id="albumCoverStatus">Nenhuma capa selecionada</div>
+        </div>
 
-      <div id="albumCoverPreview" style="margin-top:12px; display:none;">
-        <div style="display:flex; gap:12px; align-items:center; flex-wrap:wrap;">
-          <div class="albumHeroCover" style="width:140px; height:140px;">
-            <img id="albumCoverPreviewImg" alt="Prévia da capa">
+        <div class="dropArea">
+          <div class="dropText">
+            Escolha uma imagem para ser a capa do álbum.<br>
+            <span style="opacity:.9;">(melhor em formato quadrado)</span>
           </div>
-          <div class="tiny" id="albumCoverHint">Prévia da capa.</div>
+          <div class="rowBtns">
+            <button class="btn ghost" onclick="pickAlbumCover()"><i class="fa-solid fa-folder-open"></i> Selecionar capa</button>
+            <button class="btn ghost" onclick="clearCover()" title="Remover seleção"><i class="fa-solid fa-eraser"></i></button>
+          </div>
+        </div>
+
+        <input id="albumCoverInput" class="filePicker" type="file" accept="image/*">
+
+        <div id="albumCoverPreview" style="margin-top:12px; display:none;">
+          <div style="display:flex; gap:12px; align-items:center; flex-wrap:wrap;">
+            <div class="albumHeroCover" style="width:140px; height:140px;">
+              <img id="albumCoverPreviewImg" alt="Prévia da capa">
+            </div>
+            <div class="tiny" id="albumCoverHint">Prévia da capa.</div>
+          </div>
         </div>
       </div>
-    </div>
 
-    <!-- FOTOS -->
-    <div class="uploadBox" style="margin-top:12px;">
-      <div class="uploadTop">
-        <div class="uploadTitle"><i class="fa-solid fa-images" style="color:var(--primary)"></i> Fotos do álbum</div>
-        <div class="miniStat"><span id="albumPhotosCount">0</span> / 10</div>
+      <!-- FOTOS -->
+      <div class="uploadBox" style="margin-top:12px;">
+        <div class="uploadTop">
+          <div class="uploadTitle"><i class="fa-solid fa-images" style="color:var(--primary)"></i> Fotos do álbum</div>
+          <div class="miniStat"><span id="albumPhotosCount">0</span> / 10</div>
+        </div>
+
+        <div class="dropArea">
+          <div class="dropText">
+            Selecione até <b>10 fotos</b>.<br>
+            <span style="opacity:.9;">Você pode remover fotos clicando no ✕.</span>
+          </div>
+          <div class="rowBtns">
+            <button class="btn ghost" onclick="pickAlbumPhotos()"><i class="fa-solid fa-folder-open"></i> Selecionar fotos</button>
+            <button class="btn ghost" onclick="clearPhotos()" title="Limpar seleção"><i class="fa-solid fa-broom"></i></button>
+          </div>
+        </div>
+
+        <input id="albumPhotosInput" class="filePicker" type="file" accept="image/*" multiple>
+
+        <div id="albumPhotosPreviewWrap" style="display:none;">
+          <div class="previewGrid" id="albumPhotosPreviewGrid"></div>
+        </div>
+
+        <div class="tiny" id="albumPhotosStatus" style="margin-top:10px;">Nenhuma foto selecionada.</div>
       </div>
 
-      <div class="dropArea">
-        <div class="dropText">
-          Selecione até <b>10 fotos</b>.<br>
-          <span style="opacity:.9;">Você pode remover fotos clicando no ✕.</span>
+      <!-- VÍDEOS -->
+      <div class="uploadBox" style="margin-top:12px;">
+        <div class="uploadTop">
+          <div class="uploadTitle"><i class="fa-solid fa-video" style="color:var(--primary)"></i> Vídeos do álbum</div>
+          <div class="miniStat"><span id="albumVideosCount">0</span> / 10</div>
         </div>
+
+        <div class="dropArea">
+          <div class="dropText">
+            Selecione até <b>10 vídeos</b>.<br>
+            <span style="opacity:.9;">Remova vídeos clicando no ✕.</span>
+          </div>
+          <div class="rowBtns">
+            <button class="btn ghost" onclick="pickAlbumVideos()"><i class="fa-solid fa-folder-open"></i> Selecionar vídeos</button>
+            <button class="btn ghost" onclick="clearVideos()" title="Limpar seleção"><i class="fa-solid fa-broom"></i></button>
+          </div>
+        </div>
+
+        <input id="albumVideosInput" class="filePicker" type="file" accept="video/*" multiple>
+
+        <div id="albumVideosPreviewWrap" style="display:none;">
+          <div class="previewGrid" id="albumVideosPreviewGrid"></div>
+        </div>
+
+        <div class="tiny" id="albumVideosStatus" style="margin-top:10px;">Nenhum vídeo selecionado.</div>
+      </div>
+
+      <div class="rowBtns" style="margin-top:14px; justify-content:space-between;">
+        <div class="tiny" id="albumModeHint">Modo: Criar</div>
         <div class="rowBtns">
-          <button class="btn ghost" onclick="pickAlbumPhotos()"><i class="fa-solid fa-folder-open"></i> Selecionar fotos</button>
-          <button class="btn ghost" onclick="clearPhotos()" title="Limpar seleção"><i class="fa-solid fa-broom"></i></button>
+          <button class="btn" id="albumSaveBtn" onclick="salvarAlbum()"><i class="fa-solid fa-check"></i> Salvar</button>
+          <button class="btn ghost" onclick="fecharModal('modalAlbum')"><i class="fa-solid fa-ban"></i> Cancelar</button>
         </div>
       </div>
 
-      <input id="albumPhotosInput" class="filePicker" type="file" accept="image/*" multiple>
-
-      <div id="albumPhotosPreviewWrap" style="display:none;">
-        <div class="previewGrid" id="albumPhotosPreviewGrid"></div>
+      <div class="tiny" style="margin-top:12px; line-height:1.35;">
+        Ao salvar, o álbum aparece para todos na galeria com capa + dono. Ao clicar, abre o álbum.
       </div>
-
-      <div class="tiny" id="albumPhotosStatus" style="margin-top:10px;">Nenhuma foto selecionada.</div>
-    </div>
-
-    <!-- VÍDEOS -->
-    <div class="uploadBox" style="margin-top:12px;">
-      <div class="uploadTop">
-        <div class="uploadTitle"><i class="fa-solid fa-video" style="color:var(--primary)"></i> Vídeos do álbum</div>
-        <div class="miniStat"><span id="albumVideosCount">0</span> / 10</div>
-      </div>
-
-      <div class="dropArea">
-        <div class="dropText">
-          Selecione até <b>10 vídeos</b>.<br>
-          <span style="opacity:.9;">Remova vídeos clicando no ✕.</span>
-        </div>
-        <div class="rowBtns">
-          <button class="btn ghost" onclick="pickAlbumVideos()"><i class="fa-solid fa-folder-open"></i> Selecionar vídeos</button>
-          <button class="btn ghost" onclick="clearVideos()" title="Limpar seleção"><i class="fa-solid fa-broom"></i></button>
-        </div>
-      </div>
-
-      <input id="albumVideosInput" class="filePicker" type="file" accept="video/*" multiple>
-
-      <div id="albumVideosPreviewWrap" style="display:none;">
-        <div class="previewGrid" id="albumVideosPreviewGrid"></div>
-      </div>
-
-      <div class="tiny" id="albumVideosStatus" style="margin-top:10px;">Nenhum vídeo selecionado.</div>
-    </div>
-
-    <div class="rowBtns" style="margin-top:14px; justify-content:space-between;">
-      <div class="tiny" id="albumModeHint">Modo: Criar</div>
-      <div class="rowBtns">
-        <button class="btn" id="albumSaveBtn" onclick="salvarAlbum()"><i class="fa-solid fa-check"></i> Salvar</button>
-        <button class="btn ghost" onclick="fecharModal('modalAlbum')"><i class="fa-solid fa-ban"></i> Cancelar</button>
-      </div>
-    </div>
-
-    <div class="tiny" style="margin-top:12px; line-height:1.35;">
-      Ao salvar, o álbum aparece para todos na galeria com capa + dono. Ao clicar, abre o álbum.
     </div>
   </div>
 </div>
 
-<!-- ===================== MODAL: VER ALBUM (1 ITEM VISÍVEL + SWIPE) ===================== -->
+<!-- ===================== MODAL: VER ALBUM ===================== -->
 <div class="modalOverlay" id="modalViewAlbum">
   <div class="modalCard">
     <div class="modalTop">
@@ -938,8 +955,6 @@
       <button class="btn ghost" onclick="editarAlbumAtual()"><i class="fa-solid fa-pen"></i> Editar</button>
       <button class="btn ghost dangerBtn" onclick="excluirAlbumAtual()"><i class="fa-solid fa-trash"></i> Excluir</button>
     </div>
-
-    <!-- ✅ FRASE REMOVIDA: "Você está vendo este álbum como visitante..." -->
 
     <div id="albumBody"></div>
   </div>
@@ -1594,7 +1609,7 @@ async function toggleLikeAlbum(albumId){
   }
 }
 
-/* ====================== ABRIR ÁLBUM (VISÃO NOVA) ====================== */
+/* ====================== ABRIR ÁLBUM ====================== */
 let CURRENT_ALBUM_ID = "";
 let CURRENT_ALBUM_DATA = null;
 
@@ -1642,10 +1657,18 @@ function stageRender(){
   nextBtn.classList.toggle("disabled", list.length<=1);
 
   const item = list[STAGE_INDEX];
+
   if(STAGE_TAB === "photos"){
     stageMedia.innerHTML = `<img src="${escapeHTML(item.url||"")}" alt="foto">`;
   }else{
-    stageMedia.innerHTML = `<video src="${escapeHTML(item.url||"")}" controls playsinline preload="metadata"></video>`;
+    stageMedia.innerHTML = `
+      <video
+        src="${escapeHTML(item.url||"")}"
+        controls
+        playsinline
+        preload="metadata">
+      </video>
+    `;
   }
 }
 
@@ -1667,28 +1690,47 @@ function stageSetTab(tab){
   stageRender();
 }
 
-/* swipe para o stage (celular) */
+/* ✅ swipe corrigido: NÃO trava o scroll da página */
 function bindStageSwipe(){
   const stage = document.getElementById("stageBox");
   if(!stage) return;
 
-  let startX=0, startY=0, dx=0, dy=0, tracking=false;
+  let startX=0, startY=0, dx=0, dy=0, tracking=false, locked=false;
+
+  function getPoint(e){
+    return (e.touches && e.touches[0]) ? e.touches[0] : e;
+  }
 
   function onStart(e){
-    tracking=true; dx=dy=0;
-    const p = (e.touches && e.touches[0]) ? e.touches[0] : e;
+    tracking=true; locked=false; dx=dy=0;
+    const p = getPoint(e);
     startX=p.clientX; startY=p.clientY;
   }
+
   function onMove(e){
     if(!tracking) return;
-    const p = (e.touches && e.touches[0]) ? e.touches[0] : e;
+    const p = getPoint(e);
     dx = p.clientX - startX;
     dy = p.clientY - startY;
-    if(e.cancelable) e.preventDefault();
+
+    const ax = Math.abs(dx);
+    const ay = Math.abs(dy);
+
+    // trava só se a intenção for horizontal
+    if(!locked && ax > 10 && ax > ay){
+      locked = true;
+    }
+
+    // se travou (horizontal), impede o scroll da página
+    if(locked && e.cancelable){
+      e.preventDefault();
+    }
   }
+
   function onEnd(){
     if(!tracking) return;
     tracking=false;
+
     const ax=Math.abs(dx), ay=Math.abs(dy);
     if(ax>50 && ax>ay){
       if(dx<0) stageNext();
@@ -1752,7 +1794,7 @@ async function abrirAlbum(albumId){
     STAGE_TAB = "photos";
     STAGE_INDEX = 0;
 
-    // likes (carrega estado + render)
+    // likes
     const likeState = await getLikeState(albumId);
     const likeCount = likeState.list.length;
     const likedByMe = likeState.likedByMe;
@@ -1785,10 +1827,12 @@ async function abrirAlbum(albumId){
 
       <div class="stageBox" id="stageBox">
         <div class="stageMedia" id="stageMedia"></div>
+
         <div class="stageNav">
           <div class="navBtn" id="stagePrev" onclick="stagePrev()"><i class="fa-solid fa-chevron-left"></i></div>
           <div class="navBtn" id="stageNext" onclick="stageNext()"><i class="fa-solid fa-chevron-right"></i></div>
         </div>
+
         <div class="stageBottom">
           <div class="stageCounter" id="stageCounter">0/0</div>
           <div class="stageHint">Arraste pro lado (← →) para passar</div>
@@ -1796,14 +1840,10 @@ async function abrirAlbum(albumId){
       </div>
     `;
 
-    // render inicial stage + swipe
     stageRender();
     bindStageSwipe();
 
-    // listener realtime das curtidas no álbum aberto
     bindLikesRealtime(albumId);
-
-    // monta lista inicial (caso abra "ver curtidas")
     renderLikeList(likeState.list);
 
   }catch(e){
@@ -1887,7 +1927,6 @@ async function excluirAlbumAtual(){
 
     await DB.ref("albums/" + CURRENT_ALBUM_ID).remove();
 
-    // remove curtidas também
     try{ await DB.ref(`albumLikes/${CURRENT_ALBUM_ID}`).remove(); }catch(e){}
 
     for(const p of paths){
