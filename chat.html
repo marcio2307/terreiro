@@ -5,10 +5,6 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
 <title>Lojas & Serviços — Anúncios</title>
 
-<link rel="preconnect" href="https://www.gstatic.com" crossorigin>
-<link rel="preconnect" href="https://firebasestorage.googleapis.com" crossorigin>
-<link rel="preconnect" href="https://coletivo-f34d4-default-rtdb.firebaseio.com" crossorigin>
-
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
 <style>
@@ -24,12 +20,10 @@
   :root{
     --fb-bg:#18191A;
     --fb-surface:#242526;
-    --fb-surface-2:#2D2E30;
     --fb-border:rgba(255,255,255,.10);
     --fb-text:#E4E6EB;
     --fb-muted:rgba(228,230,235,.72);
     --fb-blue:#0866FF;
-    --fb-green:#31A24C;
     --fb-red:#F02849;
     --fb-shadow:0 8px 18px rgba(0,0,0,.35);
     --fb-radius:16px;
@@ -97,6 +91,7 @@
     overflow:hidden;
     flex:0 0 auto;
   }
+  .userAvatar img{ width:100%; height:100%; object-fit:cover; display:block; }
   .userName{
     font-weight: 900;
     font-size: 13px;
@@ -137,10 +132,7 @@
   }
   .chip input::placeholder{ color: rgba(228,230,235,.55); }
 
-  .tabs{
-    display:flex;
-    gap:8px;
-  }
+  .tabs{ display:flex; gap:8px; }
   .tabBtn{
     border:none;
     cursor:pointer;
@@ -153,10 +145,7 @@
     box-shadow: 0 8px 16px rgba(0,0,0,.18);
     user-select:none;
   }
-  .tabBtn.active{
-    background: var(--fb-blue);
-    color:#fff;
-  }
+  .tabBtn.active{ background: var(--fb-blue); color:#fff; }
 
   /* ANUNCIAR */
   .createRow{
@@ -265,17 +254,45 @@
     text-align:center;
   }
 
-  .metaSmall{
+  /* ✅ linha com avatar do anunciante + nome + data (igual antes) */
+  .metaLine{
     width:100%;
     display:flex;
     align-items:center;
     justify-content:center;
-    gap:8px;
+    gap:10px;
     color: var(--fb-muted);
     font-size: 12px;
     font-weight: 900;
     flex-wrap:wrap;
-    text-align:center;
+  }
+  .adUser{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    min-width:0;
+    max-width: 92%;
+  }
+  .miniAvatar{
+    width:28px;
+    height:28px;
+    border-radius:50%;
+    overflow:hidden;
+    background:#3A3B3C;
+    border:1px solid rgba(255,255,255,.10);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-weight:900;
+    color: rgba(228,230,235,.92);
+    flex:0 0 auto;
+  }
+  .miniAvatar img{ width:100%; height:100%; object-fit:cover; display:block; }
+  .adUserName{
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    max-width: 60vw;
   }
 
   /* ✅ FOTO MAIS CHAMATIVA + CLICÁVEL */
@@ -288,7 +305,6 @@
     border: 1px solid rgba(255,255,255,.12);
     margin: 2px auto 0 auto;
 
-    /* chamativo */
     box-shadow:
       0 18px 34px rgba(0,0,0,.50),
       0 0 0 1px rgba(255,255,255,.08) inset;
@@ -298,8 +314,6 @@
   }
   .cover img{ width:100%; height:100%; object-fit:cover; display:block; transition: transform .18s ease; }
   .cover:hover img{ transform: scale(1.04); }
-
-  /* brilho/overlay */
   .cover::after{
     content:"";
     position:absolute;
@@ -309,8 +323,6 @@
       linear-gradient(to bottom, rgba(0,0,0,.10), rgba(0,0,0,.35));
     pointer-events:none;
   }
-
-  /* ícone de zoom */
   .zoomBadge{
     position:absolute;
     right: 12px;
@@ -328,7 +340,6 @@
     pointer-events:none;
     box-shadow: 0 10px 20px rgba(0,0,0,.35);
   }
-
   .coverFallback{
     width:100%; height:100%;
     display:flex; align-items:center; justify-content:center;
@@ -346,9 +357,10 @@
     text-align:center;
   }
 
+  /* ✅ botão mais largo */
   .saibaBtn{
     margin-top: 2px;
-    width: min(320px, 86%);
+    width: min(360px, 92%);
     border:none;
     border-radius: 14px;
     padding: 12px 12px;
@@ -430,7 +442,9 @@
     display:flex; align-items:center; justify-content:center;
     font-weight: 900;
     flex:0 0 auto;
+    color: rgba(228,230,235,.92);
   }
+  .adAvatar img{ width:100%; height:100%; object-fit:cover; display:block; }
   .adHeadText{ min-width:0; }
   .adOwner{
     font-weight: 900;
@@ -761,11 +775,10 @@
     <div class="title">Lojas & Serviços</div>
   </div>
 
-  <div style="display:flex;align-items:center;gap:10px;min-width:0;">
-    <div class="userBadge" title="Usuário logado">
-      <div class="userAvatar" id="userAvatar">U</div>
-      <div class="userName" id="userName">Carregando...</div>
-    </div>
+  <!-- ✅ foto de perfil de quem está logado (como estava) -->
+  <div class="userBadge" title="Usuário logado">
+    <div class="userAvatar" id="userAvatar">U</div>
+    <div class="userName" id="userName">Carregando...</div>
   </div>
 </div>
 
@@ -829,6 +842,13 @@
         <div class="hint">Dica: se você digitar sem https://, o sistema adiciona automaticamente.</div>
       </div>
 
+      <!-- ✅ FOTO DE PERFIL DO ANUNCIANTE (salva e aparece no feed e no saiba mais) -->
+      <div class="field full">
+        <div class="label"><i class="fa-solid fa-user"></i> Foto de perfil (vai aparecer no anúncio)</div>
+        <input class="input" id="fProfileUrl" maxlength="500" placeholder="Cole o link da sua foto (opcional)" />
+        <div class="hint">Se não colocar, aparece a letra do nome.</div>
+      </div>
+
       <div class="field full">
         <div class="label"><i class="fa-solid fa-images"></i> Fotos (até 3)</div>
         <div class="photoPicker" id="photoPicker"></div>
@@ -879,7 +899,6 @@
 /* ====================== LOGIN / NAVEGAÇÃO ====================== */
 const LOGIN_URL = "https://marcio2307.github.io/terreiro/entrar.html";
 const BACK_URL  = "https://marcio2307.github.io/terreiro/site.html";
-
 function goBackNoLogout(){ location.href = BACK_URL; }
 
 function normalizeNameKey(name){
@@ -960,30 +979,49 @@ localStorage.setItem("uid_user_" + nameKey, UID);
 localStorage.setItem("uid_passageiro", UID);
 sessionStorage.setItem("uid_passageiro", UID);
 
-(async function syncUidWithFirebase(){
+/* ✅ foto de perfil do logado (como estava): lê do localStorage se existir */
+const LS_PROFILE_KEY = "perfil_foto_" + nameKey;
+let LOGGED_PROFILE_URL = (localStorage.getItem(LS_PROFILE_KEY) || "").trim();
+
+/* se tiver no firebase também (opcional), tenta puxar */
+(async function syncUidAndProfile(){
   try{
-    const ref = DB.ref("usernames/" + nameKey);
-    const snap = await ref.once("value");
-    const remoteUid = snap.val();
-    if(remoteUid && typeof remoteUid === "string" && remoteUid.length > 5){
-      if(remoteUid !== UID){
-        UID = remoteUid;
-        localStorage.setItem("uid_user_" + nameKey, UID);
-        localStorage.setItem("uid_passageiro", UID);
-        sessionStorage.setItem("uid_passageiro", UID);
-        location.reload();
-        return;
-      }
-    }else{
-      await ref.set(UID);
+    const refU = DB.ref("usernames/" + nameKey);
+    const snapU = await refU.once("value");
+    const remoteUid = snapU.val();
+    if(remoteUid && typeof remoteUid === "string" && remoteUid.length > 5 && remoteUid !== UID){
+      UID = remoteUid;
+      localStorage.setItem("uid_user_" + nameKey, UID);
+      localStorage.setItem("uid_passageiro", UID);
+      sessionStorage.setItem("uid_passageiro", UID);
+      location.reload();
+      return;
+    }else if(!remoteUid){
+      await refU.set(UID);
+    }
+
+    const refP = DB.ref("userProfiles/" + UID + "/photoUrl");
+    const snapP = await refP.once("value");
+    const remotePhoto = (snapP.val() || "").trim();
+    if(remotePhoto){
+      LOGGED_PROFILE_URL = remotePhoto;
+      localStorage.setItem(LS_PROFILE_KEY, remotePhoto);
+      paintUser();
     }
   }catch(e){}
 })();
 
-(function paintUser(){
+function paintUser(){
   document.getElementById("userName").textContent = USER_NAME;
-  document.getElementById("userAvatar").textContent = initials(USER_NAME);
-})();
+  const el = document.getElementById("userAvatar");
+  const url = (LOGGED_PROFILE_URL || "").trim();
+  if(url){
+    el.innerHTML = `<img src="${escapeHTML(url)}" alt="Foto de perfil">`;
+  }else{
+    el.textContent = initials(USER_NAME);
+  }
+}
+paintUser();
 
 /* ====================== LOADING ====================== */
 const loadingOverlay = document.getElementById("loadingOverlay");
@@ -1019,6 +1057,8 @@ const fDesc = document.getElementById("fDesc");
 const fAddress = document.getElementById("fAddress");
 const fPhone = document.getElementById("fPhone");
 const fWebsite = document.getElementById("fWebsite");
+const fProfileUrl = document.getElementById("fProfileUrl");
+
 const photoPicker = document.getElementById("photoPicker");
 
 let editingAdId = null;
@@ -1039,6 +1079,9 @@ function openModalCreate(){
   fAddress.value = "";
   fPhone.value = "";
   fWebsite.value = "";
+
+  /* ✅ já preenche com a foto do logado (se tiver) */
+  fProfileUrl.value = (LOGGED_PROFILE_URL || "");
 
   pickedFiles = [null,null,null];
   cleanupPreviews();
@@ -1065,6 +1108,9 @@ function openModalEdit(adId, adData){
   fAddress.value = adData.address || "";
   fPhone.value = adData.phone || "";
   fWebsite.value = adData.website || "";
+
+  /* ✅ puxa a foto do anunciante do anúncio */
+  fProfileUrl.value = (adData.profilePhotoUrl || "");
 
   pickedFiles = [null,null,null];
   cleanupPreviews();
@@ -1190,6 +1236,7 @@ async function saveAd(){
   const address = (fAddress.value || "").trim();
   const phone = (fPhone.value || "").trim();
   const website = safeUrl(fWebsite.value || "");
+  const profilePhotoUrl = (fProfileUrl.value || "").trim();
 
   if(!title || title.length < 3){
     alert("Digite um título (mín. 3 caracteres).");
@@ -1217,7 +1264,7 @@ async function saveAd(){
       }
     }
 
-    const finalPhotos = [null,null,null];
+    let finalPhotos = [null,null,null];
 
     async function tryDeleteOld(storagePath){
       if(!storagePath) return;
@@ -1248,17 +1295,18 @@ async function saveAd(){
       }
     }
 
-    const cleanedPhotos = finalPhotos.filter(Boolean);
+    finalPhotos = finalPhotos.filter(Boolean);
 
     const payload = {
       uid: UID,
       userName: USER_NAME,
+      profilePhotoUrl: profilePhotoUrl || "",   /* ✅ salva foto do anunciante */
       title,
       desc,
       address,
       phone,
       website,
-      photos: cleanedPhotos,
+      photos: finalPhotos,
       updatedAt: firebase.database.ServerValue.TIMESTAMP
     };
 
@@ -1269,6 +1317,14 @@ async function saveAd(){
     }
 
     await DB.ref(`${ADS_PATH}/${adId}`).set(payload);
+
+    /* ✅ se for o usuário logado, guarda como "foto do logado" também */
+    if(profilePhotoUrl){
+      localStorage.setItem(LS_PROFILE_KEY, profilePhotoUrl);
+      LOGGED_PROFILE_URL = profilePhotoUrl;
+      paintUser();
+      try{ await DB.ref("userProfiles/" + UID + "/photoUrl").set(profilePhotoUrl); }catch(e){}
+    }
 
     closeModal();
     cleanupPreviews();
@@ -1326,7 +1382,6 @@ const tabAll  = document.getElementById("tabAll");
 const tabMine = document.getElementById("tabMine");
 
 let showOnlyMine = false;
-
 let adsAll = [];
 let adsFiltered = [];
 
@@ -1385,13 +1440,20 @@ document.addEventListener("click", (e)=>{
   if(!clickedMenu) closeAllMenus();
 });
 
-/* ✅ agora: clicar NA FOTO também abre a prévia (viewer) */
 function openFirstPhotoViewer(adId){
   const ad = adsAll.find(x=>x.id === adId);
   if(!ad) return;
   const photos = Array.isArray(ad.photos) ? ad.photos : [];
   const firstUrl = photos[0] && photos[0].url ? photos[0].url : "";
   if(firstUrl) openViewer(firstUrl);
+}
+
+function avatarHTML(photoUrl, userName){
+  const url = (photoUrl || "").trim();
+  if(url){
+    return `<span class="miniAvatar"><img src="${escapeHTML(url)}" alt="Foto de ${escapeHTML(userName||'usuário')}"></span>`;
+  }
+  return `<span class="miniAvatar">${escapeHTML(initials(userName||""))}</span>`;
 }
 
 function adCardHTML(adId, a){
@@ -1424,16 +1486,17 @@ function adCardHTML(adId, a){
       ${menu}
 
       <div class="adCompact">
-        <div class="metaSmall">
-          <i class="fa-solid fa-user"></i>
-          <span style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:60vw;">${escapeHTML(a.userName || "Usuário")}</span>
+        <!-- ✅ avatar do anunciante + nome + data -->
+        <div class="metaLine">
+          <div class="adUser" title="${escapeHTML(a.userName||'Usuário')}">
+            ${avatarHTML(a.profilePhotoUrl, a.userName)}
+            <span class="adUserName">${escapeHTML(a.userName || "Usuário")}</span>
+          </div>
           <span style="opacity:.55;">•</span>
           <span>${escapeHTML(when)}</span>
         </div>
 
-        <!-- ✅ clicar aqui abre a prévia -->
-        <div class="cover" role="button" aria-label="Abrir prévia da foto"
-             onclick="openFirstPhotoViewer('${adId}')">
+        <div class="cover" role="button" aria-label="Abrir prévia da foto" onclick="openFirstPhotoViewer('${adId}')">
           ${coverHTML}
           ${firstPhoto ? `<div class="zoomBadge"><i class="fa-solid fa-magnifying-glass-plus"></i></div>` : ``}
         </div>
@@ -1567,9 +1630,13 @@ function buildDetailsHTML(a){
     </button>
   ` : ``;
 
+  const avatar = (a.profilePhotoUrl||"").trim()
+    ? `<div class="adAvatar"><img src="${escapeHTML(a.profilePhotoUrl)}" alt="Foto do anunciante"></div>`
+    : `<div class="adAvatar">${escapeHTML(initials(a.userName || "Usuário"))}</div>`;
+
   return `
     <div class="adHead">
-      <div class="adAvatar">${escapeHTML(initials(a.userName || "Usuário"))}</div>
+      ${avatar}
       <div class="adHeadText">
         <div class="adOwner">${escapeHTML(a.userName || "Usuário")}</div>
         <div class="adWhen">${escapeHTML(when)}</div>
