@@ -226,7 +226,7 @@
     50%{ transform:scale(1.25); opacity:.35; }
   }
 
-  /* botões abaixo do nome (como pedido) */
+  /* botões abaixo do nome */
   .heroActions{
     margin-top: 12px;
     display:flex;
@@ -384,7 +384,7 @@
   }
   .dangerBtn:hover{ background: rgba(255,91,91,.18) !important; }
 
-  /* ===================== GRID DE ÁLBUNS (dono acima + capa abaixo) ===================== */
+  /* ===================== GRID DE ÁLBUNS ===================== */
   .albumsGrid{
     display:grid;
     grid-template-columns: repeat(4, 1fr);
@@ -507,7 +507,7 @@
     display:flex; align-items:center; gap:10px;
   }
 
-  /* ===================== ALBUM VIEW ===================== */
+  /* ===================== ALBUM VIEW (ABAS COM 1 ITEM VISÍVEL) ===================== */
   .albumHeader{
     display:flex;
     gap:12px;
@@ -542,42 +542,146 @@
     word-break: break-word;
   }
 
-  .mediaSection{
-    margin-top: 14px;
-    background: rgba(255,255,255,.04);
-    border: 1px solid rgba(255,255,255,.10);
-    border-radius: 16px;
-    padding: 12px;
+  .tabs{
+    margin-top:12px;
+    display:flex;
+    gap:10px;
+    flex-wrap:wrap;
+    align-items:center;
   }
-  .secTitle{
-    display:flex; align-items:center; justify-content:space-between; gap:10px;
+  .tabBtn{
+    flex:1 1 140px;
+    border:1px solid rgba(255,255,255,.12);
+    background: rgba(255,255,255,.06);
+    color: var(--text);
+    padding: 10px 12px;
+    border-radius: 999px;
+    cursor:pointer;
     font-weight:900;
-    letter-spacing:.2px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:8px;
+    user-select:none;
+    transition:.15s;
   }
-  .mediaGrid{
-    margin-top: 12px;
-    display:grid;
-    grid-template-columns: repeat(3, 1fr);
+  .tabBtn:hover{ background: rgba(255,255,255,.09); }
+  .tabBtn.active{
+    background: var(--primarySoft);
+    border-color: rgba(8,102,255,.55);
+  }
+
+  .likeRow{
+    margin-top:12px;
+    display:flex;
+    gap:10px;
+    flex-wrap:wrap;
+    align-items:center;
+    justify-content:space-between;
+  }
+  .likeInfo{
+    font-weight:900;
+    color: var(--muted);
+    font-size: 13px;
+    line-height:1.35;
+  }
+  .likeList{
+    margin-top:10px;
+    border-radius: 14px;
+    border: 1px solid rgba(255,255,255,.10);
+    background: rgba(0,0,0,.18);
+    padding: 10px;
+    display:none;
+  }
+  .likeItem{
+    padding:8px 10px;
+    border-radius: 12px;
+    border:1px solid rgba(255,255,255,.08);
+    background: rgba(255,255,255,.04);
+    font-weight:900;
+    color: var(--text);
+    margin-bottom:8px;
+    display:flex;
+    justify-content:space-between;
     gap:10px;
   }
-  @media (max-width: 820px){ .mediaGrid{ grid-template-columns: repeat(2, 1fr); } }
-  @media (max-width: 520px){ .mediaGrid{ grid-template-columns: 1fr; } }
+  .likeItem:last-child{ margin-bottom:0; }
+  .likeSmall{ color: var(--muted); font-size:12px; font-weight:900; }
 
-  .mediaItem{
-    border-radius: 14px;
-    overflow:hidden;
+  .stageBox{
+    margin-top:12px;
+    border-radius: 16px;
     border: 1px solid rgba(255,255,255,.10);
-    background:#000;
-    cursor: pointer;
+    background: #000;
+    overflow:hidden;
+    position:relative;
   }
-  .mediaItem img, .mediaItem video{
+  .stageMedia{
     width:100%;
-    height: 220px;
-    object-fit: cover;
-    display:block;
+    height: min(64vh, 520px);
+    display:flex;
+    align-items:center;
+    justify-content:center;
     background:#000;
   }
-  .mediaItem video{ height: 240px; }
+  .stageMedia img, .stageMedia video{
+    width:100%;
+    height:100%;
+    object-fit: contain;
+    background:#000;
+    display:block;
+  }
+  .stageNav{
+    position:absolute;
+    inset:0;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    pointer-events:none;
+  }
+  .navBtn{
+    pointer-events:auto;
+    width:44px; height:44px;
+    border-radius: 999px;
+    border: 1px solid rgba(255,255,255,.18);
+    background: rgba(0,0,0,.45);
+    color:#fff;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    cursor:pointer;
+    user-select:none;
+    margin: 0 10px;
+  }
+  .navBtn:active{ transform: scale(.98); }
+  .navBtn.disabled{ opacity:.35; pointer-events:none; }
+
+  .stageBottom{
+    padding: 10px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:10px;
+    flex-wrap:wrap;
+    background: rgba(0,0,0,.35);
+    border-top: 1px solid rgba(255,255,255,.10);
+  }
+  .stageCounter{
+    font-weight:900;
+    color:#fff;
+    background: rgba(0,0,0,.25);
+    border:1px solid rgba(255,255,255,.14);
+    padding: 7px 10px;
+    border-radius: 999px;
+  }
+  .stageHint{
+    font-weight:900;
+    color: rgba(255,255,255,.82);
+    font-size: 12px;
+  }
+  @media (min-width: 820px){
+    .stageHint{ display:none; }
+  }
 
   /* toast */
   .toast{
@@ -596,98 +700,10 @@
     font-weight:900;
   }
 
-  /* ===================== FOTO VIEWER (Swipe) ===================== */
-  .viewerOverlay{
-    position:fixed; inset:0;
-    background: rgba(0,0,0,.92);
-    display:none;
-    align-items:center;
-    justify-content:center;
-    z-index: 99999999;
-    touch-action: none;
-  }
-  .viewerTop{
-    position:absolute;
-    left:0; right:0; top:0;
-    padding-top: env(safe-area-inset-top);
-    padding: 10px 12px;
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    gap:10px;
-    pointer-events:none;
-  }
-  .viewerTop .vLeft, .viewerTop .vRight, .viewerTop .vCenter{ pointer-events:auto; }
-  .viewerTop .vCenter{
-    flex:1;
-    display:flex;
-    justify-content:center;
-    min-width:0;
-  }
-  .viewerCounter{
-    font-weight:900;
-    color:#fff;
-    background: rgba(0,0,0,.35);
-    border:1px solid rgba(255,255,255,.16);
-    padding: 8px 12px;
-    border-radius: 999px;
-    max-width: 72vw;
-    overflow:hidden;
-    text-overflow:ellipsis;
-    white-space:nowrap;
-  }
-  .viewerBtn{
-    width:44px; height:44px;
-    border-radius: 999px;
-    border: 1px solid rgba(255,255,255,.18);
-    background: rgba(0,0,0,.45);
-    color:#fff;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    cursor:pointer;
-    user-select:none;
-  }
-  .viewerBtn:active{ transform: scale(.98); }
-  .viewerStage{
-    width:100%;
-    height:100%;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    overflow:hidden;
-  }
-  .viewerImg{
-    max-width: 100vw;
-    max-height: 100vh;
-    width: 100%;
-    height: 100%;
-    object-fit: contain;
-    user-select:none;
-    -webkit-user-drag: none;
-  }
-  .viewerHint{
-    position:absolute;
-    left:50%;
-    transform:translateX(-50%);
-    bottom: calc(16px + env(safe-area-inset-bottom));
-    color:#fff;
-    font-weight:900;
-    font-size: 12px;
-    opacity:.85;
-    background: rgba(0,0,0,.35);
-    border:1px solid rgba(255,255,255,.12);
-    padding: 8px 12px;
-    border-radius: 999px;
-    pointer-events:none;
-  }
-  @media (min-width: 820px){
-    .viewerHint{ display:none; }
-  }
-
-  /* painel simples (sem tabs) */
+  /* painel simples */
   .panel{ display:none; }
   .panel.active{ display:block; }
+
 </style>
 </head>
 
@@ -711,13 +727,11 @@
   <button class="btn ghost icon" title="Voltar" aria-label="Voltar" onclick="voltarHome()">
     <i class="fa-solid fa-arrow-left"></i>
   </button>
-  <!-- ✅ título Memorial do lado esquerdo -->
   <div class="brand">MEMORIAL</div>
 </div>
 
 <div class="wrap">
 
-  <!-- ✅ nome + foto do usuário logado, e abaixo botões -->
   <div class="hero">
     <div class="heroTop">
       <div class="meLeft">
@@ -739,7 +753,6 @@
       </div>
     </div>
 
-    <!-- ✅ abaixo do nome: Criar álbum e Meus álbuns -->
     <div class="heroActions">
       <button class="btn" onclick="abrirModalCriarAlbum()"><i class="fa-solid fa-plus"></i> Criar álbum</button>
       <button class="btn ghost" onclick="setPanel('my')"><i class="fa-solid fa-user"></i> Meus álbuns</button>
@@ -747,13 +760,11 @@
     </div>
   </div>
 
-  <!-- ✅ Título "Memórias" -->
   <div class="sectionTitle">
     <div class="left"><i class="fa-solid fa-images" style="color:var(--primary)"></i> Memórias</div>
     <div class="tiny" id="allAlbumsCount">0 álbuns</div>
   </div>
 
-  <!-- ÁLBUNS (todos) -->
   <div class="panel active" id="panel_albums">
     <div class="card">
       <div id="albumsGrid" class="albumsGrid"></div>
@@ -763,7 +774,6 @@
     </div>
   </div>
 
-  <!-- MEUS ÁLBUNS -->
   <div class="panel" id="panel_my" style="margin-top:12px;">
     <div class="card">
       <div class="sectionTitle" style="margin:0 0 10px 0;">
@@ -890,12 +900,12 @@
     </div>
 
     <div class="tiny" style="margin-top:12px; line-height:1.35;">
-      Ao salvar, o álbum aparece para todos na galeria com capa + dono. Ao clicar, mostra tudo.
+      Ao salvar, o álbum aparece para todos na galeria com capa + dono. Ao clicar, abre o álbum.
     </div>
   </div>
 </div>
 
-<!-- ===================== MODAL: VER ALBUM ===================== -->
+<!-- ===================== MODAL: VER ALBUM (1 ITEM VISÍVEL + SWIPE) ===================== -->
 <div class="modalOverlay" id="modalViewAlbum">
   <div class="modalCard">
     <div class="modalTop">
@@ -910,33 +920,10 @@
       <button class="btn ghost dangerBtn" onclick="excluirAlbumAtual()"><i class="fa-solid fa-trash"></i> Excluir</button>
     </div>
 
-    <div class="mutedHint" id="albumNotOwnerHint" style="display:none; margin-top:12px;">
-      Você está vendo este álbum como visitante (somente leitura).
-    </div>
+    <!-- ✅ FRASE REMOVIDA: "Você está vendo este álbum como visitante..." -->
 
     <div id="albumBody"></div>
   </div>
-</div>
-
-<!-- ===================== FOTO VIEWER SWIPE ===================== -->
-<div class="viewerOverlay" id="photoViewer">
-  <div class="viewerTop">
-    <div class="vLeft">
-      <div class="viewerBtn" onclick="closePhotoViewer()" title="Fechar"><i class="fa-solid fa-xmark"></i></div>
-    </div>
-    <div class="vCenter">
-      <div class="viewerCounter" id="viewerCounter">1/1</div>
-    </div>
-    <div class="vRight">
-      <div class="viewerBtn" onclick="toggleViewerUI()" title="Ocultar/Mostrar HUD"><i class="fa-solid fa-eye"></i></div>
-    </div>
-  </div>
-
-  <div class="viewerStage" id="viewerStage">
-    <img id="viewerImg" class="viewerImg" alt="Foto">
-  </div>
-
-  <div class="viewerHint">Arraste para o lado (← →) para passar as fotos</div>
 </div>
 
 <div class="toast" id="toast"></div>
@@ -1138,8 +1125,9 @@ async function uploadToStorage(file, folder){
   return { url, path };
 }
 
-/* ====================== DADOS: ÁLBUNS ====================== */
+/* ====================== DADOS: ÁLBUNS + CURTIDAS ====================== */
 const ALBUMS_REF = DB.ref("albums");
+const LIKES_REF  = DB.ref("albumLikes"); // albumLikes/{albumId}/{uid} => {uid,name,at}
 
 /* ====================== UI: CRIAR/EDITAR ====================== */
 const albumModalTitle = document.getElementById("albumModalTitle");
@@ -1167,7 +1155,6 @@ let pendingCoverFile = null;
 let pendingPhotoFiles = [];
 let pendingVideoFiles = [];
 
-/* modo edição */
 let EDIT_MODE = false;
 let EDIT_ALBUM_ID = "";
 let EDIT_EXISTING = null;
@@ -1269,7 +1256,6 @@ function clearPhotos(){
   albumPhotosPreviewWrap.style.display = "none";
   albumPhotosPreviewGrid.innerHTML = "";
 }
-
 function renderPhotosPreview(){
   const count = pendingPhotoFiles.length;
   albumPhotosCountEl.textContent = String(count);
@@ -1296,7 +1282,6 @@ function removePhoto(idx){
   pendingPhotoFiles.splice(idx, 1);
   renderPhotosPreview();
 }
-
 albumPhotosInput.addEventListener("change", ()=>{
   const files = Array.from(albumPhotosInput.files || []).filter(f => (f.type||"").startsWith("image/"));
   const merged = pendingPhotoFiles.concat(files).slice(0, 10);
@@ -1312,7 +1297,6 @@ function clearVideos(){
   albumVideosPreviewWrap.style.display = "none";
   albumVideosPreviewGrid.innerHTML = "";
 }
-
 function renderVideosPreview(){
   const count = pendingVideoFiles.length;
   albumVideosCountEl.textContent = String(count);
@@ -1345,7 +1329,6 @@ function removeVideo(idx){
   pendingVideoFiles.splice(idx, 1);
   renderVideosPreview();
 }
-
 albumVideosInput.addEventListener("change", ()=>{
   const files = Array.from(albumVideosInput.files || []).filter(f => (f.type||"").startsWith("video/"));
   const merged = pendingVideoFiles.concat(files).slice(0, 10);
@@ -1518,16 +1501,11 @@ function albumCardHTML(a){
 
   return `
     <div class="albumCard" onclick="abrirAlbum('${escapeHTML(a.albumId)}')">
-      <!-- ✅ acima da capa: foto + nome do dono -->
       <div class="albumOwnerTop">
         <div class="oAva">${ownerAvatarHTML(a.ownerAvatar || "", a.ownerName || "")}</div>
         <div class="oName">${escapeHTML(a.ownerName || "Usuário")}</div>
       </div>
-
-      <!-- ✅ capa -->
       <div class="albumCoverBox">${cover}</div>
-
-      <!-- título -->
       <div class="albumBottom">
         <div class="albumTitle">${escapeHTML(a.title || "Álbum")}</div>
         <div class="albumMetaTiny">
@@ -1573,63 +1551,114 @@ function listenAlbums(){
   });
 }
 
-/* ====================== FOTO VIEWER (Swipe) ====================== */
-const photoViewer = document.getElementById("photoViewer");
-const viewerImg = document.getElementById("viewerImg");
-const viewerCounter = document.getElementById("viewerCounter");
-const viewerStage = document.getElementById("viewerStage");
-
-let VIEWER_LIST = [];
-let VIEWER_INDEX = 0;
-let VIEWER_HUD_VISIBLE = true;
-
-function openPhotoViewer(listUrls, startIndex){
-  VIEWER_LIST = (listUrls || []).slice();
-  VIEWER_INDEX = Math.max(0, Math.min(startIndex || 0, VIEWER_LIST.length-1));
-  if(VIEWER_LIST.length === 0) return;
-
-  photoViewer.style.display = "flex";
-  document.body.style.overflow = "hidden";
-  renderViewer();
-}
-function closePhotoViewer(){
-  photoViewer.style.display = "none";
-  document.body.style.overflow = "";
-}
-function renderViewer(){
-  const total = VIEWER_LIST.length;
-  const idx = VIEWER_INDEX;
-  viewerCounter.textContent = `${idx+1}/${total}`;
-  viewerImg.src = VIEWER_LIST[idx];
-}
-function nextPhoto(){
-  if(VIEWER_LIST.length === 0) return;
-  VIEWER_INDEX = (VIEWER_INDEX + 1) % VIEWER_LIST.length;
-  renderViewer();
-}
-function prevPhoto(){
-  if(VIEWER_LIST.length === 0) return;
-  VIEWER_INDEX = (VIEWER_INDEX - 1 + VIEWER_LIST.length) % VIEWER_LIST.length;
-  renderViewer();
-}
-function toggleViewerUI(){
-  VIEWER_HUD_VISIBLE = !VIEWER_HUD_VISIBLE;
-  const top = photoViewer.querySelector(".viewerTop");
-  const hint = photoViewer.querySelector(".viewerHint");
-  top.style.display = VIEWER_HUD_VISIBLE ? "flex" : "none";
-  hint.style.display = VIEWER_HUD_VISIBLE ? "" : "none";
+/* ====================== CURTIR ÁLBUM ====================== */
+async function getLikeState(albumId){
+  const snap = await DB.ref(`albumLikes/${albumId}`).once("value");
+  const obj = snap.val() || {};
+  const list = Object.keys(obj).map(k=>obj[k]).filter(Boolean);
+  const likedByMe = !!obj[UID];
+  return { likedByMe, list };
 }
 
-(function setupViewerGestures(){
-  let startX = 0, startY = 0, dx = 0, dy = 0;
-  let tracking = false;
+async function toggleLikeAlbum(albumId){
+  if(!USER_NAME){ abrirLogin(); return; }
+  const my = { uid: UID, name: USER_NAME, at: firebase.database.ServerValue.TIMESTAMP };
+
+  const ref = DB.ref(`albumLikes/${albumId}/${UID}`);
+  const snap = await ref.once("value");
+  if(snap.exists()){
+    await ref.remove();
+    toast("Curtida removida");
+  }else{
+    await ref.set(my);
+    toast("Você curtiu ✅");
+  }
+}
+
+/* ====================== ABRIR ÁLBUM (VISÃO NOVA) ====================== */
+let CURRENT_ALBUM_ID = "";
+let CURRENT_ALBUM_DATA = null;
+
+const albumViewTop = document.getElementById("albumViewTop");
+const albumBody = document.getElementById("albumBody");
+const albumOwnerActions = document.getElementById("albumOwnerActions");
+
+/* estado do "stage" */
+let STAGE_TAB = "photos"; // photos | videos
+let STAGE_PHOTOS = [];
+let STAGE_VIDEOS = [];
+let STAGE_INDEX = 0;
+
+function stageClamp(){
+  const list = (STAGE_TAB === "photos") ? STAGE_PHOTOS : STAGE_VIDEOS;
+  if(list.length === 0) STAGE_INDEX = 0;
+  else STAGE_INDEX = Math.max(0, Math.min(STAGE_INDEX, list.length-1));
+}
+
+function stageRender(){
+  const list = (STAGE_TAB === "photos") ? STAGE_PHOTOS : STAGE_VIDEOS;
+  const stageMedia = document.getElementById("stageMedia");
+  const counter = document.getElementById("stageCounter");
+  const prevBtn = document.getElementById("stagePrev");
+  const nextBtn = document.getElementById("stageNext");
+  const tabPhotos = document.getElementById("tabPhotos");
+  const tabVideos = document.getElementById("tabVideos");
+
+  tabPhotos.classList.toggle("active", STAGE_TAB==="photos");
+  tabVideos.classList.toggle("active", STAGE_TAB==="videos");
+
+  stageClamp();
+
+  if(list.length === 0){
+    counter.textContent = `0/0`;
+    stageMedia.innerHTML = `<div style="color:#fff; font-weight:900; padding:18px; text-align:center;">Nenhum item aqui.</div>`;
+    prevBtn.classList.add("disabled");
+    nextBtn.classList.add("disabled");
+    return;
+  }
+
+  counter.textContent = `${STAGE_INDEX+1}/${list.length}`;
+
+  prevBtn.classList.toggle("disabled", list.length<=1);
+  nextBtn.classList.toggle("disabled", list.length<=1);
+
+  const item = list[STAGE_INDEX];
+  if(STAGE_TAB === "photos"){
+    stageMedia.innerHTML = `<img src="${escapeHTML(item.url||"")}" alt="foto">`;
+  }else{
+    stageMedia.innerHTML = `<video src="${escapeHTML(item.url||"")}" controls playsinline preload="metadata"></video>`;
+  }
+}
+
+function stageNext(){
+  const list = (STAGE_TAB === "photos") ? STAGE_PHOTOS : STAGE_VIDEOS;
+  if(list.length <= 1) return;
+  STAGE_INDEX = (STAGE_INDEX + 1) % list.length;
+  stageRender();
+}
+function stagePrev(){
+  const list = (STAGE_TAB === "photos") ? STAGE_PHOTOS : STAGE_VIDEOS;
+  if(list.length <= 1) return;
+  STAGE_INDEX = (STAGE_INDEX - 1 + list.length) % list.length;
+  stageRender();
+}
+function stageSetTab(tab){
+  STAGE_TAB = tab;
+  STAGE_INDEX = 0;
+  stageRender();
+}
+
+/* swipe para o stage (celular) */
+function bindStageSwipe(){
+  const stage = document.getElementById("stageBox");
+  if(!stage) return;
+
+  let startX=0, startY=0, dx=0, dy=0, tracking=false;
 
   function onStart(e){
-    tracking = true;
-    dx = dy = 0;
+    tracking=true; dx=dy=0;
     const p = (e.touches && e.touches[0]) ? e.touches[0] : e;
-    startX = p.clientX;
-    startY = p.clientY;
+    startX=p.clientX; startY=p.clientY;
   }
   function onMove(e){
     if(!tracking) return;
@@ -1640,79 +1669,17 @@ function toggleViewerUI(){
   }
   function onEnd(){
     if(!tracking) return;
-    tracking = false;
-
-    const absX = Math.abs(dx);
-    const absY = Math.abs(dy);
-
-    if(absX > 50 && absX > absY){
-      if(dx < 0) nextPhoto();
-      else prevPhoto();
-      return;
-    }
-    if(absX < 8 && absY < 8){
-      toggleViewerUI();
+    tracking=false;
+    const ax=Math.abs(dx), ay=Math.abs(dy);
+    if(ax>50 && ax>ay){
+      if(dx<0) stageNext();
+      else stagePrev();
     }
   }
 
-  viewerStage.addEventListener("touchstart", onStart, {passive:true});
-  viewerStage.addEventListener("touchmove", onMove, {passive:false});
-  viewerStage.addEventListener("touchend", onEnd, {passive:true});
-
-  document.addEventListener("keydown", (e)=>{
-    if(photoViewer.style.display !== "flex") return;
-    if(e.key === "Escape") closePhotoViewer();
-    if(e.key === "ArrowRight") nextPhoto();
-    if(e.key === "ArrowLeft") prevPhoto();
-  });
-
-  photoViewer.addEventListener("click", (e)=>{
-    if(e.target === photoViewer) closePhotoViewer();
-  });
-})();
-
-/* ====================== ABRIR ÁLBUM (ver tudo) ====================== */
-let CURRENT_ALBUM_ID = "";
-let CURRENT_ALBUM_DATA = null;
-
-const albumViewTop = document.getElementById("albumViewTop");
-const albumBody = document.getElementById("albumBody");
-const albumOwnerActions = document.getElementById("albumOwnerActions");
-const albumNotOwnerHint = document.getElementById("albumNotOwnerHint");
-
-function mediaGridHTML(items, kind){
-  const arr = Array.isArray(items) ? items : [];
-  if(arr.length === 0){
-    return `<div class="mutedHint">Nenhum ${kind} neste álbum.</div>`;
-  }
-
-  if(kind === "foto"){
-    const urls = arr.map(x => (x && x.url) ? String(x.url) : "").filter(Boolean);
-    return `
-      <div class="mediaGrid">
-        ${arr.map((x, i)=>{
-          const u = escapeHTML(x.url||"");
-          return `
-            <div class="mediaItem" onclick="openPhotoViewer(${JSON.stringify(urls).replace(/</g,'\\u003c')}, ${i})">
-              <img src="${u}" alt="foto" loading="lazy">
-            </div>
-          `;
-        }).join("")}
-      </div>
-    `;
-  }
-
-  return `
-    <div class="mediaGrid">
-      ${arr.map(x=>{
-        return `
-          <div class="mediaItem" style="cursor:default;">
-            <video src="${escapeHTML(x.url||"")}" controls playsinline preload="metadata"></video>
-          </div>
-        `;
-      }).join("")}
-    </div>
-  `;
+  stage.addEventListener("touchstart", onStart, {passive:true});
+  stage.addEventListener("touchmove", onMove, {passive:false});
+  stage.addEventListener("touchend", onEnd, {passive:true});
 }
 
 async function abrirAlbum(albumId){
@@ -1760,32 +1727,126 @@ async function abrirAlbum(albumId){
 
     const isOwner = (fresh.ownerUid||"") === UID;
     albumOwnerActions.style.display = isOwner ? "flex" : "none";
-    albumNotOwnerHint.style.display = isOwner ? "none" : "block";
 
-    const photos = Array.isArray(fresh.photos) ? fresh.photos : [];
-    const videos = Array.isArray(fresh.videos) ? fresh.videos : [];
+    STAGE_PHOTOS = Array.isArray(fresh.photos) ? fresh.photos : [];
+    STAGE_VIDEOS = Array.isArray(fresh.videos) ? fresh.videos : [];
+    STAGE_TAB = "photos";
+    STAGE_INDEX = 0;
+
+    // likes (carrega estado + render)
+    const likeState = await getLikeState(albumId);
+    const likeCount = likeState.list.length;
+    const likedByMe = likeState.likedByMe;
 
     albumBody.innerHTML = `
-      <div class="mediaSection">
-        <div class="secTitle">
-          <div><i class="fa-solid fa-images" style="color:var(--primary)"></i> Fotos</div>
-          <div class="tiny">${photos.length} / 10</div>
-        </div>
-        ${mediaGridHTML(photos, "foto")}
+      <div class="tabs">
+        <button class="tabBtn active" id="tabPhotos" onclick="stageSetTab('photos')">
+          <i class="fa-solid fa-images"></i> Fotos <span class="tiny">(${STAGE_PHOTOS.length}/10)</span>
+        </button>
+        <button class="tabBtn" id="tabVideos" onclick="stageSetTab('videos')">
+          <i class="fa-solid fa-video"></i> Vídeos <span class="tiny">(${STAGE_VIDEOS.length}/10)</span>
+        </button>
       </div>
 
-      <div class="mediaSection">
-        <div class="secTitle">
-          <div><i class="fa-solid fa-video" style="color:var(--primary)"></i> Vídeos</div>
-          <div class="tiny">${videos.length} / 10</div>
+      <div class="likeRow">
+        <div class="rowBtns" style="gap:10px;">
+          <button class="btn ${likedByMe ? '' : 'ghost'}" id="likeBtn" onclick="onLikeClick()">
+            <i class="fa-solid fa-thumbs-up"></i> Curtir
+          </button>
+          <button class="btn ghost" onclick="toggleLikeList()">
+            <i class="fa-solid fa-heart"></i> Ver curtidas
+          </button>
         </div>
-        ${mediaGridHTML(videos, "vídeo")}
+        <div class="likeInfo" id="likeInfo">
+          <b id="likeCount">${likeCount}</b> curtida(s)
+        </div>
+      </div>
+
+      <div class="likeList" id="likeList"></div>
+
+      <div class="stageBox" id="stageBox">
+        <div class="stageMedia" id="stageMedia"></div>
+        <div class="stageNav">
+          <div class="navBtn" id="stagePrev" onclick="stagePrev()"><i class="fa-solid fa-chevron-left"></i></div>
+          <div class="navBtn" id="stageNext" onclick="stageNext()"><i class="fa-solid fa-chevron-right"></i></div>
+        </div>
+        <div class="stageBottom">
+          <div class="stageCounter" id="stageCounter">0/0</div>
+          <div class="stageHint">Arraste pro lado (← →) para passar</div>
+        </div>
       </div>
     `;
+
+    // render inicial stage + swipe
+    stageRender();
+    bindStageSwipe();
+
+    // listener realtime das curtidas no álbum aberto
+    bindLikesRealtime(albumId);
+
+    // monta lista inicial (caso abra "ver curtidas")
+    renderLikeList(likeState.list);
+
   }catch(e){
     console.log(e);
     albumBody.innerHTML = `<div class="mutedHint">Erro ao carregar o álbum.</div>`;
   }
+}
+
+/* clique curtir + realtime */
+async function onLikeClick(){
+  if(!CURRENT_ALBUM_ID) return;
+  await toggleLikeAlbum(CURRENT_ALBUM_ID);
+}
+
+function renderLikeList(list){
+  const box = document.getElementById("likeList");
+  if(!box) return;
+
+  const arr = (list||[]).slice().sort((a,b)=> (b.at||0)-(a.at||0));
+  if(arr.length === 0){
+    box.innerHTML = `<div class="mutedHint" style="margin:0;">Nenhuma curtida ainda.</div>`;
+    return;
+  }
+  box.innerHTML = arr.map(x=>`
+    <div class="likeItem">
+      <div><i class="fa-solid fa-user"></i> ${escapeHTML(x.name || "Usuário")}</div>
+      <div class="likeSmall">${escapeHTML(fmtDate(x.at || Date.now()))}</div>
+    </div>
+  `).join("");
+}
+
+function toggleLikeList(){
+  const box = document.getElementById("likeList");
+  if(!box) return;
+  box.style.display = (box.style.display === "block") ? "none" : "block";
+}
+
+function bindLikesRealtime(albumId){
+  if(window.__likesUnsub){
+    try{ window.__likesUnsub(); }catch(e){}
+    window.__likesUnsub = null;
+  }
+
+  const ref = DB.ref(`albumLikes/${albumId}`);
+  const handler = (snap)=>{
+    const obj = snap.val() || {};
+    const list = Object.keys(obj).map(k=>obj[k]).filter(Boolean);
+    const likedByMe = !!obj[UID];
+
+    const likeCountEl = document.getElementById("likeCount");
+    if(likeCountEl) likeCountEl.textContent = String(list.length);
+
+    const likeBtn = document.getElementById("likeBtn");
+    if(likeBtn){
+      likeBtn.classList.toggle("ghost", !likedByMe);
+    }
+
+    renderLikeList(list);
+  };
+
+  ref.on("value", handler);
+  window.__likesUnsub = ()=> ref.off("value", handler);
 }
 
 /* ====================== EXCLUIR ÁLBUM (dono) ====================== */
@@ -1806,6 +1867,9 @@ async function excluirAlbumAtual(){
     (Array.isArray(a.videos) ? a.videos : []).forEach(x=>{ if(x && x.path) paths.push(String(x.path)); });
 
     await DB.ref("albums/" + CURRENT_ALBUM_ID).remove();
+
+    // remove curtidas também
+    try{ await DB.ref(`albumLikes/${CURRENT_ALBUM_ID}`).remove(); }catch(e){}
 
     for(const p of paths){
       try{ await ST.ref().child(p).delete(); }catch(e){}
