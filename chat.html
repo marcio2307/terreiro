@@ -291,6 +291,7 @@
     max-width:58vw;
   }
 
+  /* ✅ FOTO CENTRALIZADA NO CELULAR + NO PC */
   .cover{
     width: 160px;
     aspect-ratio: 1/1;
@@ -298,6 +299,8 @@
     overflow:hidden;
     background:#0f0f10;
     border: 1px solid rgba(255,255,255,.10);
+    margin: 0 auto;              /* ✅ centraliza */
+    display:block;
   }
   .cover img{ width:100%; height:100%; object-fit:cover; display:block; }
   .coverFallback{
@@ -308,25 +311,30 @@
     font-weight: 900;
   }
 
+  /* ✅ TÍTULO CENTRALIZADO */
   .adTitleCompact{
     font-weight: 900;
     font-size: 18px;
     margin: 0;
     line-height: 1.15;
+    text-align:center;           /* ✅ */
   }
 
+  /* ✅ BOTÃO “SAIBA MAIS” MENOS LARGO (centralizado) */
   .saibaBtn{
-    margin-top: 2px;
-    width: 100%;
+    margin: 4px auto 0 auto;     /* ✅ centraliza */
+    width: auto;                 /* ✅ não ocupa tudo */
+    min-width: 190px;            /* ✅ tamanho bom */
+    max-width: 260px;            /* ✅ não fica enorme */
     border:none;
     border-radius: 14px;
-    padding: 12px 12px;
+    padding: 12px 14px;
     font-weight: 900;
     cursor:pointer;
     background: var(--fb-blue);
     color:#fff;
     border: 1px solid rgba(255,255,255,.10);
-    display:flex;
+    display:inline-flex;         /* ✅ */
     align-items:center;
     justify-content:center;
     gap:10px;
@@ -1421,7 +1429,7 @@ document.addEventListener("click", (e)=>{
   if(!clickedMenu) closeAllMenus();
 });
 
-/* ✅ CARD COMPACTO: agora mostra avatar REAL do anunciante */
+/* ✅ CARD COMPACTO */
 function adCardHTML(adId, a){
   const isMine = (a.uid === UID);
   const when = fmtDate(a.createdAt || a.updatedAt || Date.now());
