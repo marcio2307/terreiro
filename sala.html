@@ -38,25 +38,44 @@
 
   /* ===================== TOPBAR ===================== */
   .topbar{
-    position: sticky; top:0; z-index:9999;
-    background: var(--surface);
-    border-bottom: 1px solid var(--line);
-    box-shadow: 0 2px 14px rgba(0,0,0,.35);
-    padding: 10px 12px;
-    display:flex;
-    align-items:center;
-    justify-content:flex-start;
-    gap:12px;
-    padding-top: calc(10px + env(safe-area-inset-top));
-  }
-  .brand{
-    font-weight:900;
-    color: var(--text);
-    letter-spacing:.2px;
-    white-space:nowrap;
-    overflow:hidden;
-    text-overflow:ellipsis;
-  }
+  position: sticky;
+  top:0;
+  z-index:9999;
+  background: var(--surface);
+  border-bottom: 1px solid var(--line);
+  box-shadow: 0 2px 14px rgba(0,0,0,.35);
+
+  height:56px; /* ✅ altura fixa e limpa */
+  padding-top: env(safe-area-inset-top);
+
+  display:flex;
+  align-items:center;      /* ✅ alinha verticalmente */
+  justify-content:center;  /* título central */
+}
+
+/* botão voltar */
+.topbar .btn.icon{
+  position:absolute;
+  left:12px;
+  top:50%;
+  transform:translateY(-50%); /* ✅ nunca invade a linha */
+}
+
+/* título */
+.brand{
+  font-weight:900;
+  color: var(--text);
+  letter-spacing:.2px;
+  text-align:center;
+}
+
+/* título centralizado */
+.brand{
+  font-weight:900;
+  color: var(--text);
+  letter-spacing:.2px;
+  text-align:center;
+}
 
   .btn{
     border:none;
@@ -727,7 +746,7 @@
   <button class="btn ghost icon" title="Voltar" aria-label="Voltar" onclick="voltarHome()">
     <i class="fa-solid fa-arrow-left"></i>
   </button>
-  <div class="brand">MEMORIAL</div>
+  <div class="brand">MEMÓRIAS</div>
 </div>
 
 <div class="wrap">
