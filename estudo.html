@@ -22,6 +22,9 @@ html,body{ width:100%; max-width:100%; overflow-x:hidden; }
   --fb-icon:#B0B3B8;
   --fb-blue:#0866FF;
   --fb-red:#F02849;
+
+  /* 🔥 FUNDO NOVO DA TELA DE LOGIN (igual ao da 2ª imagem) */
+  --login-bg:#0f1113;
 }
 
 body{
@@ -36,21 +39,8 @@ body{
 #app{ display:none; }
 
 /* ===================== 🔒 TELA DE LOGIN (COM TOPO + VOLTAR) ===================== */
-.authScreen{
-  position:fixed;
-  inset:0;
-  z-index:9999999;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  padding:14px;
-  background:
-    radial-gradient(1200px 900px at 50% 20%, rgba(8,102,255,.10) 0%, rgba(24,37,42,0) 55%),
-    linear-gradient(180deg, rgba(255,255,255,.04) 0%, rgba(0,0,0,0) 25%),
-    var(--fb-bg);
-}
 
-/* ✅ Topo do login (fundo estilo do site) */
+/* ✅ TOPO DO LOGIN (fundo do site + voltar em cima) */
 .authTopbar{
   position:fixed;
   top:0; left:0; right:0;
@@ -95,14 +85,26 @@ body{
   text-align:center;
 }
 
+/* FUNDO DA TELA DE LOGIN (trocado) */
+.authScreen{
+  position:fixed;
+  inset:0;
+  z-index:9999999;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:14px;
+  background: var(--login-bg);
+}
+
 .authCard{
   width:min(520px, 96vw);
-  background:rgba(36,37,38,.92);
+  background:rgba(36,37,38,.95);
   border:1px solid var(--fb-border);
   border-radius:18px;
-  box-shadow: 0 18px 40px rgba(0,0,0,.45);
+  box-shadow: 0 22px 60px rgba(0,0,0,.60);
   overflow:hidden;
-  margin-top: 56px; /* espaço do topo */
+  margin-top: 64px; /* espaço do topo */
 }
 
 .authTop{
@@ -454,19 +456,20 @@ body{
 </div>
 
 <script>
-/* 🔒 LOGIN BONITO - SENHA: "pai marcio"
-   ✅ Depois que logar 1x, salva no navegador e NÃO pede de novo ao voltar.
-*/
+/* 🔒 LOGIN - SENHA: "pai marcio"
+   ✅ após logar, fica liberado por 40 minutos e volta pro login */
 (function(){
   const authScreen = document.getElementById("authScreen");
   const authTopbar = document.getElementById("authTopbar");
   const app = document.getElementById("app");
+
   const passInput = document.getElementById("passInput");
   const loginBtn = document.getElementById("loginBtn");
   const err = document.getElementById("authError");
   const toggle = document.getElementById("togglePass");
 
-  const KEY = "estudo_auth_ok_v1";
+  const SESSION_MS = 40 * 60 * 1000; // ✅ 40 minutos
+  let sessionTimer = null;
 
   function normalize(s){
     return (s || "")
@@ -487,31 +490,38 @@ body{
   }
   function hideError(){ err.style.display = "none"; }
 
-  function unlock(persist){
+  function startSessionTimer(){
+    clearTimeout(sessionTimer);
+    sessionTimer = setTimeout(lock, SESSION_MS);
+  }
+
+  function unlock(){
     authScreen.style.display = "none";
     authTopbar.style.display = "none";
     app.style.display = "block";
-    document.body.style.overflow = "";
-    if(persist){
-      try{ localStorage.setItem(KEY, "1"); }catch(e){}
-    }
+    hideError();
+    passInput.value = "";
+    startSessionTimer();
   }
 
   function lock(){
-    authScreen.style.display = "flex";
-    authTopbar.style.display = "flex";
     app.style.display = "none";
-  }
-
-  function alreadyAuthed(){
-    try{ return localStorage.getItem(KEY) === "1"; }catch(e){ return false; }
+    authTopbar.style.display = "flex";
+    authScreen.style.display = "flex";
+    passInput.value = "";
+    passInput.type = "password";
+    toggle.innerHTML = '<i class="fa-solid fa-eye"></i>';
+    hideError();
+    clearTimeout(sessionTimer);
+    sessionTimer = null;
+    setTimeout(()=>{ passInput.focus(); }, 50);
   }
 
   function tryLogin(){
     hideError();
     const typed = normalize(passInput.value);
     if(typed === OK1 || typed === OK2){
-      unlock(true); // salva
+      unlock();
     }else{
       showError();
     }
@@ -539,13 +549,9 @@ body{
 
   loginBtn.addEventListener("click", tryLogin);
 
-  // ✅ Se já autenticou antes, libera direto
-  if(alreadyAuthed()){
-    unlock(false);
-  }else{
-    lock();
-    setTimeout(()=>{ passInput.focus(); }, 50);
-  }
+  // foco inicial
+  setTimeout(()=>{ passInput.focus(); }, 80);
+
 })();
 </script>
 
