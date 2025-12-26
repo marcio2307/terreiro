@@ -49,12 +49,11 @@
     gap:10px;
   }
 
-  /* ✅ Brand agora fica "no centro à esquerda" (centralizado no topo, puxado p/ esquerda) */
   .brand{
     display:flex; align-items:center; gap:10px;
     min-width:0;
-    flex: 1;                 /* ocupa o espaço para permitir centralizar o título */
-    justify-content:center;  /* centraliza dentro da área esquerda */
+    flex: 1;
+    justify-content:center;
   }
   .brand i{ color: var(--fb-blue); font-size: 22px; }
   .brand .title{
@@ -65,7 +64,6 @@
     text-overflow:ellipsis;
   }
 
-  /* ✅ Botão Voltar (sem deslogar) */
   .backBtn{
     border:none;
     background: transparent;
@@ -108,7 +106,7 @@
     text-overflow:ellipsis;
   }
 
-  /* ====== BUSCA (AGORA FICA ACIMA) ====== */
+  /* ====== BUSCA ====== */
   .filters{
     margin: 12px 12px 10px 12px;
     display:flex;
@@ -160,7 +158,7 @@
     color:#fff;
   }
 
-  /* ====== ANUNCIAR (AGORA FICA ABAIXO DA BUSCA) ====== */
+  /* ====== ANUNCIAR ====== */
   .createRow{
     margin: 0 12px 12px 12px;
     background: var(--fb-surface);
@@ -214,39 +212,7 @@
     overflow:hidden;
     position:relative;
     content-visibility: auto;
-    contain-intrinsic-size: 820px;
-  }
-
-  .adHead{
-    padding: 12px;
-    display:flex;
-    align-items:center;
-    gap:10px;
-    padding-right: 56px;
-  }
-  .adAvatar{
-    width:44px; height:44px;
-    border-radius:50%;
-    overflow:hidden;
-    background:#3A3B3C;
-    border: 1px solid rgba(255,255,255,.10);
-    display:flex; align-items:center; justify-content:center;
-    font-weight: 900;
-    flex:0 0 auto;
-  }
-  .adHeadText{ min-width:0; }
-  .adOwner{
-    font-weight: 900;
-    font-size: 14px;
-    white-space:nowrap;
-    overflow:hidden;
-    text-overflow:ellipsis;
-    max-width: 70vw;
-  }
-  .adWhen{
-    margin-top:3px;
-    font-size:12px;
-    color: var(--fb-muted);
+    contain-intrinsic-size: 520px;
   }
 
   .menuBtn{
@@ -262,6 +228,7 @@
     background: rgba(255,255,255,.06);
     border: 1px solid rgba(255,255,255,.08);
     user-select:none;
+    z-index:5;
   }
   .menuBtn:hover{ background: rgba(255,255,255,.08); }
 
@@ -288,99 +255,56 @@
   }
   .menuItem:hover{ background: rgba(0,0,0,.06); }
 
-  .adBody{ padding: 0 12px 12px 12px; }
-
-  .adTitle{
-    font-weight: 900;
-    font-size: 18px;
-    margin: 2px 0 6px 0;
-    line-height: 1.15;
-  }
-
-  /* ====== FOTO (DEPOIS DO TÍTULO) ====== */
-  .photos{
-    margin-top: 10px;
-    display:grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 8px;
-  }
-  .photo{
-    width:100%;
-    aspect-ratio: 1/1;
-    border-radius: 14px;
-    overflow:hidden;
-    background:#000;
-    border: 1px solid rgba(255,255,255,.10);
-    cursor:pointer;
-    position:relative;
-  }
-  .photo img{
-    width:100%; height:100%;
-    object-fit: cover;
-    display:block;
-  }
-  @media(max-width:520px){
-    .photos{ grid-template-columns: repeat(2, 1fr); }
-  }
-
-  /* ====== DESCRIÇÃO (ABAIXO DA FOTO) ====== */
-  .adDesc{
-    margin: 10px 0 10px 0;
-    font-size: 14px;
-    line-height: 1.35;
-    color: rgba(228,230,235,.95);
-    white-space: pre-wrap;
-    word-break: break-word;
-  }
-
-  /* ====== ENDEREÇO / TELEFONE / LINK (ABAIXO) ====== */
-  .metaCol{
+  /* ✅ CARD COMPACTO: foto + titulo + saiba mais */
+  .adCompact{
+    padding: 12px;
     display:flex;
     flex-direction:column;
     gap:10px;
-    margin: 10px 0 10px 0;
   }
-  .metaRow{
-    background: rgba(255,255,255,.04);
+  .cover{
+    width: 160px;
+    aspect-ratio: 1/1;
+    border-radius: 18px;
+    overflow:hidden;
+    background:#0f0f10;
     border: 1px solid rgba(255,255,255,.10);
-    border-radius: 14px;
-    padding: 10px 12px;
   }
-  .metaLabel{
-    font-size: 11px;
-    letter-spacing: .3px;
-    text-transform: uppercase;
-    color: rgba(228,230,235,.70);
+  .cover img{ width:100%; height:100%; object-fit:cover; display:block; }
+  .coverFallback{
+    width:100%; height:100%;
+    display:flex; align-items:center; justify-content:center;
+    background: rgba(255,255,255,.06);
+    color: rgba(228,230,235,.85);
     font-weight: 900;
-    margin-bottom: 6px;
-    display:flex; align-items:center; gap:8px;
   }
-  .metaValue{
-    font-size: 14px;
-    font-weight: 900;
-    color: rgba(228,230,235,.95);
-    word-break: break-word;
-  }
-  .metaValue a{ color: #cfe0ff; text-decoration:none; }
-  .metaValue a:hover{ text-decoration:underline; }
 
-  /* botões */
-  .actions{
-    display:flex;
-    flex-wrap:wrap;
-    gap:10px;
-    margin-top: 10px;
+  .adTitleCompact{
+    font-weight: 900;
+    font-size: 18px;
+    margin: 0;
+    line-height: 1.15;
   }
-  .actBtn{
-    flex: 1 1 160px;
-    min-width: 160px;
+
+  .metaSmall{
+    display:flex;
+    align-items:center;
+    gap:8px;
+    color: var(--fb-muted);
+    font-size: 12px;
+    font-weight: 900;
+  }
+
+  .saibaBtn{
+    margin-top: 2px;
+    width: 100%;
     border:none;
     border-radius: 14px;
     padding: 12px 12px;
     font-weight: 900;
     cursor:pointer;
-    background: rgba(255,255,255,.06);
-    color: var(--fb-text);
+    background: var(--fb-blue);
+    color:#fff;
     border: 1px solid rgba(255,255,255,.10);
     display:flex;
     align-items:center;
@@ -388,14 +312,9 @@
     gap:10px;
     user-select:none;
   }
-  .actBtn:hover{ background: rgba(255,255,255,.08); }
-  .actBtn.primary{
-    background: var(--fb-blue);
-    border-color: rgba(255,255,255,.10);
-    color:#fff;
-  }
+  .saibaBtn:hover{ filter: brightness(1.05); }
 
-  /* modal */
+  /* ====== DETALHES (modal) ====== */
   .modal{
     position: fixed;
     inset: 0;
@@ -443,6 +362,143 @@
   }
   .closeBtn:hover{ background: rgba(255,255,255,.08); }
 
+  .detailsBody{
+    padding: 12px;
+  }
+
+  .adHead{
+    padding: 0 0 12px 0;
+    display:flex;
+    align-items:center;
+    gap:10px;
+  }
+  .adAvatar{
+    width:44px; height:44px;
+    border-radius:50%;
+    overflow:hidden;
+    background:#3A3B3C;
+    border: 1px solid rgba(255,255,255,.10);
+    display:flex; align-items:center; justify-content:center;
+    font-weight: 900;
+    flex:0 0 auto;
+  }
+  .adHeadText{ min-width:0; }
+  .adOwner{
+    font-weight: 900;
+    font-size: 14px;
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    max-width: 70vw;
+  }
+  .adWhen{
+    margin-top:3px;
+    font-size:12px;
+    color: var(--fb-muted);
+  }
+
+  .adTitle{
+    font-weight: 900;
+    font-size: 20px;
+    margin: 2px 0 6px 0;
+    line-height: 1.15;
+  }
+
+  .photos{
+    margin-top: 10px;
+    display:grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+  }
+  .photo{
+    width:100%;
+    aspect-ratio: 1/1;
+    border-radius: 14px;
+    overflow:hidden;
+    background:#000;
+    border: 1px solid rgba(255,255,255,.10);
+    cursor:pointer;
+    position:relative;
+  }
+  .photo img{
+    width:100%; height:100%;
+    object-fit: cover;
+    display:block;
+  }
+  @media(max-width:520px){
+    .photos{ grid-template-columns: repeat(2, 1fr); }
+  }
+
+  .adDesc{
+    margin: 10px 0 10px 0;
+    font-size: 14px;
+    line-height: 1.35;
+    color: rgba(228,230,235,.95);
+    white-space: pre-wrap;
+    word-break: break-word;
+  }
+
+  .metaCol{
+    display:flex;
+    flex-direction:column;
+    gap:10px;
+    margin: 10px 0 10px 0;
+  }
+  .metaRow{
+    background: rgba(255,255,255,.04);
+    border: 1px solid rgba(255,255,255,.10);
+    border-radius: 14px;
+    padding: 10px 12px;
+  }
+  .metaLabel{
+    font-size: 11px;
+    letter-spacing: .3px;
+    text-transform: uppercase;
+    color: rgba(228,230,235,.70);
+    font-weight: 900;
+    margin-bottom: 6px;
+    display:flex; align-items:center; gap:8px;
+  }
+  .metaValue{
+    font-size: 14px;
+    font-weight: 900;
+    color: rgba(228,230,235,.95);
+    word-break: break-word;
+  }
+  .metaValue a{ color: #cfe0ff; text-decoration:none; }
+  .metaValue a:hover{ text-decoration:underline; }
+
+  .actions{
+    display:flex;
+    flex-wrap:wrap;
+    gap:10px;
+    margin-top: 10px;
+  }
+  .actBtn{
+    flex: 1 1 160px;
+    min-width: 160px;
+    border:none;
+    border-radius: 14px;
+    padding: 12px 12px;
+    font-weight: 900;
+    cursor:pointer;
+    background: rgba(255,255,255,.06);
+    color: var(--fb-text);
+    border: 1px solid rgba(255,255,255,.10);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:10px;
+    user-select:none;
+  }
+  .actBtn:hover{ background: rgba(255,255,255,.08); }
+  .actBtn.primary{
+    background: var(--fb-blue);
+    border-color: rgba(255,255,255,.10);
+    color:#fff;
+  }
+
+  /* create/edit form */
   .form{
     padding: 12px;
     display:grid;
@@ -647,7 +703,6 @@
 
 <!-- TOP -->
 <div class="topbar">
-  <!-- ✅ Botão VOLTAR (sem deslogar) -->
   <button class="backBtn" title="Voltar" aria-label="Voltar" onclick="goBackNoLogout()">
     <i class="fa-solid fa-arrow-left"></i>
   </button>
@@ -662,12 +717,10 @@
       <div class="userAvatar" id="userAvatar">U</div>
       <div class="userName" id="userName">Carregando...</div>
     </div>
-
-    <!-- ✅ Removido botão SAIR / opção logout -->
   </div>
 </div>
 
-<!-- BUSCA (ACIMA) + TABS (TODOS / MEUS) -->
+<!-- BUSCA + TABS -->
 <div class="filters">
   <div class="chip" title="Buscar por título, descrição, endereço, telefone ou site">
     <i class="fa-solid fa-magnifying-glass"></i>
@@ -680,7 +733,7 @@
   </div>
 </div>
 
-<!-- ANUNCIAR (ABAIXO DA BUSCA) -->
+<!-- ANUNCIAR -->
 <div class="createRow">
   <div class="fakeInput">Anunciar</div>
   <div class="plusBtn" id="btnPlus" title="Criar anúncio" aria-label="Criar anúncio">+</div>
@@ -749,6 +802,18 @@
   </div>
 </div>
 
+<!-- ✅ MODAL DETALHES (Saiba mais) -->
+<div class="modal" id="detailsModal">
+  <div class="modalCard" role="dialog" aria-modal="true" aria-label="Detalhes do anúncio">
+    <div class="modalTop">
+      <div class="modalTitle"><i class="fa-solid fa-circle-info"></i> Detalhes</div>
+      <button class="closeBtn" onclick="closeDetails()">Fechar</button>
+    </div>
+
+    <div class="detailsBody" id="detailsBody"></div>
+  </div>
+</div>
+
 <!-- IMAGE VIEWER -->
 <div class="viewer" id="imgViewer" onclick="closeViewer(event)">
   <button class="viewerClose" aria-label="Fechar" title="Fechar"><i class="fa-solid fa-xmark"></i></button>
@@ -766,8 +831,7 @@ const LOGIN_URL = "https://marcio2307.github.io/terreiro/entrar.html";
 const BACK_URL  = "https://marcio2307.github.io/terreiro/site.html";
 
 function goBackNoLogout(){
-  // ✅ só volta, sem remover nada do localStorage (sem deslogar)
-  location.href = BACK_URL;
+  location.href = BACK_URL; // ✅ não desloga
 }
 
 function normalizeNameKey(name){
@@ -848,7 +912,7 @@ localStorage.setItem("uid_user_" + nameKey, UID);
 localStorage.setItem("uid_passageiro", UID);
 sessionStorage.setItem("uid_passageiro", UID);
 
-// sincroniza uid (mesmo padrão do seu site)
+// sincroniza uid
 (async function syncUidWithFirebase(){
   try{
     const ref = DB.ref("usernames/" + nameKey);
@@ -899,7 +963,7 @@ function checkSize(file){
   return true;
 }
 
-/* ====================== MODAL STATE ====================== */
+/* ====================== MODAL CREATE/EDIT ====================== */
 const adModal = document.getElementById("adModal");
 const modalTitle = document.getElementById("modalTitle");
 const btnPlus = document.getElementById("btnPlus");
@@ -977,9 +1041,7 @@ adModal.addEventListener("click", (e)=>{
 });
 
 function cleanupPreviews(){
-  try{
-    pickedPreviews.forEach(u=>{ if(u) URL.revokeObjectURL(u); });
-  }catch(e){}
+  try{ pickedPreviews.forEach(u=>{ if(u) URL.revokeObjectURL(u); }); }catch(e){}
 }
 
 function renderPhotoPicker(){
@@ -1024,9 +1086,7 @@ function renderPhotoPicker(){
       if(!file) return;
       if(!checkSize(file)) return;
 
-      if(pickedPreviews[i]){
-        try{ URL.revokeObjectURL(pickedPreviews[i]); }catch(err){}
-      }
+      if(pickedPreviews[i]){ try{ URL.revokeObjectURL(pickedPreviews[i]); }catch(err){} }
       pickedFiles[i] = file;
       pickedPreviews[i] = URL.createObjectURL(file);
       renderPhotoPicker();
@@ -1047,9 +1107,7 @@ function renderPhotoPicker(){
   }
 }
 function removePhotoSlot(i){
-  if(pickedPreviews[i]){
-    try{ URL.revokeObjectURL(pickedPreviews[i]); }catch(e){}
-  }
+  if(pickedPreviews[i]){ try{ URL.revokeObjectURL(pickedPreviews[i]); }catch(e){} }
   pickedPreviews[i] = "";
   pickedFiles[i] = null;
   existingPhotos[i] = null;
@@ -1284,65 +1342,13 @@ document.addEventListener("click", (e)=>{
   if(!clickedMenu) closeAllMenus();
 });
 
+/* ✅ CARD COMPACTO: foto + título embaixo + botão "Saiba mais" */
 function adCardHTML(adId, a){
   const isMine = (a.uid === UID);
   const when = fmtDate(a.createdAt || a.updatedAt || Date.now());
+
   const photos = Array.isArray(a.photos) ? a.photos : [];
-  const purls = photos.map(x=>x && x.url).filter(Boolean).slice(0,3);
-
-  const address = (a.address||"").trim();
-  const phone = (a.phone||"").trim();
-  const website = (a.website||"").trim();
-
-  const photosHTML = purls.length ? `
-    <div class="photos">
-      ${purls.map(u=>`
-        <div class="photo" onclick="openViewer('${escapeHTML(u)}')" title="Ver foto">
-          <img src="${escapeHTML(u)}" loading="lazy" alt="Foto do anúncio">
-        </div>
-      `).join("")}
-    </div>
-  ` : ``;
-
-  const metaHTML = `
-    <div class="metaCol">
-      ${address ? `
-        <div class="metaRow">
-          <div class="metaLabel"><i class="fa-solid fa-location-dot"></i> Endereço</div>
-          <div class="metaValue">${escapeHTML(address)}</div>
-        </div>
-      ` : ``}
-
-      ${phone ? `
-        <div class="metaRow">
-          <div class="metaLabel"><i class="fa-solid fa-phone"></i> Telefone</div>
-          <div class="metaValue">${escapeHTML(phone)}</div>
-        </div>
-      ` : ``}
-
-      ${website ? `
-        <div class="metaRow">
-          <div class="metaLabel"><i class="fa-solid fa-link"></i> Link</div>
-          <div class="metaValue"><a href="${escapeHTML(website)}" target="_blank" rel="noopener noreferrer">${escapeHTML(website)}</a></div>
-        </div>
-      ` : ``}
-    </div>
-  `;
-
-  const waPhone = phone ? phone.replace(/[^\d+]/g,"") : "";
-  const waLink = waPhone ? `https://wa.me/${waPhone.replace(/^\+/, "")}?text=${encodeURIComponent("Olá! Vi seu anúncio em Lojas & Serviços. Ainda está disponível?")}` : "";
-
-  const waBtn = waLink ? `
-    <button class="actBtn primary" onclick="window.open('${escapeHTML(waLink)}','_blank')">
-      <i class="fa-brands fa-whatsapp"></i> WhatsApp
-    </button>
-  ` : ``;
-
-  const callBtn = phone ? `
-    <button class="actBtn" onclick="window.location.href='tel:${escapeHTML(waPhone || phone)}'">
-      <i class="fa-solid fa-phone"></i> Ligar
-    </button>
-  ` : ``;
+  const firstPhoto = (photos[0] && photos[0].url) ? photos[0].url : "";
 
   const menu = isMine ? `
     <div class="menuBtn" onclick="toggleMenu('${adId}')">⋮</div>
@@ -1358,31 +1364,31 @@ function adCardHTML(adId, a){
     </div>
   ` : ``;
 
+  const coverHTML = firstPhoto
+    ? `<img src="${escapeHTML(firstPhoto)}" loading="lazy" alt="Foto do anúncio">`
+    : `<div class="coverFallback"><i class="fa-solid fa-image" style="margin-right:10px;"></i>Sem foto</div>`;
+
   return `
     <div class="adCard" id="${escapeHTML(adId)}">
       ${menu}
 
-      <div class="adHead">
-        <div class="adAvatar">${escapeHTML(initials(a.userName || "Usuário"))}</div>
-        <div class="adHeadText">
-          <div class="adOwner">${escapeHTML(a.userName || "Usuário")}</div>
-          <div class="adWhen">${escapeHTML(when)}</div>
+      <div class="adCompact">
+        <div class="metaSmall">
+          <i class="fa-solid fa-user"></i>
+          <span style="white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:60vw;">${escapeHTML(a.userName || "Usuário")}</span>
+          <span style="opacity:.55;">•</span>
+          <span>${escapeHTML(when)}</span>
         </div>
-      </div>
 
-      <div class="adBody">
-        <div class="adTitle">${escapeHTML(a.title || "")}</div>
-
-        ${photosHTML}
-
-        <div class="adDesc">${escapeHTML(a.desc || "")}</div>
-
-        ${metaHTML}
-
-        <div class="actions">
-          ${waBtn}
-          ${callBtn}
+        <div class="cover">
+          ${coverHTML}
         </div>
+
+        <div class="adTitleCompact">${escapeHTML(a.title || "")}</div>
+
+        <button class="saibaBtn" onclick="openDetails('${adId}')">
+          <i class="fa-solid fa-circle-info"></i> Saiba mais
+        </button>
       </div>
     </div>
   `;
@@ -1444,6 +1450,114 @@ async function quickDelete(adId){
   }
 }
 
+/* ====================== ✅ DETALHES (Saiba mais) ====================== */
+const detailsModal = document.getElementById("detailsModal");
+const detailsBody = document.getElementById("detailsBody");
+
+function buildDetailsHTML(a){
+  const when = fmtDate(a.createdAt || a.updatedAt || Date.now());
+  const photos = Array.isArray(a.photos) ? a.photos : [];
+  const purls = photos.map(x=>x && x.url).filter(Boolean).slice(0,3);
+
+  const address = (a.address||"").trim();
+  const phone = (a.phone||"").trim();
+  const website = (a.website||"").trim();
+
+  const photosHTML = purls.length ? `
+    <div class="photos">
+      ${purls.map(u=>`
+        <div class="photo" onclick="openViewer('${escapeHTML(u)}')" title="Ver foto">
+          <img src="${escapeHTML(u)}" loading="lazy" alt="Foto do anúncio">
+        </div>
+      `).join("")}
+    </div>
+  ` : ``;
+
+  const metaHTML = `
+    <div class="metaCol">
+      ${address ? `
+        <div class="metaRow">
+          <div class="metaLabel"><i class="fa-solid fa-location-dot"></i> Endereço</div>
+          <div class="metaValue">${escapeHTML(address)}</div>
+        </div>
+      ` : ``}
+
+      ${phone ? `
+        <div class="metaRow">
+          <div class="metaLabel"><i class="fa-solid fa-phone"></i> Telefone</div>
+          <div class="metaValue">${escapeHTML(phone)}</div>
+        </div>
+      ` : ``}
+
+      ${website ? `
+        <div class="metaRow">
+          <div class="metaLabel"><i class="fa-solid fa-link"></i> Link</div>
+          <div class="metaValue"><a href="${escapeHTML(website)}" target="_blank" rel="noopener noreferrer">${escapeHTML(website)}</a></div>
+        </div>
+      ` : ``}
+    </div>
+  `;
+
+  const waPhone = phone ? phone.replace(/[^\d+]/g,"") : "";
+  const waLink = waPhone ? `https://wa.me/${waPhone.replace(/^\+/, "")}?text=${encodeURIComponent("Olá! Vi seu anúncio em Lojas & Serviços. Ainda está disponível?")}` : "";
+
+  const waBtn = waLink ? `
+    <button class="actBtn primary" onclick="window.open('${escapeHTML(waLink)}','_blank')">
+      <i class="fa-brands fa-whatsapp"></i> WhatsApp
+    </button>
+  ` : ``;
+
+  const callBtn = phone ? `
+    <button class="actBtn" onclick="window.location.href='tel:${escapeHTML(waPhone || phone)}'">
+      <i class="fa-solid fa-phone"></i> Ligar
+    </button>
+  ` : ``;
+
+  return `
+    <div class="adHead">
+      <div class="adAvatar">${escapeHTML(initials(a.userName || "Usuário"))}</div>
+      <div class="adHeadText">
+        <div class="adOwner">${escapeHTML(a.userName || "Usuário")}</div>
+        <div class="adWhen">${escapeHTML(when)}</div>
+      </div>
+    </div>
+
+    <div class="adTitle">${escapeHTML(a.title || "")}</div>
+
+    ${photosHTML}
+
+    <div class="adDesc">${escapeHTML(a.desc || "")}</div>
+
+    ${metaHTML}
+
+    <div class="actions">
+      ${waBtn}
+      ${callBtn}
+    </div>
+  `;
+}
+
+function openDetails(adId){
+  const ad = adsAll.find(x=>x.id === adId);
+  if(!ad) return;
+
+  closeAllMenus();
+  detailsBody.innerHTML = buildDetailsHTML(ad);
+
+  detailsModal.style.display = "flex";
+  document.body.style.overflow = "hidden";
+}
+
+function closeDetails(){
+  detailsModal.style.display = "none";
+  detailsBody.innerHTML = "";
+  document.body.style.overflow = "";
+}
+
+detailsModal.addEventListener("click", (e)=>{
+  if(e.target === detailsModal) closeDetails();
+});
+
 /* ====================== LISTENER ====================== */
 (function listenAds(){
   const ref = DB.ref(ADS_PATH).limitToLast(300);
@@ -1457,6 +1571,7 @@ async function quickDelete(adId){
     const id = snap.key;
     const data = snap.val() || {};
     upsertAd(id, data);
+    // se estiver aberto e for o mesmo, atualiza (opcional)
   });
   ref.on("child_removed", snap=>{
     const id = snap.key;
