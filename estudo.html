@@ -20,6 +20,8 @@ html,body{ width:100%; max-width:100%; overflow-x:hidden; }
   --fb-border:rgba(255,255,255,.10);
   --fb-text:#E4E6EB;
   --fb-icon:#B0B3B8;
+  --fb-blue:#0866FF;
+  --fb-red:#F02849;
 }
 
 body{
@@ -30,7 +32,194 @@ body{
   padding-bottom:env(safe-area-inset-bottom);
 }
 
-/* TOPO */
+/* ✅ CONTEÚDO DO SITE (fica bloqueado até login) */
+#app{ display:none; }
+
+/* ===================== 🔒 TELA DE LOGIN (COM TOPO + VOLTAR) ===================== */
+.authScreen{
+  position:fixed;
+  inset:0;
+  z-index:9999999;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:14px;
+  background:
+    radial-gradient(1200px 900px at 50% 20%, rgba(8,102,255,.10) 0%, rgba(24,37,42,0) 55%),
+    linear-gradient(180deg, rgba(255,255,255,.04) 0%, rgba(0,0,0,0) 25%),
+    var(--fb-bg);
+}
+
+/* ✅ Topo do login (fundo estilo do site) */
+.authTopbar{
+  position:fixed;
+  top:0; left:0; right:0;
+  height:64px;
+  background: var(--fb-surface);
+  border-bottom: 1px solid var(--fb-border);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  z-index:10000000;
+  padding: 10px 12px;
+}
+
+/* botão voltar em cima à esquerda */
+.authTopLeft{
+  position:absolute;
+  left:12px;
+  display:flex;
+  align-items:center;
+}
+.authBackTop{
+  width:44px;
+  height:44px;
+  border-radius:14px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background: var(--fb-surface2);
+  border:1px solid var(--fb-border);
+  color: var(--fb-text);
+  cursor:pointer;
+  -webkit-tap-highlight-color:transparent;
+}
+.authBackTop:active{ transform: scale(.99); }
+.authBackTop i{ font-size:18px; }
+
+.authTopTitle{
+  font-weight: 900;
+  letter-spacing:.3px;
+  font-size: 16px;
+  color: var(--fb-text);
+  text-align:center;
+}
+
+.authCard{
+  width:min(520px, 96vw);
+  background:rgba(36,37,38,.92);
+  border:1px solid var(--fb-border);
+  border-radius:18px;
+  box-shadow: 0 18px 40px rgba(0,0,0,.45);
+  overflow:hidden;
+  margin-top: 56px; /* espaço do topo */
+}
+
+.authTop{
+  padding:16px 16px 12px 16px;
+  display:flex;
+  align-items:center;
+  gap:12px;
+  border-bottom:1px solid rgba(255,255,255,.08);
+  background: rgba(255,255,255,.02);
+}
+
+.lockIcon{
+  width:44px;
+  height:44px;
+  border-radius:14px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background: rgba(8,102,255,.16);
+  border:1px solid rgba(8,102,255,.28);
+  color:#fff;
+  flex:0 0 auto;
+}
+
+.authTitleWrap{ min-width:0; }
+.authTitle{
+  font-weight:900;
+  letter-spacing:.3px;
+  font-size:16px;
+  color:var(--fb-text);
+  line-height:1.2;
+}
+.authSub{
+  margin-top:4px;
+  color:rgba(228,230,235,.75);
+  font-size:13px;
+  line-height:1.25;
+}
+
+.authBody{ padding:16px; }
+
+.fieldLabel{
+  font-weight:900;
+  font-size:12px;
+  letter-spacing:.3px;
+  color:rgba(228,230,235,.85);
+  margin-bottom:8px;
+  text-transform:uppercase;
+}
+
+.inputRow{
+  display:flex;
+  gap:10px;
+  align-items:stretch;
+}
+
+.authInput{
+  flex:1;
+  min-width:0;
+  padding:14px 14px;
+  border-radius:14px;
+  border:1px solid rgba(255,255,255,.10);
+  background: var(--fb-surface2);
+  color: var(--fb-text);
+  outline:none;
+  font-size:15px;
+}
+
+.toggleBtn{
+  width:52px;
+  border-radius:14px;
+  border:1px solid rgba(255,255,255,.10);
+  background: rgba(255,255,255,.06);
+  color: var(--fb-text);
+  cursor:pointer;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  -webkit-tap-highlight-color:transparent;
+}
+.toggleBtn:active{ transform: scale(.99); }
+
+.authActions{
+  margin-top:12px;
+  display:flex;
+  gap:10px;
+}
+
+.authBtn{
+  flex:1;
+  padding:14px 14px;
+  border:none;
+  border-radius:14px;
+  cursor:pointer;
+  font-weight:900;
+  letter-spacing:.3px;
+  background: var(--fb-blue);
+  color:#fff;
+  box-shadow: 0 14px 24px rgba(0,0,0,.28);
+  -webkit-tap-highlight-color:transparent;
+}
+.authBtn:active{ transform: scale(.99); }
+
+.authError{
+  display:none;
+  margin-top:12px;
+  padding:12px 12px;
+  border-radius:14px;
+  background: rgba(240,40,73,.12);
+  border: 1px solid rgba(240,40,73,.25);
+  color: #ffd3da;
+  font-weight:900;
+  font-size:13px;
+  line-height:1.25;
+}
+
+/* ===================== TOPO (APP) ===================== */
 .topbar{
   position:sticky;
   top:0;
@@ -43,12 +232,10 @@ body{
   align-items:center;
   justify-content:center;
 }
-
 .topLeft{
   position:absolute;
   left:12px;
 }
-
 .backBtn{
   width:44px;
   height:44px;
@@ -62,9 +249,7 @@ body{
   text-decoration:none;
   -webkit-tap-highlight-color:transparent;
 }
-
 .backBtn i{ font-size:18px; }
-
 .title{
   font-weight:900;
   font-size:16px;
@@ -85,7 +270,6 @@ body{
   grid-template-columns:repeat(2,1fr);
   gap:10px;
 }
-
 @media(min-width:560px){
   .grid{ grid-template-columns:repeat(3,1fr); }
 }
@@ -124,18 +308,13 @@ body{
   background:rgba(255,255,255,.06);
   border:1px solid var(--fb-border);
 }
-
 .iconBox i{
   font-size:30px;
   color:var(--fb-icon);
 }
 
 /* SVG ÍCONES */
-.iconSvg{
-  width:34px;
-  height:34px;
-}
-
+.iconSvg{ width:34px; height:34px; }
 .iconStroke{
   fill:none;
   stroke:var(--fb-icon);
@@ -155,62 +334,194 @@ body{
 
 <body>
 
-<header class="topbar">
-  <div class="topLeft">
-    <a class="backBtn"
-       href="https://marcio2307.github.io/terreiro/site.html"
-       title="Voltar">
+<!-- ✅ TOPO DO LOGIN (fundo do site + voltar em cima) -->
+<header class="authTopbar" id="authTopbar">
+  <div class="authTopLeft">
+    <button class="authBackTop" type="button" title="Voltar" aria-label="Voltar"
+      onclick="location.href='https://marcio2307.github.io/terreiro/site.html'">
       <i class="fa-solid fa-arrow-left"></i>
-    </a>
+    </button>
   </div>
-  <div class="title">Estudo</div>
+  <div class="authTopTitle">Estudo</div>
 </header>
 
-<main class="wrap">
-
-<section class="grid">
-
-  <div class="card" onclick="location.href='https://drive.google.com/file/d/1kKAL9yGVrU-c8Y9ecBApVUHG2qbuoHFV/view?usp=sharing'">
-    <div class="iconBox"><i class="fa-solid fa-book"></i></div>
-    <div class="label">Apostila</div>
-  </div>
-
-  <div class="card" onclick="location.href='https://drive.google.com/file/d/1-gQvm5UyiCnP2ldptVAgwI5GAasupd4P/view?usp=sharing'">
-    <div class="iconBox"><i class="fa-solid fa-leaf"></i></div>
-    <div class="label">Banhos</div>
-  </div>
-
-  <!-- Baralho Cigano -->
-  <div class="card" onclick="location.href='https://drive.google.com/file/d/1-X-vCFH_LbymUyLMESntPfqBGduIUc-R/view?usp=sharing'">
-    <div class="iconBox">
-      <svg class="iconSvg" viewBox="0 0 64 64">
-        <rect x="16" y="10" width="32" height="44" rx="6" class="iconStroke"/>
-        <rect x="20" y="14" width="24" height="36" rx="4" class="iconStroke" opacity=".5"/>
-        <circle cx="32" cy="32" r="6" class="iconStroke"/>
-      </svg>
+<!-- 🔒 TELA LOGIN -->
+<div class="authScreen" id="authScreen" aria-label="Tela de login">
+  <div class="authCard">
+    <div class="authTop">
+      <div class="lockIcon"><i class="fa-solid fa-lock"></i></div>
+      <div class="authTitleWrap">
+        <div class="authTitle">Acesso restrito</div>
+        <div class="authSub">Você precisa da senha do administrador para acessar.</div>
+      </div>
     </div>
-    <div class="label">Baralho Cigano</div>
-  </div>
 
-  <!-- Pontos Riscados -->
-  <div class="card" onclick="location.href='https://marcio2307.github.io/terreiro/ponto.html'">
-    <div class="iconBox">
-      <svg class="iconSvg" viewBox="0 0 64 64">
-        <polygon points="32 8, 56 48, 8 48" class="iconStroke"/>
-        <polygon points="32 56, 56 16, 8 16" class="iconStroke"/>
-      </svg>
+    <div class="authBody">
+      <div class="fieldLabel">Senha do administrador</div>
+
+      <div class="inputRow">
+        <input
+          id="passInput"
+          class="authInput"
+          type="password"
+          inputmode="text"
+          autocomplete="current-password"
+          placeholder="Digite a senha"
+        />
+        <button class="toggleBtn" id="togglePass" type="button" aria-label="Mostrar/ocultar senha" title="Mostrar/ocultar">
+          <i class="fa-solid fa-eye"></i>
+        </button>
+      </div>
+
+      <div class="authActions">
+        <button class="authBtn" id="loginBtn" type="button">
+          Entrar <i class="fa-solid fa-arrow-right" style="margin-left:8px;"></i>
+        </button>
+      </div>
+
+      <div class="authError" id="authError">
+        <i class="fa-solid fa-triangle-exclamation"></i>
+        Senha incorreta. Tente novamente.
+      </div>
     </div>
-    <div class="label">Pontos Riscados</div>
   </div>
+</div>
 
-  <div class="card" onclick="location.href='https://marcio2307.github.io/prova/index.html'">
-    <div class="iconBox"><i class="fa-solid fa-clipboard-check"></i></div>
-    <div class="label">Provas</div>
-  </div>
+<!-- ✅ APP REAL -->
+<div id="app">
 
-</section>
+  <header class="topbar">
+    <div class="topLeft">
+      <a class="backBtn"
+         href="https://marcio2307.github.io/terreiro/site.html"
+         title="Voltar">
+        <i class="fa-solid fa-arrow-left"></i>
+      </a>
+    </div>
+    <div class="title">Estudo</div>
+  </header>
 
-</main>
+  <main class="wrap">
+    <section class="grid">
+
+      <div class="card" onclick="location.href='https://drive.google.com/file/d/1kKAL9yGVrU-c8Y9ecBApVUHG2qbuoHFV/view?usp=sharing'">
+        <div class="iconBox"><i class="fa-solid fa-book"></i></div>
+        <div class="label">Apostila</div>
+      </div>
+
+      <div class="card" onclick="location.href='https://drive.google.com/file/d/1-gQvm5UyiCnP2ldptVAgwI5GAasupd4P/view?usp=sharing'">
+        <div class="iconBox"><i class="fa-solid fa-leaf"></i></div>
+        <div class="label">Banhos</div>
+      </div>
+
+      <!-- Baralho Cigano -->
+      <div class="card" onclick="location.href='https://drive.google.com/file/d/1-X-vCFH_LbymUyLMESntPfqBGduIUc-R/view?usp=sharing'">
+        <div class="iconBox">
+          <svg class="iconSvg" viewBox="0 0 64 64">
+            <rect x="16" y="10" width="32" height="44" rx="6" class="iconStroke"/>
+            <rect x="20" y="14" width="24" height="36" rx="4" class="iconStroke" opacity=".5"/>
+            <circle cx="32" cy="32" r="6" class="iconStroke"/>
+          </svg>
+        </div>
+        <div class="label">Baralho Cigano</div>
+      </div>
+
+      <!-- Pontos Riscados -->
+      <div class="card" onclick="location.href='https://marcio2307.github.io/terreiro/ponto.html'">
+        <div class="iconBox">
+          <svg class="iconSvg" viewBox="0 0 64 64">
+            <polygon points="32 8, 56 48, 8 48" class="iconStroke"/>
+            <polygon points="32 56, 56 16, 8 16" class="iconStroke"/>
+          </svg>
+        </div>
+        <div class="label">Pontos Riscados</div>
+      </div>
+
+      <div class="card" onclick="location.href='https://marcio2307.github.io/prova/index.html'">
+        <div class="iconBox"><i class="fa-solid fa-clipboard-check"></i></div>
+        <div class="label">Provas</div>
+      </div>
+
+      <!-- ✅ REUNIÃO -->
+      <div class="card" onclick="location.href='https://marcio2307.github.io/terreiro/sala.html'">
+        <div class="iconBox"><i class="fa-solid fa-video"></i></div>
+        <div class="label">Reunião</div>
+      </div>
+
+    </section>
+  </main>
+
+</div>
+
+<script>
+/* 🔒 LOGIN BONITO - SENHA: "pai marcio"
+   - aceita também "paimarcio" (sem espaço)
+   - ignora maiúsculas/minúsculas e espaços extras */
+(function(){
+  const authScreen = document.getElementById("authScreen");
+  const app = document.getElementById("app");
+  const passInput = document.getElementById("passInput");
+  const loginBtn = document.getElementById("loginBtn");
+  const err = document.getElementById("authError");
+  const toggle = document.getElementById("togglePass");
+
+  function normalize(s){
+    return (s || "")
+      .toString()
+      .trim()
+      .toLowerCase()
+      .replace(/\s+/g, " ")
+      .replace(/\s/g, "");
+  }
+
+  const OK1 = normalize("pai marcio");
+  const OK2 = normalize("paimarcio");
+
+  function showError(){
+    err.style.display = "block";
+    passInput.focus();
+    passInput.select();
+  }
+  function hideError(){ err.style.display = "none"; }
+
+  function unlock(){
+    authScreen.style.display = "none";
+    document.getElementById("authTopbar").style.display = "none";
+    app.style.display = "block";
+    document.body.style.overflow = "";
+  }
+
+  function tryLogin(){
+    hideError();
+    const typed = normalize(passInput.value);
+    if(typed === OK1 || typed === OK2) unlock();
+    else showError();
+  }
+
+  toggle.addEventListener("click", ()=>{
+    const isPass = passInput.type === "password";
+    passInput.type = isPass ? "text" : "password";
+    toggle.innerHTML = isPass
+      ? '<i class="fa-solid fa-eye-slash"></i>'
+      : '<i class="fa-solid fa-eye"></i>';
+    passInput.focus();
+  });
+
+  passInput.addEventListener("keydown", (e)=>{
+    if(e.key === "Enter"){
+      e.preventDefault();
+      tryLogin();
+    }else{
+      hideError();
+    }
+  });
+
+  loginBtn.addEventListener("click", tryLogin);
+
+  // foco inicial
+  setTimeout(()=>{ passInput.focus(); }, 50);
+})();
+</script>
 
 </body>
 </html>
