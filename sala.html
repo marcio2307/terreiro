@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-<title>Raízes da Umbanda • Memorial</title>
+<title>Memorial</title>
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
@@ -45,12 +45,10 @@
     padding: 10px 12px;
     display:flex;
     align-items:center;
-    justify-content:space-between;
+    justify-content:flex-start;
     gap:12px;
     padding-top: calc(10px + env(safe-area-inset-top));
   }
-  .topbar .left{ display:flex; align-items:center; gap:10px; min-width:0; }
-  .topbar .center{ flex:1; display:flex; justify-content:center; align-items:center; min-width:0; }
   .brand{
     font-weight:900;
     color: var(--text);
@@ -59,7 +57,6 @@
     overflow:hidden;
     text-overflow:ellipsis;
   }
-  .topbar .actions{ display:flex; align-items:center; gap:10px; }
 
   .btn{
     border:none;
@@ -166,6 +163,8 @@
     border-radius: 18px;
     box-shadow: 0 6px 18px rgba(0,0,0,.22);
     padding: 14px;
+  }
+  .heroTop{
     display:flex;
     gap:12px;
     align-items:center;
@@ -192,9 +191,18 @@
     overflow:hidden;
     text-overflow:ellipsis;
     white-space:nowrap;
-    max-width: 62vw;
+    max-width: 68vw;
   }
-  .meSub{ color: var(--muted); font-weight:900; font-size: 13px; margin-top:4px; display:flex; gap:10px; flex-wrap:wrap; align-items:center; }
+  .meSub{
+    color: var(--muted);
+    font-weight:900;
+    font-size: 13px;
+    margin-top:4px;
+    display:flex;
+    gap:10px;
+    flex-wrap:wrap;
+    align-items:center;
+  }
   .pill{
     display:inline-flex;
     gap:8px;
@@ -218,67 +226,36 @@
     50%{ transform:scale(1.25); opacity:.35; }
   }
 
-  /* ===================== "LOGADO" CHIP TOPBAR ===================== */
-  .userChip{
+  /* botões abaixo do nome (como pedido) */
+  .heroActions{
+    margin-top: 12px;
     display:flex;
-    align-items:center;
     gap:10px;
-    padding:8px 10px;
-    border-radius:999px;
-    background: rgba(255,255,255,.06);
-    border:1px solid rgba(255,255,255,.10);
-    box-shadow: 0 8px 18px rgba(0,0,0,.22);
-    max-width: 320px;
+    flex-wrap:wrap;
+    align-items:center;
   }
-  .chipAva{
-    width:34px; height:34px;
-    border-radius:50%;
-    overflow:hidden;
-    background:#3a3b3c;
-    display:flex; align-items:center; justify-content:center;
-    flex:0 0 auto;
-  }
-  .chipAva img{ width:100%; height:100%; object-fit:cover; display:block; }
-  .chipInit{ font-weight:900; color: var(--text); font-size: 13px; }
-  .chipName{
-    font-weight:900;
-    color: var(--text);
-    overflow:hidden;
-    text-overflow:ellipsis;
-    white-space:nowrap;
-    max-width: 220px;
+  .heroActions .btn{ flex: 1 1 180px; }
+  @media (max-width:520px){
+    .heroActions .btn{ flex: 1 1 100%; }
   }
 
-  /* ===================== TABS ===================== */
-  .tabs{
+  /* ===================== SEÇÕES ===================== */
+  .sectionTitle{
+    margin: 14px 2px 10px 2px;
     display:flex;
+    align-items:center;
+    justify-content:space-between;
     gap:10px;
-    padding: 12px 0 0 0;
     flex-wrap:wrap;
   }
-  .tab{
-    cursor:pointer;
-    padding:10px 14px;
-    border-radius:999px;
-    background: rgba(255,255,255,.06);
-    border:1px solid rgba(255,255,255,.10);
-    color: var(--text);
-    font-weight:900;
-    user-select:none;
+  .sectionTitle .left{
+    font-weight: 900;
+    letter-spacing: .2px;
     display:flex;
     align-items:center;
-    justify-content:center;
-    gap:8px;
+    gap:10px;
   }
-  .tab.active{
-    background: var(--primary);
-    color:#fff;
-    border-color: rgba(8,102,255,.35);
-    box-shadow: 0 10px 18px rgba(8,102,255,.20);
-  }
-
-  .panel{ padding: 12px 0; display:none; }
-  .panel.active{ display:block; }
+  .tiny{ font-size:12px; color: var(--muted); font-weight:900; }
 
   .card{
     background: var(--surface);
@@ -288,6 +265,7 @@
     box-shadow: 0 6px 18px rgba(0,0,0,.25);
   }
 
+  /* ===================== ORGANIZADO: UPLOAD BOX ===================== */
   .field{ display:flex; flex-direction:column; gap:7px; margin-bottom:12px; }
   .label{ font-weight:900; color: var(--muted); font-size:13px; letter-spacing:.2px; }
   .input, .textarea{
@@ -307,7 +285,6 @@
   }
   .textarea{ min-height: 90px; resize: vertical; }
 
-  /* ===================== ORGANIZADO: UPLOAD BOX ===================== */
   .uploadBox{
     border-radius: 16px;
     border: 1px solid rgba(255,255,255,.10);
@@ -348,6 +325,8 @@
     font-weight:900;
     line-height:1.35;
   }
+  .rowBtns{ display:flex; gap:10px; flex-wrap:wrap; align-items:center; }
+
   .previewGrid{
     margin-top: 12px;
     display:grid;
@@ -386,7 +365,26 @@
   .removeBtn:hover{ background: rgba(0,0,0,.70); }
   .removeBtn:active{ transform: scale(.96); }
 
-  /* ===================== ALBUM GRID (galeria celular) ===================== */
+  .mutedHint{
+    color: var(--muted);
+    font-weight:900;
+    font-size: 13px;
+    padding: 10px;
+    border-radius: 14px;
+    border: 1px dashed rgba(255,255,255,.14);
+    background: rgba(255,255,255,.03);
+    margin-top: 10px;
+    line-height:1.35;
+  }
+
+  .dangerBtn{
+    background: rgba(255,91,91,.12) !important;
+    border: 1px solid rgba(255,91,91,.35) !important;
+    color: #ffd6d6 !important;
+  }
+  .dangerBtn:hover{ background: rgba(255,91,91,.18) !important; }
+
+  /* ===================== GRID DE ÁLBUNS (dono acima + capa abaixo) ===================== */
   .albumsGrid{
     display:grid;
     grid-template-columns: repeat(4, 1fr);
@@ -394,9 +392,9 @@
   }
   @media (max-width: 980px){ .albumsGrid{ grid-template-columns: repeat(3, 1fr);} }
   @media (max-width: 700px){ .albumsGrid{ grid-template-columns: repeat(2, 1fr);} }
+  @media (max-width: 420px){ .albumsGrid{ grid-template-columns: 1fr;} }
 
-  .albumTile{
-    position:relative;
+  .albumCard{
     border-radius: 16px;
     overflow:hidden;
     border: 1px solid rgba(255,255,255,.10);
@@ -404,58 +402,78 @@
     box-shadow: 0 10px 18px rgba(0,0,0,.22);
     cursor:pointer;
     user-select:none;
-    min-height: 160px;
+    display:flex;
+    flex-direction:column;
+    min-height: 220px;
   }
-  .albumCover{ position:absolute; inset:0; background:#000; }
-  .albumCover img{
-    width:100%; height:100%; object-fit:cover; display:block;
-    filter: contrast(1.05) saturate(1.05);
-    opacity:.92;
+  .albumOwnerTop{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    padding: 10px 10px 8px 10px;
+    background: rgba(0,0,0,.18);
+    border-bottom: 1px solid rgba(255,255,255,.08);
   }
-  .albumShade{
-    position:absolute; inset:auto 0 0 0;
-    height: 62%;
-    background: linear-gradient(180deg, rgba(0,0,0,0) 0%, rgba(0,0,0,.30) 35%, rgba(0,0,0,.90) 100%);
-    pointer-events:none;
+  .oAva{
+    width:30px; height:30px;
+    border-radius:50%;
+    overflow:hidden;
+    background:#3a3b3c;
+    display:flex; align-items:center; justify-content:center;
+    flex:0 0 auto;
   }
-  .albumMeta{
-    position:absolute; left:10px; right:10px; bottom:10px;
-    display:flex; align-items:flex-end; justify-content:space-between; gap:10px;
+  .oAva img{ width:100%; height:100%; object-fit:cover; display:block; }
+  .oInit{ font-weight:900; font-size:12px; color: var(--text); }
+  .oName{
+    font-weight:900;
+    font-size: 13px;
+    color: var(--text);
+    max-width: 70%;
+    white-space:nowrap;
+    overflow:hidden;
+    text-overflow:ellipsis;
+  }
+
+  .albumCoverBox{
+    width:100%;
+    aspect-ratio: 1 / 1;
+    background:#000;
+    position:relative;
+  }
+  .albumCoverBox img{
+    width:100%;
+    height:100%;
+    object-fit:cover;
+    display:block;
+    opacity:.95;
+  }
+  .albumBottom{
+    padding: 10px;
+    display:flex;
+    flex-direction:column;
+    gap:6px;
   }
   .albumTitle{
     font-weight:900;
     font-size: 14px;
     line-height:1.2;
-    max-width: 100%;
     overflow:hidden;
     text-overflow:ellipsis;
     display:-webkit-box;
     -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
   }
-  .albumOwner{
-    display:flex; align-items:center; gap:8px;
-    background: rgba(0,0,0,.42);
-    border: 1px solid rgba(255,255,255,.18);
-    padding: 6px 8px;
-    border-radius: 999px;
-    box-shadow: 0 8px 18px rgba(0,0,0,.30);
-  }
-  .oAva{
-    width:24px; height:24px; border-radius:50%;
-    overflow:hidden; background:#3a3b3c;
-    display:flex; align-items:center; justify-content:center;
-  }
-  .oAva img{ width:100%; height:100%; object-fit:cover; display:block; }
-  .oInit{ font-weight:900; font-size:12px; color: var(--text); }
-  .oName{
-    font-weight:900; font-size:12px;
-    max-width: 110px;
-    white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
-    color: var(--text);
+  .albumMetaTiny{
+    font-weight:900;
+    font-size: 12px;
+    color: var(--muted);
+    display:flex;
+    gap:10px;
+    flex-wrap:wrap;
+    align-items:center;
   }
 
-  /* ===================== MODAL ===================== */
+  /* ===================== MODAIS ===================== */
   .modalOverlay{
     position:fixed; inset:0;
     background: rgba(0,0,0,.72);
@@ -488,28 +506,6 @@
     letter-spacing:.2px;
     display:flex; align-items:center; gap:10px;
   }
-
-  .rowBtns{ display:flex; gap:10px; flex-wrap:wrap; align-items:center; }
-  .tiny{ font-size:12px; color: var(--muted); font-weight:900; }
-
-  .mutedHint{
-    color: var(--muted);
-    font-weight:900;
-    font-size: 13px;
-    padding: 10px;
-    border-radius: 14px;
-    border: 1px dashed rgba(255,255,255,.14);
-    background: rgba(255,255,255,.03);
-    margin-top: 10px;
-    line-height:1.35;
-  }
-
-  .dangerBtn{
-    background: rgba(255,91,91,.12) !important;
-    border: 1px solid rgba(255,91,91,.35) !important;
-    color: #ffd6d6 !important;
-  }
-  .dangerBtn:hover{ background: rgba(255,91,91,.18) !important; }
 
   /* ===================== ALBUM VIEW ===================== */
   .albumHeader{
@@ -572,6 +568,7 @@
     overflow:hidden;
     border: 1px solid rgba(255,255,255,.10);
     background:#000;
+    cursor: pointer;
   }
   .mediaItem img, .mediaItem video{
     width:100%;
@@ -598,6 +595,99 @@
     z-index: 9999999;
     font-weight:900;
   }
+
+  /* ===================== FOTO VIEWER (Swipe) ===================== */
+  .viewerOverlay{
+    position:fixed; inset:0;
+    background: rgba(0,0,0,.92);
+    display:none;
+    align-items:center;
+    justify-content:center;
+    z-index: 99999999;
+    touch-action: none;
+  }
+  .viewerTop{
+    position:absolute;
+    left:0; right:0; top:0;
+    padding-top: env(safe-area-inset-top);
+    padding: 10px 12px;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:10px;
+    pointer-events:none;
+  }
+  .viewerTop .vLeft, .viewerTop .vRight, .viewerTop .vCenter{ pointer-events:auto; }
+  .viewerTop .vCenter{
+    flex:1;
+    display:flex;
+    justify-content:center;
+    min-width:0;
+  }
+  .viewerCounter{
+    font-weight:900;
+    color:#fff;
+    background: rgba(0,0,0,.35);
+    border:1px solid rgba(255,255,255,.16);
+    padding: 8px 12px;
+    border-radius: 999px;
+    max-width: 72vw;
+    overflow:hidden;
+    text-overflow:ellipsis;
+    white-space:nowrap;
+  }
+  .viewerBtn{
+    width:44px; height:44px;
+    border-radius: 999px;
+    border: 1px solid rgba(255,255,255,.18);
+    background: rgba(0,0,0,.45);
+    color:#fff;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    cursor:pointer;
+    user-select:none;
+  }
+  .viewerBtn:active{ transform: scale(.98); }
+  .viewerStage{
+    width:100%;
+    height:100%;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    overflow:hidden;
+  }
+  .viewerImg{
+    max-width: 100vw;
+    max-height: 100vh;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    user-select:none;
+    -webkit-user-drag: none;
+  }
+  .viewerHint{
+    position:absolute;
+    left:50%;
+    transform:translateX(-50%);
+    bottom: calc(16px + env(safe-area-inset-bottom));
+    color:#fff;
+    font-weight:900;
+    font-size: 12px;
+    opacity:.85;
+    background: rgba(0,0,0,.35);
+    border:1px solid rgba(255,255,255,.12);
+    padding: 8px 12px;
+    border-radius: 999px;
+    pointer-events:none;
+  }
+  @media (min-width: 820px){
+    .viewerHint{ display:none; }
+  }
+
+  /* painel simples (sem tabs) */
+  .panel{ display:none; }
+  .panel.active{ display:block; }
 </style>
 </head>
 
@@ -618,67 +708,55 @@
 
 <!-- TOPBAR -->
 <div class="topbar">
-  <div class="left">
-    <button class="btn ghost icon" title="Voltar" aria-label="Voltar" onclick="voltarHome()">
-      <i class="fa-solid fa-arrow-left"></i>
-    </button>
-    <div class="brand" style="opacity:.9;">Raízes da Umbanda</div>
-  </div>
-
-  <div class="center">
-    <div class="brand">MEMORIAL</div>
-  </div>
-
-  <!-- ✅ chip do logado -->
-  <div class="actions">
-    <div class="userChip" title="Você está logado">
-      <div class="chipAva" id="chipAva">
-        <div class="chipInit" id="chipInit">U</div>
-        <img id="chipImg" alt="avatar" style="display:none;">
-      </div>
-      <div class="chipName" id="chipName">—</div>
-    </div>
-  </div>
+  <button class="btn ghost icon" title="Voltar" aria-label="Voltar" onclick="voltarHome()">
+    <i class="fa-solid fa-arrow-left"></i>
+  </button>
+  <!-- ✅ título Memorial do lado esquerdo -->
+  <div class="brand">MEMORIAL</div>
 </div>
 
 <div class="wrap">
 
+  <!-- ✅ nome + foto do usuário logado, e abaixo botões -->
   <div class="hero">
-    <div class="meLeft">
-      <div class="meAvatar" id="meAvatarBox" title="Avatar do usuário">
-        <img id="meAvatarImg" style="display:none;" alt="Sua foto">
-        <div id="meAvatarInit" class="meInit">U</div>
-      </div>
-      <div class="meText">
-        <div class="meTitle" id="meName">—</div>
-        <div class="meSub">
-          <span class="pill"><span class="onlineDot"></span> Online</span>
-          <span class="pill"><i class="fa-solid fa-folder-open"></i> <span id="myAlbumsCount">0</span> álbuns</span>
+    <div class="heroTop">
+      <div class="meLeft">
+        <div class="meAvatar" id="meAvatarBox" title="Avatar do usuário">
+          <img id="meAvatarImg" style="display:none;" alt="Sua foto">
+          <div id="meAvatarInit" class="meInit">U</div>
         </div>
+        <div class="meText">
+          <div class="meTitle" id="meName">—</div>
+          <div class="meSub">
+            <span class="pill"><span class="onlineDot"></span> Online</span>
+            <span class="pill"><i class="fa-solid fa-folder-open"></i> <span id="myAlbumsCount">0</span> álbuns</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="rowBtns" style="justify-content:flex-end;">
+        <button class="btn ghost" onclick="recarregarTudo()"><i class="fa-solid fa-rotate"></i> Recarregar</button>
       </div>
     </div>
 
-    <div class="rowBtns" style="justify-content:flex-end;">
+    <!-- ✅ abaixo do nome: Criar álbum e Meus álbuns -->
+    <div class="heroActions">
       <button class="btn" onclick="abrirModalCriarAlbum()"><i class="fa-solid fa-plus"></i> Criar álbum</button>
-      <button class="btn ghost" onclick="recarregarTudo()"><i class="fa-solid fa-rotate"></i> Recarregar</button>
+      <button class="btn ghost" onclick="setPanel('my')"><i class="fa-solid fa-user"></i> Meus álbuns</button>
+      <button class="btn ghost" onclick="setPanel('albums')"><i class="fa-solid fa-images"></i> Memórias</button>
     </div>
   </div>
 
-  <div class="tabs">
-    <div class="tab active" id="tab_albums" onclick="setTab('albums')"><i class="fa-solid fa-images"></i> Álbuns</div>
-    <div class="tab" id="tab_my" onclick="setTab('my')"><i class="fa-solid fa-user"></i> Meus álbuns</div>
-    <div class="tab" id="tab_about" onclick="setTab('about')"><i class="fa-solid fa-circle-info"></i> Sobre</div>
+  <!-- ✅ Título "Memórias" -->
+  <div class="sectionTitle">
+    <div class="left"><i class="fa-solid fa-images" style="color:var(--primary)"></i> Memórias</div>
+    <div class="tiny" id="allAlbumsCount">0 álbuns</div>
   </div>
 
   <!-- ÁLBUNS (todos) -->
   <div class="panel active" id="panel_albums">
     <div class="card">
-      <div style="display:flex; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap;">
-        <div style="font-weight:900; letter-spacing:.2px;"><i class="fa-solid fa-images" style="color:var(--primary)"></i> Galeria de álbuns</div>
-        <div class="tiny" id="allAlbumsCount">0 álbuns</div>
-      </div>
-
-      <div id="albumsGrid" class="albumsGrid" style="margin-top:12px;"></div>
+      <div id="albumsGrid" class="albumsGrid"></div>
       <div id="albumsEmpty" class="mutedHint" style="display:none;">
         Ainda não existe nenhum álbum. Clique em <b>Criar álbum</b> para começar.
       </div>
@@ -686,35 +764,15 @@
   </div>
 
   <!-- MEUS ÁLBUNS -->
-  <div class="panel" id="panel_my">
+  <div class="panel" id="panel_my" style="margin-top:12px;">
     <div class="card">
-      <div style="display:flex; align-items:center; justify-content:space-between; gap:10px; flex-wrap:wrap;">
-        <div style="font-weight:900; letter-spacing:.2px;"><i class="fa-solid fa-user" style="color:var(--primary)"></i> Meus álbuns</div>
+      <div class="sectionTitle" style="margin:0 0 10px 0;">
+        <div class="left"><i class="fa-solid fa-user" style="color:var(--primary)"></i> Meus álbuns</div>
         <div class="tiny" id="onlyMyCount">0 álbuns</div>
       </div>
-
-      <div id="myAlbumsGrid" class="albumsGrid" style="margin-top:12px;"></div>
+      <div id="myAlbumsGrid" class="albumsGrid"></div>
       <div id="myAlbumsEmpty" class="mutedHint" style="display:none;">
         Você ainda não criou nenhum álbum.
-      </div>
-    </div>
-  </div>
-
-  <!-- SOBRE -->
-  <div class="panel" id="panel_about">
-    <div class="card">
-      <div style="font-weight:900; letter-spacing:.2px;">
-        <i class="fa-solid fa-circle-info" style="color:var(--primary)"></i> Como funciona
-      </div>
-      <div class="mutedHint">
-        • Cada usuário cria um <b>álbum</b> com <b>título</b>, <b>descrição</b> e <b>capa</b>.<br>
-        • No mesmo álbum, você envia <b>fotos</b> e <b>vídeos</b> (até 10 de cada).<br>
-        • Os outros usuários veem a <b>capa</b> e o <b>dono do álbum</b>; ao clicar, veem tudo: descrição, fotos e vídeos.<br>
-        • O dono do álbum pode <b>editar</b> e <b>excluir</b>.
-      </div>
-
-      <div class="mutedHint" style="margin-top:12px;">
-        <b>Dica:</b> em produção, ajuste as regras do Firebase para permitir só o dono editar/excluir.
       </div>
     </div>
   </div>
@@ -739,7 +797,7 @@
       <textarea id="albumDesc" class="textarea" maxlength="600" placeholder="Escreva uma descrição..."></textarea>
     </div>
 
-    <!-- ✅ CAPA -->
+    <!-- CAPA -->
     <div class="uploadBox">
       <div class="uploadTop">
         <div class="uploadTitle"><i class="fa-solid fa-image" style="color:var(--primary)"></i> Capa do álbum</div>
@@ -769,7 +827,7 @@
       </div>
     </div>
 
-    <!-- ✅ FOTOS (mais bonito/organizado) -->
+    <!-- FOTOS -->
     <div class="uploadBox" style="margin-top:12px;">
       <div class="uploadTop">
         <div class="uploadTitle"><i class="fa-solid fa-images" style="color:var(--primary)"></i> Fotos do álbum</div>
@@ -796,7 +854,7 @@
       <div class="tiny" id="albumPhotosStatus" style="margin-top:10px;">Nenhuma foto selecionada.</div>
     </div>
 
-    <!-- ✅ VÍDEOS -->
+    <!-- VÍDEOS -->
     <div class="uploadBox" style="margin-top:12px;">
       <div class="uploadTop">
         <div class="uploadTitle"><i class="fa-solid fa-video" style="color:var(--primary)"></i> Vídeos do álbum</div>
@@ -825,7 +883,6 @@
 
     <div class="rowBtns" style="margin-top:14px; justify-content:space-between;">
       <div class="tiny" id="albumModeHint">Modo: Criar</div>
-
       <div class="rowBtns">
         <button class="btn" id="albumSaveBtn" onclick="salvarAlbum()"><i class="fa-solid fa-check"></i> Salvar</button>
         <button class="btn ghost" onclick="fecharModal('modalAlbum')"><i class="fa-solid fa-ban"></i> Cancelar</button>
@@ -848,7 +905,6 @@
 
     <div id="albumViewTop"></div>
 
-    <!-- ✅ dono pode editar/excluir -->
     <div class="rowBtns" id="albumOwnerActions" style="margin-top:12px; display:none;">
       <button class="btn ghost" onclick="editarAlbumAtual()"><i class="fa-solid fa-pen"></i> Editar</button>
       <button class="btn ghost dangerBtn" onclick="excluirAlbumAtual()"><i class="fa-solid fa-trash"></i> Excluir</button>
@@ -862,6 +918,27 @@
   </div>
 </div>
 
+<!-- ===================== FOTO VIEWER SWIPE ===================== -->
+<div class="viewerOverlay" id="photoViewer">
+  <div class="viewerTop">
+    <div class="vLeft">
+      <div class="viewerBtn" onclick="closePhotoViewer()" title="Fechar"><i class="fa-solid fa-xmark"></i></div>
+    </div>
+    <div class="vCenter">
+      <div class="viewerCounter" id="viewerCounter">1/1</div>
+    </div>
+    <div class="vRight">
+      <div class="viewerBtn" onclick="toggleViewerUI()" title="Ocultar/Mostrar HUD"><i class="fa-solid fa-eye"></i></div>
+    </div>
+  </div>
+
+  <div class="viewerStage" id="viewerStage">
+    <img id="viewerImg" class="viewerImg" alt="Foto">
+  </div>
+
+  <div class="viewerHint">Arraste para o lado (← →) para passar as fotos</div>
+</div>
+
 <div class="toast" id="toast"></div>
 
 <!-- Firebase -->
@@ -873,7 +950,7 @@
 /* ====================== URLs ====================== */
 const SITE_HOME_URL  = "https://marcio2307.github.io/terreiro/site.html";
 
-/* ====================== FIREBASE (MESMO DO SEU EXEMPLO) ====================== */
+/* ====================== FIREBASE ====================== */
 const firebaseConfig = {
   apiKey: "AIzaSyAt4CeGjdbjzdtMH1qZHw6RuBFJ6SeTDKk",
   authDomain: "coletivo-f34d4.firebaseapp.com",
@@ -1007,16 +1084,12 @@ async function getMyProfile(){
   return snap.val() || { uid: UID, name: USER_NAME, avatarDataUrl: "" };
 }
 
-/* ====================== TOPBAR CHIP + HERO ====================== */
-const chipName = document.getElementById("chipName");
-const chipInit = document.getElementById("chipInit");
-const chipImg  = document.getElementById("chipImg");
-
+/* ====================== UI PERFIL (nome + foto) ====================== */
 const meNameEl = document.getElementById("meName");
 const meAvatarImg  = document.getElementById("meAvatarImg");
 const meAvatarInit = document.getElementById("meAvatarInit");
 
-function setAvatarUI(url, name){
+function setMyAvatar(url, name){
   if(url){
     meAvatarImg.src = url;
     meAvatarImg.style.display = "block";
@@ -1026,28 +1099,13 @@ function setAvatarUI(url, name){
     meAvatarInit.style.display = "flex";
     meAvatarInit.textContent = initials(name || "U");
   }
-
-  if(url){
-    chipImg.src = url;
-    chipImg.style.display = "block";
-    chipInit.style.display = "none";
-  }else{
-    chipImg.style.display = "none";
-    chipInit.style.display = "flex";
-    chipInit.textContent = initials(name || "U");
-  }
 }
 
-/* ====================== ABAS ====================== */
-let CURRENT_TAB = "albums";
-function setTab(which){
-  ["albums","my","about"].forEach(k=>{
-    document.getElementById("tab_"+k).classList.remove("active");
-    document.getElementById("panel_"+k).classList.remove("active");
-  });
-  document.getElementById("tab_"+which).classList.add("active");
+/* ====================== PAINÉIS ====================== */
+function setPanel(which){
+  document.getElementById("panel_albums").classList.remove("active");
+  document.getElementById("panel_my").classList.remove("active");
   document.getElementById("panel_"+which).classList.add("active");
-  CURRENT_TAB = which;
 }
 
 /* ====================== MODAIS ====================== */
@@ -1163,14 +1221,12 @@ function editarAlbumAtual(){
   document.getElementById("albumTitle").value = CURRENT_ALBUM_DATA.title || "";
   document.getElementById("albumDesc").value = CURRENT_ALBUM_DATA.description || "";
 
-  // capa atual (mostra preview, mas sem arquivo novo selecionado)
   if(CURRENT_ALBUM_DATA.coverUrl){
     albumCoverStatus.textContent = "Capa atual carregada";
     albumCoverPreviewImg.src = CURRENT_ALBUM_DATA.coverUrl;
     albumCoverPreview.style.display = "block";
   }
 
-  // em edição: mantemos fotos/vídeos antigos (não precisa re-enviar)
   albumPhotosStatus.textContent = `No álbum: ${(CURRENT_ALBUM_DATA.photos||[]).length} foto(s). Você pode adicionar mais.`;
   albumVideosStatus.textContent = `No álbum: ${(CURRENT_ALBUM_DATA.videos||[]).length} vídeo(s). Você pode adicionar mais.`;
 
@@ -1243,7 +1299,6 @@ function removePhoto(idx){
 
 albumPhotosInput.addEventListener("change", ()=>{
   const files = Array.from(albumPhotosInput.files || []).filter(f => (f.type||"").startsWith("image/"));
-  // mantém o que já tinha + adiciona novo
   const merged = pendingPhotoFiles.concat(files).slice(0, 10);
   pendingPhotoFiles = merged;
   renderPhotosPreview();
@@ -1280,7 +1335,6 @@ function renderVideosPreview(){
     `;
   }).join("");
 
-  // tenta dar play mudo
   setTimeout(()=>{
     document.querySelectorAll("#albumVideosPreviewGrid video").forEach(v=>{
       try{ v.play().catch(()=>{}); }catch(e){}
@@ -1315,7 +1369,6 @@ async function salvarAlbum(){
     const me = await getMyProfile();
 
     if(!EDIT_MODE){
-      // ===== CRIAR =====
       toast("Criando álbum...");
       const albumId = randId("alb");
       const baseFolder = `memorial/albums/${UID}/${albumId}`;
@@ -1361,7 +1414,6 @@ async function salvarAlbum(){
       return;
     }
 
-    // ===== EDITAR =====
     toast("Atualizando álbum...");
     const albumId = EDIT_ALBUM_ID;
     const ref = DB.ref("albums/" + albumId);
@@ -1378,11 +1430,9 @@ async function salvarAlbum(){
 
     const baseFolder = `memorial/albums/${UID}/${albumId}`;
 
-    // troca capa (se selecionou nova)
     let coverUrl = cur.coverUrl || "";
     let coverPath = cur.coverPath || "";
     if(pendingCoverFile){
-      // tenta apagar a capa antiga
       if(coverPath){
         try{ await ST.ref().child(coverPath).delete(); }catch(e){}
       }
@@ -1390,7 +1440,6 @@ async function salvarAlbum(){
       coverUrl = up.url; coverPath = up.path;
     }
 
-    // adiciona novas fotos (mantém antigas)
     const oldPhotos = Array.isArray(cur.photos) ? cur.photos : [];
     const roomPhotos = Math.max(0, 10 - oldPhotos.length);
     const toAddPhotos = pendingPhotoFiles.slice(0, roomPhotos);
@@ -1402,7 +1451,6 @@ async function salvarAlbum(){
       newPhotos.push({ url: up.url, path: up.path });
     }
 
-    // adiciona novos vídeos (mantém antigos)
     const oldVideos = Array.isArray(cur.videos) ? cur.videos : [];
     const roomVideos = Math.max(0, 10 - oldVideos.length);
     const toAddVideos = pendingVideoFiles.slice(0, roomVideos);
@@ -1427,8 +1475,6 @@ async function salvarAlbum(){
 
     fecharModal("modalAlbum");
     toast("Álbum atualizado ✅");
-
-    // reabre o modal de view
     setTimeout(()=> abrirAlbum(albumId), 150);
 
   }catch(e){
@@ -1452,7 +1498,7 @@ function ownerAvatarHTML(url, ownerName){
   return `<div class="oInit">${escapeHTML(initials(ownerName||"U"))}</div>`;
 }
 
-function albumTileHTML(a){
+function albumCardHTML(a){
   const cover = a.coverUrl
     ? `<img src="${escapeHTML(a.coverUrl)}" alt="capa">`
     : `<img src="data:image/svg+xml;utf8,${encodeURIComponent(`
@@ -1465,21 +1511,27 @@ function albumTileHTML(a){
         </defs>
         <rect width='100%' height='100%' fill='url(#g)'/>
         <text x='50%' y='50%' dominant-baseline='middle' text-anchor='middle' fill='#b0b3b8' font-size='34' font-family='Arial' font-weight='900'>
-          Raízes da Umbanda
+          Sem capa
         </text>
       </svg>
     `)}">`;
 
   return `
-    <div class="albumTile" onclick="abrirAlbum('${escapeHTML(a.albumId)}')">
-      <div class="albumCover">${cover}</div>
-      <div class="albumShade"></div>
+    <div class="albumCard" onclick="abrirAlbum('${escapeHTML(a.albumId)}')">
+      <!-- ✅ acima da capa: foto + nome do dono -->
+      <div class="albumOwnerTop">
+        <div class="oAva">${ownerAvatarHTML(a.ownerAvatar || "", a.ownerName || "")}</div>
+        <div class="oName">${escapeHTML(a.ownerName || "Usuário")}</div>
+      </div>
 
-      <div class="albumMeta">
+      <!-- ✅ capa -->
+      <div class="albumCoverBox">${cover}</div>
+
+      <!-- título -->
+      <div class="albumBottom">
         <div class="albumTitle">${escapeHTML(a.title || "Álbum")}</div>
-        <div class="albumOwner" title="Dono do álbum">
-          <div class="oAva">${ownerAvatarHTML(a.ownerAvatar || "", a.ownerName || "")}</div>
-          <div class="oName">${escapeHTML(a.ownerName || "Usuário")}</div>
+        <div class="albumMetaTiny">
+          <span><i class="fa-solid fa-clock"></i> ${escapeHTML(fmtDate(a.updatedAt || a.createdAt || Date.now()))}</span>
         </div>
       </div>
     </div>
@@ -1501,7 +1553,7 @@ function renderAlbumsFromCache(){
     albumsEmpty.style.display = "block";
   }else{
     albumsEmpty.style.display = "none";
-    albumsGrid.innerHTML = all.map(albumTileHTML).join("");
+    albumsGrid.innerHTML = all.map(albumCardHTML).join("");
   }
 
   if(mine.length === 0){
@@ -1509,7 +1561,7 @@ function renderAlbumsFromCache(){
     myAlbumsEmpty.style.display = "block";
   }else{
     myAlbumsEmpty.style.display = "none";
-    myAlbumsGrid.innerHTML = mine.map(albumTileHTML).join("");
+    myAlbumsGrid.innerHTML = mine.map(albumCardHTML).join("");
   }
 }
 
@@ -1520,6 +1572,104 @@ function listenAlbums(){
     renderAlbumsFromCache();
   });
 }
+
+/* ====================== FOTO VIEWER (Swipe) ====================== */
+const photoViewer = document.getElementById("photoViewer");
+const viewerImg = document.getElementById("viewerImg");
+const viewerCounter = document.getElementById("viewerCounter");
+const viewerStage = document.getElementById("viewerStage");
+
+let VIEWER_LIST = [];
+let VIEWER_INDEX = 0;
+let VIEWER_HUD_VISIBLE = true;
+
+function openPhotoViewer(listUrls, startIndex){
+  VIEWER_LIST = (listUrls || []).slice();
+  VIEWER_INDEX = Math.max(0, Math.min(startIndex || 0, VIEWER_LIST.length-1));
+  if(VIEWER_LIST.length === 0) return;
+
+  photoViewer.style.display = "flex";
+  document.body.style.overflow = "hidden";
+  renderViewer();
+}
+function closePhotoViewer(){
+  photoViewer.style.display = "none";
+  document.body.style.overflow = "";
+}
+function renderViewer(){
+  const total = VIEWER_LIST.length;
+  const idx = VIEWER_INDEX;
+  viewerCounter.textContent = `${idx+1}/${total}`;
+  viewerImg.src = VIEWER_LIST[idx];
+}
+function nextPhoto(){
+  if(VIEWER_LIST.length === 0) return;
+  VIEWER_INDEX = (VIEWER_INDEX + 1) % VIEWER_LIST.length;
+  renderViewer();
+}
+function prevPhoto(){
+  if(VIEWER_LIST.length === 0) return;
+  VIEWER_INDEX = (VIEWER_INDEX - 1 + VIEWER_LIST.length) % VIEWER_LIST.length;
+  renderViewer();
+}
+function toggleViewerUI(){
+  VIEWER_HUD_VISIBLE = !VIEWER_HUD_VISIBLE;
+  const top = photoViewer.querySelector(".viewerTop");
+  const hint = photoViewer.querySelector(".viewerHint");
+  top.style.display = VIEWER_HUD_VISIBLE ? "flex" : "none";
+  hint.style.display = VIEWER_HUD_VISIBLE ? "" : "none";
+}
+
+(function setupViewerGestures(){
+  let startX = 0, startY = 0, dx = 0, dy = 0;
+  let tracking = false;
+
+  function onStart(e){
+    tracking = true;
+    dx = dy = 0;
+    const p = (e.touches && e.touches[0]) ? e.touches[0] : e;
+    startX = p.clientX;
+    startY = p.clientY;
+  }
+  function onMove(e){
+    if(!tracking) return;
+    const p = (e.touches && e.touches[0]) ? e.touches[0] : e;
+    dx = p.clientX - startX;
+    dy = p.clientY - startY;
+    if(e.cancelable) e.preventDefault();
+  }
+  function onEnd(){
+    if(!tracking) return;
+    tracking = false;
+
+    const absX = Math.abs(dx);
+    const absY = Math.abs(dy);
+
+    if(absX > 50 && absX > absY){
+      if(dx < 0) nextPhoto();
+      else prevPhoto();
+      return;
+    }
+    if(absX < 8 && absY < 8){
+      toggleViewerUI();
+    }
+  }
+
+  viewerStage.addEventListener("touchstart", onStart, {passive:true});
+  viewerStage.addEventListener("touchmove", onMove, {passive:false});
+  viewerStage.addEventListener("touchend", onEnd, {passive:true});
+
+  document.addEventListener("keydown", (e)=>{
+    if(photoViewer.style.display !== "flex") return;
+    if(e.key === "Escape") closePhotoViewer();
+    if(e.key === "ArrowRight") nextPhoto();
+    if(e.key === "ArrowLeft") prevPhoto();
+  });
+
+  photoViewer.addEventListener("click", (e)=>{
+    if(e.target === photoViewer) closePhotoViewer();
+  });
+})();
 
 /* ====================== ABRIR ÁLBUM (ver tudo) ====================== */
 let CURRENT_ALBUM_ID = "";
@@ -1535,19 +1685,29 @@ function mediaGridHTML(items, kind){
   if(arr.length === 0){
     return `<div class="mutedHint">Nenhum ${kind} neste álbum.</div>`;
   }
+
+  if(kind === "foto"){
+    const urls = arr.map(x => (x && x.url) ? String(x.url) : "").filter(Boolean);
+    return `
+      <div class="mediaGrid">
+        ${arr.map((x, i)=>{
+          const u = escapeHTML(x.url||"");
+          return `
+            <div class="mediaItem" onclick="openPhotoViewer(${JSON.stringify(urls).replace(/</g,'\\u003c')}, ${i})">
+              <img src="${u}" alt="foto" loading="lazy">
+            </div>
+          `;
+        }).join("")}
+      </div>
+    `;
+  }
+
   return `
     <div class="mediaGrid">
       ${arr.map(x=>{
-        if(kind === "vídeo"){
-          return `
-            <div class="mediaItem">
-              <video src="${escapeHTML(x.url||"")}" controls playsinline preload="metadata"></video>
-            </div>
-          `;
-        }
         return `
-          <div class="mediaItem">
-            <img src="${escapeHTML(x.url||"")}" alt="foto" loading="lazy">
+          <div class="mediaItem" style="cursor:default;">
+            <video src="${escapeHTML(x.url||"")}" controls playsinline preload="metadata"></video>
           </div>
         `;
       }).join("")}
@@ -1662,8 +1822,7 @@ async function excluirAlbumAtual(){
 /* ====================== BOOT ====================== */
 async function carregarMinhaUI(){
   meNameEl.textContent = USER_NAME || "Usuário";
-  chipName.textContent = USER_NAME || "Usuário";
-  setAvatarUI("", USER_NAME);
+  setMyAvatar("", USER_NAME);
 
   await ensureMyProfile();
 
@@ -1674,16 +1833,14 @@ async function carregarMinhaUI(){
     const ava = (p.avatarDataUrl || "").toString();
 
     meNameEl.textContent = nm;
-    chipName.textContent = nm;
-    setAvatarUI(ava, nm);
+    setMyAvatar(ava, nm);
 
     MY_PROFILE_REF().on("value", (s)=>{
       const px = s.val() || {};
       const nm2 = px.name || USER_NAME || "Usuário";
       const ava2 = (px.avatarDataUrl || "").toString();
       meNameEl.textContent = nm2;
-      chipName.textContent = nm2;
-      setAvatarUI(ava2, nm2);
+      setMyAvatar(ava2, nm2);
     });
   }catch(e){}
 }
@@ -1692,7 +1849,7 @@ async function carregarMinhaUI(){
   if(!USER_NAME) return;
   await carregarMinhaUI();
   listenAlbums();
-  setTab("albums");
+  setPanel("albums");
 })();
 </script>
 
