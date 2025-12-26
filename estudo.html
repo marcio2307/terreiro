@@ -455,15 +455,18 @@ body{
 
 <script>
 /* 🔒 LOGIN BONITO - SENHA: "pai marcio"
-   - aceita também "paimarcio" (sem espaço)
-   - ignora maiúsculas/minúsculas e espaços extras */
+   ✅ Depois que logar 1x, salva no navegador e NÃO pede de novo ao voltar.
+*/
 (function(){
   const authScreen = document.getElementById("authScreen");
+  const authTopbar = document.getElementById("authTopbar");
   const app = document.getElementById("app");
   const passInput = document.getElementById("passInput");
   const loginBtn = document.getElementById("loginBtn");
   const err = document.getElementById("authError");
   const toggle = document.getElementById("togglePass");
+
+  const KEY = "estudo_auth_ok_v1";
 
   function normalize(s){
     return (s || "")
@@ -484,20 +487,37 @@ body{
   }
   function hideError(){ err.style.display = "none"; }
 
-  function unlock(){
+  function unlock(persist){
     authScreen.style.display = "none";
-    document.getElementById("authTopbar").style.display = "none";
+    authTopbar.style.display = "none";
     app.style.display = "block";
     document.body.style.overflow = "";
+    if(persist){
+      try{ localStorage.setItem(KEY, "1"); }catch(e){}
+    }
+  }
+
+  function lock(){
+    authScreen.style.display = "flex";
+    authTopbar.style.display = "flex";
+    app.style.display = "none";
+  }
+
+  function alreadyAuthed(){
+    try{ return localStorage.getItem(KEY) === "1"; }catch(e){ return false; }
   }
 
   function tryLogin(){
     hideError();
     const typed = normalize(passInput.value);
-    if(typed === OK1 || typed === OK2) unlock();
-    else showError();
+    if(typed === OK1 || typed === OK2){
+      unlock(true); // salva
+    }else{
+      showError();
+    }
   }
 
+  // Mostrar/ocultar senha
   toggle.addEventListener("click", ()=>{
     const isPass = passInput.type === "password";
     passInput.type = isPass ? "text" : "password";
@@ -507,6 +527,7 @@ body{
     passInput.focus();
   });
 
+  // Enter para entrar
   passInput.addEventListener("keydown", (e)=>{
     if(e.key === "Enter"){
       e.preventDefault();
@@ -518,8 +539,13 @@ body{
 
   loginBtn.addEventListener("click", tryLogin);
 
-  // foco inicial
-  setTimeout(()=>{ passInput.focus(); }, 50);
+  // ✅ Se já autenticou antes, libera direto
+  if(alreadyAuthed()){
+    unlock(false);
+  }else{
+    lock();
+    setTimeout(()=>{ passInput.focus(); }, 50);
+  }
 })();
 </script>
 
