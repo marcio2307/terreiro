@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-<title>Bate-papo (Grupo) • Facebook 2025 (Escuro)</title>
+<title>grupocumba</title>
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
@@ -183,7 +183,7 @@
   .title{ font-weight:900; color: var(--text); letter-spacing:.2px; font-size: 18px; text-align:center; }
   .subtitle{ text-align:center; margin-top:-6px; color: var(--muted); font-size: 12px; font-weight: 800; }
 
-  /* ONLINE BAR (mais bonito + avatar maior) */
+  /* ONLINE BAR */
   .onlineBar{
     width:100%;
     overflow-x:auto;
@@ -216,7 +216,6 @@
     display:flex; align-items:center; justify-content:center;
     isolation:isolate;
   }
-  /* aro tipo WhatsApp (online) + brilho */
   .oAvatar::before{
     content:"";
     position:absolute; inset:-3px;
@@ -291,15 +290,15 @@
 
   .msgBubbleWrap{ position:relative; display:inline-flex; flex-direction:column; max-width: min(82vw, 640px); }
 
-  /* BALÕES MAIORES + mais “WhatsApp” */
+  /* BALÕES SEM TRIÂNGULO (igual sua 2ª imagem) */
   .msgBubble{
     position:relative;
     display:inline-block;
     width: fit-content;
     max-width: min(82vw, 640px);
     min-width: 110px;
-    padding: 14px 52px 14px 14px; /* maior */
-    border-radius: 22px;          /* mais arredondado */
+    padding: 14px 14px;
+    border-radius: 22px;
     box-shadow: 0 10px 22px rgba(0,0,0,.30);
     border: 1px solid rgba(255,255,255,.06);
     background: linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.02));
@@ -307,21 +306,8 @@
     user-select:none;
     -webkit-tap-highlight-color: transparent;
   }
-
-  /* rabinho tipo whatsapp */
-  .msgBubble::after{
-    content:"";
-    position:absolute;
-    bottom: 10px;
-    left: -6px;
-    width: 14px;
-    height: 14px;
-    background: linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.02));
-    border-left: 1px solid rgba(255,255,255,.06);
-    border-bottom: 1px solid rgba(255,255,255,.06);
-    transform: rotate(45deg);
-    border-bottom-left-radius: 4px;
-  }
+  /* remove o “triângulo” completamente */
+  .msgBubble::after{ display:none !important; content:none !important; }
 
   .msgBubble.mediaOnly{ width: min(82vw, 640px); }
 
@@ -329,15 +315,6 @@
     background: linear-gradient(180deg, rgba(8,102,255,.98), rgba(8,102,255,.86));
     color:#fff;
     border-color: rgba(8,102,255,.25);
-  }
-  .msgRow.me .msgBubble::after{
-    left:auto;
-    right: -6px;
-    background: linear-gradient(180deg, rgba(8,102,255,.98), rgba(8,102,255,.86));
-    border-left: none;
-    border-bottom: 1px solid rgba(255,255,255,.18);
-    border-right: 1px solid rgba(255,255,255,.18);
-    transform: rotate(45deg);
   }
 
   .msgTop{ display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom: 8px; min-width:0; }
@@ -355,10 +332,26 @@
     word-break: break-word;
     overflow-wrap:anywhere;
     opacity: .98;
-    font-size: 16px;   /* maior */
-    line-height: 1.35; /* melhor leitura */
+    font-size: 16px;
+    line-height: 1.35;
     display:inline;
   }
+
+  /* QUOTE (responder) */
+  .msgQuote{
+    width:100%;
+    border-left: 4px solid rgba(255,255,255,.22);
+    padding: 8px 10px;
+    border-radius: 12px;
+    background: rgba(0,0,0,.22);
+    margin-bottom: 10px;
+  }
+  .msgRow.me .msgQuote{
+    background: rgba(255,255,255,.14);
+    border-left-color: rgba(255,255,255,.30);
+  }
+  .msgQuoteName{ font-weight: 900; font-size: 12px; opacity:.95; }
+  .msgQuoteText{ font-size: 13px; opacity:.90; margin-top: 4px; }
 
   .msgMedia{ margin-top: 10px; width:100%; }
   .msgMedia img{
@@ -371,7 +364,6 @@
   }
   .msgRow.me .msgMedia img{ border-color: rgba(255,255,255,.22); }
 
-  /* ÁUDIO COM “PÍLULA” MAIOR */
   .msgAudio{
     margin-top: 10px;
     width:100%;
@@ -387,10 +379,10 @@
   }
   .msgAudio audio{
     width: 100%;
-    height: 46px; /* maior */
+    height: 46px;
   }
 
-  /* ✅ REAÇÕES (AGORA VISÍVEIS PARA TODOS) */
+  /* ✅ REAÇÕES (6 emojis) */
   .reactionBar{
     display:inline-flex;
     align-items:center;
@@ -416,8 +408,6 @@
     border: 1px solid rgba(255,255,255,.10);
     background: rgba(255,255,255,.06);
   }
-  .reactionChip.like i{ color:#4e8cff; }
-  .reactionChip.love i{ color:#ff4d6d; }
   .reactionMe{
     box-shadow: 0 0 0 3px rgba(8,102,255,.18);
     border-color: rgba(8,102,255,.55);
@@ -428,55 +418,6 @@
     min-width: 10px;
   }
 
-  .msgMenuBtn{
-    position:absolute;
-    top: 10px;
-    right: 10px;
-    width: 40px;
-    height: 32px;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    font-size: 22px;
-    font-weight: 900;
-    letter-spacing: 1px;
-    cursor:pointer;
-    user-select:none;
-    line-height:1;
-    color: rgba(255,255,255,.98);
-    background: rgba(0,0,0,.42);
-    border: 1px solid rgba(255,255,255,.22);
-    border-radius: 12px;
-    box-shadow: 0 8px 18px rgba(0,0,0,.38);
-    backdrop-filter: blur(4px);
-    -webkit-backdrop-filter: blur(4px);
-  }
-  .msgMenuBtn:active{ transform: scale(.96); }
-
-  .msgMenuBox{
-    position:absolute;
-    top: 48px;
-    right: 10px;
-    z-index: 999;
-    cursor:pointer;
-    user-select:none;
-    background: var(--surface2);
-    color: var(--text);
-    padding: 10px 12px;
-    border-radius: 12px;
-    font-weight: 900;
-    font-size: 14px;
-    box-shadow: var(--shadow);
-    border: 1px solid var(--line);
-    white-space: nowrap;
-    min-width: 140px;
-    display:none;
-    align-items:center;
-    gap: 10px;
-    justify-content:center;
-  }
-  .msgMenuBox i{ font-size: 16px; color: var(--danger); }
-
   /* COMPOSER */
   .composer{
     position: sticky;
@@ -486,6 +427,44 @@
     padding: 10px 12px calc(10px + env(safe-area-inset-bottom)) 12px;
     border-top: 1px solid var(--line);
   }
+
+  /* Reply preview */
+  .replyPreview{
+    display:none;
+    margin-bottom: 8px;
+    padding: 10px 12px;
+    border-radius: 14px;
+    border: 1px solid rgba(255,255,255,.10);
+    background: rgba(255,255,255,.05);
+    box-shadow: 0 10px 18px rgba(0,0,0,.18);
+  }
+  .replyRow{
+    display:flex; align-items:flex-start; justify-content:space-between; gap:10px;
+  }
+  .replyLeft{
+    min-width:0;
+    border-left: 4px solid rgba(8,102,255,.65);
+    padding-left: 10px;
+  }
+  .replyName{ font-weight: 900; font-size: 12px; color: rgba(255,255,255,.92); }
+  .replyText{
+    margin-top: 4px;
+    font-size: 13px;
+    color: rgba(255,255,255,.78);
+    overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
+    max-width: 78vw;
+  }
+  .replyClose{
+    width:34px;height:34px;border-radius: 12px;
+    display:flex;align-items:center;justify-content:center;
+    background: rgba(255,255,255,.06);
+    border:1px solid rgba(255,255,255,.10);
+    color: rgba(255,255,255,.85);
+    cursor:pointer;
+    user-select:none;
+    flex:0 0 auto;
+  }
+  .replyClose:active{ transform: scale(.98); }
 
   .composerBar{
     width: 100%;
@@ -656,11 +635,90 @@
   }
   .miniBtn:active{ transform: scale(.99); }
 
+  /* ✅ MENU ESTILO WHATSAPP (REAÇÕES + AÇÕES) */
+  .ctxOverlay{
+    position: fixed; inset:0;
+    background: rgba(0,0,0,.45);
+    display:none;
+    align-items:center;
+    justify-content:center;
+    z-index: 9999999;
+    padding: 16px;
+  }
+  .ctxCard{
+    width: min(560px, 96vw);
+    border-radius: 18px;
+    background: rgba(36,37,38,.92);
+    border: 1px solid rgba(255,255,255,.12);
+    box-shadow: 0 18px 38px rgba(0,0,0,.45);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    padding: 12px;
+  }
+  .ctxReacts{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap: 10px;
+    padding: 10px;
+    border-radius: 16px;
+    background: rgba(255,255,255,.06);
+    border: 1px solid rgba(255,255,255,.10);
+  }
+  .ctxEmoji{
+    width: 44px; height: 44px;
+    border-radius: 999px;
+    display:flex; align-items:center; justify-content:center;
+    cursor:pointer;
+    user-select:none;
+    font-size: 22px;
+    background: rgba(255,255,255,.06);
+    border: 1px solid rgba(255,255,255,.10);
+  }
+  .ctxEmoji:active{ transform: scale(.98); }
+
+  .ctxActions{
+    margin-top: 12px;
+    display:flex;
+    justify-content:space-around;
+    gap: 12px;
+    padding: 12px 10px;
+    border-radius: 16px;
+    background: rgba(255,255,255,.06);
+    border: 1px solid rgba(255,255,255,.10);
+  }
+  .ctxAction{
+    flex:1;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    gap: 8px;
+    padding: 10px 8px;
+    border-radius: 14px;
+    cursor:pointer;
+    user-select:none;
+  }
+  .ctxAction:hover{ background: rgba(255,255,255,.05); }
+  .ctxAction:active{ transform: scale(.99); }
+  .ctxIcon{
+    width: 44px; height: 44px;
+    border-radius: 999px;
+    display:flex; align-items:center; justify-content:center;
+    background: rgba(0,0,0,.22);
+    border: 1px solid rgba(255,255,255,.12);
+    font-size: 18px;
+  }
+  .ctxLabel{ font-weight: 900; font-size: 14px; color: rgba(255,255,255,.92); }
+  .ctxAction.danger .ctxIcon{ color: var(--danger); }
+  .ctxAction.danger .ctxLabel{ color: rgba(255,91,91,.95); }
+
   @media (max-width: 360px){
     .composerBar{ gap:8px; }
     .toolBtn,.sendBtn{ width:40px;height:40px; }
     .leftTools{ gap:6px; }
     .rightAction{ gap:6px; }
+    .ctxEmoji{ width: 42px; height: 42px; }
   }
 </style>
 </head>
@@ -695,7 +753,7 @@
           <i class="fa-solid fa-arrow-left"></i>
           <span>Voltar</span>
         </a>
-        <div class="title">Grupo do terreiro</div>
+        <div class="title">grupocumba</div>
       </div>
 
       <div class="subtitle">Online agora</div>
@@ -708,9 +766,23 @@
 
   <!-- COMPOSER -->
   <div class="composer">
+
+    <!-- ✅ preview de resposta -->
+    <div class="replyPreview" id="replyPreview">
+      <div class="replyRow">
+        <div class="replyLeft">
+          <div class="replyName" id="replyName">Respondendo…</div>
+          <div class="replyText" id="replyText">—</div>
+        </div>
+        <div class="replyClose" onclick="clearReply()" title="Cancelar resposta" aria-label="Cancelar resposta">
+          <i class="fa-solid fa-xmark"></i>
+        </div>
+      </div>
+    </div>
+
     <div class="composerBar">
 
-      <!-- ✅ esquerda: foto + emoji (emoji ao lado da foto) -->
+      <!-- esquerda -->
       <div class="leftTools">
         <button class="toolBtn" title="Galeria" aria-label="Galeria" onclick="openFile()">
           <i class="fa-regular fa-image"></i>
@@ -721,12 +793,12 @@
         </button>
       </div>
 
-      <!-- ✅ meio: input SEM emoji dentro -->
+      <!-- meio -->
       <div class="inputPill">
         <textarea id="msgInput" class="pillTextarea" rows="1" placeholder="Mensagem"></textarea>
       </div>
 
-      <!-- ✅ direita: enviar + gravar áudio (áudio no lugar do curtir) -->
+      <!-- direita -->
       <div class="rightAction">
         <button class="sendBtn" title="Enviar" aria-label="Enviar" onclick="sendText()">
           <i class="fa-solid fa-paper-plane"></i>
@@ -763,6 +835,33 @@
     <div class="recBtns">
       <div class="miniBtn danger" onclick="cancelRecord()">Cancelar</div>
       <div class="miniBtn" onclick="stopRecord(true)">Enviar</div>
+    </div>
+  </div>
+</div>
+
+<!-- ✅ Overlay do “menu” (reação + responder + excluir) -->
+<div class="ctxOverlay" id="ctxOverlay" onclick="closeCtxMenu(event)">
+  <div class="ctxCard" onclick="event.stopPropagation()">
+    <div class="ctxReacts" id="ctxReacts">
+      <div class="ctxEmoji" title="Coração" onclick="ctxReact('love')">❤️</div>
+      <div class="ctxEmoji" title="Sorrir" onclick="ctxReact('laugh')">😂</div>
+      <div class="ctxEmoji" title="Uau" onclick="ctxReact('wow')">😮</div>
+      <div class="ctxEmoji" title="Triste" onclick="ctxReact('sad')">😢</div>
+      <div class="ctxEmoji" title="Raiva" onclick="ctxReact('angry')">😡</div>
+      <div class="ctxEmoji" title="Curtir" onclick="ctxReact('like')">👍</div>
+    </div>
+
+    <div class="ctxActions">
+      <div class="ctxAction" onclick="ctxReply()">
+        <div class="ctxIcon"><i class="fa-solid fa-reply"></i></div>
+        <div class="ctxLabel">Responder</div>
+      </div>
+
+      <!-- Excluir só aparece para quem enviou (igual sua imagem 3) -->
+      <div class="ctxAction danger" id="ctxDeleteBtn" onclick="ctxDelete()">
+        <div class="ctxIcon"><i class="fa-solid fa-trash"></i></div>
+        <div class="ctxLabel">Excluir</div>
+      </div>
     </div>
   </div>
 </div>
@@ -1126,6 +1225,24 @@ imgInput.addEventListener("change", async ()=>{
   imgInput.value = "";
 });
 
+/* ===================== RESPOSTA (Reply) ===================== */
+let replyingTo = null; // { id, uid, name, textPreview }
+const replyPreview = document.getElementById("replyPreview");
+const replyNameEl  = document.getElementById("replyName");
+const replyTextEl  = document.getElementById("replyText");
+
+function setReply(msg){
+  replyingTo = msg;
+  replyNameEl.textContent = msg.name || "Usuário";
+  replyTextEl.textContent = msg.textPreview || "";
+  replyPreview.style.display = "block";
+  try{ msgInput.focus(); }catch(e){}
+}
+function clearReply(){
+  replyingTo = null;
+  replyPreview.style.display = "none";
+}
+
 /* ENVIAR TEXTO */
 async function sendText(){
   if(precisaLogin()) return;
@@ -1135,10 +1252,18 @@ async function sendText(){
   toggleEmojiPanel(false);
   showLoading("Enviando...", "Publicando no chat");
   try{
-    await pushMessage({ text, mediaUrl:null, mediaType:null, storagePath:null, kind:"text" });
+    await pushMessage({
+      text,
+      mediaUrl:null,
+      mediaType:null,
+      storagePath:null,
+      kind:"text",
+      replyTo: replyingTo
+    });
     playChatSound();
     msgInput.value = "";
     autoGrow();
+    clearReply();
   }catch(err){
     console.log(err);
     alert("Erro ao enviar mensagem.");
@@ -1171,12 +1296,19 @@ async function sendImage(file){
       mediaType: file.type,
       storagePath,
       kind: "image",
+      replyTo: replyingTo ? {
+        id: replyingTo.id || null,
+        uid: replyingTo.uid || null,
+        name: replyingTo.name || null,
+        textPreview: replyingTo.textPreview || ""
+      } : null,
       createdAt: firebase.database.ServerValue.TIMESTAMP
     });
 
     playChatSound();
     msgInput.value = "";
     autoGrow();
+    clearReply();
   }catch(err){
     console.log(err);
     alert("Erro ao enviar imagem.");
@@ -1186,7 +1318,7 @@ async function sendImage(file){
 }
 
 /* PUSH MSG */
-async function pushMessage({text, mediaUrl, mediaType, storagePath, kind}){
+async function pushMessage({text, mediaUrl, mediaType, storagePath, kind, replyTo}){
   const msgId = "msg_" + Date.now() + "_" + Math.random().toString(36).slice(2);
   await DB.ref(`${MSG_PATH}/${msgId}`).set({
     id: msgId,
@@ -1197,6 +1329,12 @@ async function pushMessage({text, mediaUrl, mediaType, storagePath, kind}){
     mediaType: mediaType || null,
     storagePath: storagePath || null,
     kind: kind || "text",
+    replyTo: replyTo ? {
+      id: replyTo.id || null,
+      uid: replyTo.uid || null,
+      name: replyTo.name || null,
+      textPreview: replyTo.textPreview || ""
+    } : null,
     createdAt: firebase.database.ServerValue.TIMESTAMP
   });
 }
@@ -1350,10 +1488,17 @@ async function sendAudioBlob(blob){
       mediaType: blob.type || "audio/webm",
       storagePath,
       kind: "audio",
+      replyTo: replyingTo ? {
+        id: replyingTo.id || null,
+        uid: replyingTo.uid || null,
+        name: replyingTo.name || null,
+        textPreview: replyingTo.textPreview || ""
+      } : null,
       createdAt: firebase.database.ServerValue.TIMESTAMP
     });
 
     playChatSound();
+    clearReply();
   }catch(err){
     console.log(err);
     alert("Erro ao enviar áudio.");
@@ -1362,7 +1507,7 @@ async function sendAudioBlob(blob){
   }
 }
 
-/* ===================== REAÇÃO: clique = curti | pressionou = amei ===================== */
+/* ===================== REAÇÕES (6 tipos) ===================== */
 function REACTIONS_REF(msgId){ return DB.ref(`${MSG_PATH}/${msgId}/reactions`); }
 function MY_REACTION_REF(msgId){ return DB.ref(`${MSG_PATH}/${msgId}/reactions/${UID}`); }
 
@@ -1379,44 +1524,90 @@ async function setReaction(msgId, type){
   }catch(e){ console.log(e); }
 }
 
+const REACT_META = {
+  love:  { emoji:"❤️", label:"Coração" },
+  laugh: { emoji:"😂", label:"Sorrir"  },
+  wow:   { emoji:"😮", label:"Uau"     },
+  sad:   { emoji:"😢", label:"Triste"  },
+  angry: { emoji:"😡", label:"Raiva"   },
+  like:  { emoji:"👍", label:"Curtir"  }
+};
+
 function reactionSummaryHTML(counts, myType){
-  const like = (counts && counts.like) ? counts.like : 0;
-  const love = (counts && counts.love) ? counts.love : 0;
-  if(!like && !love) return "";
+  const types = Object.keys(REACT_META);
+  const hasAny = types.some(t => (counts[t]||0) > 0);
+  if(!hasAny) return "";
 
-  const likeClass = `reactionChip like ${myType==="like" ? "reactionMe" : ""}`.trim();
-  const loveClass = `reactionChip love ${myType==="love" ? "reactionMe" : ""}`.trim();
+  const chips = types
+    .filter(t => (counts[t]||0) > 0)
+    .map(t=>{
+      const cls = `reactionChip ${myType===t ? "reactionMe" : ""}`.trim();
+      return `<span class="${cls}" title="${escapeHTML(REACT_META[t].label)}">${REACT_META[t].emoji}<span class="reactionCount">${counts[t]}</span></span>`;
+    })
+    .join("");
 
-  return `
-    <div class="reactionBar" title="Reações">
-      ${like ? `<span class="${likeClass}"><i class="fa-solid fa-thumbs-up"></i><span class="reactionCount">${like}</span></span>` : ``}
-      ${love ? `<span class="${loveClass}"><i class="fa-solid fa-heart"></i><span class="reactionCount">${love}</span></span>` : ``}
-    </div>
-  `;
+  return `<div class="reactionBar" title="Reações">${chips}</div>`;
 }
 
 function bindReactions(msgId){
   REACTIONS_REF(msgId).on("value", (snap)=>{
     const all = snap.val() || {};
-    let like = 0, love = 0;
+    const counts = { love:0, laugh:0, wow:0, sad:0, angry:0, like:0 };
 
     Object.values(all).forEach(t=>{
-      if(t === "like") like++;
-      else if(t === "love") love++;
+      if(counts[t] != null) counts[t]++;
     });
 
     const myType = all[UID] || null;
     const el = document.getElementById("react_"+msgId);
-    if(el) el.innerHTML = reactionSummaryHTML({ like, love }, myType);
+    if(el) el.innerHTML = reactionSummaryHTML(counts, myType);
   });
 }
 
-/* Menu ⋮ e excluir */
-function toggleMsgMenu(id){
-  const box = document.getElementById("menu_"+id);
-  if(!box) return;
-  box.style.display = (box.style.display === "flex" ? "none" : "flex");
+/* ===================== MENU (igual imagem 3) ===================== */
+const ctxOverlay = document.getElementById("ctxOverlay");
+const ctxDeleteBtn = document.getElementById("ctxDeleteBtn");
+
+let ctxCurrent = null; // { id, uid, name, textPreview, isMe }
+
+function closeCtxMenu(ev){
+  ctxOverlay.style.display = "none";
+  ctxCurrent = null;
 }
+function openCtxMenu(msg){
+  ctxCurrent = msg;
+
+  // Excluir só para quem enviou
+  ctxDeleteBtn.style.display = msg.isMe ? "flex" : "none";
+
+  ctxOverlay.style.display = "flex";
+}
+
+function ctxReact(type){
+  if(!ctxCurrent) return;
+  setReaction(ctxCurrent.id, type);
+  closeCtxMenu();
+}
+
+function ctxReply(){
+  if(!ctxCurrent) return;
+  setReply({
+    id: ctxCurrent.id,
+    uid: ctxCurrent.uid,
+    name: ctxCurrent.name,
+    textPreview: ctxCurrent.textPreview
+  });
+  closeCtxMenu();
+}
+
+async function ctxDelete(){
+  if(!ctxCurrent) return;
+  if(!ctxCurrent.isMe) return; // segurança
+  await deleteMessage(ctxCurrent.id);
+  closeCtxMenu();
+}
+
+/* Excluir */
 async function deleteMessage(id){
   try{
     const snap = await DB.ref(`${MSG_PATH}/${id}`).once("value");
@@ -1433,22 +1624,41 @@ async function deleteMessage(id){
   }
 }
 
-/* clique/hold */
+/* clique/press no balão -> abre reações + opções */
 let pressTimer = null;
-let pressFired = false;
+let pressOpened = false;
+
 function onBubbleDown(ev, msgId){
-  pressFired = false;
+  pressOpened = false;
   clearTimeout(pressTimer);
+
+  const el = document.getElementById(msgId);
+  if(!el) return;
+
   pressTimer = setTimeout(()=>{
-    pressFired = true;
-    setReaction(msgId, "love");
-  }, 520);
+    pressOpened = true;
+    openCtxMenu(getCtxFromDom(msgId));
+  }, 320);
 }
-function onBubbleUp(){ clearTimeout(pressTimer); }
-function onBubbleCancel(){ clearTimeout(pressTimer); }
+function onBubbleUp(ev, msgId){
+  clearTimeout(pressTimer);
+}
+function onBubbleCancel(){
+  clearTimeout(pressTimer);
+}
 function onBubbleClick(ev, msgId){
-  if(pressFired) return;
-  setReaction(msgId, "like");
+  // se já abriu no long-press, não abrir de novo
+  if(pressOpened) return;
+  openCtxMenu(getCtxFromDom(msgId));
+}
+
+function getCtxFromDom(msgId){
+  const el = document.getElementById(msgId);
+  const uid = (el && el.getAttribute("data-uid")) || "";
+  const name = (el && el.getAttribute("data-name")) || "Usuário";
+  const textPreview = (el && el.getAttribute("data-preview")) || "";
+  const isMe = uid === UID;
+  return { id: msgId, uid, name, textPreview, isMe };
 }
 
 /* Render */
@@ -1473,26 +1683,42 @@ function messageHTML(m, avatarUrl, displayName){
 
   const bubbleClass = (!text && (media || audio)) ? "msgBubble mediaOnly" : "msgBubble";
 
+  const reply = (m.replyTo && (m.replyTo.name || m.replyTo.textPreview))
+    ? `
+      <div class="msgQuote" title="Resposta">
+        <div class="msgQuoteName">${escapeHTML(m.replyTo.name || "Usuário")}</div>
+        <div class="msgQuoteText">${escapeHTML(m.replyTo.textPreview || "")}</div>
+      </div>
+    `
+    : "";
+
+  // preview curto pra resposta
+  const previewRaw =
+    (m.text && m.text.trim())
+      ? m.text.trim().slice(0, 90)
+      : (m.kind === "image" ? "📷 Imagem" : (m.kind === "audio" ? "🎤 Áudio" : ""));
+  const preview = escapeHTML(previewRaw);
+
   return `
-    <div class="msgRow ${isMe ? "me" : ""}" id="${escapeHTML(m.id)}">
+    <div class="msgRow ${isMe ? "me" : ""}"
+         id="${escapeHTML(m.id)}"
+         data-uid="${escapeHTML(uid)}"
+         data-name="${escapeHTML(name)}"
+         data-preview="${preview}">
       ${avatar}
       <div class="msgBubbleWrap">
         <div class="${bubbleClass}"
           onpointerdown="onBubbleDown(event, '${escapeHTML(m.id)}')"
-          onpointerup="onBubbleUp(event)"
+          onpointerup="onBubbleUp(event, '${escapeHTML(m.id)}')"
           onpointercancel="onBubbleCancel(event)"
           onclick="onBubbleClick(event, '${escapeHTML(m.id)}')"
         >
-          <div class="msgMenuBtn" title="Opções" aria-label="Opções" onclick="event.stopPropagation(); toggleMsgMenu('${escapeHTML(m.id)}')">⋮</div>
-          <div class="msgMenuBox" id="menu_${escapeHTML(m.id)}" onclick="event.stopPropagation(); deleteMessage('${escapeHTML(m.id)}')">
-            <i class="fa-solid fa-trash"></i> Excluir
-          </div>
-
           <div class="msgTop">
             <div class="msgName" data-name-uid="${escapeHTML(uid)}">${escapeHTML(name)}</div>
             <div class="msgTime">${escapeHTML(when)}</div>
           </div>
 
+          ${reply}
           ${text ? `<div class="msgText">${text}</div>` : ``}
           ${media}
           ${audio}
@@ -1541,12 +1767,11 @@ DB.ref(MSG_PATH).on("child_removed", (snap)=>{
   if(el) el.remove();
 });
 
-/* Fecha menus ⋮ ao clicar fora */
-document.addEventListener("click", (e)=>{
-  const clickedBtn = e.target.closest(".msgMenuBtn");
-  const clickedBox = e.target.closest(".msgMenuBox");
-  if(clickedBtn || clickedBox) return;
-  document.querySelectorAll(".msgMenuBox").forEach(b=> b.style.display = "none");
+/* Fecha overlay com ESC */
+document.addEventListener("keydown", (e)=>{
+  if(e.key === "Escape"){
+    try{ ctxOverlay.style.display = "none"; }catch(err){}
+  }
 });
 </script>
 
