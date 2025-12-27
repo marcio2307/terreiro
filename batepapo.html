@@ -183,37 +183,83 @@
   .title{ font-weight:900; color: var(--text); letter-spacing:.2px; font-size: 18px; text-align:center; }
   .subtitle{ text-align:center; margin-top:-6px; color: var(--muted); font-size: 12px; font-weight: 800; }
 
-  /* ONLINE BAR */
+  /* ONLINE BAR (mais bonito + avatar maior) */
   .onlineBar{
     width:100%;
     overflow-x:auto;
     overflow-y:hidden;
     -webkit-overflow-scrolling: touch;
     display:flex;
-    gap: 10px;
-    padding: 0 2px 2px 2px;
+    gap: 12px;
+    padding: 2px 2px 6px 2px;
   }
   .onlineBar::-webkit-scrollbar{ height:6px; }
   .onlineBar::-webkit-scrollbar-thumb{ background: rgba(255,255,255,.18); border-radius:999px; }
-  .oItem{ flex:0 0 auto; width: 56px; display:flex; flex-direction:column; align-items:center; gap:6px; user-select:none; }
+
+  .oItem{
+    flex:0 0 auto;
+    width: 74px;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    gap:8px;
+    user-select:none;
+  }
+
   .oAvatar{
-    width: 52px; height: 52px; border-radius: 50%;
-    overflow:hidden; background:#3a3b3c; border: 2px solid var(--surface);
-    box-shadow: 0 1px 10px rgba(0,0,0,.35);
-    position:relative; display:flex; align-items:center; justify-content:center;
+    width: 66px; height: 66px; border-radius: 50%;
+    overflow:hidden;
+    background:#3a3b3c;
+    border: 3px solid rgba(255,255,255,.10);
+    box-shadow: 0 10px 22px rgba(0,0,0,.45);
+    position:relative;
+    display:flex; align-items:center; justify-content:center;
+    isolation:isolate;
   }
-  .oAvatar img{ width:100%; height:100%; object-fit:cover; display:block; }
-  .oAvatar .init{ font-weight:900; color: var(--text); font-size: 14px; }
+  /* aro tipo WhatsApp (online) + brilho */
+  .oAvatar::before{
+    content:"";
+    position:absolute; inset:-3px;
+    border-radius: 50%;
+    background: conic-gradient(from 180deg, rgba(49,162,76,.0), rgba(49,162,76,.85), rgba(49,162,76,.0));
+    filter: blur(0.2px);
+    z-index:-1;
+  }
+  .oAvatar::after{
+    content:"";
+    position:absolute; inset:0;
+    border-radius:50%;
+    box-shadow: inset 0 0 0 2px rgba(0,0,0,.45);
+    pointer-events:none;
+  }
+  .oAvatar img{ width:100%; height:100%; object-fit:cover; display:block; transform: scale(1.02); }
+  .oAvatar .init{ font-weight:900; color: var(--text); font-size: 15px; }
+
   .oDot{
-    position:absolute; right: 3px; bottom: 3px;
-    width: 12px; height: 12px; border-radius: 50%;
-    background: var(--good); border: 2px solid var(--surface);
-    box-shadow: 0 0 0 2px rgba(49,162,76,.18);
+    position:absolute; right: 5px; bottom: 5px;
+    width: 14px; height: 14px; border-radius: 50%;
+    background: var(--good);
+    border: 2px solid var(--surface);
+    box-shadow: 0 0 0 6px rgba(49,162,76,.14);
+    animation: oPulse 1.2s infinite;
   }
+  @keyframes oPulse{
+    0%{ box-shadow: 0 0 0 0 rgba(49,162,76,.35); }
+    70%{ box-shadow: 0 0 0 10px rgba(49,162,76,0); }
+    100%{ box-shadow: 0 0 0 0 rgba(49,162,76,0); }
+  }
+
   .oName{
-    font-size: 10px; color: var(--muted);
-    max-width: 56px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
-    text-align:center; font-weight: 800;
+    font-size: 11px;
+    color: rgba(255,255,255,.86);
+    max-width: 74px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
+    text-align:center;
+    font-weight: 900;
+    padding: 4px 8px;
+    border-radius: 999px;
+    background: rgba(255,255,255,.06);
+    border: 1px solid rgba(255,255,255,.08);
+    box-shadow: 0 10px 18px rgba(0,0,0,.22);
   }
 
   /* MESSAGES */
@@ -243,35 +289,62 @@
   .msgAvatar img{ width:100%;height:100%;object-fit:cover;display:block; }
   .msgAvatar .init{ font-weight:900; color: var(--text); }
 
-  .msgBubbleWrap{ position:relative; display:inline-flex; flex-direction:column; max-width: min(78vw, 560px); }
+  .msgBubbleWrap{ position:relative; display:inline-flex; flex-direction:column; max-width: min(82vw, 640px); }
 
+  /* BALÕES MAIORES + mais “WhatsApp” */
   .msgBubble{
     position:relative;
     display:inline-block;
     width: fit-content;
-    max-width: min(78vw, 560px);
-    min-width: 86px;
-    padding: 10px 44px 10px 12px;
-    border-radius: 18px;
-    box-shadow: 0 3px 14px rgba(0,0,0,.30);
+    max-width: min(82vw, 640px);
+    min-width: 110px;
+    padding: 14px 52px 14px 14px; /* maior */
+    border-radius: 22px;          /* mais arredondado */
+    box-shadow: 0 10px 22px rgba(0,0,0,.30);
     border: 1px solid rgba(255,255,255,.06);
-    background: var(--surface);
+    background: linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.02));
     cursor:pointer;
     user-select:none;
     -webkit-tap-highlight-color: transparent;
   }
-  .msgBubble.mediaOnly{ width: min(78vw, 560px); }
+
+  /* rabinho tipo whatsapp */
+  .msgBubble::after{
+    content:"";
+    position:absolute;
+    bottom: 10px;
+    left: -6px;
+    width: 14px;
+    height: 14px;
+    background: linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.02));
+    border-left: 1px solid rgba(255,255,255,.06);
+    border-bottom: 1px solid rgba(255,255,255,.06);
+    transform: rotate(45deg);
+    border-bottom-left-radius: 4px;
+  }
+
+  .msgBubble.mediaOnly{ width: min(82vw, 640px); }
+
   .msgRow.me .msgBubble{
-    background: var(--primary);
+    background: linear-gradient(180deg, rgba(8,102,255,.98), rgba(8,102,255,.86));
     color:#fff;
     border-color: rgba(8,102,255,.25);
   }
+  .msgRow.me .msgBubble::after{
+    left:auto;
+    right: -6px;
+    background: linear-gradient(180deg, rgba(8,102,255,.98), rgba(8,102,255,.86));
+    border-left: none;
+    border-bottom: 1px solid rgba(255,255,255,.18);
+    border-right: 1px solid rgba(255,255,255,.18);
+    transform: rotate(45deg);
+  }
 
-  .msgTop{ display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom: 6px; min-width:0; }
+  .msgTop{ display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom: 8px; min-width:0; }
   .msgName{
     font-weight:900; color: var(--muted);
     overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
-    max-width: 55vw; font-size: 13px;
+    max-width: 58vw; font-size: 13px;
   }
   .msgRow.me .msgName{ color: rgba(255,255,255,.92); }
   .msgTime{ font-size:11px; color: var(--muted); white-space:nowrap; flex:0 0 auto; opacity:.95; }
@@ -282,24 +355,40 @@
     word-break: break-word;
     overflow-wrap:anywhere;
     opacity: .98;
-    font-size: 15px;
-    line-height: 1.25;
+    font-size: 16px;   /* maior */
+    line-height: 1.35; /* melhor leitura */
     display:inline;
   }
 
-  .msgMedia{ margin-top: 8px; width:100%; }
+  .msgMedia{ margin-top: 10px; width:100%; }
   .msgMedia img{
     width: 100%;
-    max-width: 520px;
-    border-radius: 12px;
+    max-width: 560px;
+    border-radius: 14px;
     display:block;
     background:#000;
     border: 1px solid rgba(255,255,255,.18);
   }
   .msgRow.me .msgMedia img{ border-color: rgba(255,255,255,.22); }
 
-  .msgAudio{ margin-top: 8px; width:100%; }
-  .msgAudio audio{ width: 100%; height: 36px; }
+  /* ÁUDIO COM “PÍLULA” MAIOR */
+  .msgAudio{
+    margin-top: 10px;
+    width:100%;
+    background: rgba(0,0,0,.22);
+    border: 1px solid rgba(255,255,255,.10);
+    border-radius: 16px;
+    padding: 10px 10px;
+    box-shadow: inset 0 0 0 1px rgba(0,0,0,.18);
+  }
+  .msgRow.me .msgAudio{
+    background: rgba(255,255,255,.14);
+    border-color: rgba(255,255,255,.18);
+  }
+  .msgAudio audio{
+    width: 100%;
+    height: 46px; /* maior */
+  }
 
   /* ✅ REAÇÕES (AGORA VISÍVEIS PARA TODOS) */
   .reactionBar{
@@ -341,10 +430,10 @@
 
   .msgMenuBtn{
     position:absolute;
-    top: 8px;
-    right: 8px;
-    width: 36px;
-    height: 30px;
+    top: 10px;
+    right: 10px;
+    width: 40px;
+    height: 32px;
     display:flex;
     align-items:center;
     justify-content:center;
@@ -366,7 +455,7 @@
 
   .msgMenuBox{
     position:absolute;
-    top: 44px;
+    top: 48px;
     right: 10px;
     z-index: 999;
     cursor:pointer;
@@ -1274,7 +1363,6 @@ async function sendAudioBlob(blob){
 }
 
 /* ===================== REAÇÃO: clique = curti | pressionou = amei ===================== */
-/* ✅ agora salva por UID (como já estava) e mostra CONTAGEM PARA TODOS */
 function REACTIONS_REF(msgId){ return DB.ref(`${MSG_PATH}/${msgId}/reactions`); }
 function MY_REACTION_REF(msgId){ return DB.ref(`${MSG_PATH}/${msgId}/reactions/${UID}`); }
 
@@ -1291,7 +1379,6 @@ async function setReaction(msgId, type){
   }catch(e){ console.log(e); }
 }
 
-/* ✅ HTML das reações: mostra 👍 e ❤️ com contagem + destaque da minha reação */
 function reactionSummaryHTML(counts, myType){
   const like = (counts && counts.like) ? counts.like : 0;
   const love = (counts && counts.love) ? counts.love : 0;
@@ -1308,7 +1395,6 @@ function reactionSummaryHTML(counts, myType){
   `;
 }
 
-/* ✅ Listener em tempo real por mensagem (todos veem igual) */
 function bindReactions(msgId){
   REACTIONS_REF(msgId).on("value", (snap)=>{
     const all = snap.val() || {};
@@ -1412,7 +1498,6 @@ function messageHTML(m, avatarUrl, displayName){
           ${audio}
         </div>
 
-        <!-- ✅ aqui entra a contagem de reações (todos veem igual) -->
         <div id="react_${escapeHTML(m.id)}"></div>
       </div>
     </div>
@@ -1438,7 +1523,6 @@ DB.ref(MSG_PATH).orderByChild("createdAt").limitToLast(200).on("child_added", as
   wrapper.innerHTML = messageHTML(m, prof.url, prof.name).trim();
   messagesEl.appendChild(wrapper.firstChild);
 
-  /* ✅ liga o listener de reações para esta mensagem (contagem global) */
   bindReactions(m.id);
 
   if(firstLoadDone && m.uid && m.uid !== UID) playChatSound();
