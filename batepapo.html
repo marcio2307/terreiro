@@ -272,6 +272,18 @@
     overscroll-behavior: contain;
   }
 
+  /* ✅ HORA ACIMA DA CONVERSA (fora do balão) */
+  .msgStamp{
+    width:100%;
+    text-align:center;
+    color: rgba(255,255,255,.55);
+    font-weight: 900;
+    font-size: 12px;
+    letter-spacing:.2px;
+    margin: 2px 0 8px 0;
+    user-select:none;
+  }
+
   .msgRow{ display:flex; gap:10px; align-items:flex-end; margin-bottom: 12px; max-width: 100%; }
   .msgRow.me{ flex-direction: row-reverse; }
 
@@ -306,7 +318,6 @@
     user-select:none;
     -webkit-tap-highlight-color: transparent;
   }
-  /* remove o “triângulo” completamente */
   .msgBubble::after{ display:none !important; content:none !important; }
 
   .msgBubble.mediaOnly{ width: min(82vw, 640px); }
@@ -317,15 +328,21 @@
     border-color: rgba(8,102,255,.25);
   }
 
-  .msgTop{ display:flex; align-items:center; justify-content:space-between; gap:10px; margin-bottom: 8px; min-width:0; }
+  /* ✅ TIRA A HORA DO BALÃO: msgTop agora só com o nome */
+  .msgTop{
+    display:flex;
+    align-items:center;
+    justify-content:flex-start;
+    gap:10px;
+    margin-bottom: 8px;
+    min-width:0;
+  }
   .msgName{
     font-weight:900; color: var(--muted);
     overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
     max-width: 58vw; font-size: 13px;
   }
   .msgRow.me .msgName{ color: rgba(255,255,255,.92); }
-  .msgTime{ font-size:11px; color: var(--muted); white-space:nowrap; flex:0 0 auto; opacity:.95; }
-  .msgRow.me .msgTime{ color: rgba(255,255,255,.90); }
 
   .msgText{
     white-space: pre-wrap;
@@ -857,7 +874,7 @@
         <div class="ctxLabel">Responder</div>
       </div>
 
-      <!-- Excluir só aparece para quem enviou (igual sua imagem 3) -->
+      <!-- Excluir só aparece para quem enviou -->
       <div class="ctxAction danger" id="ctxDeleteBtn" onclick="ctxDelete()">
         <div class="ctxIcon"><i class="fa-solid fa-trash"></i></div>
         <div class="ctxLabel">Excluir</div>
@@ -998,8 +1015,15 @@ function initials(name){
   const b = (n.length>1 ? n[n.length-1][0] : "") || "";
   return (a+b).toUpperCase();
 }
-function fmtDate(ts){
-  try{ return new Date(ts).toLocaleString("pt-BR"); }catch(e){ return ""; }
+
+/* ✅ agora só hora (HH:MM) */
+function fmtHour(ts){
+  try{
+    const d = new Date(ts);
+    return d.toLocaleTimeString("pt-BR", { hour:"2-digit", minute:"2-digit" });
+  }catch(e){
+    return "";
+  }
 }
 
 /* ====================== LOADING ====================== */
@@ -1564,7 +1588,7 @@ function bindReactions(msgId){
   });
 }
 
-/* ===================== MENU (igual imagem 3) ===================== */
+/* ===================== MENU ===================== */
 const ctxOverlay = document.getElementById("ctxOverlay");
 const ctxDeleteBtn = document.getElementById("ctxDeleteBtn");
 
@@ -1576,10 +1600,7 @@ function closeCtxMenu(ev){
 }
 function openCtxMenu(msg){
   ctxCurrent = msg;
-
-  // Excluir só para quem enviou
   ctxDeleteBtn.style.display = msg.isMe ? "flex" : "none";
-
   ctxOverlay.style.display = "flex";
 }
 
@@ -1602,12 +1623,11 @@ function ctxReply(){
 
 async function ctxDelete(){
   if(!ctxCurrent) return;
-  if(!ctxCurrent.isMe) return; // segurança
+  if(!ctxCurrent.isMe) return;
   await deleteMessage(ctxCurrent.id);
   closeCtxMenu();
 }
 
-/* Excluir */
 async function deleteMessage(id){
   try{
     const snap = await DB.ref(`${MSG_PATH}/${id}`).once("value");
@@ -1640,14 +1660,9 @@ function onBubbleDown(ev, msgId){
     openCtxMenu(getCtxFromDom(msgId));
   }, 320);
 }
-function onBubbleUp(ev, msgId){
-  clearTimeout(pressTimer);
-}
-function onBubbleCancel(){
-  clearTimeout(pressTimer);
-}
+function onBubbleUp(ev, msgId){ clearTimeout(pressTimer); }
+function onBubbleCancel(){ clearTimeout(pressTimer); }
 function onBubbleClick(ev, msgId){
-  // se já abriu no long-press, não abrir de novo
   if(pressOpened) return;
   openCtxMenu(getCtxFromDom(msgId));
 }
@@ -1665,7 +1680,7 @@ function getCtxFromDom(msgId){
 function messageHTML(m, avatarUrl, displayName){
   const uid = m.uid || "";
   const name = displayName || m.userName || "Usuário";
-  const when = m.createdAt ? fmtDate(m.createdAt) : "";
+  const hour = m.createdAt ? fmtHour(m.createdAt) : "";
   const text = escapeHTML(m.text || "");
   const isMe = uid === UID;
 
@@ -1692,7 +1707,6 @@ function messageHTML(m, avatarUrl, displayName){
     `
     : "";
 
-  // preview curto pra resposta
   const previewRaw =
     (m.text && m.text.trim())
       ? m.text.trim().slice(0, 90)
@@ -1707,6 +1721,8 @@ function messageHTML(m, avatarUrl, displayName){
          data-preview="${preview}">
       ${avatar}
       <div class="msgBubbleWrap">
+        ${hour ? `<div class="msgStamp">${escapeHTML(hour)}</div>` : ``}
+
         <div class="${bubbleClass}"
           onpointerdown="onBubbleDown(event, '${escapeHTML(m.id)}')"
           onpointerup="onBubbleUp(event, '${escapeHTML(m.id)}')"
@@ -1715,7 +1731,6 @@ function messageHTML(m, avatarUrl, displayName){
         >
           <div class="msgTop">
             <div class="msgName" data-name-uid="${escapeHTML(uid)}">${escapeHTML(name)}</div>
-            <div class="msgTime">${escapeHTML(when)}</div>
           </div>
 
           ${reply}
@@ -1767,7 +1782,6 @@ DB.ref(MSG_PATH).on("child_removed", (snap)=>{
   if(el) el.remove();
 });
 
-/* Fecha overlay com ESC */
 document.addEventListener("keydown", (e)=>{
   if(e.key === "Escape"){
     try{ ctxOverlay.style.display = "none"; }catch(err){}
