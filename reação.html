@@ -1,0 +1,545 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
+  <title>Pessoas que reagiram</title>
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"/>
+
+  <style>
+    :root{
+      --bg:#18191A;
+      --surface:#242526;
+      --surface2:#2D2E30;
+      --border:rgba(255,255,255,.10);
+      --text:#E4E6EB;
+      --muted:rgba(228,230,235,.70);
+      --blue:#0866FF;
+      --red:#F02849;
+      --radius:16px;
+    }
+    *{box-sizing:border-box}
+    body{
+      margin:0;
+      background:var(--bg);
+      color:var(--text);
+      font-family:Arial, sans-serif;
+      padding-bottom: env(safe-area-inset-bottom);
+    }
+
+    /* Top bar */
+    .topbar{
+      position:sticky; top:0; z-index:50;
+      background:var(--surface);
+      border-bottom:1px solid var(--border);
+      padding:12px 12px calc(12px + env(safe-area-inset-top)) 12px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:10px;
+    }
+    .topbarLeft{
+      display:flex; align-items:center; gap:12px; min-width:0;
+    }
+    .iconBtn{
+      width:42px; height:42px;
+      border-radius:999px;
+      background:var(--surface2);
+      border:1px solid var(--border);
+      color:var(--text);
+      display:flex; align-items:center; justify-content:center;
+      cursor:pointer;
+      user-select:none;
+      -webkit-tap-highlight-color:transparent;
+    }
+    .title{
+      font-size:18px;
+      font-weight:900;
+      overflow:hidden; text-overflow:ellipsis; white-space:nowrap;
+    }
+
+    /* Tabs row */
+    .tabsWrap{
+      position:sticky; top:64px; z-index:45;
+      background:var(--bg);
+      border-bottom:1px solid var(--border);
+    }
+    .tabs{
+      display:flex;
+      gap:10px;
+      padding:10px 12px;
+      overflow-x:auto;
+      -webkit-overflow-scrolling:touch;
+      align-items:center;
+    }
+    .tabs::-webkit-scrollbar{height:7px}
+    .tabs::-webkit-scrollbar-thumb{background:rgba(255,255,255,.18); border-radius:999px}
+
+    .tab{
+      flex:0 0 auto;
+      border-radius:999px;
+      padding:10px 14px;
+      border:1px solid rgba(255,255,255,.10);
+      background:rgba(255,255,255,.06);
+      cursor:pointer;
+      user-select:none;
+      display:flex;
+      align-items:center;
+      gap:10px;
+      font-weight:900;
+      color:var(--text);
+      white-space:nowrap;
+      -webkit-tap-highlight-color:transparent;
+    }
+    .tab .emoji{
+      width:26px; height:26px;
+      border-radius:999px;
+      display:flex; align-items:center; justify-content:center;
+      font-size:16px;
+      background:rgba(255,255,255,.08);
+      border:1px solid rgba(255,255,255,.10);
+    }
+    .tab.active{
+      background:rgba(8,102,255,.18);
+      border-color:rgba(8,102,255,.35);
+      box-shadow:0 0 0 3px rgba(8,102,255,.10);
+    }
+
+    /* Pager */
+    .pager{
+      width:100%;
+      overflow:hidden;
+    }
+    .pages{
+      display:flex;
+      width:100%;
+      transform:translateX(0);
+      transition: transform .20s ease;
+      touch-action: pan-y;
+    }
+    .page{
+      min-width:100%;
+      padding:10px 0 18px 0;
+    }
+
+    /* List rows */
+    .list{
+      padding:0 12px;
+    }
+    .row{
+      display:flex;
+      align-items:center;
+      gap:12px;
+      padding:12px 0;
+      border-bottom:1px solid rgba(255,255,255,.06);
+    }
+    .avatarWrap{
+      position:relative;
+      width:48px; height:48px;
+      border-radius:50%;
+      overflow:hidden;
+      background:#3A3B3C;
+      border:1px solid rgba(255,255,255,.10);
+      flex:0 0 auto;
+    }
+    .avatarWrap img{
+      width:100%; height:100%; object-fit:cover; display:block;
+    }
+    .avatarInit{
+      width:100%; height:100%;
+      display:flex; align-items:center; justify-content:center;
+      font-weight:900;
+      color:var(--text);
+    }
+    .reactBadge{
+      position:absolute;
+      right:-2px; bottom:-2px;
+      width:22px; height:22px;
+      border-radius:999px;
+      border:2px solid var(--bg);
+      display:flex; align-items:center; justify-content:center;
+      font-size:13px;
+      background:rgba(255,255,255,.10);
+    }
+
+    .info{
+      min-width:0;
+      flex:1;
+    }
+    .name{
+      font-weight:900;
+      font-size:16px;
+      overflow:hidden;
+      text-overflow:ellipsis;
+      white-space:nowrap;
+    }
+    .sub{
+      margin-top:4px;
+      color:var(--muted);
+      font-size:13px;
+      overflow:hidden;
+      text-overflow:ellipsis;
+      white-space:nowrap;
+    }
+
+    /* Search overlay */
+    .searchBar{
+      display:none;
+      padding:10px 12px 12px 12px;
+      background:var(--surface);
+      border-bottom:1px solid var(--border);
+    }
+    .searchInput{
+      width:100%;
+      padding:12px 14px;
+      border-radius:999px;
+      border:1px solid rgba(255,255,255,.10);
+      background:#3A3B3C;
+      color:var(--text);
+      outline:none;
+      font-weight:800;
+    }
+
+    .empty{
+      padding:18px 12px;
+      color:var(--muted);
+      font-weight:800;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="topbar">
+    <div class="topbarLeft">
+      <div class="iconBtn" id="backBtn" title="Voltar" aria-label="Voltar">
+        <i class="fa-solid fa-arrow-left"></i>
+      </div>
+      <div class="title" id="titleTxt">Pessoas que reagiram</div>
+    </div>
+    <div class="iconBtn" id="searchBtn" title="Buscar" aria-label="Buscar">
+      <i class="fa-solid fa-magnifying-glass"></i>
+    </div>
+  </div>
+
+  <div class="searchBar" id="searchBar">
+    <input class="searchInput" id="searchInput" placeholder="Buscar nome...">
+  </div>
+
+  <div class="tabsWrap">
+    <div class="tabs" id="tabs"></div>
+  </div>
+
+  <div class="pager">
+    <div class="pages" id="pages"></div>
+  </div>
+
+  <!-- Firebase -->
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+
+  <script>
+    /* ======== CONFIG DO SEU FIREBASE (IGUAL AO SITE) ======== */
+    const firebaseConfig = {
+      apiKey: "AIzaSyAt4CeGjdbjzdtMH1qZHw6RuBFJ6SeTDKk",
+      authDomain: "coletivo-f34d4.firebaseapp.com",
+      databaseURL: "https://coletivo-f34d4-default-rtdb.firebaseio.com",
+      projectId: "coletivo-f34d4",
+      storageBucket: "coletivo-f34d4.firebasestorage.app",
+      messagingSenderId: "296376447787",
+      appId: "1:296376447787:web:1341c59c8087d6ac1e4b6e"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const DB = firebase.database();
+
+    /* ======== helpers ======== */
+    function escapeHTML(str){
+      str = (str == null ? "" : String(str));
+      return str.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/'/g,"&#039;");
+    }
+    function initials(name){
+      const n = (name||"").trim().split(/\s+/).filter(Boolean);
+      if(!n.length) return "U";
+      const a = n[0][0] || "U";
+      const b = (n.length>1 ? n[n.length-1][0] : "") || "";
+      return (a+b).toUpperCase();
+    }
+
+    /* ======== pega postId da URL ======== */
+    const qs = new URLSearchParams(location.search);
+    const POST_ID = qs.get("post") || "";
+    if(!POST_ID){
+      document.getElementById("titleTxt").textContent = "Faltou ?post=ID";
+      document.body.innerHTML += `<div class="empty">Abra assim: <b>reacoes.html?post=post_...</b></div>`;
+      throw new Error("Missing post");
+    }
+
+    /* ======== Caminho das reações no seu site ========
+       No seu código: likes/{postId}/{UID} -> { type:"like"|"love", ... }
+       Então aqui a tela pega de: likes/POST_ID
+    */
+    const REACT_PATH = "likes/" + POST_ID;
+
+    /* ======== tipos e ícones (pode aumentar se quiser) ======== */
+    const TYPES = [
+      { key:"all", label:"Todos", emoji:"", showEmoji:false },
+      { key:"like", label:"", emoji:"👍", showEmoji:true },
+      { key:"love", label:"", emoji:"❤️", showEmoji:true },
+      { key:"haha", label:"", emoji:"😂", showEmoji:true },
+      { key:"wow",  label:"", emoji:"😮", showEmoji:true },
+      { key:"sad",  label:"", emoji:"😢", showEmoji:true },
+      { key:"angry",label:"", emoji:"😡", showEmoji:true }
+    ];
+
+    /* ======== perfil cache (puxa foto/nome de profiles/uid) ======== */
+    const profileCache = new Map();
+    function PROFILE_REF(uid){ return DB.ref("profiles/" + uid); }
+    async function getProfile(uid, fallbackName){
+      if(!uid) return { name: fallbackName||"Usuário", url:"" };
+      if(profileCache.has(uid)) return profileCache.get(uid);
+
+      try{
+        const snap = await PROFILE_REF(uid).once("value");
+        const p = snap.val() || {};
+        const name = (p.name || fallbackName || "Usuário");
+        const url  = (p.avatarDataUrl || p.avatarUrl || "");
+        const obj = { name, url };
+        profileCache.set(uid, obj);
+
+        // live update
+        PROFILE_REF(uid).on("value", s=>{
+          const px = s.val() || {};
+          profileCache.set(uid, {
+            name: (px.name || name || "Usuário"),
+            url: (px.avatarDataUrl || px.avatarUrl || "")
+          });
+          // re-render leve (não trava)
+          scheduleRender();
+        });
+
+        return obj;
+      }catch(e){
+        const obj = { name: fallbackName||"Usuário", url:"" };
+        profileCache.set(uid, obj);
+        return obj;
+      }
+    }
+
+    /* ======== estado ======== */
+    let reactionsObj = {};
+    let activeType = "all";
+    let searchOn = false;
+    let searchTerm = "";
+
+    const tabsEl = document.getElementById("tabs");
+    const pagesEl = document.getElementById("pages");
+    const searchBtn = document.getElementById("searchBtn");
+    const searchBar = document.getElementById("searchBar");
+    const searchInput = document.getElementById("searchInput");
+
+    document.getElementById("backBtn").onclick = ()=>{
+      if(history.length > 1) history.back();
+      else location.href = "site.html";
+    };
+
+    searchBtn.onclick = ()=>{
+      searchOn = !searchOn;
+      searchBar.style.display = searchOn ? "block" : "none";
+      if(searchOn){
+        setTimeout(()=> searchInput.focus(), 50);
+      }else{
+        searchTerm = "";
+        searchInput.value = "";
+        scheduleRender();
+      }
+    };
+    searchInput.oninput = ()=>{
+      searchTerm = (searchInput.value||"").trim().toLowerCase();
+      scheduleRender();
+    };
+
+    /* ======== build tabs + pages ======== */
+    function typeCount(key){
+      const vals = Object.values(reactionsObj||{});
+      if(key === "all") return vals.length;
+      return vals.filter(x => (x && (x.type||"like") === key)).length;
+    }
+
+    function tabHTML(t){
+      const count = typeCount(t.key);
+      if(t.key === "all"){
+        return `
+          <div class="tab ${t.key===activeType?'active':''}" data-tab="${t.key}">
+            <span>${escapeHTML(t.label)} ${count}</span>
+          </div>
+        `;
+      }
+      if(count <= 0) return ""; // não mostra aba vazia (igual app: só aparece se tem)
+      return `
+        <div class="tab ${t.key===activeType?'active':''}" data-tab="${t.key}">
+          <span class="emoji">${t.emoji}</span>
+          <span>${count}</span>
+        </div>
+      `;
+    }
+
+    function reactBadgeEmoji(type){
+      if(type==="love") return "❤️";
+      if(type==="like") return "👍";
+      if(type==="haha") return "😂";
+      if(type==="wow")  return "😮";
+      if(type==="sad")  return "😢";
+      if(type==="angry")return "😡";
+      return "👍";
+    }
+
+    async function listForType(typeKey){
+      const all = Object.keys(reactionsObj||{}).map(uid=>{
+        const r = reactionsObj[uid] || {};
+        const type = (r.type || "like");
+        return { uid, type, userName: r.userName || "Usuário", createdAt: r.createdAt || 0 };
+      }).sort((a,b)=>(b.createdAt||0)-(a.createdAt||0));
+
+      const filtered = (typeKey==="all") ? all : all.filter(x=>x.type===typeKey);
+
+      const out = [];
+      for(const item of filtered){
+        const prof = await getProfile(item.uid, item.userName);
+        const name = (prof.name || item.userName || "Usuário");
+
+        if(searchTerm){
+          if(!name.toLowerCase().includes(searchTerm)) continue;
+        }
+
+        const avatar = prof.url
+          ? `<img src="${prof.url}" alt="avatar" loading="lazy">`
+          : `<div class="avatarInit">${escapeHTML(initials(name))}</div>`;
+
+        out.push(`
+          <div class="row">
+            <div class="avatarWrap">
+              ${avatar}
+              <div class="reactBadge">${reactBadgeEmoji(item.type)}</div>
+            </div>
+            <div class="info">
+              <div class="name">${escapeHTML(name)}</div>
+              <div class="sub">${item.type==="love" ? "Amei" : (item.type==="like" ? "Curtiu" : "Reagiu")}</div>
+            </div>
+          </div>
+        `);
+      }
+      return out;
+    }
+
+    let renderTimer = null;
+    function scheduleRender(){
+      clearTimeout(renderTimer);
+      renderTimer = setTimeout(renderUI, 60);
+    }
+
+    async function renderUI(){
+      // tabs
+      tabsEl.innerHTML = TYPES.map(tabHTML).join("");
+
+      // pages (uma página por aba visível)
+      const visibleTypes = [];
+      for(const t of TYPES){
+        if(t.key === "all") { visibleTypes.push(t); continue; }
+        if(typeCount(t.key) > 0) visibleTypes.push(t);
+      }
+
+      pagesEl.innerHTML = visibleTypes.map(t => `
+        <div class="page" data-page="${t.key}">
+          <div class="list" id="list_${t.key}">
+            <div class="empty">Carregando...</div>
+          </div>
+        </div>
+      `).join("");
+
+      // clique tabs
+      document.querySelectorAll(".tab").forEach(el=>{
+        el.onclick = ()=>{
+          const k = el.getAttribute("data-tab");
+          setActive(k);
+        };
+      });
+
+      // render só a página ativa (mais leve)
+      const activeVisibleIndex = Math.max(0, visibleTypes.findIndex(x=>x.key===activeType));
+      slideTo(activeVisibleIndex);
+
+      const listEl = document.getElementById("list_" + activeType);
+      if(listEl){
+        const rows = await listForType(activeType);
+        listEl.innerHTML = rows.length ? rows.join("") : `<div class="empty">Nenhuma reação aqui.</div>`;
+      }
+
+      // atualiza o título com total
+      const total = typeCount("all");
+      document.getElementById("titleTxt").textContent = "Pessoas que reagiram";
+
+      // habilita swipe
+      bindSwipe(visibleTypes);
+    }
+
+    function setActive(k){
+      activeType = k;
+      scheduleRender();
+    }
+
+    function slideTo(index){
+      const x = index * -100;
+      document.getElementById("pages").style.transform = `translateX(${x}%)`;
+    }
+
+    let swipeBound = false;
+    function bindSwipe(visibleTypes){
+      if(swipeBound) return;
+      swipeBound = true;
+
+      const pages = document.getElementById("pages");
+      let startX = 0, dx = 0, dragging = false;
+
+      pages.addEventListener("touchstart", (e)=>{
+        if(!e.touches || !e.touches[0]) return;
+        dragging = true;
+        startX = e.touches[0].clientX;
+        dx = 0;
+      }, {passive:true});
+
+      pages.addEventListener("touchmove", (e)=>{
+        if(!dragging || !e.touches || !e.touches[0]) return;
+        dx = e.touches[0].clientX - startX;
+      }, {passive:true});
+
+      pages.addEventListener("touchend", ()=>{
+        if(!dragging) return;
+        dragging = false;
+
+        const idx = visibleTypes.findIndex(x=>x.key===activeType);
+        if(dx < -50 && idx < visibleTypes.length-1){
+          activeType = visibleTypes[idx+1].key;
+          scheduleRender();
+        }else if(dx > 50 && idx > 0){
+          activeType = visibleTypes[idx-1].key;
+          scheduleRender();
+        }
+      }, {passive:true});
+    }
+
+    /* ======== listener firebase ======== */
+    DB.ref(REACT_PATH).on("value", (snap)=>{
+      reactionsObj = snap.val() || {};
+      // se o tipo ativo ficou vazio (ex: aba love sumiu), volta pro all
+      if(activeType !== "all" && typeCount(activeType) === 0) activeType = "all";
+      scheduleRender();
+    }, (err)=>{
+      console.log("Erro reações:", err);
+      document.body.innerHTML += `<div class="empty">Erro ao carregar reações.</div>`;
+    });
+
+    // primeira render (placeholder)
+    scheduleRender();
+  </script>
+</body>
+</html>
