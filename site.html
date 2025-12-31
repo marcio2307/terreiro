@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!DOCTYPE html> 
 <html lang="pt-br">
 <head>
 <meta charset="UTF-8" />
@@ -808,7 +808,9 @@
     color: rgba(228,230,235,.95);
   }
 
-  .post .mediaWrap{ position:relative; }
+  .post .mediaWrap{
+    position:relative;
+  }
 
   .post .mediaWrap img,
   .post .mediaWrap video{
@@ -825,25 +827,37 @@
     position:absolute;
     right: 14px;
     bottom: 14px;
+
     width: 56px;
     height: 56px;
+
     display:flex;
     align-items:center;
     justify-content:center;
+
     border: none;
     background: transparent;
     padding: 0;
     margin: 0;
+
     cursor:pointer;
     z-index: 30;
     -webkit-tap-highlight-color: transparent;
     user-select:none;
+
     filter: drop-shadow(0 8px 16px rgba(0,0,0,.55));
     transition: transform .12s ease, filter .12s ease;
   }
   .vidSoundBtn:active{ transform: scale(.94); }
   .vidSoundBtn:hover{ filter: drop-shadow(0 10px 18px rgba(0,0,0,.60)); }
-  .vidSoundBtn svg{ width: 34px; height: 34px; fill: #fff; display:block; }
+
+  .vidSoundBtn svg{
+    width: 34px;
+    height: 34px;
+    fill: #fff;
+    display:block;
+  }
+
   .vidSoundBtn.isMuted .waves{ display:none; }
   .vidSoundBtn .xMark{
     position:absolute;
@@ -860,29 +874,17 @@
   }
   .vidSoundBtn.isMuted .xMark{ display:block; }
 
-  /* ===================== ✅ AÇÕES DO POST (3 ÍCONES) ===================== */
   .post-actions{
     display:flex;
-    justify-content:space-between;
-    align-items:flex-start;
+    justify-content:space-around;
     margin-top:12px;
-    gap: 10px;
+    flex-wrap: wrap;
+    gap: 8px;
   }
-  .actionItem{
-    flex: 1;
-    min-width: 0;
-    display:flex;
-    flex-direction:column;
-    align-items:center;
-    gap: 6px;
-    position:relative;
-  }
-  .actionBtn{
-    width: 100%;
-    max-width: 240px;
+  .btn-action{
     color: var(--fb-text);
     padding: 10px 12px;
-    border-radius: 12px;
+    border-radius: 10px;
     font-weight:900;
     cursor:pointer;
     transition:0.15s;
@@ -891,57 +893,27 @@
     background: rgba(255,255,255,.06);
     user-select:none;
     font-size:14px;
-    -webkit-tap-highlight-color: transparent;
+    min-width: 150px;
   }
-  .actionBtn:hover{ background: rgba(255,255,255,.08); }
-  .actionBtn:active{ transform: scale(.99); }
+  .btn-action:hover{ background: rgba(255,255,255,.08); }
+  .btn-action:active{ transform: scale(.99); }
 
-  .counterMini{
+  .contador{
+    margin-top:6px;
     font-size:12px;
     color: var(--fb-muted);
     text-align:center;
-    line-height:1.2;
-    user-select:none;
+    line-height:1.35;
+    word-break: break-word;
   }
 
-  /* ✅ popup reações (aparece ao pressionar) */
-  .reactPicker{
-    position:absolute;
-    bottom: 56px;
-    left: 50%;
-    transform: translateX(-50%);
+  .coment-area{
+    background: rgba(255,255,255,.04);
+    padding:10px;
+    margin-top:10px;
+    border-radius: 14px;
     display:none;
-    gap: 8px;
-    align-items:center;
-    padding: 10px 12px;
-    border-radius: 999px;
-    background: rgba(36,37,38,.92);
-    border: 1px solid rgba(255,255,255,.10);
-    box-shadow: 0 12px 24px rgba(0,0,0,.35);
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
-    z-index: 50;
-  }
-  .reactOpt{
-    width: 40px;
-    height: 40px;
-    border-radius: 50%;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    background: rgba(255,255,255,.06);
-    border: 1px solid rgba(255,255,255,.10);
-    cursor:pointer;
-    font-size: 20px;
-    transition: transform .12s ease;
-    user-select:none;
-  }
-  .reactOpt:active{ transform: scale(.92); }
-
-  /* ✅ (opcional) destacar quando você reagiu */
-  .actionBtn.isReacted{
-    border-color: rgba(8,102,255,.35);
-    box-shadow: 0 0 0 3px rgba(8,102,255,.12);
+    border:1px solid rgba(255,255,255,.10);
   }
 
   .menu-btn{
@@ -978,6 +950,77 @@
   }
   .menu-box div{ padding: 8px 6px; border-radius: 10px; }
   .menu-box div:hover{ background: rgba(0,0,0,.06); }
+
+  .cRow{
+    position:relative;
+    background: rgba(255,255,255,.03);
+    border:1px solid rgba(255,255,255,.10);
+    padding:10px 44px 10px 10px;
+    border-radius: 14px;
+    margin-bottom:8px;
+  }
+  .cHead{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    margin-bottom:6px;
+    min-width:0;
+  }
+  .cAvatar{
+    width:30px; height:30px;
+    border-radius:50%;
+    overflow:hidden;
+    background:#3A3B3C;
+    border:1px solid rgba(255,255,255,.08);
+    flex:0 0 auto;
+    display:flex; align-items:center; justify-content:center;
+    cursor:pointer;
+  }
+  .cAvatar img{ width:100%; height:100%; object-fit: cover; display:block; }
+  .cName{
+    font-weight:900;
+    color: var(--fb-text);
+    overflow:hidden;
+    text-overflow:ellipsis;
+    white-space:nowrap;
+    max-width: 62vw;
+    cursor:pointer;
+    font-size:14px;
+  }
+  .cText{ opacity:.95; font-size:13px; color: rgba(228,230,235,.92); }
+
+  .coment-menu-btn{
+    position:absolute;
+    top:10px;
+    right:10px;
+    width: 34px; height: 34px;
+    border-radius: 10px;
+    display:flex; align-items:center; justify-content:center;
+    font-size:18px;
+    cursor:pointer;
+    color: rgba(255,255,255,.90);
+    background: rgba(255,255,255,.06);
+    border: 1px solid rgba(255,255,255,.08);
+    user-select:none;
+    line-height:1;
+  }
+  .coment-menu-box{
+    position:absolute;
+    top:46px;
+    right:10px;
+    background: #ffffff;
+    color:#111;
+    padding:8px 10px;
+    border-radius:12px;
+    display:none;
+    font-weight:900;
+    cursor:pointer;
+    box-shadow: 0 12px 24px rgba(0,0,0,.35);
+    z-index:5;
+    line-height:1;
+    min-width: 120px;
+  }
+  .coment-menu-box:hover{ background: rgba(0,0,0,.06); }
 
   /* ===================== LOADING ===================== */
   .loadingOverlay{
@@ -1122,15 +1165,14 @@
   </a>
 
   <a href="https://marcio2307.github.io/terreiro/chat.html" title="Serviços" aria-label="Serviços">
-    <i class="fa-solid fa-store"></i>
-    <div class="menuLabel">Serviços</div>
-  </a>
+  <i class="fa-solid fa-store"></i>
+  <div class="menuLabel">Serviços</div>
+</a>
 
   <a href="https://marcio2307.github.io/terreiro/sala.html" title="Memórias" aria-label="Memórias">
-    <i class="fa-solid fa-images"></i>
-    <div class="menuLabel">Memórias</div>
-  </a>
-
+  <i class="fa-solid fa-images"></i>
+  <div class="menuLabel">Memórias</div>
+</a>
   <!-- ✅ Rádio -->
   <a href="#" id="radioBtn" title="Rádio" aria-label="Rádio">
     <i class="fa-solid fa-radio" id="radioIcon"></i>
@@ -1222,10 +1264,6 @@
 const LOGIN_URL = "https://marcio2307.github.io/terreiro/entrar.html";
 const SITE_URL  = "https://marcio2307.github.io/terreiro/site.html";
 
-/* ✅ (NOVO) páginas externas que pegam o ID do post */
-const COMMENTS_PAGE_URL = "https://marcio2307.github.io/terreiro/comentarios.html";
-const REACTS_PAGE_URL   = "https://marcio2307.github.io/terreiro/reação.html";
-
 function normalizeNameKey(name){
   return (name || "")
     .trim()
@@ -1256,43 +1294,6 @@ const firebaseConfig = {
   appId: "1:296376447787:web:1341c59c8087d6ac1e4b6e"
 };
 firebase.initializeApp(firebaseConfig);
-
-/* ====================== ✅ (NOVO) SEM "Network connection lost..." ======================
-   - Desliga logs internos do RTDB
-   - Filtra avisos/logs que algumas builds exibem no console
-   - Evita "unhandledrejection" de reconexão poluir o console
-*/
-try{ firebase.database.enableLogging(false); }catch(e){}
-
-(function suppressNetworkLogs(){
-  const block = (msg)=>{
-    msg = String(msg||"");
-    return (
-      msg.includes("Network connection lost") ||
-      msg.includes("Attempting to reconnect") ||
-      msg.includes("Connection interrupted") ||
-      msg.includes("connection lost") ||
-      msg.includes("Connection was interrupted")
-    );
-  };
-
-  const olog  = console.log.bind(console);
-  const owarn = console.warn.bind(console);
-  const oerr  = console.error.bind(console);
-
-  console.log = (...a)=>{ try{ if(block(a[0])) return; }catch(e){} olog(...a); };
-  console.warn= (...a)=>{ try{ if(block(a[0])) return; }catch(e){} owarn(...a); };
-  console.error=(...a)=>{ try{ if(block(a[0])) return; }catch(e){} oerr(...a); };
-
-  window.addEventListener("unhandledrejection", (ev)=>{
-    try{
-      const r = ev.reason;
-      const msg = (r && (r.message || r.toString())) || "";
-      if(block(msg)) ev.preventDefault();
-    }catch(e){}
-  });
-})();
-
 const DB = firebase.database();
 const ST = firebase.storage();
 
@@ -1337,24 +1338,31 @@ let __radioNeedReload = false;  // só dá load() se deu erro
 function ensureRadio(){
   if(radio) return;
 
+  // ✅ cria já com URL e NÃO reinicia no play
   radio = new Audio(RADIO_URL);
   radio.preload = "auto";
   radio.crossOrigin = "anonymous";
   radio.volume = 1.0;
 
+  // tenta iniciar o carregamento logo que cria
   try{ radio.load(); }catch(e){}
 
   radio.addEventListener("playing", ()=>{ setRadioUI(true); onRadioStateChange(true); });
+
+  // ✅ IMPORTANTE: em alguns navegadores, "pause" pode disparar atrasado.
+  // Então garantimos o estado também no "emptied" e no "ended".
   radio.addEventListener("pause",   ()=>{ setRadioUI(false); onRadioStateChange(false); });
   radio.addEventListener("ended",   ()=>{ setRadioUI(false); onRadioStateChange(false); });
   radio.addEventListener("emptied", ()=>{ setRadioUI(false); onRadioStateChange(false); });
 
+  // ✅ se der erro, marca pra dar load() só na próxima tentativa
   radio.addEventListener("error", ()=>{
     __radioNeedReload = true;
     setRadioUI(false);
     onRadioStateChange(false);
   });
 
+  // ✅ (NOVO) se ficar travado e voltar, mantém flag primed
   radio.addEventListener("canplay", ()=>{ __radioPrimed = true; });
   radio.addEventListener("canplaythrough", ()=>{ __radioPrimed = true; });
 }
@@ -1376,11 +1384,13 @@ function setRadioUI(isPlaying){
   icon.className = radioPlaying ? "fa-solid fa-pause" : "fa-solid fa-radio";
 }
 
+/* ✅ (NOVO) “aquecimento” do rádio no primeiro toque do usuário (deixa o play instantâneo) */
 async function primeRadioFast(){
   try{
     ensureRadio();
     if(!radio || __radioPrimed) return;
 
+    // toca bem rapidinho MUTADO, para abrir a conexão do stream
     radio.muted = true;
 
     if(__radioNeedReload){
@@ -1388,9 +1398,14 @@ async function primeRadioFast(){
       __radioNeedReload = false;
     }
 
+    // ✅ NÃO pausa imediatamente se o navegador ainda não começou.
+    // Espera um micro-tick pra evitar "play request was interrupted"
     const p = radio.play();
-    if(p && p.then){ await p.catch(()=>{}); }
+    if(p && p.then){
+      await p.catch(()=>{});
+    }
 
+    // pequeno delay só pra garantir que o buffer abriu (sem "travar")
     await new Promise(r=>setTimeout(r, 120));
 
     try{ radio.pause(); }catch(e){}
@@ -1408,6 +1423,7 @@ function unlockAudioOnce(){
     actionSfx.muted = false;
     chatSfx.muted = false;
 
+    // ✅ garante que o rádio é criado e “aquecido” no primeiro gesto do usuário
     try{ primeRadioFast(); }catch(e){}
 
     const p1 = actionSfx.play();
@@ -1433,29 +1449,41 @@ function playChatSound(){
   try{ chatSfx.pause(); chatSfx.currentTime = 0; chatSfx.play().catch(()=>{}); }catch(e){}
 }
 
+/* ✅ (ALTERADO) toggle do rádio:
+   - ao PAUSAR: pausa de verdade (sem reset)
+   - ao TOCAR de novo: toca IMEDIATO (sem delay e sem recriar áudio) */
 async function toggleRadio(){
   ensureRadio();
   unlockAudioOnce();
 
+  // ✅ fonte da verdade: estado real do elemento (evita “cliquei e não tocou”)
   const isActuallyPlaying = radio && !radio.paused && !radio.ended;
 
   if(!isActuallyPlaying){
     try{
+      // ✅ Só dá load() se realmente houve erro antes
       if(__radioNeedReload){
         try{ radio.load(); }catch(e){}
         __radioNeedReload = false;
       }
 
+      // ✅ Se ainda não aqueceu, aquece agora (no clique do rádio)
       if(!__radioPrimed){
         await primeRadioFast();
       }
 
+      // ✅ IMPORTANTE: garantir que o play retome “do ao vivo” sem acumular atraso
+      // (para stream não faz sentido manter currentTime)
       try{ radio.currentTime = 0; }catch(e){}
+
       radio.muted = false;
 
       const p = radio.play();
-      if(p && p.then){ await p.catch(()=>{ throw new Error("play blocked"); }); }
+      if(p && p.then){
+        await p.catch(()=>{ throw new Error("play blocked"); });
+      }
 
+      // UI/estado
       setRadioUI(true);
       onRadioStateChange(true);
     }catch(e){
@@ -1464,12 +1492,16 @@ async function toggleRadio(){
       __radioNeedReload = true;
     }
   }else{
+    // ✅ PAUSA de verdade (sem resetar src nem chamar load)
     try{ radio.pause(); }catch(e){}
+    // ✅ força estado consistente imediatamente
     setRadioUI(false);
     onRadioStateChange(false);
   }
 }
 
+/* ✅ (ALTERADO) remove delay do clique no mobile:
+   Usa pointerdown/touchstart e NÃO deixa disparar 2x (era isso que fazia “para” e logo “toca” ou vice-versa) */
 (function bindRadioFastTap(){
   const btn = document.getElementById("radioBtn");
   if(!btn) return;
@@ -1479,6 +1511,7 @@ async function toggleRadio(){
     e.preventDefault();
     e.stopPropagation();
 
+    // ✅ anti-duplo disparo (touchstart + click)
     const now = Date.now();
     if(now - lastFire < 450) return false;
     lastFire = now;
@@ -1490,7 +1523,11 @@ async function toggleRadio(){
   btn.addEventListener("pointerdown", handler, { passive:false });
   btn.addEventListener("touchstart", handler, { passive:false });
 
-  btn.addEventListener("click", (e)=>{ handler(e); });
+  // ✅ clique normal só como fallback (desktop)
+  btn.addEventListener("click", (e)=>{
+    // no mobile o click vem depois do touchstart, então a trava acima bloqueia
+    handler(e);
+  });
 })();
 </script>
 
@@ -1660,11 +1697,14 @@ function stopPresence(silent){
 startPresence();
 </script>
 
+<!-- ========= (RESTO DO SEU CÓDIGO CONTINUA IGUAL) ========= -->
+
 <script>
 /* ===================== PERFIS ===================== */
 const profileCache = new Map();
 function PROFILE_REF(uid){ return DB.ref("profiles/" + uid); }
 
+/* atualiza fundo do criar story */
 function updateCreateStoryCardBgInDOM(uid, url){
   if(!uid) return;
   document.querySelectorAll(`[data-create-story-bg-uid="${uid}"]`).forEach(el=>{
@@ -2879,6 +2919,8 @@ function setupAllFeedVideos(){
 /* ===================== FEED / MURAL ===================== */
 let selectedFile = null;
 let mode = "add";
+let longPress = {};
+let holdTimer = null;
 
 const postsCache = new Set();
 let renderQueue = [];
@@ -3018,137 +3060,132 @@ async function criarPostFirebase(texto, fileOrNull, fileTypeOrNull, forcedPostId
   return postId;
 }
 
-/* ===================== ✅ REAÇÕES DO POST (LIKE/AMEI/HAHA/TRISTE/RAIVA) ===================== */
-/* Mantém no mesmo nó "likes/{postId}/{uid}" para compatibilidade, agora com type: like|love|haha|sad|angry */
-const REACT_TYPES = ["like","love","haha","sad","angry"];
-function reactEmoji(t){
-  if(t==="like") return "👍";
-  if(t==="love") return "❤️";
-  if(t==="haha") return "😂";
-  if(t==="sad")  return "😢";
-  if(t==="angry")return "😡";
-  return "👍";
+/* ======= CURTIR / AMEI ======= */
+function pressionarCurtir(id){
+  longPress[id] = false;
+  holdTimer = setTimeout(()=>{
+    longPress[id] = true;
+    amei(id);
+  }, 500);
 }
-function reactLabel(t){
-  if(t==="like") return "Curtir";
-  if(t==="love") return "Amei";
-  if(t==="haha") return "Haha";
-  if(t==="sad")  return "Triste";
-  if(t==="angry")return "Raiva";
-  return "Curtir";
+function soltarCurtir(){
+  if(holdTimer) clearTimeout(holdTimer);
 }
 
-const __pressTimers = {};
-const __pressState = {}; // {postId: {longPressUsed:true/false}}
-
-function showPicker(postId){
-  const p = document.getElementById("picker_"+postId);
-  if(!p) return;
-  p.style.display = "flex";
-}
-function hidePicker(postId){
-  const p = document.getElementById("picker_"+postId);
-  if(!p) return;
-  p.style.display = "none";
-}
-
-function startPress(postId){
-  __pressState[postId] = { longPressUsed:false };
-  clearTimeout(__pressTimers[postId]);
-  __pressTimers[postId] = setTimeout(()=>{
-    __pressState[postId].longPressUsed = true;
-    showPicker(postId);
-  }, 320);
-}
-function endPress(postId){
-  clearTimeout(__pressTimers[postId]);
-}
-
-async function toggleLike(postId){
-  // Se não foi long-press, alterna Like (uma vez curte, outra descurte)
-  const st = __pressState[postId];
-  if(st && st.longPressUsed) return;
-
-  const ref = DB.ref(`likes/${postId}/${UID}`);
-  const snap = await ref.once("value");
+async function curtir(id){
+  if(longPress[id]){ longPress[id] = false; return; }
+  const likeRef = DB.ref(`likes/${id}/${UID}`);
+  const snap = await likeRef.once("value");
   const cur = snap.val();
-
-  if(cur && cur.type === "like"){
-    await ref.remove();
-  }else{
-    await ref.set({ type:"like", uid:UID, userName:USER_NAME, createdAt: firebase.database.ServerValue.TIMESTAMP });
-  }
+  if(cur) await likeRef.remove();
+  else await likeRef.set({ type:"like", uid:UID, userName:USER_NAME, createdAt: firebase.database.ServerValue.TIMESTAMP });
+  playActionSound();
+}
+async function amei(id){
+  const likeRef = DB.ref(`likes/${id}/${UID}`);
+  const snap = await likeRef.once("value");
+  const cur = snap.val();
+  if(cur && cur.type === "love") await likeRef.remove();
+  else await likeRef.set({ type:"love", uid:UID, userName:USER_NAME, createdAt: firebase.database.ServerValue.TIMESTAMP });
   playActionSound();
 }
 
-async function setReaction(postId, type){
-  try{
-    if(!REACT_TYPES.includes(type)) type = "like";
-    const ref = DB.ref(`likes/${postId}/${UID}`);
-    const snap = await ref.once("value");
-    const cur = snap.val();
-
-    // clicar na mesma reação -> remove
-    if(cur && cur.type === type){
-      await ref.remove();
-    }else{
-      await ref.set({ type, uid:UID, userName:USER_NAME, createdAt: firebase.database.ServerValue.TIMESTAMP });
-    }
-    hidePicker(postId);
-    playActionSound();
-  }catch(e){}
-}
-
-function atualizarReacoesUI(postId, likesObj){
-  const btn = document.getElementById("likeBtn_"+postId);
-  const cont = document.getElementById("likeCount_"+postId);
-  const reactsBtn = document.getElementById("reactsBtn_"+postId);
-  const reactsCount = document.getElementById("reactsCount_"+postId);
-
-  if(!btn || !cont || !reactsBtn || !reactsCount) return;
+function atualizarCurtidasUI(postId, likesObj){
+  const btn = document.getElementById("curtir_"+postId);
+  const cont = document.getElementById("contadorCurtidas_"+postId);
+  if(!btn || !cont) return;
 
   const likes = likesObj || {};
-  const entries = Object.values(likes).filter(Boolean);
+  const entries = Object.values(likes);
   const total = entries.length;
-
   const my = likes[UID];
-  const myType = my && my.type ? my.type : null;
 
-  // ✅ botão esquerdo: só botão + número
-  btn.classList.remove("isReacted");
-  if(myType){
-    btn.classList.add("isReacted");
-    btn.textContent = `${reactEmoji(myType)} ${myType==="like" ? "Curtir" : reactLabel(myType)}`;
+  if(my){
+    if(my.type === "love"){
+      btn.textContent = "❤️ Você amou";
+      btn.style.color = "var(--fb-red)";
+    }else{
+      btn.textContent = "👍 Você curtiu";
+      btn.style.color = "var(--fb-text)";
+    }
   }else{
     btn.textContent = "👍 Curtir";
+    btn.style.color = "var(--fb-text)";
   }
-  cont.textContent = total > 0 ? String(total) : "0";
 
-  // ✅ botão direito (lista de reações) mostra total e (opcional) um mini preview
-  // aqui mostramos só "Reações" e o número
-  reactsBtn.textContent = "😀 Reações";
-  reactsCount.textContent = total > 0 ? String(total) : "0";
+  if(total === 0){ cont.innerHTML = ""; return; }
+
+  const sorted = entries.sort((a,b)=>(a.createdAt||0)-(b.createdAt||0));
+  const nomes = sorted.map(x => (x.uid === UID ? "Você" : (x.userName || "Usuário")));
+  cont.innerHTML = `Curtidas (${total}): <b>${nomes.map(escapeHTML).join(", ")}</b>`;
 }
 
-/* ✅ abre páginas externas com o ID do post */
-function openCommentsPage(postId){
-  try{ localStorage.setItem("post_id", postId); }catch(e){}
-  window.location.href = `${COMMENTS_PAGE_URL}?id=${encodeURIComponent(postId)}`;
+/* ✅ toggle comentários */
+const commentCloseHandlers = {};
+function fecharComentarios(id){
+  const box = document.getElementById("comentarios_"+id);
+  if(!box) return;
+  box.style.display = "none";
+  if(commentCloseHandlers[id]){
+    document.removeEventListener("click", commentCloseHandlers[id]);
+    delete commentCloseHandlers[id];
+  }
 }
-function openReactsPage(postId){
-  try{ localStorage.setItem("post_id", postId); }catch(e){}
-  window.location.href = `${REACTS_PAGE_URL}?id=${encodeURIComponent(postId)}`;
+function abrirComentarios(id){
+  const box = document.getElementById("comentarios_"+id);
+  if(!box) return;
+
+  if(box.style.display === "block"){
+    fecharComentarios(id);
+    return;
+  }
+
+  box.style.display = "block";
+
+  if(commentCloseHandlers[id]){
+    document.removeEventListener("click", commentCloseHandlers[id]);
+    delete commentCloseHandlers[id];
+  }
+
+  const handler = (e)=>{
+    const insideBox = box.contains(e.target);
+    const clickedButton = e.target.closest(".btn-action");
+    const clickedMenu = e.target.closest(".coment-menu-btn") || e.target.closest(".coment-menu-box");
+    if(!insideBox && !clickedButton && !clickedMenu){
+      fecharComentarios(id);
+    }
+  };
+  commentCloseHandlers[id] = handler;
+  setTimeout(()=> document.addEventListener("click", handler), 50);
 }
 
-/* ✅ fechar picker ao clicar fora */
-document.addEventListener("click", (e)=>{
-  const picker = e.target.closest(".reactPicker");
-  const likeBtn = e.target.closest("[data-likebtn='1']");
-  if(picker || likeBtn) return;
-  document.querySelectorAll(".reactPicker").forEach(p=>{ p.style.display="none"; });
-}, { capture:true });
+async function enviarComentario(id){
+  const input = document.getElementById("comentarioInput_"+id);
+  if(!input) return;
+  const texto = input.value.trim();
+  if(!texto) return;
 
-/* ===================== menu do post ===================== */
+  const commentId = "cmt_" + Date.now() + "_" + Math.random().toString(36).slice(2);
+  await DB.ref(`comments/${id}/${commentId}`).set({
+    uid: UID,
+    userName: USER_NAME,
+    text: texto,
+    createdAt: firebase.database.ServerValue.TIMESTAMP
+  });
+  input.value = "";
+  playActionSound();
+}
+
+function toggleComentMenu(cid){
+  const menu = document.getElementById("menu_"+cid);
+  if(!menu) return;
+  menu.style.display = (menu.style.display==="block" ? "none" : "block");
+}
+async function excluirComentario(cid, postId){
+  await DB.ref(`comments/${postId}/${cid}`).remove();
+  playActionSound();
+}
+
 function toggleMenu(id){
   let m = document.getElementById("menu_"+id);
   if(!m) return;
@@ -3216,6 +3253,7 @@ function postHTML(id, postData, avatarUrl){
     </div>
   `;
 
+  /* ✅ (ALTERADO) ⋮ no post só aparece para o usuário logado (dono do post) */
   const postMenuHTML = isMine ? `
     <div class="menu-btn" onclick="toggleMenu('${id}')">⋮</div>
     <div class="menu-box" id="menu_${id}">
@@ -3244,43 +3282,37 @@ function postHTML(id, postData, avatarUrl){
       ${midia}
     </div>
 
-    <!-- ✅ Ações: ESQ (Curtir+Nº) | CENTRO (Comentários+Nº abre pagina) | DIR (Reações+Nº abre pagina) -->
     <div class="post-actions">
-      <!-- ESQUERDA -->
-      <div class="actionItem">
-        <div class="reactPicker" id="picker_${id}">
-          <div class="reactOpt" title="Curtir"  onclick="setReaction('${id}','like')">👍</div>
-          <div class="reactOpt" title="Amei"   onclick="setReaction('${id}','love')">❤️</div>
-          <div class="reactOpt" title="Haha"   onclick="setReaction('${id}','haha')">😂</div>
-          <div class="reactOpt" title="Triste" onclick="setReaction('${id}','sad')">😢</div>
-          <div class="reactOpt" title="Raiva"  onclick="setReaction('${id}','angry')">😡</div>
-        </div>
-
-        <div class="actionBtn"
-          id="likeBtn_${id}"
-          data-likebtn="1"
-          onmousedown="startPress('${id}')"
-          onmouseup="endPress('${id}')"
-          onmouseleave="endPress('${id}')"
-          ontouchstart="startPress('${id}')"
-          ontouchend="endPress('${id}')"
-          onclick="toggleLike('${id}')">
+      <div style="text-align:center; min-width:160px;">
+        <div class="btn-action"
+          id="curtir_${id}"
+          onmousedown="pressionarCurtir('${id}')"
+          onmouseup="soltarCurtir()"
+          ontouchstart="pressionarCurtir('${id}')"
+          ontouchend="soltarCurtir()"
+          onclick="curtir('${id}')">
           👍 Curtir
         </div>
-        <div class="counterMini"><span id="likeCount_${id}">0</span></div>
+        <div class="contador" id="contadorCurtidas_${id}"></div>
       </div>
 
-      <!-- CENTRO -->
-      <div class="actionItem">
-        <div class="actionBtn" onclick="openCommentsPage('${id}')">💬 Comentários</div>
-        <div class="counterMini"><span id="commentCount_${id}">0</span></div>
+      <div style="text-align:center; min-width:160px;">
+        <div class="btn-action" onclick="abrirComentarios('${id}')">💬 Comentar</div>
+        <div class="contador" id="contadorComentarios_${id}"></div>
       </div>
+    </div>
 
-      <!-- DIREITA -->
-      <div class="actionItem">
-        <div class="actionBtn" id="reactsBtn_${id}" onclick="openReactsPage('${id}')">😀 Reações</div>
-        <div class="counterMini"><span id="reactsCount_${id}">0</span></div>
-      </div>
+    <div class="coment-area" id="comentarios_${id}">
+      <div id="listaComentarios_${id}" style="margin-bottom:12px;"></div>
+
+      <input type="text" id="comentarioInput_${id}"
+        placeholder="Escreva um comentário..."
+        style="width:100%;padding:10px;border-radius:12px;border:1px solid rgba(255,255,255,.12);background:#3A3B3C;color:var(--fb-text);outline:none;">
+
+      <button onclick="enviarComentario('${id}')"
+        style="margin-top:8px;background:var(--fb-blue);color:#fff;border:none;padding:10px 14px;border-radius:12px;cursor:pointer;font-weight:900;">
+        Enviar
+      </button>
     </div>
   </div>
   `;
@@ -3290,6 +3322,7 @@ function postHTML(id, postData, avatarUrl){
 function criarPostOptimista(id, postData){
   if(postsCache.has(id)) return;
   postsCache.add(id);
+  longPress[id] = false;
 
   const feed = document.getElementById("feed");
   const temp = document.createElement("div");
@@ -3301,10 +3334,10 @@ function criarPostOptimista(id, postData){
 
     ensureConnectionsSection();
 
-    listenReactions(id);
-    listenCommentsCount(id);
-
+    listenLikes(id);
+    listenComments(id);
     updateAvatarsInDOM(uid, url, name);
+
     setupAllFeedVideos();
   });
 }
@@ -3337,7 +3370,7 @@ function atualizarPostDoServidor(id, data){
             preload="none"
             playsinline
             webkit-playsinline></video>
-      `;
+        `;
     }else{
       wrap.innerHTML = "";
     }
@@ -3348,20 +3381,59 @@ function atualizarPostDoServidor(id, data){
   setupAllFeedVideos();
 }
 
-/* ✅ listener de reações (no nó likes/...) */
-function listenReactions(postId){
+function listenLikes(postId){
   DB.ref("likes/" + postId).on("value", snap=>{
-    atualizarReacoesUI(postId, snap.val() || {});
+    atualizarCurtidasUI(postId, snap.val() || {});
   });
 }
 
-/* ✅ listener de quantidade de comentários (sem abrir aqui — abre a outra página) */
-function listenCommentsCount(postId){
-  DB.ref("comments/" + postId).on("value", snap=>{
+function listenComments(postId){
+  DB.ref("comments/" + postId).orderByChild("createdAt").on("value", async snap=>{
+    const lista = document.getElementById("listaComentarios_"+postId);
+    const contador = document.getElementById("contadorComentarios_"+postId);
+    if(!lista || !contador) return;
+
     const obj = snap.val() || {};
-    const total = Object.keys(obj).length;
-    const el = document.getElementById("commentCount_"+postId);
-    if(el) el.textContent = String(total || 0);
+    const arr = Object.keys(obj).map(cid=>({ cid, ...obj[cid] }))
+      .sort((a,b)=>(a.createdAt||0)-(b.createdAt||0));
+
+    const htmls = await Promise.all(arr.map(async c=>{
+      const nome = (c.userName || "Usuário");
+      const txt = escapeHTML(c.text || "");
+      const prof = await getAvatarForUID(c.uid, nome);
+
+      const ava = prof.url
+        ? `<div class="cAvatar" data-avatar-uid="${escapeHTML(c.uid)}" onclick="openProfileModal('${escapeHTML(c.uid)}')"><img src="${prof.url}" alt="avatar" loading="lazy"></div>`
+        : `<div class="cAvatar" data-avatar-uid="${escapeHTML(c.uid)}" onclick="openProfileModal('${escapeHTML(c.uid)}')"><div class="init">${escapeHTML(initials(nome))}</div></div>`;
+
+      const canDelete = (c.uid === UID);
+
+      /* ✅ (ALTERADO) ⋮ nos comentários só aparece para o usuário logado (dono do comentário) */
+      const cMenuHTML = canDelete ? `
+        <span class="coment-menu-btn" onclick="toggleComentMenu('${c.cid}')">⋮</span>
+        <div class="coment-menu-box" id="menu_${c.cid}" onclick="excluirComentario('${c.cid}','${postId}')">
+          Excluir
+        </div>
+      ` : "";
+
+      return `
+        <div id="${c.cid}" class="cRow">
+          <div class="cHead">
+            ${ava}
+            <div class="cName" data-name-uid="${escapeHTML(c.uid)}" onclick="openProfileModal('${escapeHTML(c.uid)}')">${escapeHTML(nome)}</div>
+          </div>
+          <div class="cText">💬 ${txt}</div>
+          ${cMenuHTML}
+        </div>
+      `;
+    }));
+
+    lista.innerHTML = htmls.join("");
+
+    const total = arr.length;
+    if(total === 0) contador.innerHTML = "";
+    else if(total === 1) contador.innerHTML = "1 comentário";
+    else contador.innerHTML = `${total} comentários`;
   });
 }
 
@@ -3412,8 +3484,8 @@ function pumpRenderQueue(){
         temp.innerHTML = postHTML(it.id, it.data, prof.url).trim();
         feed.prepend(temp.firstChild);
 
-        listenReactions(it.id);
-        listenCommentsCount(it.id);
+        listenLikes(it.id);
+        listenComments(it.id);
 
         updateAvatarsInDOM(it.data.uid, prof.url, prof.name);
 
@@ -3439,3 +3511,10 @@ setupAllFeedVideos();
 
 </body>
 </html>
+
+
+
+
+
+
+
