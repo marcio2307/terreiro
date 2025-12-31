@@ -1256,6 +1256,43 @@ const firebaseConfig = {
   appId: "1:296376447787:web:1341c59c8087d6ac1e4b6e"
 };
 firebase.initializeApp(firebaseConfig);
+
+/* ====================== ✅ (NOVO) SEM "Network connection lost..." ======================
+   - Desliga logs internos do RTDB
+   - Filtra avisos/logs que algumas builds exibem no console
+   - Evita "unhandledrejection" de reconexão poluir o console
+*/
+try{ firebase.database.enableLogging(false); }catch(e){}
+
+(function suppressNetworkLogs(){
+  const block = (msg)=>{
+    msg = String(msg||"");
+    return (
+      msg.includes("Network connection lost") ||
+      msg.includes("Attempting to reconnect") ||
+      msg.includes("Connection interrupted") ||
+      msg.includes("connection lost") ||
+      msg.includes("Connection was interrupted")
+    );
+  };
+
+  const olog  = console.log.bind(console);
+  const owarn = console.warn.bind(console);
+  const oerr  = console.error.bind(console);
+
+  console.log = (...a)=>{ try{ if(block(a[0])) return; }catch(e){} olog(...a); };
+  console.warn= (...a)=>{ try{ if(block(a[0])) return; }catch(e){} owarn(...a); };
+  console.error=(...a)=>{ try{ if(block(a[0])) return; }catch(e){} oerr(...a); };
+
+  window.addEventListener("unhandledrejection", (ev)=>{
+    try{
+      const r = ev.reason;
+      const msg = (r && (r.message || r.toString())) || "";
+      if(block(msg)) ev.preventDefault();
+    }catch(e){}
+  });
+})();
+
 const DB = firebase.database();
 const ST = firebase.storage();
 
