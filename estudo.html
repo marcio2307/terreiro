@@ -23,7 +23,7 @@ html,body{ width:100%; max-width:100%; overflow-x:hidden; }
   --fb-blue:#0866FF;
   --fb-red:#F02849;
 
-  /* 🔥 FUNDO NOVO DA TELA DE LOGIN (igual ao da 2ª imagem) */
+  /* 🔥 FUNDO NOVO DA TELA DE LOGIN */
   --login-bg:#0f1113;
 }
 
@@ -40,7 +40,7 @@ body{
 
 /* ===================== 🔒 TELA DE LOGIN (COM TOPO + VOLTAR) ===================== */
 
-/* ✅ TOPO DO LOGIN (fundo do site + voltar em cima) */
+/* ✅ TOPO DO LOGIN */
 .authTopbar{
   position:fixed;
   top:0; left:0; right:0;
@@ -85,7 +85,7 @@ body{
   text-align:center;
 }
 
-/* FUNDO DA TELA DE LOGIN (trocado) */
+/* FUNDO DA TELA DE LOGIN */
 .authScreen{
   position:fixed;
   inset:0;
@@ -336,7 +336,7 @@ body{
 
 <body>
 
-<!-- ✅ TOPO DO LOGIN (fundo do site + voltar em cima) -->
+<!-- ✅ TOPO DO LOGIN -->
 <header class="authTopbar" id="authTopbar">
   <div class="authTopLeft">
     <button class="authBackTop" type="button" title="Voltar" aria-label="Voltar"
@@ -457,7 +457,9 @@ body{
 
 <script>
 /* 🔒 LOGIN - SENHA: "pai marcio"
-   ✅ após logar, fica liberado por 40 minutos e volta pro login */
+   ✅ NÃO pede senha ao voltar/navegar
+   ✅ Só pede novamente após 40 minutos (persistente com localStorage)
+*/
 (function(){
   const authScreen = document.getElementById("authScreen");
   const authTopbar = document.getElementById("authTopbar");
@@ -469,7 +471,7 @@ body{
   const toggle = document.getElementById("togglePass");
 
   const SESSION_MS = 40 * 60 * 1000; // ✅ 40 minutos
-  let sessionTimer = null;
+  const STORAGE_KEY = "adminSessionUntil_estudo_v1";
 
   function normalize(s){
     return (s || "")
@@ -490,9 +492,18 @@ body{
   }
   function hideError(){ err.style.display = "none"; }
 
-  function startSessionTimer(){
-    clearTimeout(sessionTimer);
-    sessionTimer = setTimeout(lock, SESSION_MS);
+  function getUntil(){
+    return Number(localStorage.getItem(STORAGE_KEY) || 0);
+  }
+
+  function isValidSession(){
+    return Date.now() < getUntil();
+  }
+
+  function setSession(){
+    const until = Date.now() + SESSION_MS;
+    localStorage.setItem(STORAGE_KEY, String(until));
+    return until;
   }
 
   function unlock(){
@@ -501,7 +512,6 @@ body{
     app.style.display = "block";
     hideError();
     passInput.value = "";
-    startSessionTimer();
   }
 
   function lock(){
@@ -512,16 +522,27 @@ body{
     passInput.type = "password";
     toggle.innerHTML = '<i class="fa-solid fa-eye"></i>';
     hideError();
-    clearTimeout(sessionTimer);
-    sessionTimer = null;
     setTimeout(()=>{ passInput.focus(); }, 50);
+  }
+
+  function scheduleAutoLock(){
+    const until = getUntil();
+    if(!until) return;
+    const ms = until - Date.now();
+    if(ms <= 0) return;
+    // Timer só para travar quando expirar enquanto está na página
+    setTimeout(()=>{
+      if(!isValidSession()) lock();
+    }, ms + 50);
   }
 
   function tryLogin(){
     hideError();
     const typed = normalize(passInput.value);
     if(typed === OK1 || typed === OK2){
-      unlock();
+      setSession();      // ✅ salva por 40 min
+      unlock();          // ✅ libera
+      scheduleAutoLock();// ✅ programa travar quando expirar
     }else{
       showError();
     }
@@ -549,12 +570,17 @@ body{
 
   loginBtn.addEventListener("click", tryLogin);
 
-  // foco inicial
-  setTimeout(()=>{ passInput.focus(); }, 80);
+  // ✅ Ao abrir/voltar/recarregar:
+  // Se sessão ainda válida -> não pede senha
+  if(isValidSession()){
+    unlock();
+    scheduleAutoLock();
+  }else{
+    lock();
+  }
 
 })();
 </script>
 
 </body>
 </html>
-
