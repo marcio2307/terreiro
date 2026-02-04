@@ -25,6 +25,42 @@ header{
   margin-bottom:10px;
 }
 
+/* PLAYER RÁDIO */
+.radio-player{
+  display:flex;
+  flex-direction:column;
+  align-items:center;
+  gap:10px;
+  margin-bottom:12px;
+}
+
+.radio-btn{
+  width:72px;
+  height:72px;
+  border-radius:50%;
+  border:none;
+  background:#2aa449;
+  color:#ffffff;
+  font-size:28px;
+  cursor:pointer;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  box-shadow:0 6px 16px rgba(0,0,0,.25);
+  transition:transform .15s ease, box-shadow .15s ease;
+}
+
+.radio-btn:hover{
+  transform:scale(1.05);
+  box-shadow:0 10px 22px rgba(0,0,0,.3);
+}
+
+.radio-title{
+  font-size:15px;
+  font-weight:900;
+  color:#2aa449;
+}
+
 .title{
   font-size:22px;
   font-weight:900;
@@ -69,13 +105,11 @@ header{
   justify-content:center;
 }
 
-/* ÍCONES FONT AWESOME */
 .iconBox i{
   font-size:30px;
   color:#ffffff;
 }
 
-/* ÍCONES DESENHADOS (SVG) */
 .iconSvg{
   width:34px;
   height:34px;
@@ -103,25 +137,33 @@ header{
   <img class="logo"
        src="https://i.ibb.co/chGrPSNm/Screenshot-20250609-030533-Canva.jpg"
        alt="Logo">
+
+  <!-- PLAYER RÁDIO -->
+  <div class="radio-player">
+    <button class="radio-btn" id="radioBtn">
+      <i class="fa-solid fa-play"></i>
+    </button>
+    <div class="radio-title">Rádio</div>
+  </div>
+
   <div class="title">Estudo</div>
 </header>
+
+<audio id="radio" src="https://stream.zeno.fm/l8ocj9i6ka2uv"></audio>
 
 <main class="wrap">
   <section class="grid">
 
-    <!-- Apostila -->
     <div class="card" onclick="location.href='https://drive.google.com/file/d/1kKAL9yGVrU-c8Y9ecBApVUHG2qbuoHFV/view?usp=sharing'">
       <div class="iconBox"><i class="fa-solid fa-book"></i></div>
       <div class="label">Apostila</div>
     </div>
 
-    <!-- Banhos -->
     <div class="card" onclick="location.href='https://drive.google.com/file/d/1-gQvm5UyiCnP2ldptVAgwI5GAasupd4P/view?usp=sharing'">
       <div class="iconBox"><i class="fa-solid fa-leaf"></i></div>
       <div class="label">Banhos</div>
     </div>
 
-    <!-- Baralho Cigano (SVG IGUAL AO ORIGINAL) -->
     <div class="card" onclick="location.href='https://drive.google.com/file/d/1-X-vCFH_LbymUyLMESntPfqBGduIUc-R/view?usp=sharing'">
       <div class="iconBox">
         <svg class="iconSvg" viewBox="0 0 64 64">
@@ -133,7 +175,6 @@ header{
       <div class="label">Baralho Cigano</div>
     </div>
 
-    <!-- Pontos Riscados (SVG IGUAL AO ORIGINAL) -->
     <div class="card" onclick="location.href='https://marcio2307.github.io/terreiro/ponto.html'">
       <div class="iconBox">
         <svg class="iconSvg" viewBox="0 0 64 64">
@@ -144,13 +185,11 @@ header{
       <div class="label">Pontos Riscados</div>
     </div>
 
-    <!-- Provas -->
     <div class="card" onclick="location.href='https://marcio2307.github.io/prova/index.html'">
       <div class="iconBox"><i class="fa-solid fa-clipboard-check"></i></div>
       <div class="label">Provas</div>
     </div>
 
-    <!-- Reunião -->
     <div class="card" onclick="location.href='https://marcio2307.github.io/terreiro/reuni%C3%A3o.html'">
       <div class="iconBox"><i class="fa-solid fa-video"></i></div>
       <div class="label">Reunião</div>
@@ -158,6 +197,24 @@ header{
 
   </section>
 </main>
+
+<script>
+const radio = document.getElementById('radio');
+const btn = document.getElementById('radioBtn');
+const icon = btn.querySelector('i');
+
+btn.addEventListener('click', () => {
+  if (radio.paused) {
+    radio.play();
+    icon.classList.remove('fa-play');
+    icon.classList.add('fa-pause');
+  } else {
+    radio.pause();
+    icon.classList.remove('fa-pause');
+    icon.classList.add('fa-play');
+  }
+});
+</script>
 
 </body>
 </html>
