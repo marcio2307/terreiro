@@ -11,10 +11,11 @@ body { font-family: Arial, sans-serif; background:#f4f4f4; margin:0; padding:20p
 h1 { text-align:center; color:#333;}
 p { font-size:16px; line-height:1.5; color:#555;}
 input[type="text"] { width:100%; padding:10px; font-size:16px; margin:15px 0; border-radius:6px; border:1px solid #ccc;}
-button { background-color:#4CAF50; color:white; border:none; padding:12px 25px; font-size:16px; border-radius:8px; cursor:pointer;}
+button { background-color:#4CAF50; color:white; border:none; padding:12px 25px; font-size:16px; border-radius:8px; cursor:pointer; margin-top:10px;}
 button:hover { background-color:#45a049;}
 .notice { margin-top:20px; color:#d9534f; font-weight:bold; text-align:center;}
 #infoData { margin-top:10px; font-size:14px; color:#333; text-align:center;}
+canvas { border:1px solid #ccc; border-radius:6px; display:block; margin:auto; margin-top:10px; background:#fff; }
 </style>
 </head>
 <body>
@@ -27,46 +28,82 @@ button:hover { background-color:#45a049;}
 
 <p>Fica expressamente proibida a divulgação, reprodução ou compartilhamento de qualquer conteúdo deste grupo para pessoas externas, sob pena de responsabilização judicial conforme o <strong>art. 187 do Código Civil</strong> e a <strong>Lei nº 12.965/2014 (Marco Civil da Internet)</strong>.</p>
 
-<p>Ao clicar no botão abaixo, declaro que li, compreendi e concordo com os termos acima, assumindo integral responsabilidade pelo cumprimento desta cláusula de confidencialidade.</p>
+<p>Assine abaixo com seu dedo ou mouse para confirmar o termo:</p>
+<canvas id="assinatura" width="600" height="150"></canvas>
+<button id="limpar">Limpar Assinatura</button>
+<br>
+<button id="gerarPDF">Gerar PDF e Enviar ao Administrador</button>
 
-<button id="assinarBtn">Concordo e Gerar PDF</button>
 <div id="infoData"></div>
-<div class="notice">⚠️ O descumprimento deste termo pode gerar responsabilização civil e/ou criminal.</div>
+<div class="notice">⚠️ O PDF gerado deve ser enviado ao administrador do grupo para validação.</div>
 </div>
 
 <script>
-const btn = document.getElementById('assinarBtn');
-const nomeInput = document.getElementById('nome');
-const infoData = document.getElementById('infoData');
+const canvas = document.getElementById('assinatura');
+const ctx = canvas.getContext('2d');
+let desenhando = false;
 
-btn.addEventListener('click', () => {
-    const nome = nomeInput.value.trim();
+// Desenhar assinatura
+canvas.addEventListener('mousedown', () => desenhando = true);
+canvas.addEventListener('mouseup', () => desenhando = false);
+canvas.addEventListener('mouseout', () => desenhando = false);
+canvas.addEventListener('mousemove', draw);
+
+canvas.addEventListener('touchstart', e => { desenhando = true; draw(e); e.preventDefault(); });
+canvas.addEventListener('touchend', () => desenhando = false);
+canvas.addEventListener('touchmove', draw);
+
+function draw(e){
+    if(!desenhando) return;
+    const rect = canvas.getBoundingClientRect();
+    let x, y;
+    if(e.touches){
+        x = e.touches[0].clientX - rect.left;
+        y = e.touches[0].clientY - rect.top;
+    } else {
+        x = e.clientX - rect.left;
+        y = e.clientY - rect.top;
+    }
+    ctx.lineWidth = 2;
+    ctx.lineCap = "round";
+    ctx.strokeStyle = "#000";
+    ctx.lineTo(x, y);
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(x, y);
+}
+
+// Limpar assinatura
+document.getElementById('limpar').addEventListener('click', () => {
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+});
+
+// Gerar PDF
+document.getElementById('gerarPDF').addEventListener('click', () => {
+    const nome = document.getElementById('nome').value.trim();
     if(!nome) return alert('Digite seu nome completo.');
+    if(ctx.getImageData(0,0,canvas.width,canvas.height).data.every(v => v === 0)) return alert('Por favor, assine o termo antes de gerar o PDF.');
 
-    // Bloqueia o campo e botão
-    nomeInput.disabled = true;
-    btn.disabled = true;
-    btn.textContent = "Assinado ✅";
+    document.getElementById('nome').disabled = true;
+    document.getElementById('gerarPDF').disabled = true;
+    document.getElementById('gerarPDF').textContent = "Assinado ✅";
 
-    // Gera data e hora
     const agora = new Date();
     const dataHora = agora.toLocaleString('pt-BR', {dateStyle:'short', timeStyle:'short'});
-    infoData.innerHTML = `Data e horário do acordo: ${dataHora}`;
+    document.getElementById('infoData').innerHTML = `Data e horário do acordo: ${dataHora}`;
 
-    // Cria PDF com layout profissional
     const { jsPDF } = window.jspdf;
     const doc = new jsPDF();
 
     // Logo
     const img = new Image();
-    img.crossOrigin = "anonymous"; // importante para evitar erro CORS
+    img.crossOrigin = "anonymous";
     img.src = 'https://i.ibb.co/chGrPSNm/Screenshot-20250609-030533-Canva.jpg';
-    img.onload = function() {
-        // Ajusta proporcionalmente a logo
+    img.onload = function(){
         const imgWidth = 50;
         const imgHeight = (img.height / img.width) * imgWidth;
         doc.addImage(img, 'JPEG', 80, 10, imgWidth, imgHeight);
-        
+
         doc.setFontSize(18);
         doc.text("Termo de Responsabilidade", 105, 70, null, null, "center");
         doc.setFontSize(12);
@@ -77,10 +114,14 @@ btn.addEventListener('click', () => {
         doc.text(`Data/Hora: ${dataHora}`, 20, y); y+=20;
         doc.text("Declaro que estou ciente que todas as conversas e mensagens deste grupo são privadas.", 20, y, {maxWidth:170}); y+=10;
         doc.text("Fica proibido compartilhar qualquer conteúdo externo, sob pena de responsabilização judicial.", 20, y, {maxWidth:170}); y+=10;
-        doc.text("Ao assinar, assumo responsabilidade pelo cumprimento desta cláusula.", 20, y, {maxWidth:170});
+        doc.text("Ao assinar, assumo responsabilidade pelo cumprimento desta cláusula.", 20, y, {maxWidth:170}); y+=20;
+
+        // Adiciona assinatura
+        const assinaturaData = canvas.toDataURL('image/png');
+        doc.addImage(assinaturaData, 'PNG', 20, y, 170, 50);
 
         doc.save(`Termo_${nome.replace(/ /g,"_")}.pdf`);
-        alert("PDF gerado! Envie-o ao administrador do grupo pelo WhatsApp.");
+        alert("PDF gerado com sucesso! Envie-o ao administrador do grupo pelo WhatsApp ou outro meio para validação.");
     };
 });
 </script>
