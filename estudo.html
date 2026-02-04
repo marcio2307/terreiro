@@ -5,582 +5,136 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
 <title>Estudo</title>
 
-<link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
-<link rel="dns-prefetch" href="//cdnjs.cloudflare.com">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
 <style>
-*{ box-sizing:border-box; }
-html,body{ width:100%; max-width:100%; overflow-x:hidden; }
+*{ box-sizing:border-box; margin:0; padding:0; }
 
-:root{
-  --fb-bg:#18191A;
-  --fb-surface:#242526;
-  --fb-surface2:#2D2E30;
-  --fb-border:rgba(255,255,255,.10);
-  --fb-text:#E4E6EB;
-  --fb-icon:#B0B3B8;
-  --fb-blue:#0866FF;
-  --fb-red:#F02849;
-
-  /* 🔥 FUNDO NOVO DA TELA DE LOGIN */
-  --login-bg:#0f1113;
-}
-
-body{
-  margin:0;
-  background:var(--fb-bg);
+html, body{
+  width:100%; 
+  height:100%;
   font-family:Arial, sans-serif;
-  color:var(--fb-text);
-  padding-bottom:env(safe-area-inset-bottom);
+  background:#ffffff; /* fundo branco */
 }
 
-/* ✅ CONTEÚDO DO SITE (fica bloqueado até login) */
-#app{ display:none; }
-
-/* ===================== 🔒 TELA DE LOGIN (COM TOPO + VOLTAR) ===================== */
-
-/* ✅ TOPO DO LOGIN */
-.authTopbar{
-  position:fixed;
-  top:0; left:0; right:0;
-  height:64px;
-  background: var(--fb-surface);
-  border-bottom: 1px solid var(--fb-border);
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  z-index:10000000;
-  padding: 10px 12px;
-}
-
-/* botão voltar em cima à esquerda */
-.authTopLeft{
-  position:absolute;
-  left:12px;
-  display:flex;
-  align-items:center;
-}
-.authBackTop{
-  width:44px;
-  height:44px;
-  border-radius:14px;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  background: var(--fb-surface2);
-  border:1px solid var(--fb-border);
-  color: var(--fb-text);
-  cursor:pointer;
-  -webkit-tap-highlight-color:transparent;
-}
-.authBackTop:active{ transform: scale(.99); }
-.authBackTop i{ font-size:18px; }
-
-.authTopTitle{
-  font-weight: 900;
-  letter-spacing:.3px;
-  font-size: 16px;
-  color: var(--fb-text);
+header{
   text-align:center;
+  padding:24px 10px 14px 10px;
 }
 
-/* FUNDO DA TELA DE LOGIN */
-.authScreen{
-  position:fixed;
-  inset:0;
-  z-index:9999999;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  padding:14px;
-  background: var(--login-bg);
+.logo{
+  width:180px;
+  margin-bottom:10px;
 }
 
-.authCard{
-  width:min(520px, 96vw);
-  background:rgba(36,37,38,.95);
-  border:1px solid var(--fb-border);
-  border-radius:18px;
-  box-shadow: 0 22px 60px rgba(0,0,0,.60);
-  overflow:hidden;
-  margin-top: 64px; /* espaço do topo */
-}
-
-.authTop{
-  padding:16px 16px 12px 16px;
-  display:flex;
-  align-items:center;
-  gap:12px;
-  border-bottom:1px solid rgba(255,255,255,.08);
-  background: rgba(255,255,255,.02);
-}
-
-.lockIcon{
-  width:44px;
-  height:44px;
-  border-radius:14px;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  background: rgba(8,102,255,.16);
-  border:1px solid rgba(8,102,255,.28);
-  color:#fff;
-  flex:0 0 auto;
-}
-
-.authTitleWrap{ min-width:0; }
-.authTitle{
-  font-weight:900;
-  letter-spacing:.3px;
-  font-size:16px;
-  color:var(--fb-text);
-  line-height:1.2;
-}
-.authSub{
-  margin-top:4px;
-  color:rgba(228,230,235,.75);
-  font-size:13px;
-  line-height:1.25;
-}
-
-.authBody{ padding:16px; }
-
-.fieldLabel{
-  font-weight:900;
-  font-size:12px;
-  letter-spacing:.3px;
-  color:rgba(228,230,235,.85);
-  margin-bottom:8px;
-  text-transform:uppercase;
-}
-
-.inputRow{
-  display:flex;
-  gap:10px;
-  align-items:stretch;
-}
-
-.authInput{
-  flex:1;
-  min-width:0;
-  padding:14px 14px;
-  border-radius:14px;
-  border:1px solid rgba(255,255,255,.10);
-  background: var(--fb-surface2);
-  color: var(--fb-text);
-  outline:none;
-  font-size:15px;
-}
-
-.toggleBtn{
-  width:52px;
-  border-radius:14px;
-  border:1px solid rgba(255,255,255,.10);
-  background: rgba(255,255,255,.06);
-  color: var(--fb-text);
-  cursor:pointer;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  -webkit-tap-highlight-color:transparent;
-}
-.toggleBtn:active{ transform: scale(.99); }
-
-.authActions{
-  margin-top:12px;
-  display:flex;
-  gap:10px;
-}
-
-.authBtn{
-  flex:1;
-  padding:14px 14px;
-  border:none;
-  border-radius:14px;
-  cursor:pointer;
-  font-weight:900;
-  letter-spacing:.3px;
-  background: var(--fb-blue);
-  color:#fff;
-  box-shadow: 0 14px 24px rgba(0,0,0,.28);
-  -webkit-tap-highlight-color:transparent;
-}
-.authBtn:active{ transform: scale(.99); }
-
-.authError{
-  display:none;
-  margin-top:12px;
-  padding:12px 12px;
-  border-radius:14px;
-  background: rgba(240,40,73,.12);
-  border: 1px solid rgba(240,40,73,.25);
-  color: #ffd3da;
-  font-weight:900;
-  font-size:13px;
-  line-height:1.25;
-}
-
-/* ===================== TOPO (APP) ===================== */
-.topbar{
-  position:sticky;
-  top:0;
-  z-index:9999;
-  background:var(--fb-surface);
-  border-bottom:1px solid var(--fb-border);
-  padding:10px 12px;
-  min-height:56px;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-}
-.topLeft{
-  position:absolute;
-  left:12px;
-}
-.backBtn{
-  width:44px;
-  height:44px;
-  border-radius:999px;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  background:var(--fb-surface2);
-  border:1px solid var(--fb-border);
-  color:var(--fb-icon);
-  text-decoration:none;
-  -webkit-tap-highlight-color:transparent;
-}
-.backBtn i{ font-size:18px; }
 .title{
+  font-size:22px;
   font-weight:900;
-  font-size:16px;
-  letter-spacing:.3px;
-  color:var(--fb-text);
+  color:#2aa449; /* título verde */
 }
 
-/* CONTEÚDO */
 .wrap{
-  max-width:980px;
-  margin:0 auto;
-  padding:12px;
+  padding:14px;
 }
 
-/* GRID */
 .grid{
   display:grid;
   grid-template-columns:repeat(2,1fr);
-  gap:10px;
+  gap:12px;
 }
-@media(min-width:560px){
-  .grid{ grid-template-columns:repeat(3,1fr); }
-}
-@media(min-width:860px){
-  .grid{ grid-template-columns:repeat(5,1fr); }
-}
+@media(min-width:560px){ .grid{ grid-template-columns:repeat(3,1fr); } }
+@media(min-width:860px){ .grid{ grid-template-columns:repeat(4,1fr); } }
 
-/* CARD */
 .card{
-  background:var(--fb-surface);
-  border:1px solid var(--fb-border);
-  border-radius:16px;
-  padding:14px 12px;
-  box-shadow:0 10px 18px rgba(0,0,0,.22);
-  cursor:pointer;
+  background:#2aa449; /* verde */
+  border-radius:18px;
+  padding:20px 10px;
   display:flex;
   flex-direction:column;
   align-items:center;
   justify-content:center;
-  gap:10px;
-  min-height:120px;
-  text-align:center;
-  transition:transform .12s ease;
-  -webkit-tap-highlight-color:transparent;
+  gap:12px;
+  cursor:pointer;
+  transition:transform .15s ease, box-shadow .15s ease;
 }
-.card:active{ transform:scale(.99); }
+.card:hover{
+  transform:scale(1.03);
+  box-shadow:0 10px 22px rgba(0,0,0,.15);
+}
 
-/* ÍCONE */
 .iconBox{
-  width:62px;
-  height:62px;
-  border-radius:20px;
+  width:64px;
+  height:64px;
+  border-radius:999px;
+  background:rgba(255,255,255,0.25);
   display:flex;
   align-items:center;
   justify-content:center;
-  background:rgba(255,255,255,.06);
-  border:1px solid var(--fb-border);
 }
+
 .iconBox i{
   font-size:30px;
-  color:var(--fb-icon);
+  color:#ffffff;
 }
 
-/* SVG ÍCONES */
-.iconSvg{ width:34px; height:34px; }
-.iconStroke{
-  fill:none;
-  stroke:var(--fb-icon);
-  stroke-width:2.6;
-  stroke-linejoin:round;
-  stroke-linecap:round;
-}
-
-/* TEXTO */
 .label{
+  font-size:14px;
   font-weight:900;
-  font-size:13px;
-  color:var(--fb-text);
+  color:#ffffff;
+  text-align:center;
 }
 </style>
 </head>
 
 <body>
 
-<!-- ✅ TOPO DO LOGIN -->
-<header class="authTopbar" id="authTopbar">
-  <div class="authTopLeft">
-    <button class="authBackTop" type="button" title="Voltar" aria-label="Voltar"
-      onclick="location.href='https://marcio2307.github.io/terreiro/site.html'">
-      <i class="fa-solid fa-arrow-left"></i>
-    </button>
-  </div>
-  <div class="authTopTitle">Estudo</div>
+<header>
+  <!-- LOGO -->
+  <img
+    class="logo"
+    src="https://i.ibb.co/chGrPSNm/Screenshot-20250609-030533-Canva.jpg"
+    alt="Logo"
+  >
+
+  <!-- TÍTULO -->
+  <div class="title">Estudo</div>
 </header>
 
-<!-- 🔒 TELA LOGIN -->
-<div class="authScreen" id="authScreen" aria-label="Tela de login">
-  <div class="authCard">
-    <div class="authTop">
-      <div class="lockIcon"><i class="fa-solid fa-lock"></i></div>
-      <div class="authTitleWrap">
-        <div class="authTitle">Acesso restrito</div>
-        <div class="authSub">Você precisa da senha do administrador para acessar.</div>
-      </div>
+<main class="wrap">
+  <section class="grid">
+
+    <div class="card" onclick="location.href='https://drive.google.com/file/d/1kKAL9yGVrU-c8Y9ecBApVUHG2qbuoHFV/view?usp=sharing'">
+      <div class="iconBox"><i class="fa-solid fa-book"></i></div>
+      <div class="label">Apostila</div>
     </div>
 
-    <div class="authBody">
-      <div class="fieldLabel">Senha do administrador</div>
-
-      <div class="inputRow">
-        <input
-          id="passInput"
-          class="authInput"
-          type="password"
-          inputmode="text"
-          autocomplete="current-password"
-          placeholder="Digite a senha"
-        />
-        <button class="toggleBtn" id="togglePass" type="button" aria-label="Mostrar/ocultar senha" title="Mostrar/ocultar">
-          <i class="fa-solid fa-eye"></i>
-        </button>
-      </div>
-
-      <div class="authActions">
-        <button class="authBtn" id="loginBtn" type="button">
-          Entrar <i class="fa-solid fa-arrow-right" style="margin-left:8px;"></i>
-        </button>
-      </div>
-
-      <div class="authError" id="authError">
-        <i class="fa-solid fa-triangle-exclamation"></i>
-        Senha incorreta. Tente novamente.
-      </div>
+    <div class="card" onclick="location.href='https://drive.google.com/file/d/1-gQvm5UyiCnP2ldptVAgwI5GAasupd4P/view?usp=sharing'">
+      <div class="iconBox"><i class="fa-solid fa-leaf"></i></div>
+      <div class="label">Banhos</div>
     </div>
-  </div>
-</div>
 
-<!-- ✅ APP REAL -->
-<div id="app">
-
-  <header class="topbar">
-    <div class="topLeft">
-      <a class="backBtn"
-         href="https://marcio2307.github.io/terreiro/site.html"
-         title="Voltar">
-        <i class="fa-solid fa-arrow-left"></i>
-      </a>
+    <div class="card" onclick="location.href='https://drive.google.com/file/d/1-X-vCFH_LbymUyLMESntPfqBGduIUc-R/view?usp=sharing'">
+      <div class="iconBox"><i class="fa-solid fa-clone"></i></div>
+      <div class="label">Baralho Cigano</div>
     </div>
-    <div class="title">Estudo</div>
-  </header>
 
-  <main class="wrap">
-    <section class="grid">
+    <div class="card" onclick="location.href='https://marcio2307.github.io/terreiro/ponto.html'">
+      <div class="iconBox"><i class="fa-solid fa-draw-polygon"></i></div>
+      <div class="label">Pontos Riscados</div>
+    </div>
 
-      <div class="card" onclick="location.href='https://drive.google.com/file/d/1kKAL9yGVrU-c8Y9ecBApVUHG2qbuoHFV/view?usp=sharing'">
-        <div class="iconBox"><i class="fa-solid fa-book"></i></div>
-        <div class="label">Apostila</div>
-      </div>
+    <div class="card" onclick="location.href='https://marcio2307.github.io/prova/index.html'">
+      <div class="iconBox"><i class="fa-solid fa-clipboard-check"></i></div>
+      <div class="label">Provas</div>
+    </div>
 
-      <div class="card" onclick="location.href='https://drive.google.com/file/d/1-gQvm5UyiCnP2ldptVAgwI5GAasupd4P/view?usp=sharing'">
-        <div class="iconBox"><i class="fa-solid fa-leaf"></i></div>
-        <div class="label">Banhos</div>
-      </div>
+    <div class="card" onclick="location.href='https://marcio2307.github.io/terreiro/reuni%C3%A3o.html'">
+      <div class="iconBox"><i class="fa-solid fa-video"></i></div>
+      <div class="label">Reunião</div>
+    </div>
 
-      <!-- Baralho Cigano -->
-      <div class="card" onclick="location.href='https://drive.google.com/file/d/1-X-vCFH_LbymUyLMESntPfqBGduIUc-R/view?usp=sharing'">
-        <div class="iconBox">
-          <svg class="iconSvg" viewBox="0 0 64 64">
-            <rect x="16" y="10" width="32" height="44" rx="6" class="iconStroke"/>
-            <rect x="20" y="14" width="24" height="36" rx="4" class="iconStroke" opacity=".5"/>
-            <circle cx="32" cy="32" r="6" class="iconStroke"/>
-          </svg>
-        </div>
-        <div class="label">Baralho Cigano</div>
-      </div>
-
-      <!-- Pontos Riscados -->
-      <div class="card" onclick="location.href='https://marcio2307.github.io/terreiro/ponto.html'">
-        <div class="iconBox">
-          <svg class="iconSvg" viewBox="0 0 64 64">
-            <polygon points="32 8, 56 48, 8 48" class="iconStroke"/>
-            <polygon points="32 56, 56 16, 8 16" class="iconStroke"/>
-          </svg>
-        </div>
-        <div class="label">Pontos Riscados</div>
-      </div>
-
-      <div class="card" onclick="location.href='https://marcio2307.github.io/prova/index.html'">
-        <div class="iconBox"><i class="fa-solid fa-clipboard-check"></i></div>
-        <div class="label">Provas</div>
-      </div>
-
-      <!-- ✅ REUNIÃO -->
-      <div class="card" onclick="location.href='https://marcio2307.github.io/terreiro/reuni%C3%A3o.html'">
-        <div class="iconBox"><i class="fa-solid fa-video"></i></div>
-        <div class="label">Reunião</div>
-      </div>
-
-    </section>
-  </main>
-
-</div>
-
-<script>
-/* 🔒 LOGIN - SENHA: "pai marcio"
-   ✅ NÃO pede senha ao voltar/navegar
-   ✅ Só pede novamente após 40 minutos (persistente com localStorage)
-*/
-(function(){
-  const authScreen = document.getElementById("authScreen");
-  const authTopbar = document.getElementById("authTopbar");
-  const app = document.getElementById("app");
-
-  const passInput = document.getElementById("passInput");
-  const loginBtn = document.getElementById("loginBtn");
-  const err = document.getElementById("authError");
-  const toggle = document.getElementById("togglePass");
-
-  const SESSION_MS = 40 * 60 * 1000; // ✅ 40 minutos
-  const STORAGE_KEY = "adminSessionUntil_estudo_v1";
-
-  function normalize(s){
-    return (s || "")
-      .toString()
-      .trim()
-      .toLowerCase()
-      .replace(/\s+/g, " ")
-      .replace(/\s/g, "");
-  }
-
-  const OK1 = normalize("pai marcio");
-  const OK2 = normalize("paimarcio");
-
-  function showError(){
-    err.style.display = "block";
-    passInput.focus();
-    passInput.select();
-  }
-  function hideError(){ err.style.display = "none"; }
-
-  function getUntil(){
-    return Number(localStorage.getItem(STORAGE_KEY) || 0);
-  }
-
-  function isValidSession(){
-    return Date.now() < getUntil();
-  }
-
-  function setSession(){
-    const until = Date.now() + SESSION_MS;
-    localStorage.setItem(STORAGE_KEY, String(until));
-    return until;
-  }
-
-  function unlock(){
-    authScreen.style.display = "none";
-    authTopbar.style.display = "none";
-    app.style.display = "block";
-    hideError();
-    passInput.value = "";
-  }
-
-  function lock(){
-    app.style.display = "none";
-    authTopbar.style.display = "flex";
-    authScreen.style.display = "flex";
-    passInput.value = "";
-    passInput.type = "password";
-    toggle.innerHTML = '<i class="fa-solid fa-eye"></i>';
-    hideError();
-    setTimeout(()=>{ passInput.focus(); }, 50);
-  }
-
-  function scheduleAutoLock(){
-    const until = getUntil();
-    if(!until) return;
-    const ms = until - Date.now();
-    if(ms <= 0) return;
-    // Timer só para travar quando expirar enquanto está na página
-    setTimeout(()=>{
-      if(!isValidSession()) lock();
-    }, ms + 50);
-  }
-
-  function tryLogin(){
-    hideError();
-    const typed = normalize(passInput.value);
-    if(typed === OK1 || typed === OK2){
-      setSession();      // ✅ salva por 40 min
-      unlock();          // ✅ libera
-      scheduleAutoLock();// ✅ programa travar quando expirar
-    }else{
-      showError();
-    }
-  }
-
-  // Mostrar/ocultar senha
-  toggle.addEventListener("click", ()=>{
-    const isPass = passInput.type === "password";
-    passInput.type = isPass ? "text" : "password";
-    toggle.innerHTML = isPass
-      ? '<i class="fa-solid fa-eye-slash"></i>'
-      : '<i class="fa-solid fa-eye"></i>';
-    passInput.focus();
-  });
-
-  // Enter para entrar
-  passInput.addEventListener("keydown", (e)=>{
-    if(e.key === "Enter"){
-      e.preventDefault();
-      tryLogin();
-    }else{
-      hideError();
-    }
-  });
-
-  loginBtn.addEventListener("click", tryLogin);
-
-  // ✅ Ao abrir/voltar/recarregar:
-  // Se sessão ainda válida -> não pede senha
-  if(isValidSession()){
-    unlock();
-    scheduleAutoLock();
-  }else{
-    lock();
-  }
-
-})();
-</script>
+  </section>
+</main>
 
 </body>
 </html>
