@@ -2,7 +2,7 @@
 <html lang="pt-br">
 <head>
 <meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Estudo</title>
 
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
@@ -10,16 +10,14 @@
 <style>
 *{ box-sizing:border-box; margin:0; padding:0; }
 
-html, body{
-  width:100%; 
-  height:100%;
+body{
   font-family:Arial, sans-serif;
-  background:#ffffff; /* fundo branco */
+  background:#ffffff;
 }
 
 header{
   text-align:center;
-  padding:24px 10px 14px 10px;
+  padding:24px 10px 14px;
 }
 
 .logo{
@@ -30,7 +28,7 @@ header{
 .title{
   font-size:22px;
   font-weight:900;
-  color:#2aa449; /* título verde */
+  color:#2aa449;
 }
 
 .wrap{
@@ -46,13 +44,12 @@ header{
 @media(min-width:860px){ .grid{ grid-template-columns:repeat(4,1fr); } }
 
 .card{
-  background:#2aa449; /* verde */
+  background:#2aa449;
   border-radius:18px;
   padding:20px 10px;
   display:flex;
   flex-direction:column;
   align-items:center;
-  justify-content:center;
   gap:12px;
   cursor:pointer;
   transition:transform .15s ease, box-shadow .15s ease;
@@ -65,16 +62,30 @@ header{
 .iconBox{
   width:64px;
   height:64px;
-  border-radius:999px;
-  background:rgba(255,255,255,0.25);
+  border-radius:20px;
+  background:rgba(255,255,255,.25);
   display:flex;
   align-items:center;
   justify-content:center;
 }
 
+/* ÍCONES FONT AWESOME */
 .iconBox i{
   font-size:30px;
   color:#ffffff;
+}
+
+/* ÍCONES DESENHADOS (SVG) */
+.iconSvg{
+  width:34px;
+  height:34px;
+}
+.iconStroke{
+  fill:none;
+  stroke:#ffffff;
+  stroke-width:2.6;
+  stroke-linejoin:round;
+  stroke-linecap:round;
 }
 
 .label{
@@ -89,45 +100,57 @@ header{
 <body>
 
 <header>
-  <!-- LOGO -->
-  <img
-    class="logo"
-    src="https://i.ibb.co/chGrPSNm/Screenshot-20250609-030533-Canva.jpg"
-    alt="Logo"
-  >
-
-  <!-- TÍTULO -->
+  <img class="logo"
+       src="https://i.ibb.co/chGrPSNm/Screenshot-20250609-030533-Canva.jpg"
+       alt="Logo">
   <div class="title">Estudo</div>
 </header>
 
 <main class="wrap">
   <section class="grid">
 
+    <!-- Apostila -->
     <div class="card" onclick="location.href='https://drive.google.com/file/d/1kKAL9yGVrU-c8Y9ecBApVUHG2qbuoHFV/view?usp=sharing'">
       <div class="iconBox"><i class="fa-solid fa-book"></i></div>
       <div class="label">Apostila</div>
     </div>
 
+    <!-- Banhos -->
     <div class="card" onclick="location.href='https://drive.google.com/file/d/1-gQvm5UyiCnP2ldptVAgwI5GAasupd4P/view?usp=sharing'">
       <div class="iconBox"><i class="fa-solid fa-leaf"></i></div>
       <div class="label">Banhos</div>
     </div>
 
+    <!-- Baralho Cigano (SVG IGUAL AO ORIGINAL) -->
     <div class="card" onclick="location.href='https://drive.google.com/file/d/1-X-vCFH_LbymUyLMESntPfqBGduIUc-R/view?usp=sharing'">
-      <div class="iconBox"><i class="fa-solid fa-clone"></i></div>
+      <div class="iconBox">
+        <svg class="iconSvg" viewBox="0 0 64 64">
+          <rect x="16" y="10" width="32" height="44" rx="6" class="iconStroke"/>
+          <rect x="20" y="14" width="24" height="36" rx="4" class="iconStroke" opacity=".6"/>
+          <circle cx="32" cy="32" r="6" class="iconStroke"/>
+        </svg>
+      </div>
       <div class="label">Baralho Cigano</div>
     </div>
 
+    <!-- Pontos Riscados (SVG IGUAL AO ORIGINAL) -->
     <div class="card" onclick="location.href='https://marcio2307.github.io/terreiro/ponto.html'">
-      <div class="iconBox"><i class="fa-solid fa-draw-polygon"></i></div>
+      <div class="iconBox">
+        <svg class="iconSvg" viewBox="0 0 64 64">
+          <polygon points="32 8, 56 48, 8 48" class="iconStroke"/>
+          <polygon points="32 56, 56 16, 8 16" class="iconStroke"/>
+        </svg>
+      </div>
       <div class="label">Pontos Riscados</div>
     </div>
 
+    <!-- Provas -->
     <div class="card" onclick="location.href='https://marcio2307.github.io/prova/index.html'">
       <div class="iconBox"><i class="fa-solid fa-clipboard-check"></i></div>
       <div class="label">Provas</div>
     </div>
 
+    <!-- Reunião -->
     <div class="card" onclick="location.href='https://marcio2307.github.io/terreiro/reuni%C3%A3o.html'">
       <div class="iconBox"><i class="fa-solid fa-video"></i></div>
       <div class="label">Reunião</div>
