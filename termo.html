@@ -11,11 +11,11 @@ body { font-family: Arial, sans-serif; background:#f4f4f4; margin:0; padding:10p
 h1 { text-align:center; color:#333; font-size:20px;}
 p { font-size:14px; line-height:1.5; color:#555;}
 input[type="text"] { width:100%; padding:10px; font-size:16px; margin:10px 0; border-radius:6px; border:1px solid #ccc;}
-button { background-color:#4CAF50; color:white; border:none; padding:12px 20px; font-size:16px; border-radius:8px; cursor:pointer; margin-top:10px; width:100%;}
+button { background-color:#4CAF50; color:white; border:none; padding:12px 20px; font-size:16px; border-radius:8px; cursor:pointer; margin-top:10px; width:100%; max-width:300px;}
 button:hover { background-color:#45a049;}
 .notice { margin-top:20px; color:#d9534f; font-weight:bold; text-align:center; font-size:14px;}
 #infoData { margin-top:10px; font-size:14px; color:#333; text-align:center;}
-canvas { border:1px solid #ccc; border-radius:8px; display:block; margin:auto; margin-top:10px; background:#fff; touch-action: none; }
+canvas { border:1px solid #ccc; border-radius:8px; display:block; margin:auto; margin-top:10px; background:#fff; touch-action:none; width:100%; height:150px; }
 </style>
 </head>
 <body>
@@ -29,7 +29,7 @@ canvas { border:1px solid #ccc; border-radius:8px; display:block; margin:auto; m
 <p>Fica expressamente proibida a divulgação, reprodução ou compartilhamento de qualquer conteúdo deste grupo para pessoas externas, sob pena de responsabilização judicial conforme o <strong>art. 187 do Código Civil</strong> e a <strong>Lei nº 12.965/2014 (Marco Civil da Internet)</strong>.</p>
 
 <p>Assine abaixo com seu dedo para confirmar o termo:</p>
-<canvas id="assinatura" width="500" height="150"></canvas>
+<canvas id="assinatura"></canvas>
 <button id="limpar">Limpar Assinatura</button>
 <br>
 <button id="gerarPDF">Gerar PDF e Enviar ao Administrador</button>
@@ -39,11 +39,22 @@ canvas { border:1px solid #ccc; border-radius:8px; display:block; margin:auto; m
 </div>
 
 <script>
+// Tornar canvas responsivo
 const canvas = document.getElementById('assinatura');
 const ctx = canvas.getContext('2d');
+
+function ajustarCanvas() {
+    canvas.width = canvas.offsetWidth;
+    canvas.height = 150; // altura fixa
+    ctx.lineWidth = 3;
+    ctx.lineCap = "round";
+    ctx.strokeStyle = "#000";
+}
+window.addEventListener('resize', ajustarCanvas);
+ajustarCanvas();
+
 let desenhando = false;
 
-// Ajuste de densidade para celular
 function getPos(e){
     const rect = canvas.getBoundingClientRect();
     let x, y;
@@ -58,39 +69,35 @@ function getPos(e){
 }
 
 // Início do desenho
-canvas.addEventListener('mousedown', e => { desenhando = true; const pos = getPos(e); ctx.beginPath(); ctx.moveTo(pos.x,pos.y); });
-canvas.addEventListener('touchstart', e => { desenhando = true; const pos = getPos(e); ctx.beginPath(); ctx.moveTo(pos.x,pos.y); e.preventDefault(); });
+canvas.addEventListener('mousedown', e => { desenhando=true; const pos=getPos(e); ctx.beginPath(); ctx.moveTo(pos.x,pos.y); });
+canvas.addEventListener('touchstart', e => { desenhando=true; const pos=getPos(e); ctx.beginPath(); ctx.moveTo(pos.x,pos.y); e.preventDefault(); });
 
 // Movimento
-canvas.addEventListener('mousemove', e => { if(!desenhando) return; const pos = getPos(e); ctx.lineTo(pos.x,pos.y); ctx.stroke(); ctx.beginPath(); ctx.moveTo(pos.x,pos.y); });
-canvas.addEventListener('touchmove', e => { if(!desenhando) return; const pos = getPos(e); ctx.lineTo(pos.x,pos.y); ctx.stroke(); ctx.beginPath(); ctx.moveTo(pos.x,pos.y); e.preventDefault(); });
+canvas.addEventListener('mousemove', e => { if(!desenhando) return; const pos=getPos(e); ctx.lineTo(pos.x,pos.y); ctx.stroke(); ctx.beginPath(); ctx.moveTo(pos.x,pos.y); });
+canvas.addEventListener('touchmove', e => { if(!desenhando) return; const pos=getPos(e); ctx.lineTo(pos.x,pos.y); ctx.stroke(); ctx.beginPath(); ctx.moveTo(pos.x,pos.y); e.preventDefault(); });
 
 // Fim do desenho
-canvas.addEventListener('mouseup', () => desenhando=false);
-canvas.addEventListener('mouseout', () => desenhando=false);
-canvas.addEventListener('touchend', () => desenhando=false);
-
-ctx.lineWidth = 3;
-ctx.lineCap = "round";
-ctx.strokeStyle = "#000";
+canvas.addEventListener('mouseup', ()=>desenhando=false);
+canvas.addEventListener('mouseout', ()=>desenhando=false);
+canvas.addEventListener('touchend', ()=>desenhando=false);
 
 // Limpar assinatura
-document.getElementById('limpar').addEventListener('click', () => { ctx.clearRect(0,0,canvas.width,canvas.height); });
+document.getElementById('limpar').addEventListener('click', ()=>{ ctx.clearRect(0,0,canvas.width,canvas.height); });
 
 // Gerar PDF
-document.getElementById('gerarPDF').addEventListener('click', () => {
+document.getElementById('gerarPDF').addEventListener('click', ()=>{
     const nome = document.getElementById('nome').value.trim();
     if(!nome) return alert('Digite seu nome completo.');
     const dataAssinatura = ctx.getImageData(0,0,canvas.width,canvas.height).data;
-    if(dataAssinatura.every(v => v===0)) return alert('Por favor, assine o termo antes de gerar o PDF.');
+    if(dataAssinatura.every(v=>v===0)) return alert('Por favor, assine o termo antes de gerar o PDF.');
 
-    document.getElementById('nome').disabled = true;
-    document.getElementById('gerarPDF').disabled = true;
-    document.getElementById('gerarPDF').textContent = "Assinado ✅";
+    document.getElementById('nome').disabled=true;
+    document.getElementById('gerarPDF').disabled=true;
+    document.getElementById('gerarPDF').textContent="Assinado ✅";
 
     const agora = new Date();
-    const dataHora = agora.toLocaleString('pt-BR', {dateStyle:'short', timeStyle:'short'});
-    document.getElementById('infoData').innerHTML = `Data e horário do acordo: ${dataHora}`;
+    const dataHora = agora.toLocaleString('pt-BR',{dateStyle:'short',timeStyle:'short'});
+    document.getElementById('infoData').innerHTML=`Data e horário do acordo: ${dataHora}`;
 
     const { jsPDF } = window.jspdf;
     const doc = new jsPDF();
@@ -98,22 +105,22 @@ document.getElementById('gerarPDF').addEventListener('click', () => {
     const img = new Image();
     img.crossOrigin="anonymous";
     img.src="https://i.ibb.co/chGrPSNm/Screenshot-20250609-030533-Canva.jpg";
-    img.onload = function(){
-        const imgWidth = 50;
-        const imgHeight = (img.height/img.width)*imgWidth;
+    img.onload=function(){
+        const imgWidth=50;
+        const imgHeight=(img.height/img.width)*imgWidth;
         doc.addImage(img,'JPEG',80,10,imgWidth,imgHeight);
 
         doc.setFontSize(18);
-        doc.text("Termo de Responsabilidade", 105, 70, null, null, "center");
+        doc.text("Termo de Responsabilidade",105,70,null,null,"center");
         doc.setFontSize(12);
-        let y = 90;
-        doc.text(`Participante: ${nome}`, 20, y); y+=10;
-        doc.text(`Grupo: C.E.U. SÃO SEBASTIÃO REI OXOSSI`, 20, y); y+=10;
-        doc.text(`Número do grupo: 85986966786`, 20, y); y+=10;
-        doc.text(`Data/Hora: ${dataHora}`, 20, y); y+=20;
-        doc.text("Declaro que estou ciente que todas as conversas e mensagens deste grupo são privadas.", 20, y, {maxWidth:170}); y+=10;
-        doc.text("Fica proibido compartilhar qualquer conteúdo externo, sob pena de responsabilização judicial.", 20, y, {maxWidth:170}); y+=10;
-        doc.text("Ao assinar, assumo responsabilidade pelo cumprimento desta cláusula.", 20, y, {maxWidth:170}); y+=20;
+        let y=90;
+        doc.text(`Participante: ${nome}`,20,y); y+=10;
+        doc.text(`Grupo: C.E.U. SÃO SEBASTIÃO REI OXOSSI`,20,y); y+=10;
+        doc.text(`Número do grupo: 85986966786`,20,y); y+=10;
+        doc.text(`Data/Hora: ${dataHora}`,20,y); y+=20;
+        doc.text("Declaro que estou ciente que todas as conversas e mensagens deste grupo são privadas.",20,y,{maxWidth:170}); y+=10;
+        doc.text("Fica proibido compartilhar qualquer conteúdo externo, sob pena de responsabilização judicial.",20,y,{maxWidth:170}); y+=10;
+        doc.text("Ao assinar, assumo responsabilidade pelo cumprimento desta cláusula.",20,y,{maxWidth:170}); y+=20;
 
         const assinaturaData = canvas.toDataURL('image/png');
         doc.addImage(assinaturaData,'PNG',20,y,170,60);
