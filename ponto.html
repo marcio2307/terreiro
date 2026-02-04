@@ -7,11 +7,11 @@
 
 <style>
   :root{
-    --bg: #33363A;
-    --text: #ffffff;
-    --card: rgba(255,255,255,0.06);
-    --border: rgba(255,255,255,0.25);
-    --shadow: rgba(0,0,0,0.35);
+    --bg: #ffffff;
+    --text: #2aa449;
+    --card: rgba(42,164,73,0.08);
+    --border: rgba(42,164,73,0.35);
+    --shadow: rgba(0,0,0,0.18);
   }
 
   *{ box-sizing: border-box; }
@@ -25,7 +25,6 @@
     color: var(--text);
   }
 
-  /* Container central */
   .wrap{
     max-width: 1050px;
     margin: 0 auto;
@@ -34,14 +33,13 @@
 
   h1{
     margin: 10px auto 14px;
-    padding: 14px 14px;
-    color: var(--text);
+    padding: 14px;
     font-size: 26px;
     line-height: 1.35;
     background: var(--card);
     border: 1px solid var(--border);
     border-radius: 14px;
-    box-shadow: 0 10px 24px var(--shadow);
+    box-shadow: 0 8px 20px var(--shadow);
   }
 
   p{
@@ -50,28 +48,25 @@
     padding: 14px 16px;
     font-size: 18px;
     line-height: 1.55;
-    color: var(--text);
     background: var(--card);
     border: 1px solid var(--border);
     border-radius: 14px;
-    box-shadow: 0 10px 24px var(--shadow);
+    box-shadow: 0 8px 20px var(--shadow);
   }
 
   .img-container{
     display: flex;
     flex-direction: column;
     gap: 18px;
-    padding: 0;
     margin-top: 10px;
   }
 
-  /* “Card” da imagem (melhor no mobile) */
   .img-card{
-    background: rgba(255,255,255,0.04);
+    background: rgba(42,164,73,0.05);
     border: 1px solid var(--border);
     border-radius: 16px;
     padding: 10px;
-    box-shadow: 0 12px 26px var(--shadow);
+    box-shadow: 0 10px 22px var(--shadow);
   }
 
   .img-card img{
@@ -79,23 +74,20 @@
     height: auto;
     display: block;
     border-radius: 12px;
-    border: 2px solid rgba(255,255,255,0.18);
+    border: 2px solid rgba(42,164,73,0.35);
   }
 
-  /* Responsivo para celular */
   @media (max-width: 768px){
     .wrap{ padding: 14px 12px 34px; }
 
     h1{
       font-size: 20px;
-      padding: 12px 12px;
-      border-radius: 12px;
+      padding: 12px;
     }
 
     p{
       font-size: 15.5px;
-      padding: 12px 12px;
-      border-radius: 12px;
+      padding: 12px;
     }
 
     .img-container{ gap: 14px; }
@@ -110,7 +102,6 @@
     }
   }
 
-  /* Melhor leitura em telas bem pequenas */
   @media (max-width: 380px){
     h1{ font-size: 18px; }
     p{ font-size: 15px; }
