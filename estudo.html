@@ -1,27 +1,65 @@
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+<meta charset="UTF-8">
+
+<meta
+  name="viewport"
+  content="width=device-width, initial-scale=1.0, viewport-fit=cover"
+>
+
 <title>Estudo</title>
 
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<!-- PWA -->
+<link rel="manifest" href="manifest.json">
+
+<meta name="theme-color" content="#2aa449">
+
+<!-- ANDROID -->
+<meta name="mobile-web-app-capable" content="yes">
+
+<!-- IOS -->
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<meta name="apple-mobile-web-app-title" content="Estudo">
+
+<link rel="apple-touch-icon" href="logo-192.png">
+
+<!-- FAVICON -->
+<link rel="icon" type="image/png" sizes="192x192" href="logo-192.png">
+
+<!-- FONT AWESOME -->
+<link
+  rel="stylesheet"
+  href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+>
 
 <style>
+
 *{
   box-sizing:border-box;
   margin:0;
   padding:0;
 }
 
-body{
-  font-family:Arial, sans-serif;
-  background:#ffffff;
+html{
+  width:100%;
+  min-height:100%;
 }
 
-/* =========================
+body{
+  font-family:Arial,sans-serif;
+  background:#ffffff;
+  min-height:100vh;
+  min-height:100dvh;
+  overflow-x:hidden;
+  -webkit-text-size-adjust:100%;
+}
+
+/* =====================================================
    PESQUISA GOOGLE
-   ========================= */
+   ===================================================== */
 
 .google-search{
   display:flex;
@@ -41,12 +79,20 @@ body{
   flex:1;
   min-width:0;
   padding:0 16px;
+
   border:1px solid #d0d0d0;
   border-right:none;
+
   border-radius:24px 0 0 24px;
+
   outline:none;
+
   font-size:16px;
+
   box-shadow:0 2px 6px rgba(0,0,0,.10);
+
+  -webkit-appearance:none;
+  appearance:none;
 }
 
 .google-search input:focus{
@@ -56,22 +102,31 @@ body{
 
 .google-search button{
   width:58px;
+  flex-shrink:0;
+
   border:none;
+
   border-radius:0 24px 24px 0;
+
   background:#2aa449;
   color:#fff;
+
   font-size:18px;
+
   cursor:pointer;
+
   box-shadow:0 2px 6px rgba(0,0,0,.10);
+
+  -webkit-tap-highlight-color:transparent;
 }
 
 .google-search button:hover{
   background:#218b3d;
 }
 
-/* =========================
+/* =====================================================
    CABEÇALHO
-   ========================= */
+   ===================================================== */
 
 header{
   text-align:center;
@@ -80,12 +135,15 @@ header{
 
 .logo{
   width:180px;
-  margin-bottom:10px;
+  max-width:70vw;
+  height:auto;
+  display:block;
+  margin:0 auto 10px;
 }
 
-/* =========================
+/* =====================================================
    PLAYER RÁDIO
-   ========================= */
+   ===================================================== */
 
 .radio-player{
   display:flex;
@@ -98,22 +156,37 @@ header{
 .radio-btn{
   width:72px;
   height:72px;
+
   border-radius:50%;
   border:none;
+
   background:#2aa449;
   color:#ffffff;
+
   font-size:28px;
+
   cursor:pointer;
+
   display:flex;
   align-items:center;
   justify-content:center;
+
   box-shadow:0 6px 16px rgba(0,0,0,.25);
-  transition:transform .15s ease, box-shadow .15s ease;
+
+  transition:
+    transform .15s ease,
+    box-shadow .15s ease;
+
+  -webkit-tap-highlight-color:transparent;
 }
 
 .radio-btn:hover{
   transform:scale(1.05);
   box-shadow:0 10px 22px rgba(0,0,0,.3);
+}
+
+.radio-btn:active{
+  transform:scale(.96);
 }
 
 .radio-title{
@@ -128,12 +201,15 @@ header{
   color:#2aa449;
 }
 
-/* =========================
+/* =====================================================
    CARDS
-   ========================= */
+   ===================================================== */
 
 .wrap{
   padding:14px;
+  width:100%;
+  max-width:1200px;
+  margin:auto;
 }
 
 .grid{
@@ -143,27 +219,43 @@ header{
 }
 
 @media(min-width:560px){
+
   .grid{
     grid-template-columns:repeat(3,1fr);
   }
+
 }
 
 @media(min-width:860px){
+
   .grid{
     grid-template-columns:repeat(4,1fr);
   }
+
 }
 
 .card{
   background:#2aa449;
+
   border-radius:18px;
+
   padding:20px 10px;
+
   display:flex;
   flex-direction:column;
   align-items:center;
+
   gap:12px;
+
   cursor:pointer;
-  transition:transform .15s ease, box-shadow .15s ease;
+
+  transition:
+    transform .15s ease,
+    box-shadow .15s ease;
+
+  -webkit-tap-highlight-color:transparent;
+
+  user-select:none;
 }
 
 .card:hover{
@@ -171,14 +263,23 @@ header{
   box-shadow:0 10px 22px rgba(0,0,0,.15);
 }
 
+.card:active{
+  transform:scale(.98);
+}
+
 .iconBox{
   width:64px;
   height:64px;
+
   border-radius:20px;
+
   background:rgba(255,255,255,.25);
+
   display:flex;
   align-items:center;
   justify-content:center;
+
+  flex-shrink:0;
 }
 
 .iconBox i{
@@ -205,17 +306,291 @@ header{
   color:#ffffff;
   text-align:center;
 }
+
+/* =====================================================
+   POPUP DE INSTALAÇÃO PWA
+   ===================================================== */
+
+.pwa-overlay{
+
+  position:fixed;
+
+  inset:0;
+
+  width:100%;
+  height:100%;
+
+  background:rgba(0,0,0,.62);
+
+  display:none;
+
+  align-items:center;
+  justify-content:center;
+
+  padding:18px;
+
+  z-index:99999;
+
+  backdrop-filter:blur(4px);
+  -webkit-backdrop-filter:blur(4px);
+}
+
+.pwa-popup{
+
+  width:100%;
+  max-width:430px;
+
+  background:#ffffff;
+
+  border-radius:24px;
+
+  padding:24px 20px 20px;
+
+  box-shadow:
+    0 20px 60px rgba(0,0,0,.30);
+
+  text-align:center;
+
+  animation:pwaEntrada .25s ease;
+
+  max-height:90vh;
+  overflow-y:auto;
+}
+
+@keyframes pwaEntrada{
+
+  from{
+    opacity:0;
+    transform:translateY(25px) scale(.96);
+  }
+
+  to{
+    opacity:1;
+    transform:translateY(0) scale(1);
+  }
+
+}
+
+.pwa-icon{
+
+  width:82px;
+  height:82px;
+
+  object-fit:contain;
+
+  margin:0 auto 12px;
+
+  border-radius:18px;
+
+  box-shadow:0 5px 15px rgba(0,0,0,.15);
+}
+
+.pwa-popup h2{
+
+  color:#2aa449;
+
+  font-size:21px;
+
+  margin-bottom:10px;
+
+  font-weight:900;
+}
+
+.pwa-popup p{
+
+  color:#444;
+
+  font-size:15px;
+
+  line-height:1.5;
+
+  margin-bottom:14px;
+}
+
+.pwa-steps{
+
+  background:#f1faf3;
+
+  border:1px solid #d5eedb;
+
+  border-radius:16px;
+
+  padding:15px;
+
+  text-align:left;
+
+  color:#333;
+
+  font-size:14px;
+
+  line-height:1.65;
+
+  margin-bottom:15px;
+}
+
+.pwa-steps strong{
+
+  color:#2aa449;
+}
+
+.pwa-install{
+
+  width:100%;
+
+  border:none;
+
+  border-radius:14px;
+
+  padding:14px;
+
+  background:#2aa449;
+
+  color:#fff;
+
+  font-size:16px;
+
+  font-weight:900;
+
+  cursor:pointer;
+
+  margin-bottom:9px;
+
+  -webkit-tap-highlight-color:transparent;
+}
+
+.pwa-install:hover{
+  background:#218b3d;
+}
+
+.pwa-close{
+
+  width:100%;
+
+  border:1px solid #ddd;
+
+  border-radius:14px;
+
+  padding:12px;
+
+  background:#fff;
+
+  color:#555;
+
+  font-size:14px;
+
+  cursor:pointer;
+}
+
+.pwa-link{
+
+  display:inline-block;
+
+  margin-top:10px;
+
+  color:#2aa449;
+
+  font-size:13px;
+
+  font-weight:bold;
+
+  text-decoration:none;
+}
+
+/* =====================================================
+   CELULAR
+   ===================================================== */
+
+@media(max-width:480px){
+
+  header{
+    padding-top:18px;
+  }
+
+  .logo{
+    width:160px;
+  }
+
+  .radio-btn{
+    width:68px;
+    height:68px;
+  }
+
+  .title{
+    font-size:21px;
+  }
+
+  .card{
+    padding:18px 8px;
+  }
+
+  .iconBox{
+    width:60px;
+    height:60px;
+  }
+
+  .iconBox i{
+    font-size:27px;
+  }
+
+  .pwa-popup{
+    padding:21px 16px 16px;
+  }
+
+}
+
+/* =====================================================
+   TABLET / PC
+   ===================================================== */
+
+@media(min-width:700px){
+
+  .google-search{
+    padding-top:18px;
+  }
+
+  header{
+    padding-top:28px;
+  }
+
+  .pwa-popup{
+    max-width:460px;
+  }
+
+}
+
+/* =====================================================
+   SAFE AREA IPHONE
+   ===================================================== */
+
+@supports(padding:max(0px)){
+
+  body{
+    padding-bottom:max(0px, env(safe-area-inset-bottom));
+  }
+
+  .pwa-overlay{
+    padding-top:max(18px, env(safe-area-inset-top));
+    padding-bottom:max(18px, env(safe-area-inset-bottom));
+  }
+
+}
+
 </style>
+
 </head>
 
 <body>
 
-<!-- =========================
+<!-- =====================================================
      PESQUISA GOOGLE
-     ========================= -->
+     ===================================================== -->
 
 <div class="google-search">
-  <form action="https://www.google.com/search" method="get">
+
+  <form
+    action="https://www.google.com/search"
+    method="get"
+  >
 
     <input
       type="search"
@@ -225,52 +600,71 @@ header{
       aria-label="Pesquisar no Google"
     >
 
-    <button type="submit" aria-label="Pesquisar">
+    <button
+      type="submit"
+      aria-label="Pesquisar"
+    >
       <i class="fa-solid fa-magnifying-glass"></i>
     </button>
 
   </form>
+
 </div>
 
 
-<!-- =========================
+<!-- =====================================================
      CABEÇALHO
-     ========================= -->
+     ===================================================== -->
 
 <header>
 
-  <img class="logo"
-       src="logo.jpg"
-       alt="Logo">
+  <img
+    class="logo"
+    src="logo.jpg"
+    alt="Logo"
+  >
 
   <!-- PLAYER RÁDIO -->
 
   <div class="radio-player">
 
-    <button class="radio-btn" id="radioBtn">
+    <button
+      class="radio-btn"
+      id="radioBtn"
+      aria-label="Tocar rádio"
+    >
+
       <i class="fa-solid fa-play"></i>
+
     </button>
 
-    <div class="radio-title">Rádio</div>
+    <div class="radio-title">
+      Rádio
+    </div>
 
   </div>
 
-  <div class="title">Estudo</div>
+  <div class="title">
+    Estudo
+  </div>
 
 </header>
 
 
-<!-- RÁDIO -->
+<!-- =====================================================
+     RÁDIO
+     ===================================================== -->
 
 <audio
   id="radio"
-  src="https://stream.zeno.fm/l8ocj9i6ka2uv">
-</audio>
+  src="https://stream.zeno.fm/l8ocj9i6ka2uv"
+  preload="none"
+></audio>
 
 
-<!-- =========================
+<!-- =====================================================
      CARDS
-     ========================= -->
+     ===================================================== -->
 
 <main class="wrap">
 
@@ -278,7 +672,8 @@ header{
 
     <div
       class="card"
-      onclick="location.href='https://drive.google.com/file/d/1kKAL9yGVrU-c8Y9ecBApVUHG2qbuoHFV/view?usp=sharing'">
+      onclick="location.href='https://drive.google.com/file/d/1kKAL9yGVrU-c8Y9ecBApVUHG2qbuoHFV/view?usp=sharing'"
+    >
 
       <div class="iconBox">
         <i class="fa-solid fa-book"></i>
@@ -293,7 +688,8 @@ header{
 
     <div
       class="card"
-      onclick="location.href='https://drive.google.com/file/d/1-gQvm5UyiCnP2ldptVAgwI5GAasupd4P/view?usp=sharing'">
+      onclick="location.href='https://drive.google.com/file/d/1-gQvm5UyiCnP2ldptVAgwI5GAasupd4P/view?usp=sharing'"
+    >
 
       <div class="iconBox">
         <i class="fa-solid fa-leaf"></i>
@@ -308,11 +704,15 @@ header{
 
     <div
       class="card"
-      onclick="location.href='https://drive.google.com/file/d/1-X-vCFH_LbymUyLMESntPfqBGduIUc-R/view?usp=sharing'">
+      onclick="location.href='https://drive.google.com/file/d/1-X-vCFH_LbymUyLMESntPfqBGduIUc-R/view?usp=sharing'"
+    >
 
       <div class="iconBox">
 
-        <svg class="iconSvg" viewBox="0 0 64 64">
+        <svg
+          class="iconSvg"
+          viewBox="0 0 64 64"
+        >
 
           <rect
             x="16"
@@ -320,7 +720,8 @@ header{
             width="32"
             height="44"
             rx="6"
-            class="iconStroke"/>
+            class="iconStroke"
+          />
 
           <rect
             x="20"
@@ -329,13 +730,15 @@ header{
             height="36"
             rx="4"
             class="iconStroke"
-            opacity=".6"/>
+            opacity=".6"
+          />
 
           <circle
             cx="32"
             cy="32"
             r="6"
-            class="iconStroke"/>
+            class="iconStroke"
+          />
 
         </svg>
 
@@ -350,19 +753,25 @@ header{
 
     <div
       class="card"
-      onclick="location.href='https://marcio2307.github.io/terreiro/ponto.html'">
+      onclick="location.href='https://marcio2307.github.io/terreiro/ponto.html'"
+    >
 
       <div class="iconBox">
 
-        <svg class="iconSvg" viewBox="0 0 64 64">
+        <svg
+          class="iconSvg"
+          viewBox="0 0 64 64"
+        >
 
           <polygon
             points="32 8, 56 48, 8 48"
-            class="iconStroke"/>
+            class="iconStroke"
+          />
 
           <polygon
             points="32 56, 56 16, 8 16"
-            class="iconStroke"/>
+            class="iconStroke"
+          />
 
         </svg>
 
@@ -377,7 +786,8 @@ header{
 
     <div
       class="card"
-      onclick="location.href='https://marcio2307.github.io/prova/index.html'">
+      onclick="location.href='https://marcio2307.github.io/prova/index.html'"
+    >
 
       <div class="iconBox">
         <i class="fa-solid fa-clipboard-check"></i>
@@ -392,7 +802,8 @@ header{
 
     <div
       class="card"
-      onclick="location.href='https://marcio2307.github.io/terreiro/reuni%C3%A3o.html'">
+      onclick="location.href='https://marcio2307.github.io/terreiro/reuni%C3%A3o.html'"
+    >
 
       <div class="iconBox">
         <i class="fa-solid fa-video"></i>
@@ -409,35 +820,495 @@ header{
 </main>
 
 
-<!-- =========================
-     JAVASCRIPT DO RÁDIO
-     ========================= -->
+<!-- =====================================================
+     POPUP PWA
+     ===================================================== -->
+
+<div
+  class="pwa-overlay"
+  id="pwaOverlay"
+>
+
+  <div class="pwa-popup">
+
+    <img
+      src="logo-192.png"
+      class="pwa-icon"
+      alt="Aplicativo Estudo"
+    >
+
+    <h2 id="pwaTitulo">
+      Instale o aplicativo
+    </h2>
+
+    <p id="pwaTexto">
+      Tenha acesso rápido ao Estudo diretamente pela tela inicial do seu aparelho.
+    </p>
+
+    <div
+      class="pwa-steps"
+      id="pwaSteps"
+    >
+    </div>
+
+    <button
+      class="pwa-install"
+      id="pwaInstall"
+      style="display:none;"
+    >
+      INSTALAR APLICATIVO
+    </button>
+
+    <button
+      class="pwa-close"
+      id="pwaClose"
+    >
+      CONTINUAR NO NAVEGADOR
+    </button>
+
+  </div>
+
+</div>
+
+
+<!-- =====================================================
+     JAVASCRIPT
+     ===================================================== -->
 
 <script>
 
-const radio = document.getElementById('radio');
-const btn = document.getElementById('radioBtn');
-const icon = btn.querySelector('i');
+/* =====================================================
+   RÁDIO
+   ===================================================== */
 
-btn.addEventListener('click', () => {
+const radio = document.getElementById("radio");
+const radioBtn = document.getElementById("radioBtn");
+const radioIcon = radioBtn.querySelector("i");
 
-  if (radio.paused) {
+radioBtn.addEventListener("click", async () => {
 
-    radio.play();
+  try{
 
-    icon.classList.remove('fa-play');
-    icon.classList.add('fa-pause');
+    if(radio.paused){
 
-  } else {
+      await radio.play();
 
-    radio.pause();
+      radioIcon.classList.remove("fa-play");
+      radioIcon.classList.add("fa-pause");
 
-    icon.classList.remove('fa-pause');
-    icon.classList.add('fa-play');
+    }else{
+
+      radio.pause();
+
+      radioIcon.classList.remove("fa-pause");
+      radioIcon.classList.add("fa-play");
+
+    }
+
+  }catch(error){
+
+    console.log("Não foi possível iniciar a rádio:",error);
 
   }
 
 });
+
+
+/* =====================================================
+   PWA
+   ===================================================== */
+
+let deferredPrompt = null;
+
+
+/* Detecta Android */
+
+function isAndroid(){
+
+  return /android/i.test(
+    navigator.userAgent
+  );
+
+}
+
+
+/* Detecta iPhone/iPad */
+
+function isIOS(){
+
+  return /iphone|ipad|ipod/i.test(
+    navigator.userAgent
+  );
+
+}
+
+
+/* Detecta navegador interno */
+
+function isInAppBrowser(){
+
+  const ua =
+    navigator.userAgent.toLowerCase();
+
+  return (
+    ua.includes("instagram") ||
+    ua.includes("fbav") ||
+    ua.includes("fban") ||
+    ua.includes("facebook") ||
+    ua.includes("messenger")
+  );
+
+}
+
+
+/* Detecta PWA instalado */
+
+function isStandalone(){
+
+  return (
+    window.matchMedia(
+      "(display-mode: standalone)"
+    ).matches ||
+
+    window.navigator.standalone === true
+  );
+
+}
+
+
+/* =====================================================
+   ANDROID / CHROME
+   Captura o pedido de instalação
+   ===================================================== */
+
+window.addEventListener(
+  "beforeinstallprompt",
+  function(event){
+
+    event.preventDefault();
+
+    deferredPrompt = event;
+
+    const installBtn =
+      document.getElementById("pwaInstall");
+
+    if(installBtn){
+
+      installBtn.style.display =
+        "block";
+
+    }
+
+  }
+);
+
+
+/* =====================================================
+   POPUP
+   ===================================================== */
+
+function abrirPopupPWA(){
+
+  /* Não mostra se já estiver instalado */
+
+  if(isStandalone()){
+
+    return;
+
+  }
+
+
+  const overlay =
+    document.getElementById("pwaOverlay");
+
+  const titulo =
+    document.getElementById("pwaTitulo");
+
+  const texto =
+    document.getElementById("pwaTexto");
+
+  const steps =
+    document.getElementById("pwaSteps");
+
+  const installBtn =
+    document.getElementById("pwaInstall");
+
+
+  overlay.style.display =
+    "flex";
+
+
+  /* =================================================
+     FACEBOOK / INSTAGRAM
+     ================================================= */
+
+  if(isInAppBrowser()){
+
+    titulo.innerText =
+      "Abra no navegador";
+
+    texto.innerHTML =
+      "Você está acessando o site pelo navegador interno do Facebook ou Instagram.";
+
+    steps.innerHTML = `
+
+      <strong>Para instalar o aplicativo:</strong><br><br>
+
+      1. Toque nos <b>três pontinhos ⋮</b> ou no menu do navegador.<br>
+
+      2. Escolha <b>“Abrir no navegador”</b> ou
+      <b>“Abrir no Chrome/Safari”</b>.<br>
+
+      3. Quando o site abrir no navegador,
+      siga as instruções de instalação.<br>
+
+    `;
+
+    installBtn.style.display =
+      "none";
+
+    return;
+
+  }
+
+
+  /* =================================================
+     IPHONE / IPAD
+     ================================================= */
+
+  if(isIOS()){
+
+    titulo.innerText =
+      "Instale no iPhone ou iPad";
+
+    texto.innerHTML =
+      "Você pode colocar o Estudo na tela inicial e abrir como um aplicativo.";
+
+    steps.innerHTML = `
+
+      <strong>No Safari:</strong><br><br>
+
+      1. Toque no botão
+      <b>Compartilhar</b>
+      <br>
+
+      2. Role a lista para baixo.<br>
+
+      3. Toque em
+      <b>“Adicionar à Tela de Início”</b>.<br>
+
+      4. Toque em
+      <b>Adicionar</b>.<br><br>
+
+      Depois o ícone <b>Estudo</b>
+      aparecerá na tela do seu iPhone/iPad.
+
+    `;
+
+    installBtn.style.display =
+      "none";
+
+    return;
+
+  }
+
+
+  /* =================================================
+     ANDROID
+     ================================================= */
+
+  if(isAndroid()){
+
+    titulo.innerText =
+      "Instale o aplicativo";
+
+    texto.innerHTML =
+      "Instale o Estudo na tela inicial do seu Android para acessar rapidamente.";
+
+    steps.innerHTML = `
+
+      <strong>No Android:</strong><br><br>
+
+      Se aparecer o botão abaixo,
+      toque em <b>INSTALAR APLICATIVO</b>.<br><br>
+
+      Se o botão não aparecer:<br>
+
+      1. Abra o menu <b>⋮</b> do Chrome.<br>
+
+      2. Procure por
+      <b>“Instalar aplicativo”</b>
+      ou
+      <b>“Adicionar à tela inicial”</b>.<br>
+
+      3. Confirme a instalação.
+
+    `;
+
+    return;
+
+  }
+
+
+  /* =================================================
+     PC / OUTROS NAVEGADORES
+     ================================================= */
+
+  titulo.innerText =
+    "Instale o aplicativo";
+
+  texto.innerHTML =
+    "Você pode instalar o Estudo no seu computador quando o navegador oferecer essa opção.";
+
+  steps.innerHTML = `
+
+    <strong>No Chrome ou navegador compatível:</strong><br><br>
+
+    Procure o ícone de
+    <b>instalação</b>
+    na barra de endereço ou abra o menu
+    <b>⋮</b>.<br><br>
+
+    Depois escolha
+    <b>“Instalar Estudo”</b>.
+
+  `;
+
+}
+
+
+/* =====================================================
+   BOTÃO INSTALAR ANDROID / CHROME
+   ===================================================== */
+
+document
+  .getElementById("pwaInstall")
+  .addEventListener("click", async () => {
+
+    if(!deferredPrompt){
+
+      return;
+
+    }
+
+    deferredPrompt.prompt();
+
+    const resultado =
+      await deferredPrompt.userChoice;
+
+    console.log(
+      "Instalação:",
+      resultado.outcome
+    );
+
+    deferredPrompt = null;
+
+    document
+      .getElementById("pwaInstall")
+      .style.display =
+      "none";
+
+  });
+
+
+/* =====================================================
+   FECHAR POPUP
+   ===================================================== */
+
+document
+  .getElementById("pwaClose")
+  .addEventListener(
+    "click",
+    () => {
+
+      document
+        .getElementById("pwaOverlay")
+        .style.display =
+        "none";
+
+    }
+  );
+
+
+/* =====================================================
+   FECHA CLICANDO FORA
+   ===================================================== */
+
+document
+  .getElementById("pwaOverlay")
+  .addEventListener(
+    "click",
+    function(event){
+
+      if(
+        event.target === this
+      ){
+
+        this.style.display =
+          "none";
+
+      }
+
+    }
+  );
+
+
+/* =====================================================
+   MOSTRA O POPUP DEPOIS QUE A PÁGINA CARREGAR
+   ===================================================== */
+
+window.addEventListener(
+  "load",
+  () => {
+
+    setTimeout(
+      abrirPopupPWA,
+      900
+    );
+
+  }
+);
+
+
+/* =====================================================
+   SERVICE WORKER
+   ===================================================== */
+
+if(
+  "serviceWorker" in navigator
+){
+
+  window.addEventListener(
+    "load",
+    () => {
+
+      navigator.serviceWorker
+        .register("./service-worker.js")
+        .then(
+          registration => {
+
+            console.log(
+              "Service Worker registrado:",
+              registration.scope
+            );
+
+          }
+        )
+        .catch(
+          error => {
+
+            console.log(
+              "Erro no Service Worker:",
+              error
+            );
+
+          }
+        );
+
+    }
+  );
+
+}
 
 </script>
 
