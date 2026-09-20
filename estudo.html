@@ -24,10 +24,10 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="Estudo">
 
-<link rel="apple-touch-icon" href="logo-192.png">
+<link rel="apple-touch-icon" href="logo-192.jpg">
 
 <!-- FAVICON -->
-<link rel="icon" type="image/png" sizes="192x192" href="logo-192.png">
+<link rel="icon" type="image/png" sizes="192x192" href="logo-192.jpg">
 
 <!-- FONT AWESOME -->
 <link
@@ -832,7 +832,7 @@ header{
   <div class="pwa-popup">
 
     <img
-      src="logo-192.png"
+      src="logo-192.jpg"
       class="pwa-icon"
       alt="Aplicativo Estudo"
     >
@@ -850,6 +850,12 @@ header{
       id="pwaSteps"
     >
     </div>
+
+    <div
+      id="pwaStatus"
+      style="display:none; margin:0 0 12px; padding:10px 12px; border-radius:12px; background:#fff7e6; border:1px solid #f1d49a; color:#6b5200; font-size:13px; line-height:1.45;"
+      aria-live="polite"
+    ></div>
 
     <button
       class="pwa-install"
@@ -915,400 +921,541 @@ radioBtn.addEventListener("click", async () => {
 
 
 /* =====================================================
-   PWA
+   PWA — INSTALAÇÃO E ADAPTAÇÃO MULTINAVEGADOR
    ===================================================== */
 
 let deferredPrompt = null;
+let installEventReceived = false;
 
+/* ---------- DETECÇÃO DE AMBIENTE ---------- */
 
-/* Detecta Android */
+function getUA(){
+  return (navigator.userAgent || "").toLowerCase();
+}
 
 function isAndroid(){
-
-  return /android/i.test(
-    navigator.userAgent
-  );
-
+  return /android/i.test(navigator.userAgent || "");
 }
-
-
-/* Detecta iPhone/iPad */
 
 function isIOS(){
-
-  return /iphone|ipad|ipod/i.test(
-    navigator.userAgent
-  );
-
+  return /iphone|ipad|ipod/i.test(navigator.userAgent || "") ||
+         (navigator.platform === "MacIntel" && navigator.maxTouchPoints > 1);
 }
 
-
-/* Detecta navegador interno */
+function isStandalone(){
+  return (
+    window.matchMedia("(display-mode: standalone)").matches ||
+    window.matchMedia("(display-mode: fullscreen)").matches ||
+    window.navigator.standalone === true
+  );
+}
 
 function isInAppBrowser(){
-
-  const ua =
-    navigator.userAgent.toLowerCase();
+  const ua = getUA();
 
   return (
     ua.includes("instagram") ||
     ua.includes("fbav") ||
     ua.includes("fban") ||
-    ua.includes("facebook") ||
-    ua.includes("messenger")
+    ua.includes("fb_iab") ||
+    ua.includes("fb4a") ||
+    ua.includes("fbiOS".toLowerCase()) ||
+    ua.includes("messenger") ||
+    ua.includes("line/") ||
+    ua.includes("tiktok") ||
+    ua.includes("twitter")
   );
-
 }
 
+function getBrowser(){
+  const ua = getUA();
 
-/* Detecta PWA instalado */
+  if (isInAppBrowser()) return "inapp";
+  if (ua.includes("samsungbrowser")) return "samsung";
+  if (ua.includes("edg/")) return "edge";
+  if (ua.includes("opr/") || ua.includes("opera")) return "opera";
+  if (ua.includes("firefox") || ua.includes("fxios")) return "firefox";
+  if (ua.includes("crios") || ua.includes("chrome")) return "chrome";
+  if (ua.includes("safari")) return "safari";
 
-function isStandalone(){
-
-  return (
-    window.matchMedia(
-      "(display-mode: standalone)"
-    ).matches ||
-
-    window.navigator.standalone === true
-  );
-
+  return "other";
 }
 
+/* ---------- ELEMENTOS ---------- */
 
-/* =====================================================
-   ANDROID / CHROME
-   Captura o pedido de instalação
-   ===================================================== */
+const pwaOverlay = document.getElementById("pwaOverlay");
+const pwaTitulo = document.getElementById("pwaTitulo");
+const pwaTexto = document.getElementById("pwaTexto");
+const pwaSteps = document.getElementById("pwaSteps");
+const pwaInstall = document.getElementById("pwaInstall");
+const pwaClose = document.getElementById("pwaClose");
+const pwaStatus = document.getElementById("pwaStatus");
 
-window.addEventListener(
-  "beforeinstallprompt",
-  function(event){
+/* ---------- FUNÇÕES DE INTERFACE ---------- */
 
-    event.preventDefault();
+function mostrarStatus(mensagem){
+  if(!pwaStatus) return;
 
-    deferredPrompt = event;
+  pwaStatus.innerHTML = mensagem;
+  pwaStatus.style.display = "block";
+}
 
-    const installBtn =
-      document.getElementById("pwaInstall");
+function esconderStatus(){
+  if(!pwaStatus) return;
 
-    if(installBtn){
+  pwaStatus.style.display = "none";
+  pwaStatus.innerHTML = "";
+}
 
-      installBtn.style.display =
-        "block";
+function mostrarBotaoInstalar(){
+  if(pwaInstall){
+    pwaInstall.style.display = "block";
+  }
+}
+
+function esconderBotaoInstalar(){
+  if(pwaInstall){
+    pwaInstall.style.display = "none";
+  }
+}
+
+/* ---------- CAPTURA DO PEDIDO NATIVO DE INSTALAÇÃO ---------- */
+
+/*
+   Chrome/Edge/Samsung Internet e outros navegadores compatíveis
+   podem disparar este evento quando a página cumpre os requisitos
+   de instalação do PWA.
+*/
+window.addEventListener("beforeinstallprompt", event => {
+
+  event.preventDefault();
+
+  deferredPrompt = event;
+  installEventReceived = true;
+
+  mostrarBotaoInstalar();
+
+  mostrarStatus(
+    "<strong>Instalação disponível:</strong> toque em <b>INSTALAR APLICATIVO</b> para adicionar o Estudo ao aparelho."
+  );
+});
+
+/*
+   Quando o navegador conclui a instalação.
+*/
+window.addEventListener("appinstalled", () => {
+
+  deferredPrompt = null;
+  installEventReceived = false;
+
+  esconderBotaoInstalar();
+
+  mostrarStatus(
+    "<strong>Aplicativo instalado.</strong> O Estudo agora pode ser aberto pela tela inicial."
+  );
+});
+
+/* ---------- CONTEÚDO POR NAVEGADOR ---------- */
+
+function configurarInstrucoes(){
+
+  const browser = getBrowser();
+
+  esconderStatus();
+
+  /* Facebook / Instagram / navegadores internos */
+  if(browser === "inapp"){
+
+    pwaTitulo.innerText = "Abra no navegador";
+
+    pwaTexto.innerHTML =
+      "O Facebook, Instagram e alguns aplicativos usam um navegador interno. A instalação deve ser feita no navegador do aparelho.";
+
+    pwaSteps.innerHTML = `
+      <strong>Como continuar:</strong><br><br>
+
+      <b>1.</b> Abra o menu do navegador interno
+      <b>⋮</b> ou procure por <b>“Abrir no navegador”</b>.<br><br>
+
+      <b>2.</b> Escolha <b>Chrome</b>, <b>Safari</b> ou outro navegador externo disponível.<br><br>
+
+      <b>3.</b> No navegador externo, espere a página carregar completamente.<br><br>
+
+      <b>4.</b> Use o botão <b>INSTALAR APLICATIVO</b>, quando aparecer,
+      ou siga a opção <b>Adicionar à tela inicial</b>.
+    `;
+
+    esconderBotaoInstalar();
+    return;
+  }
+
+  /* iPhone / iPad */
+  if(isIOS()){
+
+    pwaTitulo.innerText = "Instale no iPhone ou iPad";
+
+    pwaTexto.innerHTML =
+      "No iPhone e iPad, a instalação é feita pelo menu de compartilhamento do navegador.";
+
+    if(browser === "safari" || browser === "other" || browser === "chrome" || browser === "edge" || browser === "firefox" || browser === "opera"){
+
+      pwaSteps.innerHTML = `
+        <strong>No iPhone ou iPad:</strong><br><br>
+
+        <b>1.</b> Abra esta página no <b>Safari</b> para a instalação mais compatível.<br><br>
+
+        <b>2.</b> Toque em <b>Compartilhar</b>
+        <span aria-hidden="true">⬆️</span>.<br><br>
+
+        <b>3.</b> Procure <b>“Adicionar à Tela de Início”</b>.<br><br>
+
+        <b>4.</b> Toque em <b>Adicionar</b>.<br><br>
+
+        Depois, o ícone <b>Estudo</b> ficará disponível na tela inicial.
+      `;
+
+      mostrarStatus(
+        "<strong>iPhone/iPad:</strong> se a opção não aparecer, abra esta página diretamente no Safari."
+      );
+    }
+
+    esconderBotaoInstalar();
+    return;
+  }
+
+  /* Android */
+  if(isAndroid()){
+
+    pwaTitulo.innerText = "Instale o aplicativo";
+
+    pwaTexto.innerHTML =
+      "Seu Android pode instalar o Estudo como aplicativo, sem precisar abrir o navegador toda vez.";
+
+    if(installEventReceived){
+
+      pwaSteps.innerHTML = `
+        <strong>Instalação disponível neste navegador:</strong><br><br>
+
+        Toque em <b>INSTALAR APLICATIVO</b> abaixo e confirme quando o navegador pedir.
+      `;
+
+      mostrarBotaoInstalar();
+      return;
+    }
+
+    if(browser === "chrome"){
+
+      pwaSteps.innerHTML = `
+        <strong>Google Chrome no Android:</strong><br><br>
+
+        <b>1.</b> Toque no menu <b>⋮</b> no canto superior direito.<br><br>
+
+        <b>2.</b> Procure <b>“Instalar aplicativo”</b>,
+        <b>“Instalar Estudo”</b> ou
+        <b>“Adicionar à tela inicial”</b>.<br><br>
+
+        <b>3.</b> Confirme a instalação.
+      `;
+
+    }else if(browser === "samsung"){
+
+      pwaSteps.innerHTML = `
+        <strong>Samsung Internet:</strong><br><br>
+
+        <b>1.</b> Abra o menu <b>☰</b> ou o menu do navegador.<br><br>
+
+        <b>2.</b> Procure <b>“Adicionar página à”</b>,
+        <b>“Tela inicial”</b> ou a opção de instalação oferecida pelo navegador.<br><br>
+
+        <b>3.</b> Confirme para criar o acesso na tela inicial.<br><br>
+
+        Se o navegador oferecer <b>Instalar aplicativo</b>, use essa opção.
+      `;
+
+    }else if(browser === "edge"){
+
+      pwaSteps.innerHTML = `
+        <strong>Microsoft Edge no Android:</strong><br><br>
+
+        <b>1.</b> Abra o menu do Edge.<br><br>
+
+        <b>2.</b> Procure <b>“Adicionar ao telefone”</b>,
+        <b>“Instalar aplicativo”</b> ou opção equivalente.<br><br>
+
+        <b>3.</b> Confirme a instalação.
+      `;
+
+    }else if(browser === "opera"){
+
+      pwaSteps.innerHTML = `
+        <strong>Opera / Opera Mini:</strong><br><br>
+
+        O suporte à instalação de PWA pode variar conforme a versão do navegador.<br><br>
+
+        Se aparecer <b>Instalar</b> ou <b>Adicionar à tela inicial</b>,
+        use essa opção.<br><br>
+
+        Se não aparecer, abra o endereço no <b>Chrome</b> ou
+        <b>Samsung Internet</b> e faça a instalação por lá.
+      `;
+
+    }else if(browser === "firefox"){
+
+      pwaSteps.innerHTML = `
+        <strong>Firefox:</strong><br><br>
+
+        O suporte à instalação pode variar conforme o aparelho e a versão.<br><br>
+
+        Procure no menu do navegador uma opção como
+        <b>“Adicionar à tela inicial”</b>.<br><br>
+
+        Se a opção de instalação não estiver disponível,
+        abra a página no <b>Chrome</b> ou <b>Samsung Internet</b>.
+      `;
+
+    }else{
+
+      pwaSteps.innerHTML = `
+        <strong>Outros navegadores Android:</strong><br><br>
+
+        Abra o menu do navegador e procure por
+        <b>“Instalar aplicativo”</b>,
+        <b>“Adicionar à tela inicial”</b> ou
+        <b>“Adicionar à página inicial”</b>.<br><br>
+
+        Se o navegador não oferecer essas opções,
+        abra o site no <b>Chrome</b> ou <b>Samsung Internet</b>.
+      `;
 
     }
 
+    esconderBotaoInstalar();
+
+    mostrarStatus(
+      "<strong>Dica:</strong> o botão de instalação aparece automaticamente quando este navegador informa que o PWA está pronto para instalar."
+    );
+
+    return;
   }
-);
 
+  /* PC / Mac */
+  pwaTitulo.innerText = "Instale o aplicativo";
 
-/* =====================================================
-   POPUP
-   ===================================================== */
+  pwaTexto.innerHTML =
+    "Você pode instalar o Estudo no computador e abrir em uma janela própria, como um aplicativo.";
+
+  if(installEventReceived){
+
+    pwaSteps.innerHTML = `
+      <strong>Instalação disponível:</strong><br><br>
+
+      Clique em <b>INSTALAR APLICATIVO</b> abaixo e confirme.
+    `;
+
+    mostrarBotaoInstalar();
+    return;
+  }
+
+  if(browser === "chrome"){
+
+    pwaSteps.innerHTML = `
+      <strong>Google Chrome no PC:</strong><br><br>
+
+      <b>1.</b> Procure o ícone de instalação
+      <span aria-hidden="true">⊕</span> na barra de endereço,
+      quando disponível.<br><br>
+
+      <b>2.</b> Ou abra o menu <b>⋮</b>.<br><br>
+
+      <b>3.</b> Escolha <b>“Instalar Estudo”</b> ou
+      <b>“Instalar aplicativo”</b>.
+    `;
+
+  }else if(browser === "edge"){
+
+    pwaSteps.innerHTML = `
+      <strong>Microsoft Edge no PC:</strong><br><br>
+
+      <b>1.</b> Procure o ícone de aplicativo/instalação na barra de endereço.<br><br>
+
+      <b>2.</b> Ou abra o menu do Edge.<br><br>
+
+      <b>3.</b> Procure <b>“Aplicativos”</b> →
+      <b>“Instalar este site como aplicativo”</b>.
+    `;
+
+  }else if(browser === "safari"){
+
+    pwaSteps.innerHTML = `
+      <strong>Safari no Mac:</strong><br><br>
+
+      Dependendo da versão do macOS, use o menu
+      <b>Arquivo</b> → <b>Adicionar ao Dock</b>
+      para transformar o site em um aplicativo.<br><br>
+
+      Se essa opção não estiver disponível, mantenha o site salvo
+      nos favoritos ou abra-o em um navegador compatível com instalação de PWA.
+    `;
+
+  }else if(browser === "firefox"){
+
+    pwaSteps.innerHTML = `
+      <strong>Firefox no PC:</strong><br><br>
+
+      A instalação de PWA pode não estar disponível nesta versão do Firefox.<br><br>
+
+      Para instalar como aplicativo, abra o Estudo no
+      <b>Chrome</b> ou <b>Microsoft Edge</b>.
+    `;
+
+  }else{
+
+    pwaSteps.innerHTML = `
+      <strong>Seu navegador:</strong><br><br>
+
+      Procure no menu uma opção como
+      <b>Instalar aplicativo</b>,
+      <b>Instalar este site</b> ou
+      <b>Adicionar à tela inicial</b>.<br><br>
+
+      Se essa opção não existir, abra o Estudo no
+      <b>Chrome</b> ou <b>Microsoft Edge</b> para instalar como aplicativo.
+    `;
+
+  }
+
+  esconderBotaoInstalar();
+
+  mostrarStatus(
+    "<strong>Importante:</strong> o botão de instalação só é exibido quando o navegador libera a instalação do PWA."
+  );
+}
+
+/* ---------- ABERTURA DO POPUP ---------- */
 
 function abrirPopupPWA(){
 
-  /* Não mostra se já estiver instalado */
-
+  /* Se já estiver instalado, não mostra popup */
   if(isStandalone()){
-
     return;
-
   }
 
+  configurarInstrucoes();
 
-  const overlay =
-    document.getElementById("pwaOverlay");
-
-  const titulo =
-    document.getElementById("pwaTitulo");
-
-  const texto =
-    document.getElementById("pwaTexto");
-
-  const steps =
-    document.getElementById("pwaSteps");
-
-  const installBtn =
-    document.getElementById("pwaInstall");
-
-
-  overlay.style.display =
-    "flex";
-
-
-  /* =================================================
-     FACEBOOK / INSTAGRAM
-     ================================================= */
-
-  if(isInAppBrowser()){
-
-    titulo.innerText =
-      "Abra no navegador";
-
-    texto.innerHTML =
-      "Você está acessando o site pelo navegador interno do Facebook ou Instagram.";
-
-    steps.innerHTML = `
-
-      <strong>Para instalar o aplicativo:</strong><br><br>
-
-      1. Toque nos <b>três pontinhos ⋮</b> ou no menu do navegador.<br>
-
-      2. Escolha <b>“Abrir no navegador”</b> ou
-      <b>“Abrir no Chrome/Safari”</b>.<br>
-
-      3. Quando o site abrir no navegador,
-      siga as instruções de instalação.<br>
-
-    `;
-
-    installBtn.style.display =
-      "none";
-
-    return;
-
+  if(pwaOverlay){
+    pwaOverlay.style.display = "flex";
   }
-
-
-  /* =================================================
-     IPHONE / IPAD
-     ================================================= */
-
-  if(isIOS()){
-
-    titulo.innerText =
-      "Instale no iPhone ou iPad";
-
-    texto.innerHTML =
-      "Você pode colocar o Estudo na tela inicial e abrir como um aplicativo.";
-
-    steps.innerHTML = `
-
-      <strong>No Safari:</strong><br><br>
-
-      1. Toque no botão
-      <b>Compartilhar</b>
-      <br>
-
-      2. Role a lista para baixo.<br>
-
-      3. Toque em
-      <b>“Adicionar à Tela de Início”</b>.<br>
-
-      4. Toque em
-      <b>Adicionar</b>.<br><br>
-
-      Depois o ícone <b>Estudo</b>
-      aparecerá na tela do seu iPhone/iPad.
-
-    `;
-
-    installBtn.style.display =
-      "none";
-
-    return;
-
-  }
-
-
-  /* =================================================
-     ANDROID
-     ================================================= */
-
-  if(isAndroid()){
-
-    titulo.innerText =
-      "Instale o aplicativo";
-
-    texto.innerHTML =
-      "Instale o Estudo na tela inicial do seu Android para acessar rapidamente.";
-
-    steps.innerHTML = `
-
-      <strong>No Android:</strong><br><br>
-
-      Se aparecer o botão abaixo,
-      toque em <b>INSTALAR APLICATIVO</b>.<br><br>
-
-      Se o botão não aparecer:<br>
-
-      1. Abra o menu <b>⋮</b> do Chrome.<br>
-
-      2. Procure por
-      <b>“Instalar aplicativo”</b>
-      ou
-      <b>“Adicionar à tela inicial”</b>.<br>
-
-      3. Confirme a instalação.
-
-    `;
-
-    return;
-
-  }
-
-
-  /* =================================================
-     PC / OUTROS NAVEGADORES
-     ================================================= */
-
-  titulo.innerText =
-    "Instale o aplicativo";
-
-  texto.innerHTML =
-    "Você pode instalar o Estudo no seu computador quando o navegador oferecer essa opção.";
-
-  steps.innerHTML = `
-
-    <strong>No Chrome ou navegador compatível:</strong><br><br>
-
-    Procure o ícone de
-    <b>instalação</b>
-    na barra de endereço ou abra o menu
-    <b>⋮</b>.<br><br>
-
-    Depois escolha
-    <b>“Instalar Estudo”</b>.
-
-  `;
-
 }
 
+/* ---------- BOTÃO NATIVO DE INSTALAÇÃO ---------- */
 
-/* =====================================================
-   BOTÃO INSTALAR ANDROID / CHROME
-   ===================================================== */
+if(pwaInstall){
 
-document
-  .getElementById("pwaInstall")
-  .addEventListener("click", async () => {
+  pwaInstall.addEventListener("click", async () => {
 
     if(!deferredPrompt){
 
-      return;
+      mostrarStatus(
+        "<strong>Instalação ainda não liberada.</strong><br>Use as instruções acima ou abra o site no Chrome/Edge."
+      );
 
+      return;
     }
 
-    deferredPrompt.prompt();
+    try{
 
-    const resultado =
-      await deferredPrompt.userChoice;
+      deferredPrompt.prompt();
 
-    console.log(
-      "Instalação:",
-      resultado.outcome
-    );
+      const resultado = await deferredPrompt.userChoice;
 
-    deferredPrompt = null;
+      console.log("Instalação:", resultado.outcome);
 
-    document
-      .getElementById("pwaInstall")
-      .style.display =
-      "none";
+      deferredPrompt = null;
+      installEventReceived = false;
+
+      esconderBotaoInstalar();
+
+    }catch(error){
+
+      console.log("Erro ao instalar PWA:", error);
+
+    }
 
   });
 
+}
 
-/* =====================================================
-   FECHAR POPUP
-   ===================================================== */
+/* ---------- FECHAR POPUP ---------- */
 
-document
-  .getElementById("pwaClose")
-  .addEventListener(
-    "click",
-    () => {
+if(pwaClose){
 
-      document
-        .getElementById("pwaOverlay")
-        .style.display =
-        "none";
+  pwaClose.addEventListener("click", () => {
 
+    if(pwaOverlay){
+      pwaOverlay.style.display = "none";
     }
-  );
 
-
-/* =====================================================
-   FECHA CLICANDO FORA
-   ===================================================== */
-
-document
-  .getElementById("pwaOverlay")
-  .addEventListener(
-    "click",
-    function(event){
-
-      if(
-        event.target === this
-      ){
-
-        this.style.display =
-          "none";
-
-      }
-
-    }
-  );
-
-
-/* =====================================================
-   MOSTRA O POPUP DEPOIS QUE A PÁGINA CARREGAR
-   ===================================================== */
-
-window.addEventListener(
-  "load",
-  () => {
-
-    setTimeout(
-      abrirPopupPWA,
-      900
-    );
-
-  }
-);
-
-
-/* =====================================================
-   SERVICE WORKER
-   ===================================================== */
-
-if(
-  "serviceWorker" in navigator
-){
-
-  window.addEventListener(
-    "load",
-    () => {
-
-      navigator.serviceWorker
-        .register("./service-worker.js")
-        .then(
-          registration => {
-
-            console.log(
-              "Service Worker registrado:",
-              registration.scope
-            );
-
-          }
-        )
-        .catch(
-          error => {
-
-            console.log(
-              "Erro no Service Worker:",
-              error
-            );
-
-          }
-        );
-
-    }
-  );
+  });
 
 }
+
+/* ---------- FECHAR CLICANDO FORA ---------- */
+
+if(pwaOverlay){
+
+  pwaOverlay.addEventListener("click", function(event){
+
+    if(event.target === this){
+      this.style.display = "none";
+    }
+
+  });
+
+}
+
+/* ---------- ABRIR POPUP ---------- */
+
+window.addEventListener("load", () => {
+
+  setTimeout(() => {
+
+    abrirPopupPWA();
+
+  }, 700);
+
+});
+
+/* ---------- SERVICE WORKER ---------- */
+
+if("serviceWorker" in navigator){
+
+  window.addEventListener("load", () => {
+
+    navigator.serviceWorker
+      .register("./service-worker.js", {
+        scope: "./"
+      })
+      .then(registration => {
+
+        console.log(
+          "Service Worker registrado:",
+          registration.scope
+        );
+
+      })
+      .catch(error => {
+
+        console.log(
+          "Erro no Service Worker:",
+          error
+        );
+
+      });
+
+  });
+
+}
+
 
 </script>
 
