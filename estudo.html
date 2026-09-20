@@ -8,12 +8,70 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
 <style>
-*{ box-sizing:border-box; margin:0; padding:0; }
+*{
+  box-sizing:border-box;
+  margin:0;
+  padding:0;
+}
 
 body{
   font-family:Arial, sans-serif;
   background:#ffffff;
 }
+
+/* =========================
+   PESQUISA GOOGLE
+   ========================= */
+
+.google-search{
+  display:flex;
+  justify-content:center;
+  width:100%;
+  padding:10px 14px 0;
+}
+
+.google-search form{
+  display:flex;
+  width:100%;
+  max-width:600px;
+  height:46px;
+}
+
+.google-search input{
+  flex:1;
+  min-width:0;
+  padding:0 16px;
+  border:1px solid #d0d0d0;
+  border-right:none;
+  border-radius:24px 0 0 24px;
+  outline:none;
+  font-size:16px;
+  box-shadow:0 2px 6px rgba(0,0,0,.10);
+}
+
+.google-search input:focus{
+  border-color:#2aa449;
+  box-shadow:0 2px 8px rgba(42,164,73,.25);
+}
+
+.google-search button{
+  width:58px;
+  border:none;
+  border-radius:0 24px 24px 0;
+  background:#2aa449;
+  color:#fff;
+  font-size:18px;
+  cursor:pointer;
+  box-shadow:0 2px 6px rgba(0,0,0,.10);
+}
+
+.google-search button:hover{
+  background:#218b3d;
+}
+
+/* =========================
+   CABEÇALHO
+   ========================= */
 
 header{
   text-align:center;
@@ -25,7 +83,10 @@ header{
   margin-bottom:10px;
 }
 
-/* PLAYER RÁDIO */
+/* =========================
+   PLAYER RÁDIO
+   ========================= */
+
 .radio-player{
   display:flex;
   flex-direction:column;
@@ -67,6 +128,10 @@ header{
   color:#2aa449;
 }
 
+/* =========================
+   CARDS
+   ========================= */
+
 .wrap{
   padding:14px;
 }
@@ -76,8 +141,18 @@ header{
   grid-template-columns:repeat(2,1fr);
   gap:12px;
 }
-@media(min-width:560px){ .grid{ grid-template-columns:repeat(3,1fr); } }
-@media(min-width:860px){ .grid{ grid-template-columns:repeat(4,1fr); } }
+
+@media(min-width:560px){
+  .grid{
+    grid-template-columns:repeat(3,1fr);
+  }
+}
+
+@media(min-width:860px){
+  .grid{
+    grid-template-columns:repeat(4,1fr);
+  }
+}
 
 .card{
   background:#2aa449;
@@ -90,6 +165,7 @@ header{
   cursor:pointer;
   transition:transform .15s ease, box-shadow .15s ease;
 }
+
 .card:hover{
   transform:scale(1.03);
   box-shadow:0 10px 22px rgba(0,0,0,.15);
@@ -114,6 +190,7 @@ header{
   width:34px;
   height:34px;
 }
+
 .iconStroke{
   fill:none;
   stroke:#ffffff;
@@ -129,86 +206,239 @@ header{
   text-align:center;
 }
 </style>
+</head>
+
+<body>
+
+<!-- =========================
+     PESQUISA GOOGLE
+     ========================= -->
+
+<div class="google-search">
+  <form action="https://www.google.com/search" method="get">
+
+    <input
+      type="search"
+      name="q"
+      placeholder="Pesquisar no Google..."
+      autocomplete="off"
+      aria-label="Pesquisar no Google"
+    >
+
+    <button type="submit" aria-label="Pesquisar">
+      <i class="fa-solid fa-magnifying-glass"></i>
+    </button>
+
+  </form>
+</div>
+
+
+<!-- =========================
+     CABEÇALHO
+     ========================= -->
+
 <header>
+
   <img class="logo"
        src="logo.jpg"
        alt="Logo">
 
   <!-- PLAYER RÁDIO -->
+
   <div class="radio-player">
+
     <button class="radio-btn" id="radioBtn">
       <i class="fa-solid fa-play"></i>
     </button>
+
     <div class="radio-title">Rádio</div>
+
   </div>
 
   <div class="title">Estudo</div>
+
 </header>
-<audio id="radio" src="https://stream.zeno.fm/l8ocj9i6ka2uv"></audio>
+
+
+<!-- RÁDIO -->
+
+<audio
+  id="radio"
+  src="https://stream.zeno.fm/l8ocj9i6ka2uv">
+</audio>
+
+
+<!-- =========================
+     CARDS
+     ========================= -->
 
 <main class="wrap">
+
   <section class="grid">
 
-    <div class="card" onclick="location.href='https://drive.google.com/file/d/1kKAL9yGVrU-c8Y9ecBApVUHG2qbuoHFV/view?usp=sharing'">
-      <div class="iconBox"><i class="fa-solid fa-book"></i></div>
-      <div class="label">Apostila</div>
-    </div>
+    <div
+      class="card"
+      onclick="location.href='https://drive.google.com/file/d/1kKAL9yGVrU-c8Y9ecBApVUHG2qbuoHFV/view?usp=sharing'">
 
-    <div class="card" onclick="location.href='https://drive.google.com/file/d/1-gQvm5UyiCnP2ldptVAgwI5GAasupd4P/view?usp=sharing'">
-      <div class="iconBox"><i class="fa-solid fa-leaf"></i></div>
-      <div class="label">Banhos</div>
-    </div>
-
-    <div class="card" onclick="location.href='https://drive.google.com/file/d/1-X-vCFH_LbymUyLMESntPfqBGduIUc-R/view?usp=sharing'">
       <div class="iconBox">
-        <svg class="iconSvg" viewBox="0 0 64 64">
-          <rect x="16" y="10" width="32" height="44" rx="6" class="iconStroke"/>
-          <rect x="20" y="14" width="24" height="36" rx="4" class="iconStroke" opacity=".6"/>
-          <circle cx="32" cy="32" r="6" class="iconStroke"/>
-        </svg>
+        <i class="fa-solid fa-book"></i>
       </div>
-      <div class="label">Baralho Cigano</div>
+
+      <div class="label">
+        Apostila
+      </div>
+
     </div>
 
-    <div class="card" onclick="location.href='https://marcio2307.github.io/terreiro/ponto.html'">
+
+    <div
+      class="card"
+      onclick="location.href='https://drive.google.com/file/d/1-gQvm5UyiCnP2ldptVAgwI5GAasupd4P/view?usp=sharing'">
+
       <div class="iconBox">
-        <svg class="iconSvg" viewBox="0 0 64 64">
-          <polygon points="32 8, 56 48, 8 48" class="iconStroke"/>
-          <polygon points="32 56, 56 16, 8 16" class="iconStroke"/>
-        </svg>
+        <i class="fa-solid fa-leaf"></i>
       </div>
-      <div class="label">Pontos Riscados</div>
+
+      <div class="label">
+        Banhos
+      </div>
+
     </div>
 
-    <div class="card" onclick="location.href='https://marcio2307.github.io/prova/index.html'">
-      <div class="iconBox"><i class="fa-solid fa-clipboard-check"></i></div>
-      <div class="label">Provas</div>
+
+    <div
+      class="card"
+      onclick="location.href='https://drive.google.com/file/d/1-X-vCFH_LbymUyLMESntPfqBGduIUc-R/view?usp=sharing'">
+
+      <div class="iconBox">
+
+        <svg class="iconSvg" viewBox="0 0 64 64">
+
+          <rect
+            x="16"
+            y="10"
+            width="32"
+            height="44"
+            rx="6"
+            class="iconStroke"/>
+
+          <rect
+            x="20"
+            y="14"
+            width="24"
+            height="36"
+            rx="4"
+            class="iconStroke"
+            opacity=".6"/>
+
+          <circle
+            cx="32"
+            cy="32"
+            r="6"
+            class="iconStroke"/>
+
+        </svg>
+
+      </div>
+
+      <div class="label">
+        Baralho Cigano
+      </div>
+
     </div>
 
-    <div class="card" onclick="location.href='https://marcio2307.github.io/terreiro/reuni%C3%A3o.html'">
-      <div class="iconBox"><i class="fa-solid fa-video"></i></div>
-      <div class="label">Reunião</div>
+
+    <div
+      class="card"
+      onclick="location.href='https://marcio2307.github.io/terreiro/ponto.html'">
+
+      <div class="iconBox">
+
+        <svg class="iconSvg" viewBox="0 0 64 64">
+
+          <polygon
+            points="32 8, 56 48, 8 48"
+            class="iconStroke"/>
+
+          <polygon
+            points="32 56, 56 16, 8 16"
+            class="iconStroke"/>
+
+        </svg>
+
+      </div>
+
+      <div class="label">
+        Pontos Riscados
+      </div>
+
+    </div>
+
+
+    <div
+      class="card"
+      onclick="location.href='https://marcio2307.github.io/prova/index.html'">
+
+      <div class="iconBox">
+        <i class="fa-solid fa-clipboard-check"></i>
+      </div>
+
+      <div class="label">
+        Provas
+      </div>
+
+    </div>
+
+
+    <div
+      class="card"
+      onclick="location.href='https://marcio2307.github.io/terreiro/reuni%C3%A3o.html'">
+
+      <div class="iconBox">
+        <i class="fa-solid fa-video"></i>
+      </div>
+
+      <div class="label">
+        Reunião
+      </div>
+
     </div>
 
   </section>
+
 </main>
 
+
+<!-- =========================
+     JAVASCRIPT DO RÁDIO
+     ========================= -->
+
 <script>
+
 const radio = document.getElementById('radio');
 const btn = document.getElementById('radioBtn');
 const icon = btn.querySelector('i');
 
 btn.addEventListener('click', () => {
+
   if (radio.paused) {
+
     radio.play();
+
     icon.classList.remove('fa-play');
     icon.classList.add('fa-pause');
+
   } else {
+
     radio.pause();
+
     icon.classList.remove('fa-pause');
     icon.classList.add('fa-play');
+
   }
+
 });
+
 </script>
 
 </body>
