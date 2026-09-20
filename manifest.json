@@ -1,7 +1,7 @@
 {
-  "name": "Estudo",
-  "short_name": "Estudo",
-  "description": "Aplicativo de Estudos",
+  "name": "Meu Terreiro",
+  "short_name": "Meu Terreiro",
+  "description": "Aplicativo Meu Terreiro",
   "start_url": "./estudo.html",
   "scope": "./",
   "display": "standalone",
