@@ -1,4 +1,4 @@
-const CACHE_NAME = "meu-terreiro-pwa-v1";
+const CACHE_NAME = "meu-terreiro-pwa-v2";
 
 const ARQUIVOS = [
   "./",
