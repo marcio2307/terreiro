@@ -1,150 +1,337 @@
 <!DOCTYPE html>
-<html lang="pt-br">
+<html lang="pt-BR">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Pontos Riscados na Umbanda</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#ffffff">
+<title>Imagens</title>
 
 <style>
-  :root{
-    --bg: #ffffff;
-    --text: #2aa449;
-    --card: rgba(42,164,73,0.08);
-    --border: rgba(42,164,73,0.35);
-    --shadow: rgba(0,0,0,0.18);
+*{
+  box-sizing:border-box;
+  margin:0;
+  padding:0;
+}
+
+html, body{
+  width:100%;
+  height:100%;
+  overflow:hidden;
+  background:#fff;
+  font-family:Arial, sans-serif;
+}
+
+/* Área principal */
+.viewer{
+  position:relative;
+  width:100vw;
+  height:100dvh;
+  background:#fff;
+  overflow:hidden;
+}
+
+/* Sequência de imagens */
+.slides{
+  display:flex;
+  width:100%;
+  height:100%;
+  overflow-x:auto;
+  overflow-y:hidden;
+  scroll-snap-type:x mandatory;
+  scroll-behavior:smooth;
+  -webkit-overflow-scrolling:touch;
+  scrollbar-width:none;
+  touch-action:pan-x;
+}
+
+.slides::-webkit-scrollbar{
+  display:none;
+}
+
+.slide{
+  flex:0 0 100%;
+  width:100%;
+  height:100%;
+  scroll-snap-align:start;
+  scroll-snap-stop:always;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  padding:10px 42px;
+  background:#fff;
+}
+
+.slide img{
+  display:block;
+  width:auto;
+  height:auto;
+  max-width:100%;
+  max-height:100%;
+  object-fit:contain;
+  user-select:none;
+  -webkit-user-drag:none;
+}
+
+/* Setas */
+.arrow{
+  position:absolute;
+  top:50%;
+  transform:translateY(-50%);
+  width:48px;
+  height:48px;
+  border:0;
+  border-radius:50%;
+  background:rgba(42,164,73,.88);
+  color:#fff;
+  font-size:30px;
+  line-height:48px;
+  text-align:center;
+  cursor:pointer;
+  z-index:10;
+  box-shadow:0 4px 12px rgba(0,0,0,.22);
+  transition:transform .15s ease, background .15s ease;
+}
+
+.arrow:hover{
+  background:#218b3d;
+}
+
+.arrow:active{
+  transform:translateY(-50%) scale(.94);
+}
+
+.prev{
+  left:10px;
+}
+
+.next{
+  right:10px;
+}
+
+/* Indicadores */
+.dots{
+  position:absolute;
+  left:50%;
+  bottom:12px;
+  transform:translateX(-50%);
+  z-index:10;
+  display:flex;
+  gap:7px;
+  padding:7px 10px;
+  border-radius:20px;
+  background:rgba(0,0,0,.18);
+  backdrop-filter:blur(4px);
+}
+
+.dot{
+  width:9px;
+  height:9px;
+  border-radius:50%;
+  background:#fff;
+  opacity:.55;
+  cursor:pointer;
+}
+
+.dot.active{
+  opacity:1;
+  transform:scale(1.2);
+}
+
+/* Número da página */
+.counter{
+  position:absolute;
+  top:12px;
+  left:50%;
+  transform:translateX(-50%);
+  z-index:10;
+  padding:5px 11px;
+  border-radius:16px;
+  background:rgba(0,0,0,.18);
+  color:#fff;
+  font-size:13px;
+  font-weight:bold;
+  backdrop-filter:blur(4px);
+}
+
+/* Celular */
+@media (max-width:600px){
+  .slide{
+    padding:8px 34px;
   }
 
-  *{ box-sizing: border-box; }
-
-  body{
-    margin: 0;
-    padding: 0;
-    background: var(--bg);
-    font-family: Arial, sans-serif;
-    text-align: center;
-    color: var(--text);
+  .arrow{
+    width:42px;
+    height:42px;
+    line-height:42px;
+    font-size:26px;
   }
 
-  .wrap{
-    max-width: 1050px;
-    margin: 0 auto;
-    padding: 18px 14px 40px;
+  .prev{
+    left:6px;
   }
 
-  h1{
-    margin: 10px auto 14px;
-    padding: 14px;
-    font-size: 26px;
-    line-height: 1.35;
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: 14px;
-    box-shadow: 0 8px 20px var(--shadow);
+  .next{
+    right:6px;
   }
 
-  p{
-    max-width: 900px;
-    margin: 0 auto 22px;
-    padding: 14px 16px;
-    font-size: 18px;
-    line-height: 1.55;
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: 14px;
-    box-shadow: 0 8px 20px var(--shadow);
+  .dots{
+    bottom:9px;
   }
+}
 
-  .img-container{
-    display: flex;
-    flex-direction: column;
-    gap: 18px;
-    margin-top: 10px;
+/* Respeita usuários que preferem menos animação */
+@media (prefers-reduced-motion:reduce){
+  .slides{
+    scroll-behavior:auto;
   }
-
-  .img-card{
-    background: rgba(42,164,73,0.05);
-    border: 1px solid var(--border);
-    border-radius: 16px;
-    padding: 10px;
-    box-shadow: 0 10px 22px var(--shadow);
-  }
-
-  .img-card img{
-    width: 100%;
-    height: auto;
-    display: block;
-    border-radius: 12px;
-    border: 2px solid rgba(42,164,73,0.35);
-  }
-
-  @media (max-width: 768px){
-    .wrap{ padding: 14px 12px 34px; }
-
-    h1{
-      font-size: 20px;
-      padding: 12px;
-    }
-
-    p{
-      font-size: 15.5px;
-      padding: 12px;
-    }
-
-    .img-container{ gap: 14px; }
-
-    .img-card{
-      padding: 8px;
-      border-radius: 14px;
-    }
-
-    .img-card img{
-      border-radius: 10px;
-    }
-  }
-
-  @media (max-width: 380px){
-    h1{ font-size: 18px; }
-    p{ font-size: 15px; }
-  }
+}
 </style>
-
 </head>
+
 <body>
 
-  <div class="wrap">
+<div class="viewer">
 
-    <h1>
-      Os pontos riscados na Umbanda são símbolos místicos e sagrados que funcionam como "assinaturas"
-      das entidades espirituais, como os orixás e guias.
-    </h1>
+  <div class="slides" id="slides">
 
-    <p>
-      Eles servem para identificar a entidade, representar sua história e sua linha de atuação,
-      mobilizar energias, criar portais de proteção ou, por meio de magias,
-      descarregar energias negativas e cortar demandas.
-    </p>
+    <!-- PRIMEIRA: IMAGEM 0 -->
+    <section class="slide">
+      <img src="imagem%200.png" alt="Imagem 0">
+    </section>
 
-    <div class="img-container">
+    <!-- SEGUNDA: IMAGEM 1 -->
+    <section class="slide">
+      <img src="imagem%201.png" alt="Imagem 1">
+    </section>
 
-      <div class="img-card">
-        <img src="https://i.ibb.co/rRdYfqMj/Chat-GPT-Image-20-12-2025-02-35-55.png" alt="Pontos Riscados 1" loading="lazy">
-      </div>
+    <!-- TERCEIRA: IMAGEM 2 -->
+    <section class="slide">
+      <img src="imagem%202.png" alt="Imagem 2">
+    </section>
 
-      <div class="img-card">
-        <img src="https://i.ibb.co/ccH5Tb2h/Chat-GPT-Image-20-12-2025-02-34-42.png" alt="Pontos Riscados 2" loading="lazy">
-      </div>
+    <!-- QUARTA: IMAGEM 3 -->
+    <section class="slide">
+      <img src="imagem%203.png" alt="Imagem 3">
+    </section>
 
-      <div class="img-card">
-        <img src="https://i.ibb.co/7xjm8FrN/Chat-GPT-Image-20-12-2025-02-33-32.png" alt="Pontos Riscados 3" loading="lazy">
-      </div>
-
-      <div class="img-card">
-        <img src="https://i.ibb.co/Y7VJLcjG/Chat-GPT-Image-20-12-2025-02-32-28.png" alt="Pontos Riscados 4" loading="lazy">
-      </div>
-
-    </div>
+    <!-- QUINTA: IMAGEM 4 -->
+    <section class="slide">
+      <img src="imagem%204.png" alt="Imagem 4">
+    </section>
 
   </div>
+
+  <!-- Setas -->
+  <button class="arrow prev" id="prev" aria-label="Imagem anterior">&#10094;</button>
+  <button class="arrow next" id="next" aria-label="Próxima imagem">&#10095;</button>
+
+  <!-- Contador -->
+  <div class="counter" id="counter">1 / 5</div>
+
+  <!-- Pontinhos -->
+  <div class="dots" id="dots">
+    <span class="dot active" data-index="0"></span>
+    <span class="dot" data-index="1"></span>
+    <span class="dot" data-index="2"></span>
+    <span class="dot" data-index="3"></span>
+    <span class="dot" data-index="4"></span>
+  </div>
+
+</div>
+
+<script>
+const slides = document.getElementById('slides');
+const slideItems = document.querySelectorAll('.slide');
+const dots = document.querySelectorAll('.dot');
+const counter = document.getElementById('counter');
+const prev = document.getElementById('prev');
+const next = document.getElementById('next');
+
+let current = 0;
+
+function showSlide(index){
+  current = Math.max(0, Math.min(index, slideItems.length - 1));
+
+  slides.scrollTo({
+    left: current * slides.clientWidth,
+    behavior: 'smooth'
+  });
+
+  updateUI();
+}
+
+function updateUI(){
+  counter.textContent = (current + 1) + ' / ' + slideItems.length;
+
+  dots.forEach((dot, i) => {
+    dot.classList.toggle('active', i === current);
+  });
+
+  prev.style.visibility = current === 0 ? 'hidden' : 'visible';
+  next.style.visibility = current === slideItems.length - 1 ? 'hidden' : 'visible';
+}
+
+prev.addEventListener('click', () => showSlide(current - 1));
+next.addEventListener('click', () => showSlide(current + 1));
+
+dots.forEach(dot => {
+  dot.addEventListener('click', () => {
+    showSlide(Number(dot.dataset.index));
+  });
+});
+
+/* Roda do mouse: passa uma imagem por vez */
+slides.addEventListener('wheel', (event) => {
+  event.preventDefault();
+
+  if (Math.abs(event.deltaY) > Math.abs(event.deltaX)) {
+    if (event.deltaY > 0) {
+      showSlide(current + 1);
+    } else {
+      showSlide(current - 1);
+    }
+  } else if (event.deltaX !== 0) {
+    showSlide(current + (event.deltaX > 0 ? 1 : -1));
+  }
+}, {passive:false});
+
+/* Atualiza a imagem atual depois de arrastar com dedo ou mouse */
+let scrollTimer;
+
+slides.addEventListener('scroll', () => {
+  clearTimeout(scrollTimer);
+
+  scrollTimer = setTimeout(() => {
+    const index = Math.round(slides.scrollLeft / slides.clientWidth);
+
+    if(index !== current){
+      current = Math.max(0, Math.min(index, slideItems.length - 1));
+      updateUI();
+    }
+  }, 80);
+});
+
+/* Teclado no computador */
+document.addEventListener('keydown', (event) => {
+  if(event.key === 'ArrowRight' || event.key === 'ArrowDown'){
+    showSlide(current + 1);
+  }
+
+  if(event.key === 'ArrowLeft' || event.key === 'ArrowUp'){
+    showSlide(current - 1);
+  }
+});
+
+window.addEventListener('resize', () => {
+  slides.scrollTo({
+    left: current * slides.clientWidth,
+    behavior: 'auto'
+  });
+});
+
+updateUI();
+</script>
 
 </body>
 </html>
