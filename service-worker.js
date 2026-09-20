@@ -1,4 +1,4 @@
-const CACHE_NAME = "estudo-pwa-v4";
+const CACHE_NAME = "meu-terreiro-pwa-v1";
 
 const ARQUIVOS = [
   "./",
@@ -56,15 +56,11 @@ self.addEventListener("fetch", event => {
     fetch(event.request)
 
       .then(response => {
-
         return response;
-
       })
 
       .catch(() => {
-
         return caches.match(event.request);
-
       })
 
   );
