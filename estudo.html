@@ -515,23 +515,28 @@ header{
     border-radius:18px;
     padding:9px;
   }
+
   .daily-close{
     width:38px;
     height:38px;
     top:6px;
     right:6px;
   }
+
   .daily-title{
     font-size:18px;
     margin-top:3px;
   }
+
   .daily-day{font-size:12px;}
+
   .daily-carousel{
     height:76vh;
     height:76dvh;
     min-height:270px;
     border-radius:11px;
   }
+
   .daily-arrow{
     width:40px;
     height:40px;
@@ -807,7 +812,6 @@ header{
 
 }
 
-
 /* =====================================================
    VISUAL MODERNO — SOMENTE PC / DESKTOP
    Celular e tablet permanecem com o layout original.
@@ -861,8 +865,7 @@ header{
     width:62px;
   }
 
-  /* Cabeçalho transparente no PC:
-     logo, rádio e título ficam diretamente sobre o fundo. */
+  /* PC: logo, rádio e título ficam diretamente sobre o fundo. */
   header{
     width:min(980px, calc(100% - 40px));
     margin:18px auto 0;
@@ -978,6 +981,45 @@ header{
   .grid{
     max-width:820px;
   }
+}
+
+/* =====================================================
+   FUNDO — FUNDO.PNG
+   A imagem ocupa toda a tela sem ser cortada.
+   ===================================================== */
+
+html,
+body{
+  background-image:url("./fundo.png");
+  background-size:100% 100%;
+  background-repeat:no-repeat;
+  background-position:center center;
+  background-attachment:fixed;
+}
+
+body{
+  background-color:transparent;
+}
+
+@media (min-width:1024px){
+
+  html{
+    background-color:transparent;
+  }
+
+  body{
+    background-image:url("./fundo.png");
+    background-size:100% 100%;
+    background-repeat:no-repeat;
+    background-position:center center;
+    background-attachment:fixed;
+    background-color:transparent;
+  }
+
+  body::before{
+    background:transparent;
+  }
+
 }
 
 </style>
@@ -1554,6 +1596,7 @@ function closeDailyPopup(){
     DEPOIS, somente se o Meu Terreiro ainda NÃO estiver
     instalado, abre o popup com as instruções de instalação.
   */
+
   setTimeout(() => {
 
     if(!isStandalone()){
