@@ -1540,6 +1540,19 @@ function closeDailyPopup(){
   dailyOverlay.style.display = "none";
 
   document.body.style.overflow = "";
+
+  /*
+    Depois de fechar o banner do Orixá do Dia,
+    mostra o popup de instalação somente se
+    o Meu Terreiro ainda não estiver instalado.
+  */
+  setTimeout(() => {
+
+    if(!isStandalone()){
+      abrirPopupPWA();
+    }
+
+  }, 250);
 }
 
 dailyClose.addEventListener(
@@ -1560,7 +1573,7 @@ dailyNext.addEventListener(
 /* ESC também fecha no PC */
 document.addEventListener("keydown",(event)=>{
 
-  if(event.key === "Escape"){
+  if(event.key === "Escape" && dailyOverlay.style.display === "flex"){
     closeDailyPopup();
   }
 
