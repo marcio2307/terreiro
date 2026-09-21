@@ -1,16 +1,15 @@
-const CACHE_NAME = "meu-terreiro-pwa-v3";
+const CACHE_NAME = "meu-terreiro-pwa-v4";
 
 const ARQUIVOS = [
   "./",
-  "./estudo.html",
+  "./index.html",
   "./manifest.json",
+  "./logo.jpg",
   "./logo-192.jpg",
-  "./logo-512.jpg",
-  "./logo.jpg"
+  "./logo-512.jpg"
 ];
 
 self.addEventListener("install", event => {
-
   event.waitUntil(
     caches.open(CACHE_NAME).then(cache => {
       return cache.addAll(ARQUIVOS);
@@ -18,32 +17,21 @@ self.addEventListener("install", event => {
   );
 
   self.skipWaiting();
-
 });
 
-
 self.addEventListener("activate", event => {
-
   event.waitUntil(
-
     caches.keys().then(keys => {
-
       return Promise.all(
-
         keys
           .filter(key => key !== CACHE_NAME)
           .map(key => caches.delete(key))
-
       );
-
     })
-
   );
 
   self.clients.claim();
-
 });
-
 
 self.addEventListener("fetch", event => {
 
@@ -52,17 +40,21 @@ self.addEventListener("fetch", event => {
   }
 
   event.respondWith(
-
     fetch(event.request)
-
       .then(response => {
+
+        // Atualiza o cache com a versão mais recente
+        const responseClone = response.clone();
+
+        caches.open(CACHE_NAME).then(cache => {
+          cache.put(event.request, responseClone);
+        });
+
         return response;
       })
-
       .catch(() => {
         return caches.match(event.request);
       })
-
   );
 
 });
