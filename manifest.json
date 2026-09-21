@@ -2,7 +2,7 @@
   "name": "Meu Terreiro",
   "short_name": "Meu Terreiro",
   "description": "Aplicativo Meu Terreiro",
-  "start_url": "./estudo.html",
+  "start_url": "./index.html",
   "scope": "./",
   "display": "standalone",
   "orientation": "portrait-primary",
