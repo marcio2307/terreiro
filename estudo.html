@@ -27,7 +27,7 @@
 <link rel="apple-touch-icon" href="logo-192.jpg">
 
 <!-- FAVICON -->
-<link rel="icon" type="image/png" sizes="192x192" href="logo-192.jpg">
+<link rel="icon" type="image/jpeg" sizes="192x192" href="logo-192.jpg">
 
 <!-- FONT AWESOME -->
 <link
@@ -1542,9 +1542,9 @@ function closeDailyPopup(){
   document.body.style.overflow = "";
 
   /*
-    Depois de fechar o banner do Orixá do Dia,
-    mostra o popup de instalação somente se
-    o Meu Terreiro ainda não estiver instalado.
+    PRIMEIRO fecha o Orixá do Dia.
+    DEPOIS, somente se o Meu Terreiro ainda NÃO estiver
+    instalado, abre o popup com as instruções de instalação.
   */
   setTimeout(() => {
 
@@ -1552,7 +1552,7 @@ function closeDailyPopup(){
       abrirPopupPWA();
     }
 
-  }, 250);
+  }, 300);
 }
 
 dailyClose.addEventListener(
@@ -1837,9 +1837,27 @@ window.addEventListener(
 
     if(installBtn){
 
-      installBtn.style.display =
-        "block";
+      installBtn.style.display = "block";
 
+    }
+
+  }
+);
+
+/*
+  Se a instalação for concluída, fecha o popup.
+*/
+window.addEventListener(
+  "appinstalled",
+  () => {
+
+    deferredPrompt = null;
+
+    const overlay =
+      document.getElementById("pwaOverlay");
+
+    if(overlay){
+      overlay.style.display = "none";
     }
 
   }
