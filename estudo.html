@@ -24,10 +24,10 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="default">
 <meta name="apple-mobile-web-app-title" content="Meu Terreiro">
 
-<link rel="apple-touch-icon" href="logo-192.jpg">
+<link rel="apple-touch-icon" href="./logo-192.jpg">
 
 <!-- FAVICON -->
-<link rel="icon" type="image/jpeg" sizes="192x192" href="logo-192.jpg">
+<link rel="icon" type="image/jpeg" sizes="192x192" href="./logo-192.jpg">
 
 <!-- FONT AWESOME -->
 <link
@@ -1025,7 +1025,7 @@ header{
 
   <img
     class="logo"
-    src="logo.jpg"
+    src="./logo.jpg"
     alt="Logo"
   >
 
@@ -1291,7 +1291,7 @@ header{
   <div class="pwa-popup">
 
     <img
-      src="logo-192.jpg"
+      src="./logo-192.jpg"
       class="pwa-icon"
       alt="Aplicativo Meu Terreiro"
     >
@@ -1344,53 +1344,53 @@ const dailyImages = {
   0: { // Domingo
     nome: "ERÊS / IBEJI",
     descricao: "Orixá do Dia — Domingo",
-    slides: ["imagem 10.png"]
+    slides: ["./imagem 10.png"]
   },
 
   1: { // Segunda-feira
     nome: "ORIXÁS DA SEGUNDA-FEIRA",
     descricao: "Exu • Omulu / Obaluaê • Nanã Buruquê",
     slides: [
-      "imagem 11.png",
-      "imagem 9.png",
-      "imagem 3.png"
+      "./imagem 11.png",
+      "./imagem 9.png",
+      "./imagem 3.png"
     ]
   },
 
   2: { // Terça-feira
     nome: "OGUM",
     descricao: "Orixá do Dia — Terça-feira",
-    slides: ["imagem 4.png"]
+    slides: ["./imagem 4.png"]
   },
 
   3: { // Quarta-feira
     nome: "ORIXÁS DA QUARTA-FEIRA",
     descricao: "Xangô • Iansã • Oxum",
     slides: [
-      "imagem 8.png",
-      "imagem 7.png",
-      "imagem 6.png"
+      "./imagem 8.png",
+      "./imagem 7.png",
+      "./imagem 6.png"
     ]
   },
 
   4: { // Quinta-feira
     nome: "OXÓSSI",
     descricao: "Orixá do Dia — Quinta-feira",
-    slides: ["imagem 5.png"]
+    slides: ["./imagem 5.png"]
   },
 
   5: { // Sexta-feira
     nome: "OXALÁ",
     descricao: "Orixá do Dia — Sexta-feira",
-    slides: ["imagem 1.png"]
+    slides: ["./imagem 1.png"]
   },
 
   6: { // Sábado
     nome: "YABÁS DO SÁBADO",
     descricao: "Yabás do Sábado • Iemanjá",
     slides: [
-      "imagem 12.png",
-      "imagem 2.png"
+      "./imagem 12.png",
+      "./imagem 2.png"
     ]
   }
 };
@@ -1534,6 +1534,14 @@ function openDailyPopup(){
     dailyClose.focus();
   }, 50);
 }
+
+
+/* Abre automaticamente o Orixá do Dia ao carregar o estudo.html. */
+window.addEventListener("load", () => {
+  setTimeout(() => {
+    openDailyPopup();
+  }, 500);
+});
 
 function closeDailyPopup(){
 
