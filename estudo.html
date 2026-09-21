@@ -308,6 +308,238 @@ header{
 }
 
 /* =====================================================
+   POPUP ORIXÁ DO DIA
+   ===================================================== */
+
+.daily-overlay{
+  position:fixed;
+  inset:0;
+  width:100%;
+  height:100%;
+  background:rgba(0,0,0,.68);
+  display:none;
+  align-items:center;
+  justify-content:center;
+  padding:16px;
+  z-index:100000;
+  backdrop-filter:blur(5px);
+  -webkit-backdrop-filter:blur(5px);
+}
+
+.daily-popup{
+  position:relative;
+  width:min(96vw, 560px);
+  max-height:94vh;
+  max-height:94dvh;
+  background:#fff;
+  border-radius:22px;
+  padding:14px;
+  box-shadow:0 24px 70px rgba(0,0,0,.38);
+  animation:dailyEntrada .28s ease;
+  overflow:hidden;
+}
+
+@keyframes dailyEntrada{
+  from{
+    opacity:0;
+    transform:translateY(22px) scale(.96);
+  }
+  to{
+    opacity:1;
+    transform:translateY(0) scale(1);
+  }
+}
+
+.daily-close{
+  position:absolute;
+  top:8px;
+  right:8px;
+  z-index:20;
+  width:40px;
+  height:40px;
+  border:1px solid #bbb;
+  border-radius:50%;
+  background:rgba(255,255,255,.96);
+  color:#000;
+  font-size:25px;
+  line-height:1;
+  cursor:pointer;
+  display:grid;
+  place-items:center;
+  box-shadow:0 3px 10px rgba(0,0,0,.16);
+  -webkit-tap-highlight-color:transparent;
+}
+
+.daily-close:hover{
+  background:#000;
+  color:#fff;
+}
+
+.daily-title{
+  text-align:center;
+  color:#000;
+  font-size:clamp(19px,4vw,26px);
+  font-weight:900;
+  letter-spacing:.04em;
+  margin:2px 45px 4px;
+  text-transform:uppercase;
+}
+
+.daily-day{
+  text-align:center;
+  color:#333;
+  font-size:13px;
+  margin:0 45px 10px;
+}
+
+.daily-carousel{
+  position:relative;
+  width:100%;
+  height:min(72vh,760px);
+  height:min(72dvh,760px);
+  min-height:280px;
+  overflow:hidden;
+  border:1px solid #c7a54b;
+  border-radius:14px;
+  background:#fff;
+  touch-action:pan-y pinch-zoom;
+  user-select:none;
+  -webkit-user-select:none;
+}
+
+.daily-track{
+  height:100%;
+  display:flex;
+  transition:transform .38s cubic-bezier(.22,.61,.36,1);
+  will-change:transform;
+}
+
+.daily-slide{
+  flex:0 0 100%;
+  width:100%;
+  height:100%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background:#fff;
+}
+
+.daily-slide img{
+  width:100%;
+  height:100%;
+  object-fit:contain;
+  object-position:center;
+  display:block;
+  background:#fff;
+  -webkit-user-drag:none;
+}
+
+.daily-arrow{
+  position:absolute;
+  top:50%;
+  transform:translateY(-50%);
+  z-index:10;
+  width:46px;
+  height:46px;
+  border:1px solid #777;
+  border-radius:50%;
+  background:rgba(255,255,255,.94);
+  color:#000;
+  font-size:31px;
+  line-height:1;
+  cursor:pointer;
+  display:grid;
+  place-items:center;
+  padding:0 0 5px;
+  box-shadow:0 3px 10px rgba(0,0,0,.16);
+}
+
+.daily-arrow:hover{
+  background:#000;
+  color:#fff;
+}
+
+.daily-prev{left:7px;}
+.daily-next{right:7px;}
+
+.daily-counter{
+  position:absolute;
+  left:50%;
+  bottom:8px;
+  transform:translateX(-50%);
+  z-index:10;
+  padding:4px 10px;
+  border-radius:999px;
+  background:rgba(255,255,255,.94);
+  color:#000;
+  border:1px solid #777;
+  font:600 12px Arial,sans-serif;
+}
+
+.daily-dots{
+  min-height:22px;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  gap:7px;
+  padding-top:7px;
+}
+
+.daily-dot{
+  width:8px;
+  height:8px;
+  border:1px solid #555;
+  border-radius:50%;
+  background:#fff;
+  padding:0;
+  cursor:pointer;
+}
+
+.daily-dot.active{
+  background:#000;
+  border-color:#000;
+  transform:scale(1.35);
+}
+
+.daily-error{
+  color:#000;
+  text-align:center;
+  padding:20px;
+  font:600 14px Arial,sans-serif;
+}
+
+@media(max-width:480px){
+  .daily-overlay{padding:8px;}
+  .daily-popup{
+    width:98vw;
+    border-radius:18px;
+    padding:9px;
+  }
+  .daily-close{
+    width:38px;
+    height:38px;
+    top:6px;
+    right:6px;
+  }
+  .daily-title{
+    font-size:18px;
+    margin-top:3px;
+  }
+  .daily-day{font-size:12px;}
+  .daily-carousel{
+    height:76vh;
+    height:76dvh;
+    min-height:270px;
+    border-radius:11px;
+  }
+  .daily-arrow{
+    width:40px;
+    height:40px;
+    font-size:27px;
+  }
+}
+
+/* =====================================================
    POPUP DE INSTALAÇÃO PWA
    ===================================================== */
 
@@ -994,6 +1226,60 @@ header{
 
 
 <!-- =====================================================
+     POPUP ORIXÁ DO DIA
+     ===================================================== -->
+
+<div class="daily-overlay" id="dailyOverlay" role="dialog"
+     aria-modal="true" aria-labelledby="dailyTitle">
+
+  <div class="daily-popup">
+
+    <button
+      class="daily-close"
+      id="dailyClose"
+      type="button"
+      aria-label="Fechar Orixá do Dia"
+      title="Fechar">
+      ×
+    </button>
+
+    <div class="daily-title" id="dailyTitle">
+      ORIXÁ DO DIA
+    </div>
+
+    <div class="daily-day" id="dailyDay"></div>
+
+    <div class="daily-carousel" id="dailyCarousel">
+
+      <div class="daily-track" id="dailyTrack"></div>
+
+      <button
+        class="daily-arrow daily-prev"
+        id="dailyPrev"
+        type="button"
+        aria-label="Orixá anterior">
+        ‹
+      </button>
+
+      <button
+        class="daily-arrow daily-next"
+        id="dailyNext"
+        type="button"
+        aria-label="Próximo Orixá">
+        ›
+      </button>
+
+      <div class="daily-counter" id="dailyCounter"></div>
+
+    </div>
+
+    <div class="daily-dots" id="dailyDots"></div>
+
+  </div>
+</div>
+
+
+<!-- =====================================================
      POPUP PWA
      ===================================================== -->
 
@@ -1049,6 +1335,377 @@ header{
      ===================================================== -->
 
 <script>
+
+/* =====================================================
+   ORIXÁ DO DIA — POPUP AUTOMÁTICO
+   ===================================================== */
+
+const dailyImages = {
+  0: { // Domingo
+    nome: "ERÊS / IBEJI",
+    descricao: "Orixá do Dia — Domingo",
+    slides: ["imagem 10.png"]
+  },
+
+  1: { // Segunda-feira
+    nome: "ORIXÁS DA SEGUNDA-FEIRA",
+    descricao: "Exu • Omulu / Obaluaê • Nanã Buruquê",
+    slides: [
+      "imagem 11.png",
+      "imagem 9.png",
+      "imagem 3.png"
+    ]
+  },
+
+  2: { // Terça-feira
+    nome: "OGUM",
+    descricao: "Orixá do Dia — Terça-feira",
+    slides: ["imagem 4.png"]
+  },
+
+  3: { // Quarta-feira
+    nome: "ORIXÁS DA QUARTA-FEIRA",
+    descricao: "Xangô • Iansã • Oxum",
+    slides: [
+      "imagem 8.png",
+      "imagem 7.png",
+      "imagem 6.png"
+    ]
+  },
+
+  4: { // Quinta-feira
+    nome: "OXÓSSI",
+    descricao: "Orixá do Dia — Quinta-feira",
+    slides: ["imagem 5.png"]
+  },
+
+  5: { // Sexta-feira
+    nome: "OXALÁ",
+    descricao: "Orixá do Dia — Sexta-feira",
+    slides: ["imagem 1.png"]
+  },
+
+  6: { // Sábado
+    nome: "YABÁS DO SÁBADO",
+    descricao: "Yabás do Sábado • Iemanjá",
+    slides: [
+      "imagem 12.png",
+      "imagem 2.png"
+    ]
+  }
+};
+
+const dailyDays = [
+  "Domingo",
+  "Segunda-feira",
+  "Terça-feira",
+  "Quarta-feira",
+  "Quinta-feira",
+  "Sexta-feira",
+  "Sábado"
+];
+
+const dailyToday = new Date();
+const dailyDayNumber = dailyToday.getDay();
+const dailyData = dailyImages[dailyDayNumber];
+
+const dailyOverlay = document.getElementById("dailyOverlay");
+const dailyClose = document.getElementById("dailyClose");
+const dailyTitle = document.getElementById("dailyTitle");
+const dailyDay = document.getElementById("dailyDay");
+const dailyCarousel = document.getElementById("dailyCarousel");
+const dailyTrack = document.getElementById("dailyTrack");
+const dailyDots = document.getElementById("dailyDots");
+const dailyCounter = document.getElementById("dailyCounter");
+const dailyPrev = document.getElementById("dailyPrev");
+const dailyNext = document.getElementById("dailyNext");
+
+let dailyIndex = 0;
+let dailyStartX = 0;
+let dailyStartY = 0;
+let dailyDragging = false;
+let dailyDx = 0;
+
+function dailyCreateSlides(){
+
+  dailyTrack.innerHTML = "";
+  dailyDots.innerHTML = "";
+
+  dailyData.slides.forEach((file, index) => {
+
+    const slide = document.createElement("div");
+    slide.className = "daily-slide";
+
+    const img = document.createElement("img");
+    img.src = file;
+    img.alt = `${dailyData.nome} — slide ${index + 1}`;
+    img.draggable = false;
+
+    img.addEventListener("error", () => {
+      slide.innerHTML = `
+        <div class="daily-error">
+          Não foi possível carregar:<br><br>
+          <strong>${file}</strong><br><br>
+          Confira se a imagem está na mesma pasta do index.html.
+        </div>
+      `;
+    });
+
+    slide.appendChild(img);
+    dailyTrack.appendChild(slide);
+
+    if(dailyData.slides.length > 1){
+
+      const dot = document.createElement("button");
+      dot.type = "button";
+      dot.className = "daily-dot";
+      dot.setAttribute(
+        "aria-label",
+        `Abrir slide ${index + 1}`
+      );
+
+      dot.addEventListener(
+        "click",
+        () => dailyGoTo(index)
+      );
+
+      dailyDots.appendChild(dot);
+    }
+  });
+
+  dailyUpdate();
+}
+
+function dailyUpdate(){
+
+  dailyTrack.style.transform =
+    `translate3d(${-dailyIndex * 100}%,0,0)`;
+
+  if(dailyData.slides.length > 1){
+
+    dailyCounter.textContent =
+      `${dailyIndex + 1} / ${dailyData.slides.length}`;
+
+    [...dailyDots.children].forEach((dot,index) => {
+      dot.classList.toggle(
+        "active",
+        index === dailyIndex
+      );
+    });
+
+    dailyPrev.style.display = "grid";
+    dailyNext.style.display = "grid";
+
+  }else{
+
+    dailyCounter.textContent = "";
+    dailyPrev.style.display = "none";
+    dailyNext.style.display = "none";
+  }
+}
+
+function dailyGoTo(newIndex){
+
+  const total = dailyData.slides.length;
+
+  dailyIndex =
+    (newIndex + total) % total;
+
+  dailyUpdate();
+}
+
+function openDailyPopup(){
+
+  dailyTitle.textContent =
+    dailyData.nome;
+
+  dailyDay.textContent =
+    `${dailyDays[dailyDayNumber]} • ${dailyData.descricao}`;
+
+  dailyIndex = 0;
+
+  dailyCreateSlides();
+
+  dailyOverlay.style.display = "flex";
+
+  document.body.style.overflow = "hidden";
+
+  setTimeout(() => {
+    dailyClose.focus();
+  }, 50);
+}
+
+function closeDailyPopup(){
+
+  dailyOverlay.style.display = "none";
+
+  document.body.style.overflow = "";
+}
+
+dailyClose.addEventListener(
+  "click",
+  closeDailyPopup
+);
+
+dailyPrev.addEventListener(
+  "click",
+  () => dailyGoTo(dailyIndex - 1)
+);
+
+dailyNext.addEventListener(
+  "click",
+  () => dailyGoTo(dailyIndex + 1)
+);
+
+/* ESC também fecha no PC */
+document.addEventListener("keydown",(event)=>{
+
+  if(event.key === "Escape"){
+    closeDailyPopup();
+  }
+
+  if(dailyOverlay.style.display === "flex"){
+
+    if(event.key === "ArrowLeft"){
+      dailyGoTo(dailyIndex - 1);
+    }
+
+    if(event.key === "ArrowRight"){
+      dailyGoTo(dailyIndex + 1);
+    }
+  }
+});
+
+/* Clique fora do card fecha */
+dailyOverlay.addEventListener(
+  "click",
+  (event) => {
+
+    if(event.target === dailyOverlay){
+      closeDailyPopup();
+    }
+
+  }
+);
+
+/* Arrastar com mouse / dedo */
+dailyCarousel.addEventListener(
+  "pointerdown",
+  (event) => {
+
+    if(dailyData.slides.length <= 1){
+      return;
+    }
+
+    dailyDragging = true;
+    dailyStartX = event.clientX;
+    dailyStartY = event.clientY;
+    dailyDx = 0;
+
+    dailyCarousel.setPointerCapture?.(
+      event.pointerId
+    );
+
+    dailyTrack.style.transition = "none";
+  }
+);
+
+dailyCarousel.addEventListener(
+  "pointermove",
+  (event) => {
+
+    if(!dailyDragging){
+      return;
+    }
+
+    const dx =
+      event.clientX - dailyStartX;
+
+    const dy =
+      event.clientY - dailyStartY;
+
+    if(
+      Math.abs(dy) > Math.abs(dx) &&
+      Math.abs(dy) > 10
+    ){
+      return;
+    }
+
+    dailyDx = dx;
+
+    const percent =
+      (dx / dailyCarousel.clientWidth) * 100;
+
+    dailyTrack.style.transform =
+      `translate3d(
+        calc(${-dailyIndex * 100}% + ${percent}px),
+        0,
+        0
+      )`;
+  }
+);
+
+function dailyEndDrag(event){
+
+  if(!dailyDragging){
+    return;
+  }
+
+  dailyDragging = false;
+  dailyTrack.style.transition = "";
+
+  const limit =
+    Math.max(
+      45,
+      dailyCarousel.clientWidth * .12
+    );
+
+  if(dailyDx < -limit){
+    dailyGoTo(dailyIndex + 1);
+  }else if(dailyDx > limit){
+    dailyGoTo(dailyIndex - 1);
+  }else{
+    dailyUpdate();
+  }
+
+  dailyDx = 0;
+
+  dailyCarousel.releasePointerCapture?.(
+    event.pointerId
+  );
+}
+
+dailyCarousel.addEventListener(
+  "pointerup",
+  dailyEndDrag
+);
+
+dailyCarousel.addEventListener(
+  "pointercancel",
+  dailyEndDrag
+);
+
+dailyCarousel.addEventListener(
+  "contextmenu",
+  event => event.preventDefault()
+);
+
+/*
+  Abre automaticamente quando o Meu Terreiro
+  termina de carregar.
+*/
+window.addEventListener(
+  "load",
+  () => {
+
+    setTimeout(
+      openDailyPopup,
+      500
+    );
+
+  }
+);
+
 
 /* =====================================================
    RÁDIO
@@ -1430,17 +2087,8 @@ document
    MOSTRA O POPUP DEPOIS QUE A PÁGINA CARREGAR
    ===================================================== */
 
-window.addEventListener(
-  "load",
-  () => {
-
-    setTimeout(
-      abrirPopupPWA,
-      900
-    );
-
-  }
-);
+/* O popup inicial agora é o Orixá do Dia.
+   O popup PWA não abre automaticamente para não sobrepor os dois. */
 
 
 /* =====================================================
