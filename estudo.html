@@ -1022,6 +1022,66 @@ body{
 
 }
 
+
+/* =====================================================
+   LEITURA POR VOZ — BOTÃO DISCRETO
+   ===================================================== */
+
+.voice-access{
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  margin:4px auto 8px;
+}
+
+.voice-btn{
+  width:34px;
+  height:34px;
+  border:1px solid rgba(42,164,73,.35);
+  border-radius:50%;
+  background:rgba(255,255,255,.72);
+  color:#2aa449;
+  font-size:14px;
+  cursor:pointer;
+  display:grid;
+  place-items:center;
+  box-shadow:0 2px 7px rgba(0,0,0,.10);
+  transition:transform .15s ease, background .15s ease, color .15s ease;
+  -webkit-tap-highlight-color:transparent;
+}
+
+.voice-btn:hover{
+  transform:scale(1.06);
+  background:#2aa449;
+  color:#fff;
+}
+
+.voice-btn.ativo{
+  background:#2aa449;
+  color:#fff;
+}
+
+.voice-btn:active{
+  transform:scale(.94);
+}
+
+.voice-btn:focus-visible{
+  outline:2px solid #2aa449;
+  outline-offset:3px;
+}
+
+.voice-status{
+  position:absolute;
+  width:1px;
+  height:1px;
+  padding:0;
+  margin:-1px;
+  overflow:hidden;
+  clip:rect(0,0,0,0);
+  white-space:nowrap;
+  border:0;
+}
+
 </style>
 
 </head>
@@ -1091,6 +1151,21 @@ body{
 
   </div>
 
+  <!-- LEITURA POR VOZ — BOTÃO DISCRETO -->
+  <div class="voice-access">
+    <button
+      class="voice-btn"
+      id="voiceBtn"
+      type="button"
+      aria-label="Ativar leitura por voz"
+      aria-pressed="false"
+      title="Leitura por voz"
+    >
+      <i class="fa-solid fa-volume-high" aria-hidden="true"></i>
+    </button>
+    <span class="voice-status" id="voiceStatus" aria-live="polite"></span>
+  </div>
+
   <div class="title">
     Meu Terreiro
   </div>
@@ -1118,8 +1193,8 @@ body{
   <section class="grid">
 
     <div
-      class="card"
-      onclick="location.href='https://drive.google.com/file/d/1kKAL9yGVrU-c8Y9ecBApVUHG2qbuoHFV/view?usp=sharing'"
+      class="card" data-voz="Apostila. Material de estudo do Meu Terreiro."
+      onclick="navegarComVoz(this, 'https://drive.google.com/file/d/1kKAL9yGVrU-c8Y9ecBApVUHG2qbuoHFV/view?usp=sharing')"
     >
 
       <div class="iconBox">
@@ -1134,8 +1209,8 @@ body{
 
 
     <div
-      class="card"
-      onclick="location.href='https://drive.google.com/file/d/1-gQvm5UyiCnP2ldptVAgwI5GAasupd4P/view?usp=sharing'"
+      class="card" data-voz="Banhos. Conteúdo sobre banhos e seus fundamentos no Meu Terreiro."
+      onclick="navegarComVoz(this, 'https://drive.google.com/file/d/1-gQvm5UyiCnP2ldptVAgwI5GAasupd4P/view?usp=sharing')"
     >
 
       <div class="iconBox">
@@ -1150,8 +1225,8 @@ body{
 
 
     <div
-      class="card"
-      onclick="location.href='https://drive.google.com/file/d/1-X-vCFH_LbymUyLMESntPfqBGduIUc-R/view?usp=sharing'"
+      class="card" data-voz="Baralho Cigano. Acesse o conteúdo do Baralho Cigano."
+      onclick="navegarComVoz(this, 'https://drive.google.com/file/d/1-X-vCFH_LbymUyLMESntPfqBGduIUc-R/view?usp=sharing')"
     >
 
       <div class="iconBox">
@@ -1199,8 +1274,8 @@ body{
 
 
     <div
-      class="card"
-      onclick="location.href='https://marcio2307.github.io/terreiro/ponto.html'"
+      class="card" data-voz="Pontos Riscados. Acesse os pontos riscados do Meu Terreiro."
+      onclick="navegarComVoz(this, 'https://marcio2307.github.io/terreiro/ponto.html')"
     >
 
       <div class="iconBox">
@@ -1232,8 +1307,8 @@ body{
 
 
     <div
-      class="card"
-      onclick="location.href='https://marcio2307.github.io/prova/index.html'"
+      class="card" data-voz="Provas. Acesse as provas e atividades do Meu Terreiro."
+      onclick="navegarComVoz(this, 'https://marcio2307.github.io/prova/index.html')"
     >
 
       <div class="iconBox">
@@ -1248,8 +1323,8 @@ body{
 
 
     <div
-      class="card"
-      onclick="location.href='https://marcio2307.github.io/terreiro/reuni%C3%A3o.html'"
+      class="card" data-voz="Reunião. Acesse a área de reuniões do Meu Terreiro."
+      onclick="navegarComVoz(this, 'https://marcio2307.github.io/terreiro/reuni%C3%A3o.html')"
     >
 
       <div class="iconBox">
@@ -1264,8 +1339,8 @@ body{
 
 
     <div
-      class="card"
-      onclick="location.href='https://marcio2307.github.io/vinil/vinil.html'"
+      class="card" data-voz="Discoteca. Acesse a discoteca do Meu Terreiro."
+      onclick="navegarComVoz(this, 'https://marcio2307.github.io/vinil/vinil.html')"
     >
 
       <div class="iconBox">
@@ -1280,8 +1355,8 @@ body{
 
 
     <div
-      class="card"
-      onclick="location.href='https://marcio2307.github.io/biblioteca/index.html'"
+      class="card" data-voz="Biblioteca. Acesse a biblioteca do Meu Terreiro."
+      onclick="navegarComVoz(this, 'https://marcio2307.github.io/biblioteca/index.html')"
     >
 
       <div class="iconBox">
@@ -1837,6 +1912,120 @@ radioBtn.addEventListener("click", async () => {
 
   }
 
+});
+
+
+/* =====================================================
+   LEITURA POR VOZ — ACESSIBILIDADE
+   A rádio continua funcionando normalmente.
+   ===================================================== */
+
+const voiceBtn = document.getElementById("voiceBtn");
+const voiceStatus = document.getElementById("voiceStatus");
+
+let vozAtiva = false;
+let navegacaoPendente = null;
+
+function obterVozPortugues(){
+  if(!("speechSynthesis" in window)){
+    return null;
+  }
+
+  const vozes = window.speechSynthesis.getVoices();
+
+  return (
+    vozes.find(v => v.lang && v.lang.toLowerCase() === "pt-br") ||
+    vozes.find(v => v.lang && v.lang.toLowerCase().startsWith("pt")) ||
+    null
+  );
+}
+
+function falar(texto, aoTerminar = null){
+  if(!("speechSynthesis" in window)){
+    if(aoTerminar) aoTerminar();
+    return;
+  }
+
+  window.speechSynthesis.cancel();
+
+  const fala = new SpeechSynthesisUtterance(texto);
+  fala.lang = "pt-BR";
+  fala.rate = 0.88;
+  fala.pitch = 1;
+  fala.volume = 1;
+
+  const voz = obterVozPortugues();
+  if(voz){
+    fala.voice = voz;
+  }
+
+  fala.onend = () => {
+    if(aoTerminar) aoTerminar();
+  };
+
+  fala.onerror = () => {
+    if(aoTerminar) aoTerminar();
+  };
+
+  window.speechSynthesis.speak(fala);
+}
+
+function ativarLeitura(){
+  vozAtiva = !vozAtiva;
+
+  voiceBtn.classList.toggle("ativo", vozAtiva);
+  voiceBtn.setAttribute("aria-pressed", String(vozAtiva));
+  voiceBtn.setAttribute(
+    "aria-label",
+    vozAtiva ? "Desativar leitura por voz" : "Ativar leitura por voz"
+  );
+
+  if(vozAtiva){
+    voiceStatus.textContent = "Leitura por voz ativada.";
+    falar("Leitura por voz ativada. Ao escolher um menu, vou informar o nome e os detalhes antes de abrir.");
+  }else{
+    voiceStatus.textContent = "Leitura por voz desativada.";
+    if("speechSynthesis" in window){
+      window.speechSynthesis.cancel();
+    }
+  }
+}
+
+function navegarComVoz(elemento, endereco){
+  const descricao =
+    elemento.getAttribute("data-voz") ||
+    elemento.querySelector(".label")?.textContent?.trim() ||
+    "Menu";
+
+  if(!vozAtiva){
+    window.location.href = endereco;
+    return;
+  }
+
+  navegacaoPendente = endereco;
+
+  falar(descricao, () => {
+    const destino = navegacaoPendente;
+    navegacaoPendente = null;
+
+    if(destino){
+      window.location.href = destino;
+    }
+  });
+}
+
+voiceBtn?.addEventListener("click", ativarLeitura);
+
+if("speechSynthesis" in window){
+  window.speechSynthesis.onvoiceschanged = () => {
+    obterVozPortugues();
+  };
+}
+
+document.addEventListener("keydown", (event) => {
+  if(event.key === "Escape" && "speechSynthesis" in window){
+    window.speechSynthesis.cancel();
+  }
 });
 
 
